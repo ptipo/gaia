@@ -1,12 +1,50 @@
 {
-  "name": "configurator",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "name": "@gaia/configurator",
+    "version": "1.0.0",
+    "description": "Headless web app configurator",
+    "main": "index.js",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "default": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        },
+        "./items": {
+            "import": {
+                "types": "./dist/items/index.d.mts",
+                "default": "./dist/items/index.mjs"
+            },
+            "require": {
+                "types": "./dist/items/index.d.ts",
+                "default": "./dist/items/index.js"
+            },
+            "default": {
+                "types": "./dist/items/index.d.ts",
+                "default": "./dist/items/index.js"
+            }
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "watch": "tsup --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "tsup": "^8.0.2"
+    },
+    "dependencies": {
+        "ts-pattern": "^5.1.1",
+        "zod": "^3.23.8"
+    }
 }
