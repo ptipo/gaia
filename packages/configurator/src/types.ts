@@ -12,3 +12,10 @@ export function isRGBA(input: unknown): input is string {
         );
     }
 }
+
+export enum NonPrimitiveTypes {
+    concept = 'concept',
+    image = 'image',
+    logicalGroup = 'logical-group',
+    itemGroup = 'item-group',
+}

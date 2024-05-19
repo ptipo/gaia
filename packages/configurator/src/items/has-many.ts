@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { Concept, ConceptSchema } from '../concept';
-import { inferConceptModel } from '../inference';
+import { Concept, getConceptSchema } from '../concept';
+import { BaseConceptModel, inferConceptModel } from '../inference';
 import { ConfigItemBase } from './common';
-import { getConceptSchema } from '../schema';
 
 /**
  * 包含另外多个`Concept` (one-to-many)
@@ -24,22 +23,22 @@ export interface HasManyItem<TCandidate extends Concept = Concept>
     /**
      * 初始项目
      */
-    initialItemsProvider?: () => inferConceptModel<TCandidate>[];
+    initialItemsProvider?: () => object[];
 
     /**
      * 新增项提供函数
      */
     newItemProvider?: (
-        concept: TCandidate,
-        currentModel: inferConceptModel<TCandidate>[]
+        concept: Concept,
+        currentModel: BaseConceptModel[]
     ) => object;
 
     /**
      * 响应子项配置变化
      */
     onChildChange?: (
-        changedItem: inferConceptModel<TCandidate>,
-        currentModel: inferConceptModel<TCandidate>[]
+        changedItem: BaseConceptModel,
+        currentModel: BaseConceptModel[]
     ) => void;
 }
 

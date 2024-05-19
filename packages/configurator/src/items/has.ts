@@ -1,5 +1,4 @@
-import { Concept } from '../concept';
-import { getConceptSchema } from '../schema';
+import { Concept, getConceptSchema } from '../concept';
 import { ConfigItemBase } from './common';
 
 /**

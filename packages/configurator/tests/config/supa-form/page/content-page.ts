@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern';
-import { Concept, defineConcept, BaseConceptModel } from '@gaia/configurator';
+import { Concept, defineConcept } from '@/concept';
 import { AllPageItems, ChoiceQuestion } from '../page-items';
 import { NextButton } from './next-button';
 
@@ -60,7 +60,7 @@ export const ContentPage = defineConcept({
 });
 
 // 根据不同的内容项类型，生成默认带自增序号的名称
-function newItemProvider(concept: Concept, model: BaseConceptModel[]) {
+function newItemProvider(concept: Concept, model: { $concept: string }[]) {
     const mappedName = match(concept.name)
         .with('QAQuestion', () => '问答')
         .with('ChoiceQuestion', () => '选择')

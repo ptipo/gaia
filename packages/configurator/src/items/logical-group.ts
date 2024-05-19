@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConfigItemBase, ProviderContext } from './common';
+import { NonPrimitiveTypes } from '../types';
 
 export type LogicalOperand =
     | { kind: 'input' }
@@ -60,15 +61,16 @@ export const LogicalItemSchema = z.object({
     operator: z.string(),
 });
 
-type Group = {
-    type: 'and' | 'or';
-    items: Array<Group | z.infer<typeof LogicalItemSchema>>;
+export type LogicalGroupType = {
+    groupOperator: 'and' | 'or';
+    items: Array<LogicalGroupType | z.infer<typeof LogicalItemSchema>>;
 };
 
-export const getSchema = (): z.ZodType<Group> =>
+export const getSchema = (): z.ZodType<LogicalGroupType> =>
     z.object({
-        type: z.union([z.literal('and'), z.literal('or')]),
-        items: z.array(z.union([getSchema(), LogicalItemSchema])),
+        $type: z.literal(NonPrimitiveTypes.logicalGroup),
+        groupOperator: z.union([z.literal('and'), z.literal('or')]),
+        items: z.array(z.union([z.lazy(getSchema), LogicalItemSchema])),
     });
 
 export type LogicalGroup = z.infer<ReturnType<typeof getSchema>>;

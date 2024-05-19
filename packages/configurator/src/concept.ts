@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { ConfigItem } from './config-item';
+import { ConfigItem, getConfigItemSchema } from './config-item';
+import { NonPrimitiveTypes } from './types';
 
 /**
  * 可配置的抽象概念，包含一组配置项。
@@ -64,4 +65,22 @@ export function defineConcept<TItems extends Concept['items']>(
     return def;
 }
 
-export const ConceptSchema = z.object({});
+export function getConceptSchema<TConcept extends Concept>(
+    concept: TConcept
+): z.ZodObject<z.ZodRawShape> {
+    return z.object({
+        ...mapConfigItems(concept.items),
+        $type: z.literal(NonPrimitiveTypes.concept),
+        $concept: z.string(),
+    });
+}
+
+function mapConfigItems(items: Record<string, ConfigItem>) {
+    return Object.entries(items).reduce(
+        (acc, [key, item]) => ({
+            ...acc,
+            [key]: getConfigItemSchema(item),
+        }),
+        {}
+    );
+}

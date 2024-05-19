@@ -1,23 +1,3 @@
-export { ColorItem } from './color';
-export * from './common';
-export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
-export { GroupItem } from './group';
-export { HasItem } from './has';
-export { HasManyItem } from './has-many';
-export { IfItem } from './if';
-export { ImageInfo, ImageItem } from './image';
-export {
-    LogicalGroupItem as LogicGroupItem,
-    LogicalOperand,
-    LogicalOperandValue,
-    LogicalOperator,
-    LogicalGroup,
-} from './logical-group';
-export { NumberItem } from './number';
-export { SelectItem } from './select';
-export { SwitchItem } from './switch';
-export { TextItem } from './text';
-
 import { z } from 'zod';
 import { ConfigItemType } from '../config-item';
 import { getSchema as getColorItemSchema } from './color';
@@ -50,3 +30,23 @@ export const Schemas: {
     switch: getSwitchItemSchema,
     text: getTextItemSchema,
 };
+
+export { ColorItem } from './color';
+export * from './common';
+export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
+export { GroupItem } from './group';
+export { HasItem } from './has';
+export { HasManyItem } from './has-many';
+export { IfItem } from './if';
+export { ImageInfo, ImageItem } from './image';
+export {
+    LogicalGroupItem as LogicGroupItem,
+    LogicalGroup,
+    LogicalOperand,
+    LogicalOperandValue,
+    LogicalOperator,
+} from './logical-group';
+export { NumberItem } from './number';
+export { SelectItem } from './select';
+export { SwitchItem } from './switch';
+export { TextItem } from './text';

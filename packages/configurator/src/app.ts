@@ -1,27 +1,31 @@
 import { z } from 'zod';
-import type { Concept } from './concept';
+import { getConceptSchema, type Concept } from './concept';
 import type { inferConceptModel } from './inference';
-import { getConceptSchema } from './schema';
+import { createModelForConcept } from './model';
 import { deserializeAppModel, serializeAppModel } from './serialization';
+import { DeepPartialConceptModel } from './utils';
 
 /**
  * 应用配置 - 创建自一个顶级`Concept`
  */
-export interface App<TConcept extends Concept> {
+export interface App<
+    TConcept extends Concept,
+    TModel = inferConceptModel<TConcept>
+> {
     /**
      * 创建一个空白Model
      */
-    createModel(): inferConceptModel<TConcept>;
+    createModel(): DeepPartialConceptModel<TModel>;
 
     /**
      * 序列化一个Model
      */
-    serializeModel(model: inferConceptModel<TConcept>): string;
+    serializeModel(model: TModel): string;
 
     /**
      * 反序列化一个Model
      */
-    loadModel(serialized: string): inferConceptModel<TConcept>;
+    loadModel(serialized: string): TModel;
 }
 
 class AppImpl<TConcept extends Concept> implements App<TConcept> {
@@ -32,7 +36,7 @@ class AppImpl<TConcept extends Concept> implements App<TConcept> {
     }
 
     createModel() {
-        return { $concept: this.concept.name } as inferConceptModel<TConcept>;
+        return createModelForConcept<TConcept>(this.concept);
     }
 
     private createModelSchema() {

@@ -1,3 +1,5 @@
+import { ConfigItemType } from '..';
+
 /**
  * 配置项通用属性
  */
@@ -5,7 +7,7 @@ export interface ConfigItemBase {
     /**
      * 类型
      */
-    type: string;
+    type: ConfigItemType;
 
     /**
      * 显示名称

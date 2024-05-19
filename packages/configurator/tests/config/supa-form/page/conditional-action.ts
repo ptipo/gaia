@@ -1,10 +1,10 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineConcept } from '@/concept';
 import {
     LogicalOperand,
     LogicalOperandValue,
     LogicalOperator,
     ProviderContext,
-} from '@gaia/configurator/items';
+} from '@/items';
 import { P, match } from 'ts-pattern';
 
 /**

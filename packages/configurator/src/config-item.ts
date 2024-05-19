@@ -1,5 +1,6 @@
 import {
     ColorItem,
+    ConfigItemBase,
     DynamicSelectItem,
     GroupItem,
     HasItem,
@@ -36,6 +37,6 @@ export type ConfigItem =
  */
 export type ConfigItemType = ConfigItem['type'];
 
-export function getConfigItemSchema(item: ConfigItem) {
+export function getConfigItemSchema(item: ConfigItemBase) {
     return Schemas[item.type](item);
 }

@@ -1,4 +1,4 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineConcept } from '@/concept';
 import { getAllPages } from '../util';
 
 /**
@@ -22,7 +22,6 @@ export const DripSetting = defineConcept({
             condition: ({ currentModel }) => currentModel.enable,
             child: {
                 type: 'group',
-
                 items: {
                     /**
                      * 每次最大页数
