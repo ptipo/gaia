@@ -1,12 +1,24 @@
 {
-  "name": "configurator",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "name": "@gaia/configurator",
+    "version": "1.0.0",
+    "description": "Headless web app configurator",
+    "main": "index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./items": "./dist/items/index.js"
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "watch": "tsc -p tsconfig.build.json --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "tsup": "^8.0.2"
+    },
+    "dependencies": {
+        "ts-pattern": "^5.1.1",
+        "zod": "^3.23.8"
+    }
 }

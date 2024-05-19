@@ -1,12 +1,24 @@
 {
-  "name": "supa-form",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "name": "supa-form",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "exports": {
+        "./config": "./dist/config/index.mjs"
+    },
+    "scripts": {
+        "build": "tsup",
+        "build:config": "tsc --noEmit && tsup",
+        "build:config:watch": "tsup --watch"
+    },
+    "dependencies": {
+        "@gaia/configurator": "workspace:*",
+        "ts-pattern": "^5.1.1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "tsup": "^8.0.2"
+    }
 }
