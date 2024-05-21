@@ -9,7 +9,8 @@
     },
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-        "watch": "tsc -p tsconfig.build.json --watch"
+        "watch": "tsc -p tsconfig.build.json --watch",
+        "test": "jest"
     },
     "keywords": [],
     "author": "",

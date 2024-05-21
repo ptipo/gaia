@@ -54,7 +54,7 @@ class AppImpl<TConcept extends Concept> implements App<TConcept> {
     }
 
     parseModel(modelData: string): inferPartialConcept<TConcept> {
-        return deserializeAppModel(modelData) as inferPartialConcept<TConcept>;
+        return deserializeAppModel<TConcept>(modelData);
     }
 }
 

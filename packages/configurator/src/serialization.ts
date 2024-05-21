@@ -13,7 +13,7 @@ type ConceptRef = { $concept: string; $id: number };
  * 序列化应用模型
  */
 export function serializeAppModel<TConcept extends Concept>(
-    model: inferPartialConcept<Concept>
+    model: inferPartialConcept<TConcept>
 ) {
     const conceptInstances: Record<string, object[]> = {};
     const processed = serializeConcept(model, conceptInstances);
@@ -26,9 +26,9 @@ export function serializeAppModel<TConcept extends Concept>(
 /**
  * 反序列化应用模型
  */
-export function deserializeAppModel(
+export function deserializeAppModel<TConcept extends Concept>(
     serialized: string
-): inferPartialConcept<Concept> {
+): inferPartialConcept<TConcept> {
     const deserialized = JSON.parse(serialized);
     const parsed = z.object({
         conceptInstances: z.record(
@@ -48,7 +48,10 @@ export function deserializeAppModel(
     });
 
     const { conceptInstances, data } = parsed.parse(deserialized);
-    return deserializeConcept(data, conceptInstances);
+    return deserializeConcept(
+        data,
+        conceptInstances
+    ) as inferPartialConcept<TConcept>;
 }
 
 function serializeConcept(
