@@ -9,7 +9,8 @@
     },
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-        "watch": "tsc -p tsconfig.build.json --watch"
+        "watch": "tsc -p tsconfig.build.json --watch",
+        "test": "jest"
     },
     "keywords": [],
     "author": "",
@@ -18,6 +19,7 @@
         "tsup": "^8.0.2"
     },
     "dependencies": {
+        "deepcopy": "^2.1.0",
         "ts-pattern": "^5.1.1",
         "zod": "^3.23.8"
     }

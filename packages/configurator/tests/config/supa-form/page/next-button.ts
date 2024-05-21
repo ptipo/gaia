@@ -1,14 +1,11 @@
-import { defineConcept } from '@/concept';
-import { ConditionalAction } from './conditional-action';
+import { defineGroupItem } from '@/items';
 import { getAllPages } from '../util';
+import { ConditionalAction } from './conditional-action';
 
 /**
  * 下一步按钮
  */
-export const NextButton = defineConcept({
-    name: 'NextButton',
-    displayName: '下一步按钮',
-
+export const NextButton = defineGroupItem({
     groups: { basic: { name: '基本设置' }, action: { name: '动作设置' } },
 
     items: {
@@ -18,6 +15,7 @@ export const NextButton = defineConcept({
         action: {
             type: 'select',
             name: '点击按钮时',
+            default: 'next',
             options: {
                 next: '前往下一页',
                 goToPage: '前往指定页面',
@@ -55,10 +53,7 @@ export const NextButton = defineConcept({
             condition: ({ currentModel }) =>
                 currentModel.action === 'conditional',
 
-            child: {
-                type: 'has',
-                concept: ConditionalAction,
-            },
+            child: ConditionalAction,
 
             groupKey: 'action',
         },

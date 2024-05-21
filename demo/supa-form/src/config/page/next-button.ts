@@ -1,6 +1,6 @@
 import { defineConcept } from '@gaia/configurator';
-import { ConditionalAction } from './conditional-action';
 import { getAllPages } from '../util';
+import { ConditionalAction } from './conditional-action';
 
 /**
  * 下一步按钮
@@ -55,10 +55,7 @@ export const NextButton = defineConcept({
             condition: ({ currentModel }) =>
                 currentModel.action === 'conditional',
 
-            child: {
-                type: 'has',
-                concept: ConditionalAction,
-            },
+            child: ConditionalAction,
 
             groupKey: 'action',
         },

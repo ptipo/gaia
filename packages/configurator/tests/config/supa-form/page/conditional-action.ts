@@ -1,19 +1,16 @@
-import { defineConcept } from '@/concept';
 import {
     LogicalOperand,
     LogicalOperandValue,
     LogicalOperator,
     ProviderContext,
+    defineGroupItem,
 } from '@/items';
 import { P, match } from 'ts-pattern';
 
 /**
  * 条件动作
  */
-export const ConditionalAction = defineConcept({
-    name: 'ConditionalAction',
-    displayName: '条件动作',
-
+export const ConditionalAction = defineGroupItem({
     items: {
         /**
          * 条件

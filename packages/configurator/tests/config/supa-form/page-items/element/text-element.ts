@@ -13,6 +13,7 @@ export const TextElement = defineConcept({
         kind: {
             type: 'select',
             name: '类型',
+            default: 'text',
             options: {
                 h1: 'H1标题',
                 h2: 'H2标题',

@@ -1,37 +1,42 @@
+import deepcopy from 'deepcopy';
 import { z } from 'zod';
 import { getConceptSchema, type Concept } from './concept';
-import type { inferConceptModel } from './inference';
+import type { inferPartialConcept } from './inference';
 import { createModelForConcept } from './model';
 import { deserializeAppModel, serializeAppModel } from './serialization';
-import { DeepPartialConceptModel } from './utils';
 
 /**
  * 应用配置 - 创建自一个顶级`Concept`
  */
 export interface App<
     TConcept extends Concept,
-    TModel = inferConceptModel<TConcept>
+    TModel = inferPartialConcept<TConcept>
 > {
     /**
      * 创建一个空白Model
      */
-    createModel(): DeepPartialConceptModel<TModel>;
+    createModel(): TModel;
 
     /**
      * 序列化一个Model
      */
-    serializeModel(model: TModel): string;
+    stringifyModel(model: TModel): string;
 
     /**
      * 反序列化一个Model
      */
-    loadModel(serialized: string): TModel;
+    parseModel(serialized: string): TModel;
+
+    /**
+     * 当前应用的`Concept`
+     */
+    get concept(): TConcept;
 }
 
 class AppImpl<TConcept extends Concept> implements App<TConcept> {
     private readonly schema: z.ZodObject<z.ZodRawShape>;
 
-    constructor(private concept: TConcept) {
+    constructor(public readonly concept: TConcept) {
         this.schema = this.createModelSchema();
     }
 
@@ -43,15 +48,13 @@ class AppImpl<TConcept extends Concept> implements App<TConcept> {
         return getConceptSchema(this.concept);
     }
 
-    serializeModel(model: inferConceptModel<TConcept>) {
-        return serializeAppModel(
-            this.schema.parse(model) as inferConceptModel<TConcept>
-        );
+    stringifyModel(model: inferPartialConcept<TConcept>) {
+        const clone = deepcopy(model);
+        return serializeAppModel(clone);
     }
 
-    loadModel(modelData: string) {
-        const loaded = deserializeAppModel(modelData);
-        return this.schema.parse(loaded) as inferConceptModel<TConcept>;
+    parseModel(modelData: string): inferPartialConcept<TConcept> {
+        return deserializeAppModel<TConcept>(modelData);
     }
 }
 
@@ -63,5 +66,3 @@ export function defineApp<TConcept extends Concept>(
 ): App<TConcept> {
     return new AppImpl(concept);
 }
-
-const m = z.object({ $concept: z.string() });

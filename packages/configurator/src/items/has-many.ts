@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Concept, getConceptSchema } from '../concept';
-import { BaseConceptModel, inferConceptModel } from '../inference';
+import { BaseConceptModel } from '../inference';
 import { ConfigItemBase } from './common';
 
 /**

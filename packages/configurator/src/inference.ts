@@ -19,10 +19,11 @@ import { GroupItem } from './items/group';
 import { NonPrimitiveTypes, RGBA } from './types';
 
 /**
- * 推断`Concept`的运行时配置类型
+ * 推断`Concept`的运行时类型
  */
-export type inferConceptModel<
+export type inferConcept<
     TConcept extends Concept,
+    TPartial extends boolean = false,
     TDepth extends number = 8
 > = TDepth extends -1
     ? unknown
@@ -32,21 +33,46 @@ export type inferConceptModel<
       } & {
           [Key in keyof TConcept['items']]: inferConfigItem<
               TConcept['items'][Key],
+              TPartial,
               TDepth
           >;
       };
 
+/**
+ * 推断`Concept`的运行时类型，支持不完整配置
+ */
+export type inferPartialConcept<TConcept extends Concept> = inferConcept<
+    TConcept,
+    true
+>;
+
+/**
+ * 基础`Concept`运行时类型
+ */
 export type BaseConceptModel = {
     $type: NonPrimitiveTypes.concept;
     $concept: string;
 } & Record<string, unknown>;
 
+type Optional<T> = T | undefined;
+
+type CheckPartial<TItem, TPartial extends boolean, TData> = TItem extends {
+    guarded: true;
+}
+    ? Optional<TData>
+    : TPartial extends true
+    ? TItem extends { default: unknown }
+        ? TData
+        : Optional<TData>
+    : TData;
+
 /**
- * 推断配置项的运行时配置类型
+ * 推断配置项的运行时类型
  */
 export type inferConfigItem<
     TItem extends ConfigItemBase | undefined,
-    TDepth extends number,
+    TPartial extends boolean = false,
+    TDepth extends number = 8,
     // limit recursion depth to avoid infinite recursion type-checking error
     // https://stackoverflow.com/questions/68891915/typescript-type-max-recursion-limited-to-9
     TDepthNext extends number = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9][TDepth]
@@ -55,32 +81,36 @@ export type inferConfigItem<
     : TItem extends undefined
     ? never
     : TItem extends SwitchItem
-    ? boolean
+    ? CheckPartial<TItem, TPartial, boolean>
     : TItem extends TextItem
-    ? string
+    ? CheckPartial<TItem, TPartial, string>
     : TItem extends DynamicSelectItem<infer TValue>
-    ? TValue
+    ? CheckPartial<TItem, TPartial, TValue>
     : TItem extends SelectItem<infer TKey>
-    ? TKey
+    ? CheckPartial<TItem, TPartial, TKey>
     : TItem extends NumberItem
-    ? number
+    ? CheckPartial<TItem, TPartial, number>
     : TItem extends ColorItem
-    ? RGBA
+    ? CheckPartial<TItem, TPartial, RGBA>
     : TItem extends ImageItem
-    ? ImageInfo
+    ? CheckPartial<TItem, TPartial, ImageInfo>
     : TItem extends HasItem<infer TChild>
-    ? inferConceptModel<TChild, TDepthNext>
+    ? inferConcept<TChild, TPartial, TDepthNext>
     : TItem extends HasManyItem<infer TCandidate>
-    ? Array<inferConceptModel<TCandidate, TDepthNext>>
+    ? Array<
+          inferConcept<TCandidate, TPartial, TDepthNext> &
+              Record<string, unknown>
+      >
     : TItem extends IfItem
-    ? inferConfigItem<TItem['child'], TDepthNext> | undefined
-    : TItem extends GroupItem
+    ? Optional<inferConfigItem<TItem['child'], false, TDepthNext>>
+    : TItem extends GroupItem<infer TChild>
     ? { $type: NonPrimitiveTypes.itemGroup } & {
-          [Key in keyof TItem['items']]: inferConfigItem<
-              TItem['items'][Key],
+          [Key in keyof TChild]: inferConfigItem<
+              TChild[Key],
+              TPartial,
               TDepthNext
           >;
       }
     : TItem extends LogicGroupItem
-    ? LogicalGroup
+    ? CheckPartial<TItem, TPartial, LogicalGroup>
     : never;
