@@ -34,7 +34,7 @@ export const Schemas: {
 export { ColorItem } from './color';
 export * from './common';
 export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
-export { GroupItem } from './group';
+export { GroupItem, defineGroupItem } from './group';
 export { HasItem } from './has';
 export { HasManyItem } from './has-many';
 export { IfItem } from './if';

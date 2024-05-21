@@ -60,19 +60,11 @@ export const Form = defineConcept({
         /**
          * 语言设置
          */
-        languageSettings: {
-            type: 'has',
-            concept: LanguageSetting,
-            groupKey: 'language',
-        },
+        languageSettings: LanguageSetting,
 
         /**
          * 表单信息收集
          */
-        dataCollection: {
-            type: 'has',
-            concept: DataCollectionSetting,
-            groupKey: 'dataCollection',
-        },
+        dataCollection: DataCollectionSetting,
     },
 });

@@ -1,11 +1,10 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineGroupItem } from '@gaia/configurator/items';
 
 /**
  * 语言设置
  */
-export const LanguageSetting = defineConcept({
-    name: 'LanguageSetting',
-    displayName: '选择语言',
+export const LanguageSetting = defineGroupItem({
+    groupKey: 'language',
 
     items: {
         /**

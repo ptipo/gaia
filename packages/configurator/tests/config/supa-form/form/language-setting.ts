@@ -1,12 +1,9 @@
-import { defineConcept } from '@/concept';
+import { defineGroupItem } from '@/items';
 
 /**
  * 语言设置
  */
-export const LanguageSetting = defineConcept({
-    name: 'LanguageSetting',
-    displayName: '选择语言',
-
+export const LanguageSetting = defineGroupItem({
     items: {
         /**
          * 选择语言

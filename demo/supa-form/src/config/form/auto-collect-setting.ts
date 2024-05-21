@@ -1,11 +1,10 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineGroupItem } from '@gaia/configurator/items';
 
 /**
  * 自动收集信息设置
  */
-export const AutoCollectSetting = defineConcept({
-    name: 'AutoCollectSetting',
-    displayName: '自动收集信息',
+export const AutoCollectSetting = defineGroupItem({
+    help: '除了表单中需要填写的内容，自动收录其它信息。',
 
     groups: {
         source: { name: '来源信息', aspect: 'setting' },

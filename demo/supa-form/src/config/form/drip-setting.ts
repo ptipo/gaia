@@ -1,12 +1,11 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineGroupItem } from '@gaia/configurator/items';
 import { getAllPages } from '../util';
 
 /**
  * 多次填写设置
  */
-export const DripSetting = defineConcept({
-    name: 'DripSetting',
-    displayName: '多次填写设置',
+export const DripSetting = defineGroupItem({
+    help: '当用户未能完成表单，自动记录表单填写进度，在下次展示时从未完成的问题开始。',
 
     items: {
         /**

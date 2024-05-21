@@ -1,5 +1,5 @@
-import { match } from 'ts-pattern';
 import { Concept, defineConcept } from '@/concept';
+import { match } from 'ts-pattern';
 import { AllPageItems, ChoiceQuestion } from '../page-items';
 import { NextButton } from './next-button';
 
@@ -28,10 +28,7 @@ export const ContentPage = defineConcept({
         /**
          * 下一步按钮
          */
-        nextButton: {
-            type: 'has',
-            concept: NextButton,
-        },
+        nextButton: NextButton,
     },
 
     templates: [

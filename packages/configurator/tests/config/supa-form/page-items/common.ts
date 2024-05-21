@@ -27,13 +27,14 @@ export const QuestionCommonItems = {
     /**
      * 是否必填
      */
-    required: { type: 'switch', name: '必填' },
+    required: { type: 'switch', name: '必填', default: false },
 
     /**
      * 是否保存为用户标签
      */
     saveAsUserTag: {
         type: 'dynamic-select',
+        guarded: true,
         name: '保存为用户标签',
         groupKey: 'data',
 
