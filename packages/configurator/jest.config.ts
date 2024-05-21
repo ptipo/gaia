@@ -1,7 +1,7 @@
 import path from 'path';
+import type { JestConfigWithTsJest } from 'ts-jest';
 
-// /** @type {import('ts-jest').JestConfigWithTsJest} */
-export default {
+const config: JestConfigWithTsJest = {
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
@@ -18,3 +18,5 @@ export default {
     coverageProvider: 'v8',
     coverageReporters: ['json', 'text', 'lcov', 'clover'],
 };
+
+export default config;
