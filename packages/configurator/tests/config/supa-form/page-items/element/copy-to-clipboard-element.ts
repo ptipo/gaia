@@ -1,4 +1,4 @@
-import { defineConcept } from '@/concept';
+import { defineConcept } from '@gaia/configurator';
 /**
  * 复制到剪贴板元素
  */

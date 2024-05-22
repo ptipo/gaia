@@ -1,4 +1,4 @@
-import { defineGroupItem } from '@/items';
+import { defineGroupItem } from '@gaia/configurator/items';
 
 /**
  * 自动收集信息设置

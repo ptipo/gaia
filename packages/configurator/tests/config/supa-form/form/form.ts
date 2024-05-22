@@ -1,4 +1,4 @@
-import { defineConcept } from '@/concept';
+import { defineConcept } from '@gaia/configurator';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';

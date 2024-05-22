@@ -1,4 +1,4 @@
-import { Concept, defineConcept } from '@/concept';
+import { Concept, defineConcept } from '@gaia/configurator';
 import { match } from 'ts-pattern';
 import { AllPageItems, ChoiceQuestion } from '../page-items';
 import { NextButton } from './next-button';

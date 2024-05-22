@@ -1,4 +1,4 @@
-import { defineGroupItem } from '@/items';
+import { defineGroupItem } from '@gaia/configurator/items';
 import { getAllPages } from '../util';
 
 /**

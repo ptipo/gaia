@@ -1,4 +1,4 @@
-import { defineGroupItem } from '@/items';
+import { defineGroupItem } from '@gaia/configurator/items';
 import { AutoCollectSetting } from './auto-collect-setting';
 import { DripSetting } from './drip-setting';
 
