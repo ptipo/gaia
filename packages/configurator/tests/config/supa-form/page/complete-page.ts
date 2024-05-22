@@ -1,4 +1,4 @@
-import { defineConcept } from '@/concept';
+import { defineConcept } from '@gaia/configurator';
 import { ImageElement, TextElement } from '../page-items';
 
 /**

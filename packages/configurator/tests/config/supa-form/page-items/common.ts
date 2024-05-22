@@ -1,5 +1,5 @@
-import { ConfigGroups } from '@/concept';
-import { ConfigItem } from '@/config-item';
+import { ConfigGroups } from '@gaia/configurator';
+import { ConfigItem } from '@gaia/configurator';
 
 /**
  * 问题通用配置项

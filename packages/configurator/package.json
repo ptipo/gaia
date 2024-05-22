@@ -4,12 +4,24 @@
     "description": "Headless web app configurator",
     "main": "index.js",
     "exports": {
-        ".": "./dist/index.js",
-        "./items": "./dist/items/index.js"
+        ".": {
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.js",
+            "default": "./dist/cjs/index.js"
+        },
+        "./items": {
+            "import": "./dist/esm/items/index.js",
+            "require": "./dist/cjs/items/index.js",
+            "default": "./dist/cjs/items/index.js"
+        }
     },
     "scripts": {
-        "build": "tsc -p tsconfig.build.json",
-        "watch": "tsc -p tsconfig.build.json --watch",
+        "build:cjs": "tsc -p tsconfig.cjs.json",
+        "build:esm": "tsc -p tsconfig.esm.json",
+        "build": "run-p build:*",
+        "watch:cjs": "tsc -p tsconfig.cjs.json --watch",
+        "watch:esm": "tsc -p tsconfig.esm.json --watch",
+        "watch": "run-p watch:*",
         "test": "jest"
     },
     "keywords": [],

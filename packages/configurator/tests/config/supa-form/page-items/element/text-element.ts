@@ -1,4 +1,4 @@
-import { defineConcept } from '@/concept';
+import { defineConcept } from '@gaia/configurator';
 /**
  * 文本元素
  */

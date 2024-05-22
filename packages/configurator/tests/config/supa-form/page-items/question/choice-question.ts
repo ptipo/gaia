@@ -1,4 +1,4 @@
-import { defineConcept } from '@/concept';
+import { defineConcept } from '@gaia/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 import { ImageChoice } from './image-choice';
 import { TextChoice } from './text-choice';

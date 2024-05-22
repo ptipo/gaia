@@ -4,7 +4,7 @@ import {
     LogicalOperator,
     ProviderContext,
     defineGroupItem,
-} from '@/items';
+} from '@gaia/configurator/items';
 import { P, match } from 'ts-pattern';
 
 /**
