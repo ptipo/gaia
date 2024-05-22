@@ -27,11 +27,6 @@ export type Concept<
      * 配置项
      */
     items: TItems;
-
-    /**
-     * 模板
-     */
-    templates?: ConceptTemplate[];
 };
 
 export type ConceptTemplate = {

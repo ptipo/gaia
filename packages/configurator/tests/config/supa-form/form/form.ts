@@ -1,4 +1,4 @@
-import { defineConcept } from '@gaia/configurator';
+import { createConceptModel, defineConcept } from '@gaia/configurator';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
@@ -27,6 +27,14 @@ export const Form = defineConcept({
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
+            newItemProvider: (concept, model) => {
+                const existing = model.filter(
+                    (item) => item.$concept === concept.name
+                );
+                return createConceptModel(ContentPage, {
+                    name: `表单页${existing.length + 1}`,
+                });
+            },
         },
 
         /**
@@ -37,6 +45,14 @@ export const Form = defineConcept({
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',
+            newItemProvider: (concept, model) => {
+                const existing = model.filter(
+                    (item) => item.$concept === concept.name
+                );
+                return createConceptModel(CompletePage, {
+                    name: `结束页${existing.length + 1}`,
+                });
+            },
         },
 
         /**

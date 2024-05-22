@@ -1,5 +1,5 @@
 import { P, match } from 'ts-pattern';
-import { ConfigItem, inferPartialConcept } from '.';
+import { ConfigItem, DeepPartialConcept, inferPartialConcept } from '.';
 import { Concept } from './concept';
 import { GroupItem } from './items';
 import { NonPrimitiveTypes } from './types';
@@ -7,8 +7,10 @@ import { NonPrimitiveTypes } from './types';
 /**
  * 为`Concept`创建初始模型
  */
-export function createModelForConcept<TConcept extends Concept>(
-    concept: TConcept
+export function createConceptModel<TConcept extends Concept>(
+    concept: TConcept,
+    data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> &
+        Record<string, unknown>
 ): inferPartialConcept<TConcept> {
     const result: any = {
         $type: NonPrimitiveTypes.concept,
@@ -16,33 +18,37 @@ export function createModelForConcept<TConcept extends Concept>(
     };
 
     for (const [key, value] of Object.entries(concept.items)) {
-        const itemValue = createModelForItem(value);
-        if (itemValue !== undefined) {
-            result[key] = itemValue;
+        if (data?.[key] !== undefined) {
+            result[key] = data[key];
+        } else {
+            const itemValue = createItemModel(value);
+            if (itemValue !== undefined) {
+                result[key] = itemValue;
+            }
         }
     }
 
     return result;
 }
 
-function createModelForItem(item: ConfigItem): any {
+function createItemModel(item: ConfigItem): any {
     return match(item)
         .with(
             { type: P.union('text', 'number', 'switch', 'select') },
             (item) => item.default
         )
-        .with({ type: 'has' }, (item) => createModelForConcept(item.concept))
+        .with({ type: 'has' }, (item) => createConceptModel(item.concept))
         .with({ type: 'has-many' }, () => [
             /* TODO: 初始项 */
         ])
-        .with({ type: 'group' }, (item) => createModelForGroup(item))
+        .with({ type: 'group' }, (item) => createGroupModel(item))
         .otherwise(() => undefined);
 }
 
-function createModelForGroup(item: GroupItem): any {
+function createGroupModel(item: GroupItem): any {
     const result: any = {};
     for (const [key, value] of Object.entries(item.items)) {
-        const itemValue = createModelForItem(value);
+        const itemValue = createItemModel(value);
         if (itemValue !== undefined) {
             result[key] = itemValue;
         }

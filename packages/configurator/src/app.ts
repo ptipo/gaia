@@ -2,7 +2,7 @@ import deepcopy from 'deepcopy';
 import { z } from 'zod';
 import { getConceptSchema, type Concept } from './concept';
 import type { inferPartialConcept } from './inference';
-import { createModelForConcept } from './model';
+import { createConceptModel } from './model';
 import { deserializeAppModel, serializeAppModel } from './serialization';
 
 /**
@@ -41,7 +41,7 @@ class AppImpl<TConcept extends Concept> implements App<TConcept> {
     }
 
     createModel() {
-        return createModelForConcept<TConcept>(this.concept);
+        return createConceptModel<TConcept>(this.concept);
     }
 
     private createModelSchema() {

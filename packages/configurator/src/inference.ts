@@ -17,6 +17,7 @@ import {
 } from './items';
 import { GroupItem } from './items/group';
 import { NonPrimitiveTypes, RGBA } from './types';
+import { DeepPartial } from './utils';
 
 /**
  * 推断`Concept`的运行时类型
@@ -44,6 +45,10 @@ export type inferConcept<
 export type inferPartialConcept<TConcept extends Concept> = inferConcept<
     TConcept,
     true
+>;
+
+export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<
+    inferConcept<TConcept>
 >;
 
 /**

@@ -3,8 +3,6 @@ import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
-import { DataCollectionSetting } from './data-collection-setting';
-import { LanguageSetting } from './language-setting';
 
 /**
  * 表单
@@ -26,6 +24,7 @@ export const Form = defineConcept({
          */
         contentPages: {
             type: 'has-many',
+            name: '表单页',
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
@@ -61,6 +60,7 @@ export const Form = defineConcept({
          */
         completePages: {
             type: 'has-many',
+            name: '结束页',
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',
@@ -101,14 +101,14 @@ export const Form = defineConcept({
             default: '提交',
         },
 
-        /**
-         * 语言设置
-         */
-        languageSettings: LanguageSetting,
+        // /**
+        //  * 语言设置
+        //  */
+        // languageSettings: LanguageSetting,
 
-        /**
-         * 表单信息收集
-         */
-        dataCollection: DataCollectionSetting,
+        // /**
+        //  * 表单信息收集
+        //  */
+        // dataCollection: DataCollectionSetting,
     },
 });
