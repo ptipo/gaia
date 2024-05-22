@@ -31,7 +31,7 @@ export interface HasManyItem<TCandidate extends Concept = Concept>
     newItemProvider?: (
         concept: Concept,
         currentModel: BaseConceptModel[]
-    ) => object;
+    ) => BaseConceptModel;
 
     /**
      * 响应子项配置变化

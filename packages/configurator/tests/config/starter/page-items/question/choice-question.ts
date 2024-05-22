@@ -21,7 +21,6 @@ export const ChoiceQuestion = defineConcept({
         kind: {
             type: 'select',
             options: { single: '单选', multiple: '多选' },
-            default: 'single',
             groupKey: 'choice',
         },
 
@@ -32,7 +31,6 @@ export const ChoiceQuestion = defineConcept({
             type: 'select',
             name: '选项类型',
             options: { text: '文字选项', image: '图片选项' },
-            default: 'text',
             groupKey: 'choice',
         },
 
@@ -78,27 +76,6 @@ export const ChoiceQuestion = defineConcept({
                         });
                     }
                 },
-
-                // 提供初始选项
-                initialItemsProvider: () => [
-                    {
-                        $concept: TextChoice,
-                        value: 'A',
-                        defaultSelected: true,
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'B',
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'C',
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'D',
-                    },
-                ],
             },
 
             groupKey: 'choice',
@@ -168,7 +145,6 @@ export const ChoiceQuestion = defineConcept({
         randomOrder: {
             type: 'switch',
             name: '随机顺序',
-            default: false,
             groupKey: 'choice',
         },
 
@@ -178,7 +154,6 @@ export const ChoiceQuestion = defineConcept({
         flatMode: {
             type: 'switch',
             name: '平铺选项',
-            default: false,
             groupKey: 'choice',
         },
     },

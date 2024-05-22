@@ -7,9 +7,22 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Configurator: typeof import('./src/components/Configurator.vue')['default']
+    App: typeof import('./src/components/App.vue')['default']
+    Concept: typeof import('./src/components/Concept.vue')['default']
+    ConceptElement: typeof import('./src/components/items/ConceptElement.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
+    ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElInput: typeof import('element-plus/es')['ElInput']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    HasManyItem: typeof import('./src/components/items/HasManyItem.vue')['default']
+    IEpInfoFilled: typeof import('~icons/ep/info-filled')['default']
+    IEpMoreFilled: typeof import('~icons/ep/more-filled')['default']
+    TextItem: typeof import('./src/components/items/TextItem.vue')['default']
   }
 }

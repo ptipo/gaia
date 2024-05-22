@@ -22,27 +22,4 @@ export const CompletePage = defineConcept({
             candidates: [TextElement, ImageElement],
         },
     },
-
-    templates: [
-        {
-            displayName: '默认结束页',
-            model: {
-                name: '新页面',
-                pageItems: [
-                    {
-                        $concept: TextElement,
-                        content: '标题',
-                    },
-                    {
-                        $concept: ImageElement,
-                        url: 'https://via.placeholder.com/150',
-                    },
-                    {
-                        $concept: TextElement,
-                        content: '说明文字',
-                    },
-                ],
-            },
-        },
-    ],
 });

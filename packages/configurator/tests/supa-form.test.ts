@@ -1,6 +1,6 @@
-import { inferConcept } from '@/inference';
-import { createModelForConcept } from '@/model';
+import { createConceptModel } from '@/model';
 import { describe } from '@jest/globals';
+import { inspect } from 'util';
 import { app } from './config/supa-form';
 import {
     ChoiceQuestion,
@@ -9,7 +9,7 @@ import {
 } from './config/supa-form/page-items';
 import { CompletePage } from './config/supa-form/page/complete-page';
 import { ContentPage } from './config/supa-form/page/content-page';
-import { inspect } from 'util';
+import { TextChoice } from './config/supa-form/page-items/question/text-choice';
 
 describe('supa-form sample app', () => {
     it('can create an empty model', () => {
@@ -36,60 +36,50 @@ describe('supa-form sample app', () => {
         const model = app.createModel();
         model.nextButtonText = 'Next';
 
-        const contentPage1 = {
-            ...createModelForConcept(ContentPage),
+        const contentPage1 = createConceptModel(ContentPage, {
             name: 'Content Page1',
             pageItems: [
-                {
-                    ...createModelForConcept(QAQuestion),
+                createConceptModel(QAQuestion, {
                     name: 'q1.1',
                     question: 'Question1',
-                },
+                }),
             ],
-        } satisfies inferConcept<typeof ContentPage>;
+        });
 
-        const contentPage2 = {
-            ...createModelForConcept(ContentPage),
+        const contentPage2 = createConceptModel(ContentPage, {
             name: 'Content Page2',
             pageItems: [
-                {
-                    ...createModelForConcept(ChoiceQuestion),
+                createConceptModel(ChoiceQuestion, {
                     name: 'q2.1',
                     question: 'Question1',
                     kind: 'single',
                     choiceKind: 'text',
                     textChoices: [
-                        {
-                            $type: 'concept',
-                            $concept: 'TextChoice',
+                        createConceptModel(TextChoice, {
                             value: 'Choice1',
                             defaultSelected: true,
-                        },
-                        {
-                            $type: 'concept',
-                            $concept: 'TextChoice',
+                        }),
+                        createConceptModel(TextChoice, {
                             value: 'Choice2',
                             additionalInput: true,
-                        },
+                        }),
                     ],
-                },
+                }),
             ],
-        } satisfies inferConcept<typeof ContentPage>;
+        });
 
         model.contentPages.push(contentPage1);
         model.contentPages.push(contentPage2);
 
-        const completePage1 = {
-            ...createModelForConcept(CompletePage),
+        const completePage1 = createConceptModel(CompletePage, {
             name: 'Complete Page1',
             pageItems: [
-                {
-                    ...createModelForConcept(TextElement),
+                createConceptModel(TextElement, {
                     kind: 'h1',
                     content: 'Thank You!',
-                },
+                }),
             ],
-        } satisfies inferConcept<typeof CompletePage>;
+        });
 
         model.completePages.push(completePage1);
 
