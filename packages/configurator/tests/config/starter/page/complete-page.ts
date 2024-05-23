@@ -19,6 +19,7 @@ export const CompletePage = defineConcept({
          */
         pageItems: {
             type: 'has-many',
+            name: '内容项',
             candidates: [TextElement, ImageElement],
         },
     },

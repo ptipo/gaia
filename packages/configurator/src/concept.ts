@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConfigItem, getConfigItemSchema } from './config-item';
+import { BaseConceptModel } from './inference';
 import { NonPrimitiveTypes } from './types';
 
 /**
@@ -16,7 +17,7 @@ export type Concept<
     /**
      * 显示名称
      */
-    displayName?: string;
+    displayName: string;
 
     /**
      * 配置项分组
@@ -27,6 +28,11 @@ export type Concept<
      * 配置项
      */
     items: TItems;
+
+    /**
+     * 计算概念的摘要信息，用于非完整内容展示
+     */
+    summary?: (model: BaseConceptModel) => string;
 };
 
 export type ConceptTemplate = {

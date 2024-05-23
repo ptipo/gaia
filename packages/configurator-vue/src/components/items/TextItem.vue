@@ -2,33 +2,21 @@
 import type { inferConfigItem } from '@gaia/configurator';
 import type { TextItem } from '@gaia/configurator/items';
 import { ref } from 'vue';
+import ItemLabel from './ItemLabel.vue';
 
-defineProps<{ item: TextItem }>();
-const model = defineModel<inferConfigItem<TextItem>>();
+const props = defineProps<{
+    item: TextItem;
+    model: inferConfigItem<TextItem>;
+}>();
 
-// use a separate inner model to avoid losing focus on every keystroke
-const data = ref(model.value);
+defineEmits<{ (e: 'change', data: inferConfigItem<TextItem>): void }>();
 
-const onValueChange = () => {
-    model.value = data.value;
-};
+const _model = ref(props.model);
 </script>
 
 <template>
-    <el-form-item>
-        <div slot="label" class="flex items-center mb-2">
-            <div class="text-sm">
-                {{ item.name }}
-            </div>
-            <el-tooltip
-                v-if="item.help"
-                class="box-item"
-                effect="dark"
-                :content="item.help"
-                placement="top"
-                ><el-icon class="ml-2"><i-ep-info-filled /></el-icon
-            ></el-tooltip>
-        </div>
-        <el-input v-model="data" @change="onValueChange" />
+    <el-form-item class="m-0">
+        <ItemLabel :item="item" />
+        <el-input v-model="_model" @change="$emit('change', _model)" />
     </el-form-item>
 </template>
