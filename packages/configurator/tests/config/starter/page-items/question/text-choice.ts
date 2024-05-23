@@ -31,4 +31,6 @@ export const TextChoice = defineConcept({
             name: '选择后，需要用户输入补充回答',
         },
     },
+
+    summary: (model) => model.value as string,
 });

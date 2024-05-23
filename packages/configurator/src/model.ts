@@ -21,10 +21,7 @@ export function createConceptModel<TConcept extends Concept>(
         if (data?.[key] !== undefined) {
             result[key] = data[key];
         } else {
-            const itemValue = createItemModel(value);
-            if (itemValue !== undefined) {
-                result[key] = itemValue;
-            }
+            result[key] = createItemModel(value);
         }
     }
 

@@ -20,6 +20,7 @@ export const ChoiceQuestion = defineConcept({
          */
         kind: {
             type: 'select',
+            name: '类型',
             options: { single: '单选', multiple: '多选' },
             groupKey: 'choice',
         },

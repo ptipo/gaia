@@ -1,15 +1,25 @@
 <script setup lang="ts">
+import { CURRENT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { App, BaseConceptModel, Concept } from '@gaia/configurator';
-import { defineModel, ref } from 'vue';
-import ConceptConfigurator from './Concept.vue';
+import { provide, ref } from 'vue';
+import ConceptStack from './ConceptStack.vue';
 
 const activeAspect = ref('content');
 
-defineProps<{
+const props = defineProps<{
     app: App<Concept>;
+    model: BaseConceptModel;
 }>();
 
-const model = defineModel<BaseConceptModel>();
+const emit = defineEmits<{
+    (e: 'change', data: BaseConceptModel): void;
+}>();
+
+// provide the root model to children
+provide(ROOT_MODEL_KEY, props.model.value);
+
+// provide the current aspect to children
+provide(CURRENT_ASPECT, activeAspect);
 
 const aspects = [
     { label: 'Content', aspect: 'content' },
@@ -25,12 +35,11 @@ const aspects = [
                 v-for="{ label, aspect } in aspects"
                 :label="label"
                 :name="aspect"
-                ><ConceptConfigurator
-                    :concept="app.concept"
-                    v-if="model?.$type === 'concept'"
-                    v-model="model"
-                    :aspect="aspect"
-                ></ConceptConfigurator
+                ><ConceptStack
+                    :root-concept="app.concept"
+                    :root-model="model"
+                    @change="(data) => emit('change', data)"
+                ></ConceptStack
             ></el-tab-pane>
         </el-tabs>
     </div>

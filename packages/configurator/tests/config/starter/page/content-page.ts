@@ -21,6 +21,7 @@ export const ContentPage = defineConcept({
          */
         pageItems: {
             type: 'has-many',
+            name: '内容项',
             candidates: AllPageItems,
             newItemProvider,
         },

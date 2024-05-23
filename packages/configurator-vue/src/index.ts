@@ -1,3 +1,3 @@
-import Configurator from './components/App.vue';
+import AppConfigurator from '@components/App.vue';
 
-export { Configurator };
+export { AppConfigurator };
