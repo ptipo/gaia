@@ -8,7 +8,8 @@
     },
     "scripts": {
         "dev": "vite",
-        "build": "tsc --watch"
+        "build": "tsc",
+        "build:watch": "tsc -w"
     },
     "dependencies": {
         "@gaia/configurator": "workspace:*",
