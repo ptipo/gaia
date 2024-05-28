@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vue-tsc && vite build",
+        "build": "vue-tsc && vite build && vite -c vite-app.config.ts build",
         "preview": "vite preview",
         "lint": "vue-tsc --noEmit"
     },
