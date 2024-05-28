@@ -6,8 +6,6 @@ import { DripSetting } from './drip-setting';
  * 表单信息收集设置
  */
 export const DataCollectionSetting = defineGroupItem({
-    groupKey: 'dataCollection',
-
     items: {
         /**
          * 多次填写设置
@@ -19,4 +17,6 @@ export const DataCollectionSetting = defineGroupItem({
          */
         autoCollect: AutoCollectSetting,
     },
+
+    groupKey: 'dataCollection',
 });

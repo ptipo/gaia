@@ -28,12 +28,16 @@ export function createConceptModel<TConcept extends Concept>(
     return result;
 }
 
-function createItemModel(item: ConfigItem): any {
+/**
+ * 为`ConfigItem`创建初始模型
+ */
+export function createItemModel(item: ConfigItem): any {
     return match(item)
         .with(
             { type: P.union('text', 'number', 'switch', 'select') },
             (item) => item.default
         )
+        .with({ type: 'image' }, () => ({ url: undefined }))
         .with({ type: 'has' }, (item) => createConceptModel(item.concept))
         .with({ type: 'has-many' }, () => [
             /* TODO: 初始项 */
@@ -44,11 +48,9 @@ function createItemModel(item: ConfigItem): any {
 
 function createGroupModel(item: GroupItem): any {
     const result: any = {};
-    for (const [key, value] of Object.entries(item.items)) {
-        const itemValue = createItemModel(value);
-        if (itemValue !== undefined) {
-            result[key] = itemValue;
-        }
+    for (const [key, child] of Object.entries(item.items)) {
+        const itemValue = createItemModel(child);
+        result[key] = itemValue;
     }
     return result;
 }

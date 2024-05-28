@@ -131,6 +131,7 @@ export const ChoiceQuestion = defineConcept({
                             ? currentModel.textChoices
                             : currentModel.imageChoices;
                     return Array.from(new Array(choices.length), (_, i) => ({
+                        key: i + 1,
                         label: (i + 1).toString(),
                         value: i + 1,
                     }));

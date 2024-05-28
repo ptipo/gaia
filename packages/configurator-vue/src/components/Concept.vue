@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
+import { CURRENT_ASPECT } from '@/lib/constants';
 import type { BaseConceptModel, Concept } from '@gaia/configurator';
-import { produce } from 'immer';
-import { computed, defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent, inject, type Ref } from 'vue';
 import { EnterConceptData } from './types';
 
 const props = defineProps<{
@@ -15,15 +15,28 @@ const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
 }>();
 
-const onChange = (key: string, data: unknown) => {
-    const nextModel = produce(props.model, (draft) => {
-        draft[key] = data;
+const currentAspect = inject<Ref<string>>(CURRENT_ASPECT);
+
+// filter items that are visible in the current aspect
+const visibleItems = computed(() => {
+    return Object.entries(props.concept.items).filter(([_, item]) => {
+        let itemAspect = 'content';
+        if (item.groupKey) {
+            const group = props.concept.groups?.[item.groupKey];
+            if (group?.aspect) {
+                itemAspect = group.aspect;
+            }
+        }
+        return itemAspect === currentAspect?.value;
     });
+});
+
+const onChange = (key: string, data: unknown) => {
+    const nextModel = { ...props.model, [key]: data };
     emit('change', nextModel);
 };
 
 const onEnter = (key: string, data: EnterConceptData) => {
-    console.log('Concept enter:', key, data);
     emit('enter', { ...data, parentKey: [key, ...data.parentKey] });
 };
 
@@ -37,15 +50,15 @@ const childComponents = computed(() => {
 
 <template>
     <div class="flex flex-col gap-6 py-4">
-        <div v-for="(item, key) in concept.items" :key="key">
-            <component
-                :is="childComponents[key]"
-                :item="item"
-                :parentModel="model"
-                :model="model[key]"
-                @change="(data: unknown) => onChange(key, data)"
-                @enter="(data: EnterConceptData) => onEnter(key, data)"
-            ></component>
-        </div>
+        <component
+            v-for="[key, item] in visibleItems"
+            :key="key"
+            :is="childComponents[key]"
+            :item="item"
+            :model="model[key]"
+            :parentModel="model"
+            @change="(data: unknown) => onChange(key, data)"
+            @enter="(data: EnterConceptData) => onEnter(key, data)"
+        ></component>
     </div>
 </template>

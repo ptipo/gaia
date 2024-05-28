@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 .coverage
+
+.DS_Store

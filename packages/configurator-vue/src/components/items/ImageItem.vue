@@ -1,0 +1,54 @@
+<script setup lang="ts">
+import { inferConfigItem } from '@gaia/configurator';
+import { ImageItem } from '@gaia/configurator/items';
+import { UploadFile, UploadRawFile } from 'element-plus';
+import { ref } from 'vue';
+
+const props = defineProps<{
+    item: ImageItem;
+    model: inferConfigItem<ImageItem>;
+}>();
+
+const emit = defineEmits<{
+    (e: 'change', data: inferConfigItem<ImageItem>): void;
+}>();
+
+const imageUrl = ref(props.model.url ?? '');
+
+const onUploadSuccess = (_resp: any, _file: UploadFile) => {
+    // TODO: real upload
+};
+
+const onBeforeUpload = async (rawFile: UploadRawFile) => {
+    // TODO: real upload
+    const blob = new Blob([await rawFile.arrayBuffer()], {
+        type: rawFile.type,
+    });
+    const url = URL.createObjectURL(blob);
+    imageUrl.value = url;
+
+    emit('change', { url });
+
+    return false;
+};
+</script>
+
+<template>
+    <el-form-item class="m-0">
+        <ItemLabel :item="item" />
+        <el-upload
+            accept="image/*"
+            :show-file-list="false"
+            :before-upload="onBeforeUpload"
+            :on-success="onUploadSuccess"
+        >
+            <div
+                v-if="!imageUrl"
+                class="w-32 h-32 flex items-center justify-center border border-dashed rounded"
+            >
+                <el-icon size="16"><i-ep-plus /> </el-icon>
+            </div>
+            <el-image v-else :src="imageUrl" class="w-full" />
+        </el-upload>
+    </el-form-item>
+</template>

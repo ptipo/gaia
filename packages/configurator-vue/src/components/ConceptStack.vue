@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseConceptModel, Concept } from '@gaia/configurator';
-import { produce } from 'immer';
+import deepcopy from 'deepcopy';
 import { computed, ref } from 'vue';
 import ConceptConfigurator from './Concept.vue';
 
@@ -45,24 +45,25 @@ const onChange = (data: BaseConceptModel) => {
         return;
     }
 
-    const nextModel = produce(props.rootModel, (draft) => {
-        // find the parent object
-        let curr: any = draft;
-        for (let i = 0; i < record.parentKey.length - 1; i++) {
-            const key = record.parentKey[i];
-            curr = curr[key];
-        }
+    const nextModel = deepcopy(props.rootModel);
 
-        // update the parent object
-        curr[record.parentKey[record.parentKey.length - 1]] = data;
-    });
+    // find the parent object
+    let curr: any = nextModel;
+    for (let i = 0; i < record.parentKey.length - 1; i++) {
+        const key = record.parentKey[i];
+        curr = curr[key];
+    }
+
+    // update the parent object
+    curr[record.parentKey[record.parentKey.length - 1]] = data;
 
     emit('change', nextModel);
 };
 
 const onEnter = (data: Record) => {
-    console.log('ConceptStack enter:', data);
-    stack.value = [...stack.value, data];
+    const prevKey = stack.value[stack.value.length - 1]?.parentKey ?? [];
+    const newKey = [...prevKey, ...data.parentKey];
+    stack.value = [...stack.value, { ...data, parentKey: newKey }];
 };
 
 const goBack = () => {

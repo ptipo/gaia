@@ -26,6 +26,7 @@ export const Form = defineConcept({
          */
         contentPages: {
             type: 'has-many',
+            name: '表单页',
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
@@ -37,8 +38,8 @@ export const Form = defineConcept({
                     name: `表单页${existing.length + 1}`,
                     pageItems: [
                         createConceptModel(ChoiceQuestion, {
-                            name: '问题1',
-                            question: '问题1',
+                            name: '选择1',
+                            question: '选择1',
                             kind: 'single',
                             choiceKind: 'text',
                             textChoices: [
@@ -61,6 +62,7 @@ export const Form = defineConcept({
          */
         completePages: {
             type: 'has-many',
+            name: '结束页',
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',

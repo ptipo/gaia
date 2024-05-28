@@ -8,10 +8,6 @@ import 'vue3-json-viewer/dist/index.css';
 import type { BaseConceptModel } from '@gaia/configurator';
 
 const model = ref<BaseConceptModel>(app.createModel());
-
-const onModelChange = (newModel: BaseConceptModel) => {
-    model.value = newModel;
-};
 </script>
 
 <template>
@@ -25,12 +21,8 @@ const onModelChange = (newModel: BaseConceptModel) => {
                 <JsonViewer :value="model" boxed copyable />
             </div>
         </div>
-        <div class="w-96 border rounded">
-            <Configurator
-                :app="app"
-                :model="model"
-                @change="(model) => onModelChange(model)"
-            />
+        <div class="w-96 border rounded h-full">
+            <Configurator :app="app" v-model="model" />
         </div>
     </div>
 </template>

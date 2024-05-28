@@ -12,6 +12,11 @@ export interface GroupItem<
     type: 'group';
 
     /**
+     * 显示名称
+     */
+    displayName?: string;
+
+    /**
      * 配置项
      */
     items: TItems;

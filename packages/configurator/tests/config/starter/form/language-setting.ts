@@ -10,6 +10,7 @@ export const LanguageSetting = defineGroupItem({
          */
         language: {
             type: 'select',
+            name: '选择语言',
             options: {
                 'zh-CN': '简体中文',
                 'en-US': 'English',
@@ -18,4 +19,6 @@ export const LanguageSetting = defineGroupItem({
             help: '系统提示语言将按照系统提示语言展示',
         },
     },
+
+    groupKey: 'language',
 });

@@ -2,7 +2,6 @@
 import { getItemComponent } from '@/lib/component';
 import type { BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
-import { produce } from 'immer';
 import { computed, ref } from 'vue';
 import { EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
@@ -70,9 +69,10 @@ const onCurrentEditChange = (data: any) => {
 
 const onSaveEdit = () => {
     if (currentEditItem.value) {
-        const nextModel = produce(props.model, (draft) => {
-            draft[currentEditItem.value!.key] = currentEditModel.value;
-        });
+        const nextModel = {
+            ...props.model,
+            [currentEditItem.value!.key]: currentEditModel.value,
+        };
         emit('change', nextModel);
     }
     showEditDialog.value = false;
@@ -85,29 +85,32 @@ const onCancelEdit = () => {
 };
 
 const onEditNested = () => {
-    // enter nested editing of a concept
-    emit('enter', {
-        concept: props.concept,
-        model: props.model,
-        parentKey: [],
-    });
+    if (!props.inlineEditing) {
+        // enter nested editing of a concept
+        emit('enter', {
+            concept: props.concept,
+            model: props.model,
+            parentKey: [],
+        });
+    }
 };
 
 const onEnterNested = (parentKey: string, data: EnterConceptData) => {
-    console.log('ConceptElement enter nested:', data);
     emit('enter', { ...data, parentKey: [parentKey, ...data.parentKey] });
 };
 
 const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
-    const nextModel = produce(props.model, (draft) => {
-        draft[parentKey] = data;
-    });
+    const nextModel = { ...props.model, [parentKey]: data };
     emit('change', nextModel);
 };
 </script>
 
 <template>
-    <div class="flex justify-between">
+    <div
+        class="flex justify-between"
+        :class="{ 'cursor-pointer': !inlineEditing }"
+        @click="onEditNested"
+    >
         <div class="text-sm">
             {{ elementSummary }}
         </div>
@@ -134,7 +137,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
                     <div v-else>
                         <el-dropdown-item @click="onEditNested"
                             ><el-icon><i-ep-edit /></el-icon>
-                            编辑</el-dropdown-item
+                            设置</el-dropdown-item
                         >
                         <el-dropdown-item
                             @click="$emit('delete', { model, concept })"
@@ -168,8 +171,8 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
         <component
             :is="getItemComponent(currentEditItem.item)"
             :item="currentEditItem.item"
-            :parentModel="model"
             :model="currentEditModel"
+            :parentModel="model"
             @change="(data: any) => onCurrentEditChange(data)"
         ></component>
         <template #footer>

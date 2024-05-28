@@ -77,12 +77,12 @@ importers:
       capitalize:
         specifier: ^2.0.4
         version: 2.0.4
+      deepcopy:
+        specifier: ^2.1.0
+        version: 2.1.0
       element-plus:
         specifier: ^2.7.3
         version: 2.7.3(vue@3.4.27)
-      immer:
-        specifier: ^10.1.1
-        version: 10.1.1
       ts-pattern:
         specifier: ^5.1.1
         version: 5.1.1
@@ -2834,10 +2834,6 @@ packages:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
     dev: true
-
-  /immer@10.1.1:
-    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
-    dev: false
 
   /immutable@4.3.6:
     resolution: {integrity: sha512-Ju0+lEMyzMVZarkTn/gqRpdqd5dOPaz1mCZ0SH3JV6iFw81PldE/PEB1hWVEA288HPt4WXW8O7AWxB10M+03QQ==}
