@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { confirmDelete } from '@/lib/message';
 import {
+    Concept,
     createConceptModel,
     type BaseConceptModel,
     type inferConfigItem,
 } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
-import { produce } from 'immer';
 import { EnterConceptData } from '../types';
 
 const props = withDefaults(
@@ -28,18 +28,21 @@ const emit = defineEmits<{
     (e: 'change', data: inferConfigItem<HasManyItem>): void;
 }>();
 
-const onCreate = () => {
-    // TODO: deal with multiple candidates
-    const concept = props.item.candidates[0];
-
+const onCreate = (concept: Concept) => {
+    const currentItemCount = props.model.length;
     const newItem =
         props.item.newItemProvider?.(concept, props.model) ??
         createConceptModel(concept);
 
-    const nextModel = produce(props.model, (draft) => {
-        draft.push(newItem);
-    });
+    const nextModel = [...props.model, newItem];
     emit('change', nextModel);
+
+    if (!props.item.inline) {
+        onEnterConcept(
+            { concept, model: newItem, parentKey: [] },
+            currentItemCount
+        );
+    }
 };
 
 const findConcept = (name: string) => {
@@ -47,9 +50,8 @@ const findConcept = (name: string) => {
 };
 
 const onChangeElement = (data: BaseConceptModel, index: number) => {
-    const nextModel = produce(props.model, (draft) => {
-        draft[index] = data;
-    });
+    const nextModel = [...props.model];
+    nextModel[index] = data;
     emit('change', nextModel);
 };
 
@@ -69,16 +71,16 @@ const onDeleteElement = async (index: number) => {
                 : elementConcept.displayName
         )
     ) {
-        const nextModel = produce(props.model, (draft) => {
-            draft.splice(index, 1);
-        });
+        const nextModel = [
+            ...props.model.slice(0, index),
+            ...props.model.slice(index + 1),
+        ];
         emit('change', nextModel);
     }
 };
 
 const onEnterConcept = (data: EnterConceptData, index: number) => {
     // append key and forward to parent
-    console.log('HasMany enter:', data, index);
     emit('enter', { ...data, parentKey: [index, ...data.parentKey] });
 };
 </script>
@@ -103,9 +105,27 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
             </div>
         </div>
         <div class="flex flex-col mt-2">
-            <el-button link class="self-start" @click="onCreate"
+            <el-button
+                v-if="item.candidates.length === 1"
+                link
+                class="self-start"
+                @click="() => onCreate(item.candidates[0])"
                 >+ 添加{{ item.name }}</el-button
             >
+            <el-dropdown v-else>
+                <el-button link class="self-start"
+                    >+ 添加{{ item.name }}</el-button
+                >
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item
+                            v-for="candidate in item.candidates"
+                            @click="() => onCreate(candidate)"
+                            >{{ candidate.displayName }}</el-dropdown-item
+                        >
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
         </div>
     </div>
 </template>

@@ -128,10 +128,11 @@ export const ChoiceQuestion = defineConcept({
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
                     const choices =
-                        currentModel.choiceKind === 'text'
+                        (currentModel.choiceKind === 'text'
                             ? currentModel.textChoices
-                            : currentModel.imageChoices;
+                            : currentModel.imageChoices) ?? [];
                     return Array.from(new Array(choices.length), (_, i) => ({
+                        key: i + 1,
                         label: (i + 1).toString(),
                         value: i + 1,
                     }));
@@ -157,5 +158,9 @@ export const ChoiceQuestion = defineConcept({
             name: '平铺选项',
             groupKey: 'choice',
         },
+    },
+
+    summary: (model) => {
+        return `${model.name || '选择'} ${model.required ? '*' : ''}`;
     },
 });

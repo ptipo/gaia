@@ -38,17 +38,20 @@ function newItemProvider(concept: Concept, model: { $concept: string }[]) {
     const mappedName = match(concept.name)
         .with('QAQuestion', () => '问答')
         .with('ChoiceQuestion', () => '选择')
+        .with('EmailQuestion', () => '邮件')
         .otherwise(() => undefined);
 
     if (!mappedName) {
         // 非问题类内容
-        return createConceptModel(concept, { label: '内容' });
+        return createConceptModel(concept, { name: concept.displayName });
     }
 
     // 生成带自增序号的问题名称
+    const nameWithSuffix = `${mappedName}${
+        model.filter((item) => item.$concept === concept.name).length + 1
+    }`;
     return createConceptModel(concept, {
-        label: `${mappedName}${
-            model.filter((item) => item.$concept === concept.name).length + 1
-        }`,
+        name: nameWithSuffix,
+        question: nameWithSuffix,
     });
 }

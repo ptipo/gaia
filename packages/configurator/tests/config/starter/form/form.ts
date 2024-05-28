@@ -3,6 +3,8 @@ import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
+import { DataCollectionSetting } from './data-collection-setting';
+import { LanguageSetting } from './language-setting';
 
 /**
  * 表单
@@ -36,8 +38,8 @@ export const Form = defineConcept({
                     name: `表单页${existing.length + 1}`,
                     pageItems: [
                         createConceptModel(ChoiceQuestion, {
-                            name: '问题1',
-                            question: '问题1',
+                            name: '选择1',
+                            question: '选择1',
                             kind: 'single',
                             choiceKind: 'text',
                             textChoices: [
@@ -101,14 +103,14 @@ export const Form = defineConcept({
             default: '提交',
         },
 
-        // /**
-        //  * 语言设置
-        //  */
-        // languageSettings: LanguageSetting,
+        /**
+         * 语言设置
+         */
+        languageSettings: LanguageSetting,
 
-        // /**
-        //  * 表单信息收集
-        //  */
-        // dataCollection: DataCollectionSetting,
+        /**
+         * 表单信息收集
+         */
+        dataCollection: DataCollectionSetting,
     },
 });

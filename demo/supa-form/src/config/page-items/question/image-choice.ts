@@ -1,5 +1,4 @@
 import { defineConcept } from '@gaia/configurator';
-
 /**
  * 图片选项
  */

@@ -6,6 +6,11 @@ import { ConfigItemBase, ProviderContext } from './common';
  */
 export type DynamicSelectOption<TValue> = {
     /**
+     * 唯一标识
+     */
+    key: number | string;
+
+    /**
      * 显示文本
      */
     label: string;

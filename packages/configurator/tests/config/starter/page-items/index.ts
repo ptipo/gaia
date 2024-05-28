@@ -10,8 +10,8 @@ import { QAQuestion } from './question/qa-question';
  */
 export const AllPageItems = [
     QAQuestion,
-    EmailQuestion,
     ChoiceQuestion,
+    EmailQuestion,
     TextElement,
     ImageElement,
     CopyToClipboard,

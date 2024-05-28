@@ -42,14 +42,17 @@ export const QuestionCommonItems = {
             // TODO: 调用API获取用户标签列表
             return [
                 {
+                    key: 'tag1',
                     label: '标签1',
                     value: '标签1',
                 },
                 {
+                    key: 'tag2',
                     label: '标签2',
                     value: '标签2',
                 },
                 {
+                    key: 'tag3',
                     label: '标签3',
                     value: '标签3',
                 },

@@ -20,8 +20,8 @@ export const ChoiceQuestion = defineConcept({
          */
         kind: {
             type: 'select',
+            name: '类型',
             options: { single: '单选', multiple: '多选' },
-            default: 'single',
             groupKey: 'choice',
         },
 
@@ -32,7 +32,6 @@ export const ChoiceQuestion = defineConcept({
             type: 'select',
             name: '选项类型',
             options: { text: '文字选项', image: '图片选项' },
-            default: 'text',
             groupKey: 'choice',
         },
 
@@ -78,27 +77,6 @@ export const ChoiceQuestion = defineConcept({
                         });
                     }
                 },
-
-                // 提供初始选项
-                initialItemsProvider: () => [
-                    {
-                        $concept: TextChoice,
-                        value: 'A',
-                        defaultSelected: true,
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'B',
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'C',
-                    },
-                    {
-                        $concept: TextChoice,
-                        value: 'D',
-                    },
-                ],
             },
 
             groupKey: 'choice',
@@ -150,10 +128,11 @@ export const ChoiceQuestion = defineConcept({
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
                     const choices =
-                        currentModel.choiceKind === 'text'
+                        (currentModel.choiceKind === 'text'
                             ? currentModel.textChoices
-                            : currentModel.imageChoices;
+                            : currentModel.imageChoices) ?? [];
                     return Array.from(new Array(choices.length), (_, i) => ({
+                        key: i + 1,
                         label: (i + 1).toString(),
                         value: i + 1,
                     }));
@@ -168,7 +147,6 @@ export const ChoiceQuestion = defineConcept({
         randomOrder: {
             type: 'switch',
             name: '随机顺序',
-            default: false,
             groupKey: 'choice',
         },
 
@@ -178,8 +156,11 @@ export const ChoiceQuestion = defineConcept({
         flatMode: {
             type: 'switch',
             name: '平铺选项',
-            default: false,
             groupKey: 'choice',
         },
+    },
+
+    summary: (model) => {
+        return `${model.name || '选择'} ${model.required ? '*' : ''}`;
     },
 });
