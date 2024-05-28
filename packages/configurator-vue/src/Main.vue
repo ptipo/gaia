@@ -16,9 +16,15 @@ const model = ref<BaseConceptModel>(app.createModel());
             class="flex flex-col gap-8 justify-center items-center flex-grow w-full h-full px-4 py-16"
         >
             <div class="text-2xl text-slate-500">App Preview</div>
-            <div class="border rounded bg-cyan-50 w-full flex-grow"></div>
-            <div class="w-full">
-                <JsonViewer :value="model" boxed copyable />
+            <div class="border rounded bg-cyan-50 w-full h-1/2"></div>
+            <div class="w-full h-1/2 overflow-auto border rounded">
+                <JsonViewer
+                    :value="model"
+                    expanded
+                    expandDepth="10"
+                    copyable
+                    class="h-full"
+                />
             </div>
         </div>
         <div class="w-96 border rounded h-full">
