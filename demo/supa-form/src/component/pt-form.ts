@@ -1,8 +1,11 @@
-import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { app } from "../config";
+import { LitElement, html, css, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { app } from '../config';
+import globalStyles from '../global.css?inline';
 
-@customElement("pt-form")
+import './pt-form-page';
+
+@customElement('pt-form')
 class PtForm extends LitElement {
     @property()
     name?: string;
@@ -23,6 +26,19 @@ class PtForm extends LitElement {
     config?: ReturnType<typeof app.createModel>;
 
     render() {
-        return html` <div>${app.stringifyModel(this.config!)}</div> `;
+        const pages = this.config?.contentPages ?? [];
+        return html`${pages.map((page) => html`<pt-form-page .name=${page.name}></pt-form-page>`)}`;
     }
+
+    static styles = [
+        unsafeCSS(globalStyles),
+        css`
+            :host {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 2rem;
+                text-align: center;
+            }
+        `,
+    ];
 }
