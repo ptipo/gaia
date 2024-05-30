@@ -7,7 +7,7 @@ import {
     HasManyItem,
     IfItem,
     ImageItem,
-    LogicGroupItem,
+    LogicalGroupItem,
     NumberItem,
     Schemas,
     SelectItem,
@@ -16,7 +16,7 @@ import {
 } from './items';
 
 /**
- * 配置项
+ * All config items
  */
 export type ConfigItem =
     | ColorItem
@@ -30,13 +30,16 @@ export type ConfigItem =
     | HasItem
     | HasManyItem
     | IfItem
-    | LogicGroupItem;
+    | LogicalGroupItem;
 
 /**
- * 配置项类型
+ * Types of config items
  */
 export type ConfigItemType = ConfigItem['type'];
 
+/**
+ * Gets a Zod schema for validating the model of a config item
+ */
 export function getConfigItemSchema(item: ConfigItemBase) {
     return Schemas[item.type](item);
 }

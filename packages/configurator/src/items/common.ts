@@ -1,44 +1,36 @@
 import { ConfigItemType } from '..';
 
 /**
- * 配置项通用属性
+ * Common fields of config items.
  */
 export interface ConfigItemBase {
     /**
-     * 类型
+     * Item type
      */
     type: ConfigItemType;
 
     /**
-     * 显示名称
+     * Item name
      */
     name?: string;
 
     /**
-     * 必填
+     * If the item is required
      */
     required?: boolean;
 
     /**
-     * 帮助信息
+     * Help text
      */
     help?: string;
 
     /**
-     * 是否通过开关控制开启
+     * If the item is guarded
      */
     guarded?: boolean;
 
     /**
-     * 分组key
+     * Item's group key
      */
     groupKey?: string;
 }
-
-/**
- * 用于计算动态配置项的上下文
- */
-export type ProviderContext = {
-    rootModel: any;
-    currentModel: any;
-};

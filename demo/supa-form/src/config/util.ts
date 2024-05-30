@@ -1,17 +1,19 @@
+import { createRef } from '@gaia/configurator';
+
 /**
  * 从root model获取所有页面
  */
 export function getAllPages(rootModel: any) {
     return [
-        ...rootModel.contentPages.map((page: any, index: number) => ({
-            key: `content-page-${index}`,
+        ...rootModel.contentPages.map((page: any) => ({
+            key: page.$id,
             label: page.name,
-            value: page,
+            value: createRef(page),
         })),
-        ...rootModel.completePages.map((page: any, index: number) => ({
-            key: `complete-page-${index}`,
+        ...rootModel.completePages.map((page: any) => ({
+            key: page.$id,
             label: page.name,
-            value: page,
+            value: createRef(page),
         })),
     ];
 }

@@ -40,11 +40,11 @@ export { HasManyItem } from './has-many';
 export { IfItem } from './if';
 export { ImageInfo, ImageItem } from './image';
 export {
-    LogicalGroupItem as LogicGroupItem,
     LogicalGroup,
-    LogicalOperand,
-    LogicalOperandValue,
+    LogicalGroupItem,
+    LogicalLeftOperandCandidates,
     LogicalOperator,
+    LogicalRightOperandCandidates,
 } from './logical-group';
 export { NumberItem } from './number';
 export { SelectItem } from './select';

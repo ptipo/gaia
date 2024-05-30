@@ -1,19 +1,20 @@
+import { ProviderContext } from '@/types';
 import { ConfigItem, getConfigItemSchema } from '../config-item';
-import { ConfigItemBase, ProviderContext } from './common';
+import { ConfigItemBase } from './common';
 
 /**
- * 条件配置项
+ * A conditional config item.
  */
 export interface IfItem extends ConfigItemBase {
     type: 'if';
 
     /**
-     * 根据当前配置上下文计算条件是否满足
+     * Callback for computing the condition
      */
-    condition: (context: ProviderContext) => boolean;
+    conditionProvider: (context: ProviderContext) => boolean;
 
     /**
-     * 满足条件时包含的配置项
+     * Child item that'll be rendered if the condition is met
      */
     child: ConfigItem;
 }

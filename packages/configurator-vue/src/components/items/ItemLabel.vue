@@ -7,8 +7,8 @@ defineProps<{
 </script>
 
 <template>
-    <div slot="label" class="flex items-center mb-2">
-        <div class="text-sm">
+    <div slot="label" class="flex items-center mb-2 w-full">
+        <div>
             {{ item.name }}
         </div>
         <el-tooltip

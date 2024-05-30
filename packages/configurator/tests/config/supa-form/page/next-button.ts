@@ -1,11 +1,15 @@
-import { defineGroupItem } from '@gaia/configurator/items';
+import { defineConcept } from '@gaia/configurator';
 import { getAllPages } from '../util';
 import { ConditionalAction } from './conditional-action';
 
 /**
  * 下一步按钮
  */
-export const NextButton = defineGroupItem({
+export const NextButton = defineConcept({
+    name: 'NextButton',
+
+    displayName: '下一步',
+
     groups: { basic: { name: '基本设置' }, action: { name: '动作设置' } },
 
     items: {
@@ -31,7 +35,8 @@ export const NextButton = defineGroupItem({
             type: 'if',
 
             // 仅在动作为“前往指定页面”时显示
-            condition: ({ currentModel }) => currentModel.action === 'goToPage',
+            conditionProvider: ({ currentModel }) =>
+                currentModel.action === 'goToPage',
 
             child: {
                 type: 'dynamic-select',
@@ -50,10 +55,14 @@ export const NextButton = defineGroupItem({
             type: 'if',
 
             // 仅在动作为“根据回答，执行不同动作”时显示
-            condition: ({ currentModel }) =>
+            conditionProvider: ({ currentModel }) =>
                 currentModel.action === 'conditional',
 
-            child: ConditionalAction,
+            child: {
+                type: 'has-many',
+                name: '条件和动作',
+                candidates: [ConditionalAction],
+            },
 
             groupKey: 'action',
         },

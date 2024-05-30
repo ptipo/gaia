@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { ROOT_MODEL_KEY } from '@/lib/constants';
-import type { BaseConceptModel, inferConfigItem } from '@gaia/configurator';
+import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import {
+    modelEquals,
+    type AppInstance,
+    type BaseConceptModel,
+    type Concept,
+    type inferConfigItem,
+} from '@gaia/configurator';
 import type {
     DynamicSelectItem,
     DynamicSelectOption,
@@ -20,6 +26,8 @@ const emit = defineEmits<{
 
 const _model = ref();
 
+const app = inject<AppInstance<Concept>>(APP_KEY);
+
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
 const options = ref<DynamicSelectOption<any>[]>([]);
@@ -27,6 +35,7 @@ const options = ref<DynamicSelectOption<any>[]>([]);
 const fillOptions = async () => {
     // call provider to fill in options
     const result = await props.item.provider?.({
+        app: app!,
         rootModel: rootModel?.value,
         currentModel: props.parentModel,
     });
@@ -34,7 +43,9 @@ const fillOptions = async () => {
 
     // update model
     if (_model.value === undefined) {
-        _model.value = result.find((option) => option.value === props.model);
+        _model.value = result.find((option) =>
+            modelEquals(option.value, props.model)
+        );
     }
 };
 

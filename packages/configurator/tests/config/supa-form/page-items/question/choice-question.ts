@@ -20,6 +20,7 @@ export const ChoiceQuestion = defineConcept({
          */
         kind: {
             type: 'select',
+            name: '类型',
             options: { single: '单选', multiple: '多选' },
             groupKey: 'choice',
         },
@@ -41,7 +42,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            condition: ({ currentModel }) =>
+            conditionProvider: ({ currentModel }) =>
                 currentModel.choiceKind === 'image',
 
             child: {
@@ -58,7 +59,8 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在文字选项时显示
-            condition: ({ currentModel }) => currentModel.choiceKind === 'text',
+            conditionProvider: ({ currentModel }) =>
+                currentModel.choiceKind === 'text',
 
             child: {
                 type: 'has-many',
@@ -88,7 +90,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            condition: ({ currentModel }) =>
+            conditionProvider: ({ currentModel }) =>
                 currentModel.choiceKind === 'image',
 
             child: {
@@ -118,7 +120,8 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在多选时显示
-            condition: ({ currentModel }) => currentModel.kind === 'multiple',
+            conditionProvider: ({ currentModel }) =>
+                currentModel.kind === 'multiple',
 
             child: {
                 type: 'dynamic-select',
@@ -127,9 +130,9 @@ export const ChoiceQuestion = defineConcept({
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
                     const choices =
-                        currentModel.choiceKind === 'text'
+                        (currentModel.choiceKind === 'text'
                             ? currentModel.textChoices
-                            : currentModel.imageChoices;
+                            : currentModel.imageChoices) ?? [];
                     return Array.from(new Array(choices.length), (_, i) => ({
                         key: i + 1,
                         label: (i + 1).toString(),
@@ -157,5 +160,11 @@ export const ChoiceQuestion = defineConcept({
             name: '平铺选项',
             groupKey: 'choice',
         },
+    },
+
+    summary: ({ currentModel }) => {
+        return `${currentModel.name || '选择'} ${
+            currentModel.required ? '*' : ''
+        }`;
     },
 });

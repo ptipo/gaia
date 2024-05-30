@@ -37,4 +37,10 @@ export const QAQuestion = defineConcept({
             groupKey: 'answer',
         },
     },
+
+    summary: ({ currentModel }) => {
+        return `${currentModel.name || '问答'} ${
+            currentModel.required ? '*' : ''
+        }`;
+    },
 });

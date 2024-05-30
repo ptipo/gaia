@@ -1,40 +1,42 @@
+import { ProviderContext } from '@/types';
 import { z } from 'zod';
 import { Concept, getConceptSchema } from '../concept';
 import { BaseConceptModel } from '../inference';
 import { ConfigItemBase } from './common';
 
 /**
- * 包含另外多个`Concept` (one-to-many)
+ * An item that manages multiple instances of `Concept` from
+ * a given list of candidates.
  */
 export interface HasManyItem<TCandidate extends Concept = Concept>
     extends ConfigItemBase {
     type: 'has-many';
 
     /**
-     * 可关联的`Concept`
+     * `Concept` candidates
      */
     candidates: TCandidate[];
 
     /**
-     * 是否内联展示
+     * If the items should be rendered inline
      */
     inline?: boolean;
 
     /**
-     * 初始项目
+     * Callback for providing an initial list of concept instances
      */
     initialItemsProvider?: () => object[];
 
     /**
-     * 新增项提供函数
+     * Callback for creating a new concept instance
      */
     newItemProvider?: (
         concept: Concept,
-        currentModel: BaseConceptModel[]
+        context: ProviderContext
     ) => BaseConceptModel;
 
     /**
-     * 响应子项配置变化
+     * Callback for handling model changes of a child item
      */
     onChildChange?: (
         changedItem: BaseConceptModel,

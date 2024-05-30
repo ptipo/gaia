@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import type { BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
+import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import type {
+    AppInstance,
+    BaseConceptModel,
+    Concept,
+    ConfigItem,
+} from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
-import { computed, ref } from 'vue';
+import { Ref, computed, inject, ref } from 'vue';
 import { EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
 
@@ -26,13 +32,20 @@ const emit = defineEmits<{
     (e: 'enter', data: EnterConceptData): void;
 }>();
 
+const app = inject<AppInstance<Concept>>(APP_KEY);
+const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+
 const showEditDialog = ref(false);
 const currentEditItem = ref<{ key: string; item: ConfigItem } | undefined>();
 const currentEditModel = ref<any>();
 
 const elementSummary = computed(() => {
     if (props.concept.summary) {
-        return props.concept.summary(props.model);
+        return props.concept.summary({
+            app: app!,
+            rootModel: rootModel?.value!,
+            currentModel: props.model,
+        });
     }
     return props.model.name ?? props.concept.displayName ?? props.concept.name;
 });
@@ -40,9 +53,7 @@ const elementSummary = computed(() => {
 // filter items that are inline editable
 const inlineEditableItems = computed(() => {
     return Object.entries(props.concept.items)
-        .filter(([_, value]) =>
-            ['text', 'number', 'switch'].includes(value.type)
-        )
+        .filter(([_, value]) => !['has-many'].includes(value.type))
         .map(([key, value]) => ({ key, item: value }));
 });
 
@@ -58,6 +69,17 @@ const nestedHasMany = computed(() => {
 });
 
 const onEdit = (key: string, item: ConfigItem) => {
+    if (item.type === 'has') {
+        // enter editing of a nested concept
+        emit('enter', {
+            concept: item.concept,
+            model: props.model[key] as BaseConceptModel,
+            parentKey: [key],
+        });
+        return;
+    }
+
+    // pop up the edit dialog
     currentEditItem.value = { key, item };
     currentEditModel.value = props.model[key];
     showEditDialog.value = true;
@@ -111,7 +133,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
         :class="{ 'cursor-pointer': !inlineEditing }"
         @click="onEditNested"
     >
-        <div class="text-sm">
+        <div>
             {{ elementSummary }}
         </div>
         <el-dropdown v-if="model">
@@ -119,7 +141,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
                 <i-ep-more-filled />
             </el-icon>
             <template #dropdown>
-                <el-dropdown-menu class="text-sm">
+                <el-dropdown-menu>
                     <div v-if="inlineEditing">
                         <el-dropdown-item
                             v-for="{ key, item } in inlineEditableItems"

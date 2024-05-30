@@ -1,8 +1,8 @@
-import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { app } from "../config";
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { app } from '../app';
 
-@customElement("pt-form")
+@customElement('pt-form')
 class PtForm extends LitElement {
     @property()
     name?: string;
@@ -12,15 +12,16 @@ class PtForm extends LitElement {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                return app.parseModel(value);
+                app.loadModel(value);
+                return app.model;
             },
-            toAttribute: (value: ReturnType<typeof app.createModel> | undefined) => {
+            toAttribute: (value: typeof app.model | undefined) => {
                 if (value === undefined) return null;
                 return app.stringifyModel(value);
             },
         },
     })
-    config?: ReturnType<typeof app.createModel>;
+    config?: typeof app.model;
 
     render() {
         return html` <div>${app.stringifyModel(this.config!)}</div> `;

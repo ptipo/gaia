@@ -1,4 +1,9 @@
-import { Concept, createConceptModel, defineConcept } from '@gaia/configurator';
+import {
+    BaseConceptModel,
+    Concept,
+    ProviderContext,
+    defineConcept,
+} from '@gaia/configurator';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
 import { NextButton } from './next-button';
@@ -29,12 +34,18 @@ export const ContentPage = defineConcept({
         /**
          * 下一步按钮
          */
-        nextButton: NextButton,
+        nextButton: {
+            type: 'has',
+            name: '下一步',
+            concept: NextButton,
+        },
     },
 });
 
 // 根据不同的内容项类型，生成默认带自增序号的名称
-function newItemProvider(concept: Concept, model: { $concept: string }[]) {
+function newItemProvider(concept: Concept, context: ProviderContext) {
+    const { app, currentModel } = context;
+
     const mappedName = match(concept.name)
         .with('QAQuestion', () => '问答')
         .with('ChoiceQuestion', () => '选择')
@@ -43,14 +54,18 @@ function newItemProvider(concept: Concept, model: { $concept: string }[]) {
 
     if (!mappedName) {
         // 非问题类内容
-        return createConceptModel(concept, { name: concept.displayName });
+        return app.createConceptInstance(concept, {
+            name: concept.displayName,
+        });
     }
 
     // 生成带自增序号的问题名称
     const nameWithSuffix = `${mappedName}${
-        model.filter((item) => item.$concept === concept.name).length + 1
+        currentModel.filter(
+            (item: BaseConceptModel) => item.$concept === concept.name
+        ).length + 1
     }`;
-    return createConceptModel(concept, {
+    return app.createConceptInstance(concept, {
         name: nameWithSuffix,
         question: nameWithSuffix,
     });

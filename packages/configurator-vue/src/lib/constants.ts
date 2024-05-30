@@ -1,4 +1,9 @@
 /**
+ * For providing the app instance.
+ */
+export const APP_KEY = 'app';
+
+/**
  * For providing the root model to the configurator tree.
  */
 export const ROOT_MODEL_KEY = 'rootModel';

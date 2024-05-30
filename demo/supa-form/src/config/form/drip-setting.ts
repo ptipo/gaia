@@ -18,7 +18,7 @@ export const DripSetting = defineGroupItem({
          */
         limitPagesPerDrip: {
             type: 'if',
-            condition: ({ currentModel }) => currentModel.enable,
+            conditionProvider: ({ currentModel }) => currentModel.enable,
             child: {
                 type: 'group',
                 items: {

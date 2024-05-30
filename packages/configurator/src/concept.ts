@@ -1,38 +1,37 @@
 import { z } from 'zod';
 import { ConfigItem, getConfigItemSchema } from './config-item';
-import { BaseConceptModel } from './inference';
-import { NonPrimitiveTypes } from './types';
+import { NonPrimitiveTypes, ProviderContext } from './types';
 
 /**
- * 可配置的抽象概念，包含一组配置项。
+ * A configurable abstract concept containing a set of config items.
  */
 export type Concept<
     TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>
 > = {
     /**
-     * 概念名称
+     * Concept name
      */
     name: string;
 
     /**
-     * 显示名称
+     * Display name
      */
     displayName: string;
 
     /**
-     * 配置项分组
+     * Grouping information
      */
     groups?: ConfigGroups;
 
     /**
-     * 配置项
+     * Config items
      */
     items: TItems;
 
     /**
-     * 计算概念的摘要信息，用于非完整内容展示
+     * Callback for computing a summary text
      */
-    summary?: (model: BaseConceptModel) => string;
+    summary?: (context: ProviderContext) => string;
 };
 
 export type ConceptTemplate = {
@@ -41,24 +40,24 @@ export type ConceptTemplate = {
 };
 
 /**
- * 配置项分组信息
+ * Grouping information
  */
 export type ConfigGroups = {
     [key: string]: {
         /**
-         * 分组所属类别
+         * Grouping aspect
          */
         aspect?: 'content' | 'design' | 'setting';
 
         /**
-         * 名称
+         * Group name
          */
         name: string;
     };
 };
 
 /**
- * 定义一个Concept
+ * Defines a concept.
  */
 export function defineConcept<TItems extends Concept['items']>(
     def: Concept<TItems>
@@ -66,6 +65,11 @@ export function defineConcept<TItems extends Concept['items']>(
     return def;
 }
 
+/**
+ * Gets a Zod schema for validating the model of a concept.
+ * @param concept
+ * @returns
+ */
 export function getConceptSchema<TConcept extends Concept>(
     concept: TConcept
 ): z.ZodObject<z.ZodRawShape> {

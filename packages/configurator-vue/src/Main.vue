@@ -1,13 +1,18 @@
 <script setup lang="ts">
+import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
 import { ref } from 'vue';
 import Configurator from './components/App.vue';
-import { app } from './test-config/starter/index';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
-import type { BaseConceptModel } from '@gaia/configurator';
+import { FormApp } from './test-config/supa-form';
 
-const model = ref<BaseConceptModel>(app.createModel());
+const app = createAppInstance(FormApp);
+const model = ref<BaseConceptModel>(app.model);
+
+const onAppChange = (data: BaseConceptModel) => {
+    app.model = model.value = data as typeof app.model;
+};
 </script>
 
 <template>
@@ -21,14 +26,14 @@ const model = ref<BaseConceptModel>(app.createModel());
                 <JsonViewer
                     :value="model"
                     expanded
-                    expandDepth="10"
+                    :expandDepth="10"
                     copyable
                     class="h-full"
                 />
             </div>
         </div>
-        <div class="w-96 border rounded h-full">
-            <Configurator :app="app" v-model="model" />
+        <div class="w-[480px] border rounded h-full">
+            <Configurator :app="app" :model="model" @change="onAppChange" />
         </div>
     </div>
 </template>

@@ -42,7 +42,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            condition: ({ currentModel }) =>
+            conditionProvider: ({ currentModel }) =>
                 currentModel.choiceKind === 'image',
 
             child: {
@@ -59,7 +59,8 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在文字选项时显示
-            condition: ({ currentModel }) => currentModel.choiceKind === 'text',
+            conditionProvider: ({ currentModel }) =>
+                currentModel.choiceKind === 'text',
 
             child: {
                 type: 'has-many',
@@ -89,7 +90,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            condition: ({ currentModel }) =>
+            conditionProvider: ({ currentModel }) =>
                 currentModel.choiceKind === 'image',
 
             child: {
@@ -119,7 +120,8 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在多选时显示
-            condition: ({ currentModel }) => currentModel.kind === 'multiple',
+            conditionProvider: ({ currentModel }) =>
+                currentModel.kind === 'multiple',
 
             child: {
                 type: 'dynamic-select',
@@ -160,7 +162,9 @@ export const ChoiceQuestion = defineConcept({
         },
     },
 
-    summary: (model) => {
-        return `${model.name || '选择'} ${model.required ? '*' : ''}`;
+    summary: ({ currentModel }) => {
+        return `${currentModel.name || '选择'} ${
+            currentModel.required ? '*' : ''
+        }`;
     },
 });

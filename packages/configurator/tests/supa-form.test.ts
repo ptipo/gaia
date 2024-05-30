@@ -1,19 +1,24 @@
-import { createConceptModel } from '@/model';
+import {
+    NonPrimitiveTypes,
+    createAppInstance,
+    createRef,
+} from '@gaia/configurator';
 import { describe } from '@jest/globals';
 import { inspect } from 'util';
-import { app } from './config/supa-form';
+import { FormApp } from './config/supa-form';
 import {
     ChoiceQuestion,
     QAQuestion,
     TextElement,
 } from './config/supa-form/page-items';
+import { TextChoice } from './config/supa-form/page-items/question/text-choice';
 import { CompletePage } from './config/supa-form/page/complete-page';
 import { ContentPage } from './config/supa-form/page/content-page';
-import { TextChoice } from './config/supa-form/page-items/question/text-choice';
 
 describe('supa-form sample app', () => {
     it('can create an empty model', () => {
-        const model = app.createModel();
+        const app = createAppInstance(FormApp);
+        const model = app.model;
 
         // common fields
         expect(model.$concept).toBe('Form');
@@ -33,33 +38,34 @@ describe('supa-form sample app', () => {
     });
 
     it('can serialize and deserialize model', () => {
-        const model = app.createModel();
+        const app = createAppInstance(FormApp);
+        const model = app.model;
         model.nextButtonText = 'Next';
 
-        const contentPage1 = createConceptModel(ContentPage, {
+        const contentPage1 = app.createConceptInstance(ContentPage, {
             name: 'Content Page1',
             pageItems: [
-                createConceptModel(QAQuestion, {
+                app.createConceptInstance(QAQuestion, {
                     name: 'q1.1',
                     question: 'Question1',
                 }),
             ],
         });
 
-        const contentPage2 = createConceptModel(ContentPage, {
+        const contentPage2 = app.createConceptInstance(ContentPage, {
             name: 'Content Page2',
             pageItems: [
-                createConceptModel(ChoiceQuestion, {
+                app.createConceptInstance(ChoiceQuestion, {
                     name: 'q2.1',
                     question: 'Question1',
                     kind: 'single',
                     choiceKind: 'text',
                     textChoices: [
-                        createConceptModel(TextChoice, {
+                        app.createConceptInstance(TextChoice, {
                             value: 'Choice1',
                             defaultSelected: true,
                         }),
-                        createConceptModel(TextChoice, {
+                        app.createConceptInstance(TextChoice, {
                             value: 'Choice2',
                             additionalInput: true,
                         }),
@@ -71,10 +77,10 @@ describe('supa-form sample app', () => {
         model.contentPages.push(contentPage1);
         model.contentPages.push(contentPage2);
 
-        const completePage1 = createConceptModel(CompletePage, {
+        const completePage1 = app.createConceptInstance(CompletePage, {
             name: 'Complete Page1',
             pageItems: [
-                createConceptModel(TextElement, {
+                app.createConceptInstance(TextElement, {
                     kind: 'h1',
                     content: 'Thank You!',
                 }),
@@ -83,11 +89,31 @@ describe('supa-form sample app', () => {
 
         model.completePages.push(completePage1);
 
+        model.dataCollection.drip.enable = true;
+        model.dataCollection.drip.limitPagesPerDrip = {
+            $type: NonPrimitiveTypes.itemGroup,
+            dripCompletePage: {
+                $type: 'ref',
+                $concept: 'CompletePage',
+                $id: completePage1.$id,
+            },
+            formCompletePage: {
+                $type: 'ref',
+                $concept: 'CompletePage',
+                $id: completePage1.$id,
+            },
+            maxPagesPerDrip: 3,
+        };
+
         const serialized = app.stringifyModel(model);
         console.log(serialized);
 
-        const deserialized = app.parseModel(serialized);
-        console.log(inspect(deserialized, false, 10));
-        expect(deserialized).toEqual(model);
+        const newApp = createAppInstance(FormApp);
+        newApp.loadModel(serialized);
+        console.log(inspect(newApp.model, false, 10));
+        expect(newApp.model).toEqual(model);
+
+        const resolvedPage = newApp.resolveConcept(createRef(completePage1));
+        expect(resolvedPage).toEqual(completePage1);
     });
 });

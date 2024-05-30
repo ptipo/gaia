@@ -1,13 +1,27 @@
+import { ProviderContext } from '@/types';
 import { z } from 'zod';
-import { ConfigItemBase, ProviderContext } from './common';
-import { NonPrimitiveTypes } from '../types';
+import { ConfigItemBase } from './common';
 
-export type LogicalOperand =
+/**
+ * Left operand candidates of a logical group.
+ */
+export type LogicalLeftOperandCandidates = Array<{
+    key: string | number;
+    label: string;
+    value: any;
+    group?: string;
+}>;
+
+/**
+ * Right operand candidates of a logical group.
+ */
+export type LogicalRightOperandCandidates =
     | { kind: 'input' }
     | {
           kind: 'select';
           multiple?: boolean;
           items: {
+              key: string | number;
               label: string;
               value: any;
               group?: string;
@@ -15,62 +29,78 @@ export type LogicalOperand =
       }
     | { kind: 'none' };
 
-export type LogicalOperandValue =
-    | string
-    | {
-          label: string;
-          value: any;
-          group?: string;
-      };
-
+/**
+ * Logical operator.
+ */
 export type LogicalOperator = { key: string; name: string };
 
 /**
- * 逻辑判断组配置项
+ * Config item representing a group of logical conditions.
  */
 export interface LogicalGroupItem extends ConfigItemBase {
     type: 'logical-group';
 
     /**
-     * 提供左运算数
+     * Callback for providing left operand candidates
      */
     leftProvider: (
         context: ProviderContext
-    ) => LogicalOperand | Promise<LogicalOperand>;
+    ) => LogicalLeftOperandCandidates | Promise<LogicalLeftOperandCandidates>;
 
     /**
-     * 提供对比操作符
+     * Callback for providing logical operators candidates
      */
     operatorProvider: (
-        leftOperandValue: LogicalOperandValue
-    ) => LogicalOperator[];
+        context: ProviderContext,
+        leftOperandValue: any
+    ) => LogicalOperator[] | Promise<LogicalOperator[]>;
 
     /**
-     * 提供右运算数
+     * Callback for providing right operand candidates
      */
     rightProvider: (
         context: ProviderContext,
-        leftOperandValue: LogicalOperandValue,
-        operator: LogicalOperator
-    ) => LogicalOperand | Promise<LogicalOperand>;
+        leftOperandValue: any,
+        operator: string
+    ) => LogicalRightOperandCandidates | Promise<LogicalRightOperandCandidates>;
 }
 
 export const LogicalItemSchema = z.object({
     left: z.unknown(),
-    right: z.unknown(),
+    right: z.unknown().optional(),
     operator: z.string(),
 });
 
-export type LogicalGroupType = {
-    groupOperator: 'and' | 'or';
-    items: Array<LogicalGroupType | z.infer<typeof LogicalItemSchema>>;
-};
+/**
+ * Logical group.
+ */
+export type LogicalGroup =
+    | z.infer<typeof LogicalItemSchema>
+    | {
+          /**
+           * Boolean operator for combining the two groups
+           */
+          groupOperator: 'and' | 'or';
 
-export const getSchema = (): z.ZodType<LogicalGroupType> =>
-    z.object({
-        $type: z.literal(NonPrimitiveTypes.logicalGroup),
-        groupOperator: z.union([z.literal('and'), z.literal('or')]),
-        items: z.array(z.union([z.lazy(getSchema), LogicalItemSchema])),
-    });
+          /**
+           * The first group
+           */
+          first: LogicalGroup;
 
-export type LogicalGroup = z.infer<ReturnType<typeof getSchema>>;
+          /**
+           * The second group
+           */
+          second: LogicalGroup;
+      };
+
+const getGroupSchema = (): z.ZodType<LogicalGroup> =>
+    z.union([
+        LogicalItemSchema,
+        z.object({
+            groupOperator: z.union([z.literal('and'), z.literal('or')]),
+            first: z.lazy(() => getGroupSchema()),
+            second: z.lazy(() => getGroupSchema()),
+        }),
+    ]);
+
+export const getSchema = () => getGroupSchema().optional();

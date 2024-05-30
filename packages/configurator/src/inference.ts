@@ -8,8 +8,8 @@ import {
     IfItem,
     ImageInfo,
     ImageItem,
-    LogicGroupItem,
     LogicalGroup,
+    LogicalGroupItem,
     NumberItem,
     SelectItem,
     SwitchItem,
@@ -20,7 +20,7 @@ import { NonPrimitiveTypes, RGBA } from './types';
 import { DeepPartial } from './utils';
 
 /**
- * 推断`Concept`的运行时类型
+ * Infers the runtime type of a `Concept`.
  */
 export type inferConcept<
     TConcept extends Concept,
@@ -28,10 +28,7 @@ export type inferConcept<
     TDepth extends number = 8
 > = TDepth extends -1
     ? unknown
-    : {
-          $type: NonPrimitiveTypes.concept;
-          $concept: string;
-      } & {
+    : BaseConceptModel & {
           [Key in keyof TConcept['items']]: inferConfigItem<
               TConcept['items'][Key],
               TPartial,
@@ -40,7 +37,7 @@ export type inferConcept<
       };
 
 /**
- * 推断`Concept`的运行时类型，支持不完整配置
+ * Infers a partial runtime type of a `Concept`.
  */
 export type inferPartialConcept<TConcept extends Concept> = inferConcept<
     TConcept,
@@ -55,6 +52,7 @@ export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<
  * 基础`Concept`运行时类型
  */
 export type BaseConceptModel = {
+    $id: string;
     $type: NonPrimitiveTypes.concept;
     $concept: string;
 } & Record<string, unknown>;
@@ -72,7 +70,7 @@ type CheckPartial<TItem, TPartial extends boolean, TData> = TItem extends {
     : TData;
 
 /**
- * 推断配置项的运行时类型
+ * Infers the runtime type of a `ConfigItem`.
  */
 export type inferConfigItem<
     TItem extends ConfigItemBase | undefined,
@@ -116,6 +114,6 @@ export type inferConfigItem<
               TDepthNext
           >;
       }
-    : TItem extends LogicGroupItem
-    ? CheckPartial<TItem, TPartial, LogicalGroup>
+    : TItem extends LogicalGroupItem
+    ? LogicalGroup
     : never;
