@@ -1,56 +1,65 @@
-import { P, match } from 'ts-pattern';
-import { ConfigItem, DeepPartialConcept, inferPartialConcept } from '.';
-import { Concept } from './concept';
-import { GroupItem } from './items';
+import { BaseConceptModel } from '.';
 import { NonPrimitiveTypes } from './types';
 
 /**
- * 为`Concept`创建初始模型
+ * Checks if the given data is a concept instance.
  */
-export function createConceptModel<TConcept extends Concept>(
-    concept: TConcept,
-    data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> &
-        Record<string, unknown>
-): inferPartialConcept<TConcept> {
-    const result: any = {
-        $type: NonPrimitiveTypes.concept,
-        $concept: concept.name,
-    };
-
-    for (const [key, value] of Object.entries(concept.items)) {
-        if (data?.[key] !== undefined) {
-            result[key] = data[key];
-        } else {
-            result[key] = createItemModel(value);
-        }
-    }
-
-    return result;
+export function isConceptInstance(data: unknown): data is BaseConceptModel {
+    return (
+        !!data &&
+        typeof data === 'object' &&
+        '$type' in data &&
+        data.$type === NonPrimitiveTypes.concept &&
+        '$concept' in data &&
+        typeof data.$concept === 'string'
+    );
 }
 
 /**
- * 为`ConfigItem`创建初始模型
+ * Reference to a concept instance.
  */
-export function createItemModel(item: ConfigItem): any {
-    return match(item)
-        .with(
-            { type: P.union('text', 'number', 'switch', 'select') },
-            (item) => item.default
-        )
-        .with({ type: 'image' }, () => ({ url: undefined }))
-        .with({ type: 'has' }, (item) => createConceptModel(item.concept))
-        .with({ type: 'has-many' }, () => [
-            /* TODO: 初始项 */
-        ])
-        .with({ type: 'group' }, (item) => createGroupModel(item))
-        .otherwise(() => undefined);
+export type ConceptRef = {
+    $type: NonPrimitiveTypes.ref;
+    $concept: string;
+    $id: string;
+};
+
+/**
+ * Creates a reference to a concept instance.
+ */
+export function createRef(instance: BaseConceptModel): ConceptRef {
+    return {
+        $type: NonPrimitiveTypes.ref,
+        $concept: instance.$concept,
+        $id: instance.$id,
+    };
 }
 
-function createGroupModel(item: GroupItem): any {
-    const result: any = {};
-    for (const [key, child] of Object.entries(item.items)) {
-        const itemValue = createItemModel(child);
-        result[key] = itemValue;
+/**
+ * Checks if the given data is a concept reference.
+ */
+export function isConceptRef(value: unknown): value is ConceptRef {
+    return (
+        !!value &&
+        typeof value === 'object' &&
+        '$type' in value &&
+        value.$type === NonPrimitiveTypes.ref &&
+        '$concept' in value &&
+        typeof value.$concept === 'string' &&
+        '$id' in value &&
+        typeof value.$id === 'string'
+    );
+}
+
+/**
+ * Checks if the given two values are equal.
+ */
+export function modelEquals(x: unknown, y: unknown) {
+    if (x === y) {
+        return true;
     }
-    return result;
+    if (isConceptRef(x) && isConceptRef(y)) {
+        return x.$concept === y.$concept && x.$id === y.$id;
+    }
+    return false;
 }

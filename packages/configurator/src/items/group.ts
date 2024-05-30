@@ -4,7 +4,7 @@ import { ConfigItemBase } from './common';
 import { ConfigGroups } from '..';
 
 /**
- * 一组配置项
+ * An item that groups other items.
  */
 export interface GroupItem<
     TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>
@@ -12,38 +12,34 @@ export interface GroupItem<
     type: 'group';
 
     /**
-     * 显示名称
-     */
-    displayName?: string;
-
-    /**
-     * 配置项
+     * Child items
      */
     items: TItems;
 
     /**
-     * 帮助信息
+     * Help text
      */
     help?: string;
 
     /**
-     * 是否内联展示
+     * If the group items should be rendered inline
      */
     inline?: boolean;
 
     /**
-     * 配置组
+     * Grouping information
      */
     groups?: ConfigGroups;
 
     /**
-     * 当前配置项在容器中所属配置组
+     * Group key for deciding which group in the parent item this item
+     * should be placed in
      */
     groupKey?: string;
 }
 
 /**
- * 创建一个GroupItem
+ * Defines a group item.
  */
 export function defineGroupItem<TItems extends Record<string, ConfigItem>>(
     def: Omit<GroupItem<TItems>, 'type'>

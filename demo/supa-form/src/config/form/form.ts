@@ -1,4 +1,4 @@
-import { createConceptModel, defineConcept } from '@gaia/configurator';
+import { BaseConceptModel, defineConcept } from '@gaia/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
@@ -30,26 +30,33 @@ export const Form = defineConcept({
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
-            newItemProvider: (concept, model) => {
-                const existing = model.filter(
-                    (item) => item.$concept === concept.name
+            newItemProvider: (concept, context) => {
+                const { app, currentModel } = context;
+                const existing = currentModel.filter(
+                    (item: BaseConceptModel) => item.$concept === concept.name
                 );
-                return createConceptModel(ContentPage, {
+                return app.createConceptInstance(ContentPage, {
                     name: `表单页${existing.length + 1}`,
                     pageItems: [
-                        createConceptModel(ChoiceQuestion, {
+                        app.createConceptInstance(ChoiceQuestion, {
                             name: '选择1',
                             question: '选择1',
                             kind: 'single',
                             choiceKind: 'text',
                             textChoices: [
-                                createConceptModel(TextChoice, {
+                                app.createConceptInstance(TextChoice, {
                                     value: 'A',
                                     defaultSelected: true,
                                 }),
-                                createConceptModel(TextChoice, { value: 'B' }),
-                                createConceptModel(TextChoice, { value: 'C' }),
-                                createConceptModel(TextChoice, { value: 'D' }),
+                                app.createConceptInstance(TextChoice, {
+                                    value: 'B',
+                                }),
+                                app.createConceptInstance(TextChoice, {
+                                    value: 'C',
+                                }),
+                                app.createConceptInstance(TextChoice, {
+                                    value: 'D',
+                                }),
                             ],
                         }),
                     ],
@@ -66,18 +73,21 @@ export const Form = defineConcept({
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',
-            newItemProvider: (concept, model) => {
-                const existing = model.filter(
-                    (item) => item.$concept === concept.name
+            newItemProvider: (concept, context) => {
+                const { app, currentModel } = context;
+                const existing = currentModel.filter(
+                    (item: BaseConceptModel) => item.$concept === concept.name
                 );
-                return createConceptModel(CompletePage, {
+                return app.createConceptInstance(CompletePage, {
                     name: `结束页${existing.length + 1}`,
                     pageItems: [
-                        createConceptModel(TextElement, { content: '标题' }),
-                        createConceptModel(ImageElement, {
+                        app.createConceptInstance(TextElement, {
+                            content: '标题',
+                        }),
+                        app.createConceptInstance(ImageElement, {
                             image: { url: 'https://via.placeholder.com/150' },
                         }),
-                        createConceptModel(TextElement, {
+                        app.createConceptInstance(TextElement, {
                             content: '说明文字',
                         }),
                     ],

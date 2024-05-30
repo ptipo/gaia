@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
 import {
+    AppInstance,
     Concept,
-    createConceptModel,
     type BaseConceptModel,
     type inferConfigItem,
 } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
-import { EnterConceptData } from '../types';
+import { inject, type Ref } from 'vue';
+import type { EnterConceptData } from '../types';
 
 const props = withDefaults(
     defineProps<{
@@ -28,11 +30,19 @@ const emit = defineEmits<{
     (e: 'change', data: inferConfigItem<HasManyItem>): void;
 }>();
 
+const app = inject<AppInstance<Concept>>(APP_KEY);
+const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+
 const onCreate = (concept: Concept) => {
     const currentItemCount = props.model.length;
+    const context = {
+        app: app!,
+        currentModel: props.model,
+        rootModel: rootModel?.value,
+    };
     const newItem =
-        props.item.newItemProvider?.(concept, props.model) ??
-        createConceptModel(concept);
+        props.item.newItemProvider?.(concept, context) ??
+        app!.createConceptInstance(concept);
 
     const nextModel = [...props.model, newItem];
     emit('change', nextModel);
@@ -87,7 +97,7 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
 
 <template>
     <div class="flex flex-col">
-        <div v-if="!inline" class="text-sm mb-2">{{ item.name }}</div>
+        <div v-if="!inline" class="mb-2">{{ item.name }}</div>
         <div class="flex flex-col gap-2">
             <div
                 :class="{ 'border rounded p-3': !inline }"
@@ -96,6 +106,7 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
                 <ConceptElement
                     v-if="findConcept(value.$concept)"
                     :concept="findConcept(value.$concept)"
+                    :key="model[index].$id"
                     :model="model[index]"
                     :inlineEditing="item.inline"
                     @delete="() => onDeleteElement(index)"

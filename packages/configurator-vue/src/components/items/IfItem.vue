@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import { ROOT_MODEL_KEY } from '@/lib/constants';
-import {
-    createItemModel,
-    type BaseConceptModel,
-    type inferConfigItem,
+import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import type {
+    AppInstance,
+    BaseConceptModel,
+    Concept,
+    inferConfigItem,
 } from '@gaia/configurator';
 import type { IfItem } from '@gaia/configurator/items';
 import { Ref, computed, inject, watch } from 'vue';
@@ -21,12 +22,14 @@ const emit = defineEmits<{
     (e: 'enter', data: EnterConceptData): void;
 }>();
 
+const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
 const childComponent = getItemComponent(props.item.child);
 
 const condition = computed(() => {
-    return props.item.condition?.({
+    return props.item.conditionProvider?.({
+        app: app!,
         rootModel: rootModel?.value,
         currentModel: props.parentModel,
     });
@@ -35,7 +38,7 @@ const condition = computed(() => {
 watch(condition, (value, oldValue) => {
     if (value && !oldValue) {
         // recreate model
-        emit('change', createItemModel(props.item.child));
+        emit('change', app!.createItemModel(props.item.child));
     }
 });
 </script>

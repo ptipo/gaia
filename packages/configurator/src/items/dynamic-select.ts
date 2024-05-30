@@ -1,39 +1,40 @@
 import { z } from 'zod';
-import { ConfigItemBase, ProviderContext } from './common';
+import { ConfigItemBase } from './common';
+import { ProviderContext } from '@/types';
 
 /**
- * 动态选项
+ * A dynamic select option.
  */
 export type DynamicSelectOption<TValue> = {
     /**
-     * 唯一标识
+     * Unique key
      */
     key: number | string;
 
     /**
-     * 显示文本
+     * Display label
      */
     label: string;
 
     /**
-     * 值
+     * Value
      */
     value: TValue;
 
     /**
-     * 分组
+     * Group name
      */
     group?: string;
 };
 
 /**
- * 动态选择配置项，根据当前配置上下文计算候选项
+ * Config item that provides a dynamically loaded list of options.
  */
 export interface DynamicSelectItem<TValue> extends ConfigItemBase {
     type: 'dynamic-select';
 
     /**
-     * 计算配置项列表
+     * Callback for computing options.
      */
     provider: (
         context: ProviderContext

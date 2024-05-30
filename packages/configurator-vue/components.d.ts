@@ -22,6 +22,8 @@ declare module 'vue' {
     IfItem: typeof import('./src/components/items/IfItem.vue')['default']
     ImageItem: typeof import('./src/components/items/ImageItem.vue')['default']
     ItemLabel: typeof import('./src/components/items/ItemLabel.vue')['default']
+    LogicalGroupElement: typeof import('./src/components/items/logical-group/LogicalGroupElement.vue')['default']
+    LogicalGroupItem: typeof import('./src/components/items/LogicalGroupItem.vue')['default']
     NumberItem: typeof import('./src/components/items/NumberItem.vue')['default']
     SelectItem: typeof import('./src/components/items/SelectItem.vue')['default']
     SwitchItem: typeof import('./src/components/items/SwitchItem.vue')['default']

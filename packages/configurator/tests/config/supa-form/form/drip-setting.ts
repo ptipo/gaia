@@ -11,14 +11,14 @@ export const DripSetting = defineGroupItem({
         /**
          * 开启
          */
-        enable: { type: 'switch', name: '开启' },
+        enable: { type: 'switch', name: '分多次收集信息' },
 
         /**
          * 每次提交控制
          */
         limitPagesPerDrip: {
             type: 'if',
-            condition: ({ currentModel }) => currentModel.enable,
+            conditionProvider: ({ currentModel }) => currentModel.enable,
             child: {
                 type: 'group',
                 items: {
@@ -61,6 +61,7 @@ export const DripSetting = defineGroupItem({
         retention: {
             type: 'select',
             help: '超过信息保留时间后，用户将需要重新填写表单',
+            name: '信息保留时间',
             options: {
                 once: '1次访问',
                 oneDay: '1天',

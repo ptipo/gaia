@@ -1,26 +1,32 @@
 <script setup lang="ts">
-import { CURRENT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
-import type { App, BaseConceptModel, Concept } from '@gaia/configurator';
+import { APP_KEY, CURRENT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
+import type {
+    AppInstance,
+    BaseConceptModel,
+    Concept,
+} from '@gaia/configurator';
 import { provide, ref } from 'vue';
 import ConceptStack from './ConceptStack.vue';
 
 const activeAspect = ref('content');
 
-defineProps<{
-    app: App<Concept>;
+const props = defineProps<{
+    app: AppInstance<Concept>;
 }>();
 
 const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
 }>();
 
-const model = defineModel<BaseConceptModel>({ required: true });
+const model = ref<BaseConceptModel>(props.app.model);
 
 // provide the root model to children
 provide(ROOT_MODEL_KEY, model);
 
 // provide the current aspect to children
 provide(CURRENT_ASPECT, activeAspect);
+
+provide(APP_KEY, props.app);
 
 const aspects = [
     { label: 'Content', aspect: 'content' },
@@ -30,11 +36,12 @@ const aspects = [
 
 const onChange = (data: BaseConceptModel) => {
     model.value = data;
+    emit('change', data);
 };
 </script>
 
 <template>
-    <div class="p-4 h-full overflow-auto">
+    <div class="p-4 h-full overflow-auto text-sm">
         <el-tabs v-model="activeAspect">
             <el-tab-pane
                 v-for="{ label, aspect } in aspects"

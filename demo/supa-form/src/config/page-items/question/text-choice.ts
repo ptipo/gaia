@@ -32,5 +32,5 @@ export const TextChoice = defineConcept({
         },
     },
 
-    summary: (model) => model.value as string,
+    summary: ({ currentModel }) => currentModel.value as string,
 });
