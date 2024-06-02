@@ -4,18 +4,18 @@ import { app } from '../app';
 import { getContentTypeComponent } from './contentTypes';
 import { unsafeStatic, html } from 'lit/static-html.js';
 
-@customElement('pt-form-page')
-class PtFormPage extends PtBase {
+@customElement('pt-form-complete-page')
+class PtFormCompletePage extends PtBase {
     @property()
     name?: string;
 
     @property({ type: Object })
-    page: (typeof app.model.contentPages)[number] = {} as any;
+    page: (typeof app.model.completePages)[number] = {} as any;
 
     render() {
         const pageItems = this.page!.pageItems ?? [];
 
-        return html` <h1 class='flex justify-center items-center bg-red-700'>${this.page?.name}</h1> 
+        return html` <h1 class='flex justify-center items-center'>${this.page.name}</h1> 
         ${pageItems.map((item) => {
             const tagName = getContentTypeComponent(item.$concept);
 
