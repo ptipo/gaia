@@ -10,7 +10,13 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        vue(),
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: (tag) => ['pt-form'].includes(tag),
+                },
+            },
+        }),
         AutoImport({
             resolvers: [
                 // ElementPlusResolver(),
