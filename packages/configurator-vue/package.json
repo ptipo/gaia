@@ -5,7 +5,8 @@
     "scripts": {
         "dev": "vite --port 5002",
         "build": "vue-tsc && vite build && vite build",
-        "preview": "vite preview -c vite-app.config.ts",
+        "build:app": "vite -c vite-app.config.ts build",
+        "preview": "vite preview -c vite-app.config.ts --port 5003",
         "lint": "vue-tsc --noEmit"
     },
     "dependencies": {
