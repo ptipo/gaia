@@ -20,7 +20,6 @@ declare module 'vue' {
     IEpInfoFilled: typeof import('~icons/ep/info-filled')['default']
     IEpMoreFilled: typeof import('~icons/ep/more-filled')['default']
     IEpPlus: typeof import('~icons/ep/plus')['default']
-    IEpRank: typeof import('~icons/ep/rank')['default']
     IfItem: typeof import('./src/components/items/IfItem.vue')['default']
     ImageItem: typeof import('./src/components/items/ImageItem.vue')['default']
     ItemLabel: typeof import('./src/components/items/ItemLabel.vue')['default']
