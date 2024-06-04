@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
+import {
+    APP_KEY,
+    CURRENT_ASPECT_KEY,
+    DEFAULT_ASPECT,
+    ROOT_MODEL_KEY,
+} from '@/lib/constants';
 import type {
     AppInstance,
     BaseConceptModel,
@@ -8,7 +13,7 @@ import type {
 import { provide, ref } from 'vue';
 import ConceptStack from './ConceptStack.vue';
 
-const activeAspect = ref('content');
+const activeAspect = ref(DEFAULT_ASPECT);
 
 const props = defineProps<{
     app: AppInstance<Concept>;
@@ -24,7 +29,7 @@ const model = ref<BaseConceptModel>(props.app.model);
 provide(ROOT_MODEL_KEY, model);
 
 // provide the current aspect to children
-provide(CURRENT_ASPECT, activeAspect);
+provide(CURRENT_ASPECT_KEY, activeAspect);
 
 provide(APP_KEY, props.app);
 
