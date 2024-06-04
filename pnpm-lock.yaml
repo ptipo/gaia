@@ -150,6 +150,9 @@ importers:
       vite:
         specifier: ^5.2.0
         version: 5.2.11(@types/node@20.12.12)(sass@1.77.2)
+      vite-plugin-filter-replace:
+        specifier: ^0.1.13
+        version: 0.1.13
       vue-tsc:
         specifier: ^2.0.6
         version: 2.0.19(typescript@5.4.5)
@@ -4906,6 +4909,10 @@ packages:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+    dev: true
+
+  /vite-plugin-filter-replace@0.1.13:
+    resolution: {integrity: sha512-ctYDU9cKxPAVbcXvVzFXyWJSg7yYDddyUmkgXDOWO65VWPuMPKMJfKckSH2jyb6NL2xQfxBP4q/5z4XS1QTuqg==}
     dev: true
 
   /vite@5.2.11(@types/node@20.12.12)(sass@1.77.2):
