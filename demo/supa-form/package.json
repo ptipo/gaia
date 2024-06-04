@@ -8,7 +8,7 @@
         "./config": "./dist/config/index.js"
     },
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --port 5001",
         "build": "tsc && vite build",
         "build:watch": "tsc -w"
     },

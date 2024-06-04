@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --port 5002",
         "build": "vue-tsc && vite build && vite -c vite-app.config.ts build && cp ../../demo/supa-form/dist/index.js app-dist/pt-form.js",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit"
