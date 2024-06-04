@@ -6,9 +6,10 @@ import './pt-form-complete-page';
 import { PtBaseShadow } from './pt-base';
 import { provide } from '@lit/context';
 import { formState, stateData } from '../state';
+import { keyed } from 'lit/directives/keyed.js';
 
 @customElement('pt-form')
-class PtForm extends PtBaseShadow {
+export class PtForm extends PtBaseShadow {
     @property()
     name?: string;
 
@@ -32,6 +33,7 @@ class PtForm extends PtBaseShadow {
     formState: stateData = {};
 
     render() {
+        console.log(this.config);
         const contentPages = this.config?.contentPages ?? [];
         const completePages = this.config?.completePages ?? [];
         const customCss = html`<style>
@@ -49,10 +51,13 @@ class PtForm extends PtBaseShadow {
         <div>
            ${
                isCompletePage
-                   ? html`<pt-form-complete-page .page=${
+                   ? html`<pt-form-complete-page  .page=${
                          completePages[this.pageIndex - contentPages.length]
                      } ></pt-form-complete-page>`
-                   : html`<pt-form-page .page=${contentPages[this.pageIndex]} ></pt-form-page>`
+                   : keyed(
+                         contentPages[this.pageIndex].$id,
+                         html`<pt-form-page .page=${contentPages[this.pageIndex]} ></pt-form-page>`
+                     )
            } 
         </div>
 
@@ -96,5 +101,11 @@ class PtForm extends PtBaseShadow {
     private onSubmit(e: Event) {
         this.pageIndex++;
         console.log(`submit form data ${JSON.stringify(this.formState)}`);
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        'pt-form': PtForm;
     }
 }
