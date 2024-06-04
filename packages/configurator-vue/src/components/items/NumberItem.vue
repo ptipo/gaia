@@ -20,7 +20,7 @@ const { enabled } = useGuard(props.model !== undefined, {
     <el-form-item class="m-0">
         <ItemLabel :item="item" v-model="enabled" />
         <el-input-number
-            v-if="enabled"
+            v-if="!item.guarded || enabled"
             :min="item.allowNegative ? undefined : 0"
             :precision="item.allowFloat ? 1 : undefined"
             v-model="_model"

@@ -20,7 +20,7 @@ const _model = ref<string | undefined>(props.model);
     <el-form-item class="m-0">
         <ItemLabel :item="item" v-model="enabled" />
         <el-input
-            v-if="enabled"
+            v-if="!item.guarded || enabled"
             v-model="_model"
             @change="$emit('change', _model)"
         />
