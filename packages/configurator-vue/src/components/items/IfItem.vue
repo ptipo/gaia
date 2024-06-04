@@ -5,22 +5,23 @@ import type {
     AppInstance,
     BaseConceptModel,
     Concept,
-    inferConfigItem,
 } from '@gaia/configurator';
 import type { IfItem } from '@gaia/configurator/items';
 import { Ref, computed, inject, watch } from 'vue';
-import { EnterConceptData } from '../types';
+import type { EnterConceptData } from '../types';
+import type { CommonEvents, CommonProps } from './common';
 
-const props = defineProps<{
-    item: IfItem;
-    parentModel: BaseConceptModel;
-    model: inferConfigItem<IfItem>;
-}>();
+const props = defineProps<
+    CommonProps<IfItem> & {
+        parentModel: BaseConceptModel;
+    }
+>();
 
-const emit = defineEmits<{
-    (e: 'change', data: inferConfigItem<IfItem>): void;
-    (e: 'enter', data: EnterConceptData): void;
-}>();
+const emit = defineEmits<
+    CommonEvents<IfItem> & {
+        (e: 'enter', data: EnterConceptData): void;
+    }
+>();
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);

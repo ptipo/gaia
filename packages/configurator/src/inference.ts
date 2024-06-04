@@ -59,15 +59,19 @@ export type BaseConceptModel = {
 
 type Optional<T> = T | undefined;
 
-type CheckPartial<TItem, TPartial extends boolean, TData> = TItem extends {
-    guarded: true;
-}
+type CheckPartial<
+    TItem,
+    TPartial extends boolean,
+    TData
+> = TPartial extends true
     ? Optional<TData>
-    : TPartial extends true
-    ? TItem extends { default: unknown }
-        ? TData
-        : Optional<TData>
-    : TData;
+    : // required
+    TItem extends { required: true }
+    ? TData
+    : // has default value
+    TItem extends { default: unknown }
+    ? TData
+    : Optional<TData>;
 
 /**
  * Infers the runtime type of a `ConfigItem`.
@@ -115,5 +119,5 @@ export type inferConfigItem<
           >;
       }
     : TItem extends LogicalGroupItem
-    ? LogicalGroup
+    ? CheckPartial<TItem, TPartial, LogicalGroup>
     : never;

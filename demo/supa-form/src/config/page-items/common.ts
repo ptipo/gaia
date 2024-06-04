@@ -8,7 +8,7 @@ export const QuestionCommonItems = {
     /**
      * 表单项名称
      */
-    name: { type: 'text', name: '表单项名称' },
+    name: { type: 'text', name: '表单项名称', required: true },
 
     /**
      * 问题

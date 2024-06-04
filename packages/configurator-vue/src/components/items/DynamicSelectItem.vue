@@ -5,7 +5,6 @@ import {
     type AppInstance,
     type BaseConceptModel,
     type Concept,
-    type inferConfigItem,
 } from '@gaia/configurator';
 import type {
     DynamicSelectItem,
@@ -13,16 +12,15 @@ import type {
 } from '@gaia/configurator/items';
 import { inject, onMounted, ref, watch, type Ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
+import type { CommonEvents, CommonProps } from './common';
 
-const props = defineProps<{
-    item: DynamicSelectItem<any>;
-    parentModel: BaseConceptModel;
-    model: inferConfigItem<DynamicSelectItem<any>>;
-}>();
+const props = defineProps<
+    CommonProps<DynamicSelectItem<any>> & {
+        parentModel: BaseConceptModel;
+    }
+>();
 
-const emit = defineEmits<{
-    (e: 'change', data: inferConfigItem<DynamicSelectItem<any>>): void;
-}>();
+const emit = defineEmits<CommonEvents<DynamicSelectItem<any>>>();
 
 const _model = ref();
 

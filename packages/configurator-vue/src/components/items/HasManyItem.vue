@@ -1,32 +1,38 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import { AppInstance, Concept, type BaseConceptModel, type inferConfigItem } from '@gaia/configurator';
+import {
+    AppInstance,
+    Concept,
+    type BaseConceptModel,
+} from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
 import { createId } from '@paralleldrive/cuid2';
 import deepcopy from 'deepcopy';
 import { inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
 import type { EnterConceptData } from '../types';
+import type { CommonEvents, CommonProps } from './common';
 
 const props = withDefaults(
-    defineProps<{
-        item: HasManyItem;
-        model: inferConfigItem<HasManyItem>;
-        /**
-         * Whether to display the items inline
-         */
-        inline?: boolean;
-    }>(),
+    defineProps<
+        CommonProps<HasManyItem> & {
+            /**
+             * Whether to display the items inline
+             */
+            inline?: boolean;
+        }
+    >(),
     {
         inline: false,
     }
 );
 
-const emit = defineEmits<{
-    (e: 'enter', data: EnterConceptData): void;
-    (e: 'change', data: inferConfigItem<HasManyItem>): void;
-}>();
+const emit = defineEmits<
+    CommonEvents<HasManyItem> & {
+        (e: 'enter', data: EnterConceptData): void;
+    }
+>();
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
@@ -54,7 +60,10 @@ const onCreate = (candidate: Concept) => {
     emit('change', nextModel);
 
     if (!props.item.inline) {
-        onEnterConcept({ concept: candidate, model: newItem, parentKey: [] }, currentItemCount);
+        onEnterConcept(
+            { concept: candidate, model: newItem, parentKey: [] },
+            currentItemCount
+        );
     }
 };
 
@@ -64,7 +73,10 @@ const createItem = (concept: Concept) => {
         currentModel: props.model,
         rootModel: rootModel?.value,
     };
-    return props.item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
+    return (
+        props.item.newItemProvider?.(concept, context) ??
+        app!.createConceptInstance(concept)
+    );
 };
 
 const findConcept = (name: string) => {
@@ -89,7 +101,11 @@ const onAddSibling = (index: number) => {
     }
 
     const newItem = createItem(concept);
-    const nextModel = [...props.model.slice(0, index + 1), newItem, ...props.model.slice(index + 1)];
+    const nextModel = [
+        ...props.model.slice(0, index + 1),
+        newItem,
+        ...props.model.slice(index + 1),
+    ];
     emit('change', nextModel);
 };
 
@@ -116,10 +132,15 @@ const onDeleteElement = async (index: number) => {
     }
     if (
         await confirmDelete(
-            typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName
+            typeof elementModel.name === 'string' && elementModel.name
+                ? elementModel.name
+                : elementConcept.displayName
         )
     ) {
-        const nextModel = [...props.model.slice(0, index), ...props.model.slice(index + 1)];
+        const nextModel = [
+            ...props.model.slice(0, index),
+            ...props.model.slice(index + 1),
+        ];
         emit('change', nextModel);
     }
 };
@@ -135,9 +156,17 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
         <div v-if="!inline" class="mb-2">{{ item.name }}</div>
 
         <!-- draggable element list -->
-        <draggable class="flex flex-col gap-2" v-model="draggableState" item-key="$id" @end="onDragEnd">
+        <draggable
+            class="flex flex-col gap-2"
+            v-model="draggableState"
+            item-key="$id"
+            @end="onDragEnd"
+        >
             <template #item="{ element, index }">
-                <div :class="{ 'border rounded p-3': !inline }" class="flex items-center w-full">
+                <div
+                    :class="{ 'border rounded p-3': !inline }"
+                    class="flex items-center w-full"
+                >
                     <div class="flex-grow">
                         <ConceptElement
                             v-if="findConcept(element.$concept)"
@@ -166,12 +195,16 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
                 >+ 添加{{ item.name }}</el-button
             >
             <el-dropdown v-else>
-                <el-button link class="self-start">+ 添加{{ item.name }}</el-button>
+                <el-button link class="self-start"
+                    >+ 添加{{ item.name }}</el-button
+                >
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item v-for="candidate in item.candidates" @click="() => onCreate(candidate)">{{
-                            candidate.displayName
-                        }}</el-dropdown-item>
+                        <el-dropdown-item
+                            v-for="candidate in item.candidates"
+                            @click="() => onCreate(candidate)"
+                            >{{ candidate.displayName }}</el-dropdown-item
+                        >
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>

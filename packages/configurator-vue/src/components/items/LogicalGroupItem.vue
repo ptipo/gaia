@@ -4,6 +4,7 @@ import { type LogicalGroupItem } from '@gaia/configurator/items';
 import { createId } from '@paralleldrive/cuid2';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
+import type { CommonEvents, CommonProps } from './common';
 import LogicalGroupElement from './logical-group/LogicalGroupElement.vue';
 
 type ModelType = Array<{
@@ -14,15 +15,13 @@ type ModelType = Array<{
     right?: unknown;
 }>;
 
-const props = defineProps<{
-    item: LogicalGroupItem;
-    model: inferConfigItem<LogicalGroupItem>;
-    parentModel: BaseConceptModel;
-}>();
+const props = defineProps<
+    CommonProps<LogicalGroupItem> & {
+        parentModel: BaseConceptModel;
+    }
+>();
 
-const emit = defineEmits<{
-    (e: 'change', data: inferConfigItem<LogicalGroupItem> | undefined): void;
-}>();
+const emit = defineEmits<CommonEvents<LogicalGroupItem>>();
 
 const _model = ref<ModelType>(transformModel(props.model));
 

@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import type { inferConfigItem } from '@gaia/configurator';
 import type { NumberItem } from '@gaia/configurator/items';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
+import type { CommonEvents, CommonProps } from './common';
+import { useGuard } from './guard';
 
-const props = defineProps<{
-    item: NumberItem;
-    model: inferConfigItem<NumberItem>;
-}>();
+const props = defineProps<CommonProps<NumberItem>>();
 
-defineEmits<{ (e: 'change', data: inferConfigItem<NumberItem>): void }>();
+const emit = defineEmits<CommonEvents<NumberItem>>();
 
 const _model = ref(props.model);
+
+const { enabled } = useGuard(props.model !== undefined, {
+    onSetOff: () => emit('change', undefined),
+});
 </script>
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" />
+        <ItemLabel :item="item" v-model="enabled" />
         <el-input-number
+            v-if="enabled"
             :min="item.allowNegative ? undefined : 0"
             :precision="item.allowFloat ? 1 : undefined"
             v-model="_model"

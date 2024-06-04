@@ -3,9 +3,10 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vue-tsc && vite build && vite -c vite-app.config.ts build && cp ../../demo/supa-form/dist/index.js app-dist/pt-form.js",
-        "preview": "vite preview -c vite-app.config.ts",
+        "dev": "vite --port 5002",
+        "build": "vue-tsc && vite build && vite build",
+        "build:app": "vite -c vite-app.config.ts build",
+        "preview": "vite preview -c vite-app.config.ts --port 5003",
         "lint": "vue-tsc --noEmit"
     },
     "dependencies": {

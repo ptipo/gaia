@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import type { inferConfigItem } from '@gaia/configurator';
 import type { SelectItem } from '@gaia/configurator/items';
 import { computed, ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
+import type { CommonEvents, CommonProps } from './common';
 
-const props = defineProps<{
-    item: SelectItem;
-    model: inferConfigItem<SelectItem>;
-}>();
+const props = defineProps<CommonProps<SelectItem>>();
 
-defineEmits<{ (e: 'change', data: inferConfigItem<SelectItem>): void }>();
+const emit = defineEmits<CommonEvents<SelectItem>>();
 
 const _model = ref(props.model);
 
