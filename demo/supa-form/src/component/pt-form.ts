@@ -34,8 +34,14 @@ export class PtForm extends PtBaseShadow {
 
     render() {
         console.log(this.config);
-        const contentPages = this.config?.contentPages ?? [];
+        const contentPages = this.config?.contentPages;
+
+        if (!contentPages) {
+            return html``;
+        }
+
         const completePages = this.config?.completePages ?? [];
+
         const customCss = html`<style>
             h1 {
                 text-align: center;
@@ -46,8 +52,11 @@ export class PtForm extends PtBaseShadow {
 
         const isLastContentPage = this.pageIndex === contentPages.length - 1;
 
-        return html`${customCss} <h1>This is a From</h1>
-        
+        if (isCompletePage && completePages.length === 0) {
+            return html`<h1 class='flex justify-center items-center'>Thank you</h1> `;
+        }
+
+        return html`${customCss} <h1 class="mb-1 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">This is a Form</h1>
         <div>
            ${
                isCompletePage
@@ -101,6 +110,14 @@ export class PtForm extends PtBaseShadow {
     private onSubmit(e: Event) {
         this.pageIndex++;
         console.log(`submit form data ${JSON.stringify(this.formState)}`);
+
+        const options = {
+            detail: this.formState,
+            bubbles: true,
+            composed: true,
+        };
+
+        this.dispatchEvent(new CustomEvent('pt-form-submit', options));
     }
 }
 

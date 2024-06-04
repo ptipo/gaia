@@ -13,9 +13,15 @@
             }
         </style>
     </head>
+
     <body>
         <div id="app"></div>
     </body>
 
+    <script>
+        app.addEventListener("pt-form-submit", function(event) {
+          alert(JSON.stringify(event.detail));
+        });
+    </script>
     <script type="module" src="src/main.ts"></script>
 </html>
