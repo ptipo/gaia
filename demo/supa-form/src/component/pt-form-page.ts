@@ -15,11 +15,14 @@ class PtFormPage extends PtBase {
     render() {
         const pageItems = this.page!.pageItems ?? [];
 
-        return html` <h1 class='flex justify-center items-center bg-red-700'>${this.page?.name}</h1> 
+        return html`<h2 class="text-m font-extrabold dark:text-white">${this.page.name}</h2>
+
         ${pageItems.map((item) => {
             const tagName = getContentTypeComponent(item.$concept);
 
-            return html`<${unsafeStatic(tagName)} data=${JSON.stringify(item)} ></${unsafeStatic(tagName)}>`;
+            return html`<div class="mb-5"></div><${unsafeStatic(tagName)} data=${JSON.stringify(
+                item
+            )} ></${unsafeStatic(tagName)}></div>`;
         })}
         `;
     }
