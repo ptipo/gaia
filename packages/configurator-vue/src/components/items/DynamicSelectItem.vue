@@ -65,7 +65,7 @@ watch([rootModel], async () => {
     <el-form-item class="m-0">
         <ItemLabel :item="item" v-model="enabled" />
         <el-select
-            v-if="enabled"
+            v-if="!item.guarded || enabled"
             v-model="_model"
             placeholder="请选择"
             value-key="key"
