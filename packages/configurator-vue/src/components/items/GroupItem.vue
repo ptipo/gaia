@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import type { inferConfigItem } from '@gaia/configurator';
 import type { GroupItem } from '@gaia/configurator/items';
 import { computed, defineAsyncComponent } from 'vue';
 import type { EnterConceptData } from '../types';
+import type { CommonEvents, CommonProps } from './common';
 
-const props = defineProps<{
-    item: GroupItem;
-    model: inferConfigItem<GroupItem>;
-}>();
+const props = defineProps<CommonProps<GroupItem>>();
 
-const emit = defineEmits<{
-    (e: 'change', data: inferConfigItem<GroupItem>): void;
-    (e: 'enter', data: EnterConceptData): void;
-}>();
+const emit = defineEmits<
+    CommonEvents<GroupItem> & {
+        (e: 'enter', data: EnterConceptData): void;
+    }
+>();
 
 const childComponents = computed(() => {
     return Object.entries(props.item.items).reduce((acc, [key, value]) => {

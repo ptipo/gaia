@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { inferConfigItem } from '@gaia/configurator';
 import { ImageItem } from '@gaia/configurator/items';
 import { UploadFile, UploadRawFile } from 'element-plus';
 import { ref } from 'vue';
+import type { CommonEvents, CommonProps } from './common';
 
-const props = defineProps<{
-    item: ImageItem;
-    model: inferConfigItem<ImageItem>;
-}>();
+const props = defineProps<CommonProps<ImageItem>>();
 
-const emit = defineEmits<{
-    (e: 'change', data: inferConfigItem<ImageItem>): void;
-}>();
+const emit = defineEmits<CommonEvents<ImageItem>>();
 
-const imageUrl = ref(props.model.url ?? '');
+const imageUrl = ref(props.model?.url ?? '');
 
 const onUploadSuccess = (_resp: any, _file: UploadFile) => {
     // TODO: real upload

@@ -49,7 +49,7 @@ const childComponents = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-6 py-4">
+    <div class="flex flex-col gap-4 py-4">
         <component
             v-for="[key, item] in visibleItems"
             :key="key"

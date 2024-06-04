@@ -21,7 +21,7 @@ export const QAQuestion = defineConcept({
         placeholder: {
             type: 'text',
             guarded: true,
-            name: '提示语（Placeholder）',
+            name: '提示语',
             help: 'Placeholder，帮助用户简单理解操作要求或呼吁用户行动',
             groupKey: 'answer',
         },
