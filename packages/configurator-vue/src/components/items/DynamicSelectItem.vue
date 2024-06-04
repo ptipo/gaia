@@ -13,6 +13,7 @@ import type {
 import { inject, onMounted, ref, watch, type Ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
+import { useGuard } from './guard';
 
 const props = defineProps<
     CommonProps<DynamicSelectItem<any>> & {
@@ -29,6 +30,10 @@ const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
 const options = ref<DynamicSelectOption<any>[]>([]);
+
+const { enabled } = useGuard(props.model !== undefined, {
+    onSetOff: () => emit('change', undefined),
+});
 
 const fillOptions = async () => {
     // call provider to fill in options
@@ -58,8 +63,9 @@ watch([rootModel], async () => {
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" />
+        <ItemLabel :item="item" v-model="enabled" />
         <el-select
+            v-if="enabled"
             v-model="_model"
             placeholder="请选择"
             value-key="key"
