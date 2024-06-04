@@ -17,9 +17,33 @@ const emit = defineEmits<{
 
 const currentAspect = inject<Ref<string>>(CURRENT_ASPECT);
 
-// filter items that are visible in the current aspect
-const visibleItems = computed(() => {
+// get groups and items belonging to the current aspect
+const groups = computed(() => {
+    if (!props.concept.groups) {
+        return [{ key: undefined, name: '', items: getGroupItems(undefined) }];
+    }
+
+    const result: Array<{
+        key: string | undefined;
+        name: string;
+        items: ReturnType<typeof getGroupItems>;
+    }> = Object.entries(props.concept.groups)
+        .filter(([_, value]) => value.aspect === currentAspect?.value)
+        .map(([key, value]) => ({
+            key,
+            name: value.name,
+            items: getGroupItems(key),
+        }));
+
+    // collect ungrouped items
+    result.push({ key: undefined, name: '', items: getGroupItems(undefined) });
+
+    return result.filter((group) => group.items.length > 0);
+});
+
+const getGroupItems = (groupKey: string | undefined) => {
     return Object.entries(props.concept.items).filter(([_, item]) => {
+        // ungrouped items are thrown into "content" aspect
         let itemAspect = 'content';
         if (item.groupKey) {
             const group = props.concept.groups?.[item.groupKey];
@@ -27,9 +51,11 @@ const visibleItems = computed(() => {
                 itemAspect = group.aspect;
             }
         }
-        return itemAspect === currentAspect?.value;
+        return (
+            item.groupKey === groupKey && itemAspect === currentAspect?.value
+        );
     });
-});
+};
 
 const onChange = (key: string, data: unknown) => {
     const nextModel = { ...props.model, [key]: data };
@@ -49,16 +75,24 @@ const childComponents = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 py-4">
-        <component
-            v-for="[key, item] in visibleItems"
-            :key="key"
-            :is="childComponents[key]"
-            :item="item"
-            :model="model[key]"
-            :parentModel="model"
-            @change="(data: unknown) => onChange(key, data)"
-            @enter="(data: EnterConceptData) => onEnter(key, data)"
-        ></component>
+    <div class="flex flex-col gap-4">
+        <div v-for="(group, index) in groups">
+            <div v-if="group.items.length > 0">
+                <el-divider v-if="index > 0" class="mt-1 mb-4" />
+                <div class="text-gray-500 mb-4">{{ group.name }}</div>
+                <div class="flex flex-col gap-4">
+                    <component
+                        v-for="[key, item] in group.items"
+                        :key="key"
+                        :is="childComponents[key]"
+                        :item="item"
+                        :model="model[key]"
+                        :parentModel="model"
+                        @change="(data: unknown) => onChange(key, data)"
+                        @enter="(data: EnterConceptData) => onEnter(key, data)"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
 </template>

@@ -72,7 +72,7 @@ const goBack = () => {
 </script>
 
 <template>
-    <el-page-header v-if="previousConcept" @back="goBack">
+    <el-page-header v-if="previousConcept" @back="goBack" class="mb-4">
         <template #title>{{ previousConcept.displayName }}</template>
     </el-page-header>
     <ConceptConfigurator
