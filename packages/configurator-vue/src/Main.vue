@@ -26,10 +26,10 @@ function onClick() {
 }
 
 onMounted(async () => {
-    // @ts-ignore
-    const appModule: any = await import(
-        '../../../demo/supa-form/dist/index.js'
-    );
+    // // @ts-ignore
+    // const appModule: any = await import(
+    //     '../../../demo/supa-form/dist/index.js'
+    // );
     document.addEventListener('pt-form-submit', function (event: any) {
         alert(`form submit data:${JSON.stringify(event.detail, null, 2)}`);
     });
