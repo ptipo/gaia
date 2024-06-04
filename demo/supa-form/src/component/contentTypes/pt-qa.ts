@@ -3,11 +3,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData } from '../pt-base';
 import { BasicData } from '..';
 import { formState, stateData } from '../../state';
+import { AllPageItemsTypesMap } from '../../config/page-items';
 
 @customElement('pt-qa')
 class PtQA extends PtBaseData {
     @property({ type: Object })
-    data?: QAQuestion;
+    data?: AllPageItemsTypesMap['QAQuestion'];
 
     @property()
     value?: string;
