@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 import Configurator from './components/App.vue';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
