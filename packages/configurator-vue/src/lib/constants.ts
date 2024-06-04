@@ -11,4 +11,9 @@ export const ROOT_MODEL_KEY = 'rootModel';
 /**
  * For providing the current aspect to the configurator tree.
  */
-export const CURRENT_ASPECT = 'currentAspect';
+export const CURRENT_ASPECT_KEY = 'currentAspect';
+
+/**
+ * Default aspect for a group if not set.
+ */
+export const DEFAULT_ASPECT = 'content';

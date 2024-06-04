@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import { CURRENT_ASPECT } from '@/lib/constants';
+import { CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
 import type { BaseConceptModel, Concept } from '@gaia/configurator';
 import { computed, defineAsyncComponent, inject, type Ref } from 'vue';
 import { EnterConceptData } from './types';
@@ -15,7 +15,7 @@ const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
 }>();
 
-const currentAspect = inject<Ref<string>>(CURRENT_ASPECT);
+const currentAspect = inject<Ref<string>>(CURRENT_ASPECT_KEY);
 
 // get groups and items belonging to the current aspect
 const groups = computed(() => {
@@ -28,7 +28,11 @@ const groups = computed(() => {
         name: string;
         items: ReturnType<typeof getGroupItems>;
     }> = Object.entries(props.concept.groups)
-        .filter(([_, value]) => value.aspect === currentAspect?.value)
+        .filter(
+            ([_, value]) =>
+                value.aspect === currentAspect?.value ||
+                (!value.aspect && currentAspect?.value === DEFAULT_ASPECT)
+        )
         .map(([key, value]) => ({
             key,
             name: value.name,
@@ -44,7 +48,7 @@ const groups = computed(() => {
 const getGroupItems = (groupKey: string | undefined) => {
     return Object.entries(props.concept.items).filter(([_, item]) => {
         // ungrouped items are thrown into "content" aspect
-        let itemAspect = 'content';
+        let itemAspect = DEFAULT_ASPECT;
         if (item.groupKey) {
             const group = props.concept.groups?.[item.groupKey];
             if (group?.aspect) {
