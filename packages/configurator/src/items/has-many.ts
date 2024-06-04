@@ -8,8 +8,7 @@ import { ConfigItemBase } from './common';
  * An item that manages multiple instances of `Concept` from
  * a given list of candidates.
  */
-export interface HasManyItem<TCandidate extends Concept = Concept>
-    extends ConfigItemBase {
+export interface HasManyItem<TCandidate extends Concept = Concept> extends ConfigItemBase {
     type: 'has-many';
 
     /**
@@ -23,25 +22,14 @@ export interface HasManyItem<TCandidate extends Concept = Concept>
     inline?: boolean;
 
     /**
-     * Callback for providing an initial list of concept instances
-     */
-    initialItemsProvider?: () => object[];
-
-    /**
      * Callback for creating a new concept instance
      */
-    newItemProvider?: (
-        concept: Concept,
-        context: ProviderContext
-    ) => BaseConceptModel;
+    newItemProvider?: (concept: Concept, context: ProviderContext) => BaseConceptModel;
 
     /**
      * Callback for handling model changes of a child item
      */
-    onChildChange?: (
-        changedItem: BaseConceptModel,
-        currentModel: BaseConceptModel[]
-    ) => void;
+    onChildChange?: (changedItem: BaseConceptModel, currentModel: BaseConceptModel[]) => void;
 }
 
 export const getSchema = (item: ConfigItemBase) => {
@@ -50,9 +38,7 @@ export const getSchema = (item: ConfigItemBase) => {
         return z.never();
     }
 
-    const candidates = myItem.candidates.map((concept) =>
-        getConceptSchema(concept)
-    );
+    const candidates = myItem.candidates.map((concept) => getConceptSchema(concept));
     return z.array(
         candidates.length > 1
             ? z.union(

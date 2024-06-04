@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import type {
-    AppInstance,
-    BaseConceptModel,
-    Concept,
-    ConfigItem,
-} from '@gaia/configurator';
+import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
 import { Ref, computed, inject, ref } from 'vue';
 import { EnterConceptData } from '../types';
@@ -27,8 +22,29 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
+    /**
+     * Emitted when the model is changed
+     */
     (e: 'change', data: BaseConceptModel): void;
+
+    /**
+     * Emitted when a sibling is added
+     */
+    (e: 'addSibling', data: { concept: Concept; model: BaseConceptModel }): void;
+
+    /**
+     * Emitted when an element is cloned
+     */
+    (e: 'clone', data: { concept: Concept; model: BaseConceptModel }): void;
+
+    /**
+     * Emitted when an element is deleted
+     */
     (e: 'delete', data: { concept: Concept; model: BaseConceptModel }): void;
+
+    /**
+     * Emitted when entering editing of a nested concept
+     */
     (e: 'enter', data: EnterConceptData): void;
 }>();
 
@@ -59,9 +75,7 @@ const inlineEditableItems = computed(() => {
 
 // find the first has-many child item (for inline-listing)
 const nestedHasMany = computed(() => {
-    const found = Object.entries(props.concept.items).find(
-        ([_, item]) => item.type === 'has-many'
-    );
+    const found = Object.entries(props.concept.items).find(([_, item]) => item.type === 'has-many');
     if (!found) {
         return undefined;
     }
@@ -128,11 +142,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
 </script>
 
 <template>
-    <div
-        class="flex justify-between"
-        :class="{ 'cursor-pointer': !inlineEditing }"
-        @click="onEditNested"
-    >
+    <div class="flex justify-between" :class="{ 'cursor-pointer': !inlineEditing }" @click="onEditNested">
         <div>
             {{ elementSummary }}
         </div>
@@ -143,30 +153,24 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
             <template #dropdown>
                 <el-dropdown-menu>
                     <div v-if="inlineEditing">
-                        <el-dropdown-item
-                            v-for="{ key, item } in inlineEditableItems"
-                            @click="onEdit(key, item)"
-                            ><el-icon><i-ep-edit /></el-icon>
-                            {{ item.name }}</el-dropdown-item
-                        >
-                        <el-dropdown-item
-                            divided
-                            @click="$emit('delete', { concept, model })"
-                            ><el-icon><i-ep-delete /></el-icon
-                            >删除</el-dropdown-item
+                        <el-dropdown-item v-for="{ key, item } in inlineEditableItems" @click="onEdit(key, item)"
+                            ><el-icon><i-ep-edit /></el-icon> {{ item.name }}</el-dropdown-item
                         >
                     </div>
                     <div v-else>
                         <el-dropdown-item @click="onEditNested"
-                            ><el-icon><i-ep-edit /></el-icon>
-                            设置</el-dropdown-item
-                        >
-                        <el-dropdown-item
-                            @click="$emit('delete', { model, concept })"
-                            ><el-icon><i-ep-delete /></el-icon
-                            >删除</el-dropdown-item
+                            ><el-icon><i-ep-edit /></el-icon> 设置</el-dropdown-item
                         >
                     </div>
+                    <el-dropdown-item divided @click="$emit('addSibling', { concept, model })"
+                        ><el-icon><i-ep-plus /></el-icon>在下方添加{{ concept.displayName }}</el-dropdown-item
+                    >
+                    <el-dropdown-item divided @click="$emit('clone', { concept, model })"
+                        ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
+                    >
+                    <el-dropdown-item @click="$emit('delete', { concept, model })"
+                        ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
+                    >
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -184,12 +188,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
     </div>
 
     <!-- inline-editing dialog -->
-    <el-dialog
-        v-model="showEditDialog"
-        v-if="currentEditItem"
-        :title="`修改${currentEditItem.item.name}`"
-        width="500"
-    >
+    <el-dialog v-model="showEditDialog" v-if="currentEditItem" :title="`修改${currentEditItem.item.name}`" width="500">
         <component
             :is="getItemComponent(currentEditItem.item)"
             :item="currentEditItem.item"

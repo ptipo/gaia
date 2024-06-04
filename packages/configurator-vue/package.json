@@ -16,7 +16,8 @@
         "deepcopy": "^2.1.0",
         "element-plus": "^2.7.3",
         "ts-pattern": "^5.1.1",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "vuedraggable": "^4.1.0"
     },
     "devDependencies": {
         "@iconify-json/ep": "^1.1.15",
