@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "pnpm run -r build && pnpm run -r build:app",
+        "build": "pnpm run -r build",
         "watch": "pnpm run -r --parallel watch",
         "lint": "pnpm run -r lint",
         "test": "pnpm run -r test"
