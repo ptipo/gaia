@@ -55,17 +55,12 @@ const onAddCondition = () => {
     if (_model.value.length === 0) {
         _model.value = [{ $id: createId() }];
     } else {
-        _model.value = [
-            ..._model.value,
-            { $id: createId(), groupOperator: 'and' },
-        ];
+        _model.value = [..._model.value, { $id: createId(), groupOperator: 'and' }];
     }
 };
 
 const onElementChange = (data: Omit<ModelType[number], '$id'>, id: string) => {
-    const newData = _model.value.map((item) =>
-        item.$id === id ? { ...data, $id: id } : item
-    );
+    const newData = _model.value.map((item) => (item.$id === id ? { ...data, $id: id } : item));
     _model.value = newData;
     emitChange();
 };
@@ -124,7 +119,7 @@ const emitChange = () => {
 <template>
     <div>
         <ItemLabel :item="item" />
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 mt-2">
             <LogicalGroupElement
                 v-for="row in _model"
                 :item="props.item"
@@ -134,9 +129,7 @@ const emitChange = () => {
                 @change="(data) => onElementChange(data, row.$id)"
                 @delete="() => onElementDelete(row.$id)"
             />
-            <el-button link @click="onAddCondition" class="self-start"
-                >+ 添加条件</el-button
-            >
+            <el-button link @click="onAddCondition" class="self-start">+ 添加条件</el-button>
         </div>
     </div>
 </template>

@@ -6,10 +6,7 @@ import {
     inferConcept,
     type BaseConceptModel,
 } from '@gaia/configurator';
-import {
-    LogicalLeftOperandCandidates,
-    LogicalRightOperandCandidates,
-} from '@gaia/configurator/items';
+import { LogicalLeftOperandCandidates, LogicalRightOperandCandidates } from '@gaia/configurator/items';
 import { P, match } from 'ts-pattern';
 import { ChoiceQuestion } from '../page-items';
 import { ContentPage } from './content-page';
@@ -50,33 +47,27 @@ export const ConditionalAction = defineConcept({
 });
 
 // 计算左端运算数
-function provideLeftOperand({
-    rootModel,
-}: ProviderContext): LogicalLeftOperandCandidates {
+function provideLeftOperand({ rootModel }: ProviderContext): LogicalLeftOperandCandidates {
     const items: LogicalLeftOperandCandidates = [];
 
-    (rootModel.contentPages as inferConcept<typeof ContentPage>[]).forEach(
-        (page) => {
-            // 获得所有问题
-            const questions = page.pageItems.filter((item: any) =>
-                ['QAQuestion', 'ChoiceQuestion', 'EmailQuestion'].includes(
-                    item.$concept
-                )
-            );
+    (rootModel.contentPages as inferConcept<typeof ContentPage>[]).forEach((page) => {
+        // 获得所有问题
+        const questions = page.pageItems.filter((item: any) =>
+            ['QAQuestion', 'ChoiceQuestion', 'EmailQuestion'].includes(item.$concept)
+        );
 
-            // 生成以页面为分组的选项
-            items.push(
-                ...questions.map((question: any) => {
-                    return {
-                        key: question.$id,
-                        label: question.name,
-                        value: createRef(question),
-                        group: page.name,
-                    };
-                })
-            );
-        }
-    );
+        // 生成以页面为分组的选项
+        items.push(
+            ...questions.map((question: any) => {
+                return {
+                    key: question.$id,
+                    label: question.name,
+                    value: createRef(question),
+                    group: page.name,
+                };
+            })
+        );
+    });
 
     return items;
 }
@@ -130,25 +121,19 @@ function provideRightOperand(
     const questionRef = leftOperandValue;
     let choices: BaseConceptModel[] = [];
     if (questionRef.$concept === 'ChoiceQuestion') {
-        const choiceQuestion =
-            context.app.resolveConcept<typeof ChoiceQuestion>(questionRef);
+        const choiceQuestion = context.app.resolveConcept<typeof ChoiceQuestion>(questionRef);
         if (choiceQuestion) {
-            choices =
-                choiceQuestion?.textChoices ??
-                choiceQuestion?.imageChoices ??
-                [];
+            choices = choiceQuestion?.textChoices ?? choiceQuestion?.imageChoices ?? [];
         }
     }
 
     const getChoiceLabel = (choice: BaseConceptModel) => {
-        return choice.$concept === 'TextChoice'
-            ? (choice.value as string)
-            : (choice.name as string);
+        return choice.$concept === 'TextChoice' ? (choice.value as string) : (choice.name as string);
     };
 
     return match(operator)
         .with(
-            P.union('selected', 'notSelected', 'selectedOne'),
+            P.union('selected', 'notSelected'),
             () =>
                 ({
                     kind: 'select',
@@ -160,7 +145,7 @@ function provideRightOperand(
                 } as const)
         )
         .with(
-            P.union('selectedAll', 'notSelectedAll', 'notSelectedAny'),
+            P.union('selectedAll', 'notSelectedAll', 'notSelectedAny', 'selectedOne'),
             () =>
                 ({
                     kind: 'select',
@@ -172,9 +157,6 @@ function provideRightOperand(
                     })),
                 } as const)
         )
-        .with(
-            P.union('contains', 'notContains'),
-            () => ({ kind: 'input' } as const)
-        )
+        .with(P.union('contains', 'notContains'), () => ({ kind: 'input' } as const))
         .otherwise(() => ({ kind: 'none' } as const));
 }
