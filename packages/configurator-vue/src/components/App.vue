@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_ASPECT_KEY, DEFAULT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept } from '@gaia/configurator';
-import { provide, ref, watch, getCurrentInstance } from 'vue';
+import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
 
 const activeAspect = ref(DEFAULT_ASPECT);

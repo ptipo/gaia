@@ -98,7 +98,7 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Serializes the model to a string.
      */
-    stringifyModel(model: inferPartialConcept<TConcept>) {
+    stringifyModel(model: BaseConceptModel) {
         return JSON.stringify({
             model,
         });
