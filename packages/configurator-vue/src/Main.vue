@@ -12,7 +12,7 @@ const app = createAppInstance(FormApp);
 const model = ref<BaseConceptModel>(app.model);
 
 const onAppChange = (data: BaseConceptModel) => {
-    app.model = data;
+    app.model = data as typeof app.model;
     model.value = data;
 };
 
