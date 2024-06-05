@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import Configurator from './components/App.vue';
+import { config as FormApp } from '@gaia/samples/form';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
-import { config as FormApp } from '@gaia/samples/form';
 
 const app = createAppInstance(FormApp);
 const model = ref<BaseConceptModel>(app.model);
+
+const onAppChange = (data: BaseConceptModel) => {
+    model.value = data;
+};
 </script>
 
 <template>
