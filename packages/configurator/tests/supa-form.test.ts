@@ -1,23 +1,15 @@
-import {
-    NonPrimitiveTypes,
-    createAppInstance,
-    createRef,
-} from '@gaia/configurator';
+import { NonPrimitiveTypes, createAppInstance, createRef } from '@gaia/configurator';
 import { describe } from '@jest/globals';
 import { inspect } from 'util';
-import { FormApp } from './config/supa-form';
-import {
-    ChoiceQuestion,
-    QAQuestion,
-    TextElement,
-} from './config/supa-form/page-items';
-import { TextChoice } from './config/supa-form/page-items/question/text-choice';
-import { CompletePage } from './config/supa-form/page/complete-page';
-import { ContentPage } from './config/supa-form/page/content-page';
+import { config } from './app-config/form';
+import { ChoiceQuestion, QAQuestion, TextElement } from './app-config/form/page-items';
+import { TextChoice } from './app-config/form/page-items/question/text-choice';
+import { CompletePage } from './app-config/form/page/complete-page';
+import { ContentPage } from './app-config/form/page/content-page';
 
-describe('supa-form sample app', () => {
+describe('form sample app', () => {
     it('can create an empty model', () => {
-        const app = createAppInstance(FormApp);
+        const app = createAppInstance(config);
         const model = app.model;
 
         // common fields
@@ -38,7 +30,7 @@ describe('supa-form sample app', () => {
     });
 
     it('can serialize and deserialize model', () => {
-        const app = createAppInstance(FormApp);
+        const app = createAppInstance(config);
         const model = app.model;
         model.nextButtonText = 'Next';
 
@@ -108,7 +100,7 @@ describe('supa-form sample app', () => {
         const serialized = app.stringifyModel(model);
         console.log(serialized);
 
-        const newApp = createAppInstance(FormApp);
+        const newApp = createAppInstance(config);
         newApp.loadModel(serialized);
         console.log(inspect(newApp.model, false, 10));
         expect(newApp.model).toEqual(model);
