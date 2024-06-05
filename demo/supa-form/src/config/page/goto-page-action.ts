@@ -25,8 +25,7 @@ export const GoToPageAction = defineConcept({
     summary: ({ app, currentModel }) => {
         let pageName = '未设置';
         if (currentModel) {
-            const pageRef: ConceptRef = currentModel.goToPage;
-            const page = app.resolveConcept(pageRef);
+            const page = currentModel.goToPage && app.resolveConcept(currentModel.goToPage);
             if (page) {
                 pageName = page.name;
             }
