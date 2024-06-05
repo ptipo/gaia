@@ -5,8 +5,10 @@ import './pt-form-page';
 import './pt-form-complete-page';
 import { PtBaseShadow } from './pt-base';
 import { provide } from '@lit/context';
-import { formState, stateData } from '../state';
+import { formState, answerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
+import { validateLogic } from '../util/logic-resolver';
+import { ConceptRef } from '@gaia/configurator';
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
@@ -26,18 +28,25 @@ export class PtForm extends PtBaseShadow {
     config?: typeof app.model;
 
     @state()
-    private pageIndex = 0;
+    private pageId: string = '';
 
     @provide({ context: formState })
     @state()
-    formState: stateData = {};
+    formState: answerData = {};
+
+    private pageIdStack: string[] = [];
 
     render() {
         console.log(this.config);
+
         const contentPages = this.config?.contentPages;
 
-        if (!contentPages) {
+        if (!contentPages?.length) {
             return html``;
+        }
+
+        if (!this.pageId) {
+            this.pageId = contentPages[0].$id;
         }
 
         const completePages = this.config?.completePages ?? [];
@@ -48,67 +57,27 @@ export class PtForm extends PtBaseShadow {
             }
         </style>`;
 
-        const isCompletePage = this.pageIndex >= contentPages.length;
+        const currentPage = contentPages.find((x) => x.$id === this.pageId);
 
-        const isLastContentPage = this.pageIndex === contentPages.length - 1;
-
-        if (isCompletePage && completePages.length === 0) {
-            return html`<h1 class='flex justify-center items-center'>Thank you</h1> `;
-        }
-
-        return html`${customCss} <h1 class="mb-1 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">This is a Form</h1>
-        <div>
-           ${
-               isCompletePage
-                   ? html`<pt-form-complete-page  .page=${
-                         completePages[this.pageIndex - contentPages.length]
-                     } ></pt-form-complete-page>`
-                   : keyed(
-                         contentPages[this.pageIndex].$id,
-                         html`<pt-form-page .page=${contentPages[this.pageIndex]} ></pt-form-page>`
-                     )
-           } 
-        </div>
-
-        ${
-            !isCompletePage
-                ? html`
-                <div class='flex justify-center items-center '>
-                <button class='py-2 px-4' type='button' @click=${() => {
-                    if (this.pageIndex > 0) this.pageIndex--;
-                }} >
-                    Pre
-                </button>
-                ${
-                    isLastContentPage
-                        ? html`
-                <button
-                    type="button" class='py-2 px-4'
-                    @click=${this.onSubmit}
+        if (currentPage) {
+            return html`<h1
+                    class="mb-1 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white"
                 >
-                    Submit
-                </button>
-                        `
-                        : html`
-                    <button
-                    type="button" class='py-2 px-4'
-                    @click=${() => {
-                        this.pageIndex++;
-                    }}
-                >
-                    Next
-                </button>
-                 `
-                }
-                </div>
-           `
-                : ''
+                    This is a Form
+                </h1>
+                <div>${keyed(this.pageId, html`<pt-form-page .page=${currentPage}></pt-form-page>`)}</div>
+                <div class="flex justify-center items-center ">
+                    <button class="py-2 px-4" type="button" @click=${this.prePage}>Pre</button>
+
+                    <button type="button" class="py-2 px-4" @click=${this.nextPage}>Next</button>
+                </div>`;
+        } else {
+            const completePage = completePages.find((x) => x.$id == this.pageId);
+            return html`<pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
         }
-        `;
     }
 
     private onSubmit(e: Event) {
-        this.pageIndex++;
         console.log(`submit form data ${JSON.stringify(this.formState)}`);
 
         const options = {
@@ -118,6 +87,44 @@ export class PtForm extends PtBaseShadow {
         };
 
         this.dispatchEvent(new CustomEvent('pt-form-submit', options));
+    }
+
+    private prePage() {
+        if (this.pageIdStack.length) {
+            this.pageId = this.pageIdStack.pop()!;
+        }
+    }
+
+    private nextPage() {
+        this.pageIdStack.push(this.pageId);
+        const contentPages = this.config?.contentPages!;
+        const currentPage = contentPages.find((x) => x.$id == this.pageId);
+        const nextButton = currentPage?.nextButton!;
+
+        const nextAction = nextButton.action;
+
+        if (nextAction == 'conditional') {
+            const satisfiedCondition = nextButton.conditionalAction?.find((x) =>
+                validateLogic(this.config!, x.condition!, this.formState)
+            );
+            if (satisfiedCondition) {
+                const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
+                this.pageId = targePage;
+                return;
+            }
+        } else if (nextAction == 'goToPage') {
+            const targePage = (nextButton.targetPage as ConceptRef).$id;
+            this.pageId = targePage;
+            return;
+        }
+
+        const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
+
+        if (currentPageIndex < contentPages.length - 1) {
+            this.pageId = contentPages[currentPageIndex + 1].$id;
+        } else {
+            this.pageId = this.config?.completePages[0].$id!;
+        }
     }
 }
 

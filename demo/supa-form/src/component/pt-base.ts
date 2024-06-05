@@ -1,9 +1,8 @@
 import { LitElement, css, unsafeCSS } from 'lit';
 import globalStyles from '../global.css?inline';
 import { consume } from '@lit/context';
-import { formState, stateData } from '../state';
+import { formState, answerData } from '../state';
 import { property } from 'lit/decorators.js';
-import { BasicData } from '.';
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 
@@ -22,7 +21,7 @@ const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom
 
 class DataBase extends LitElement {
     @property({ type: Object })
-    data?: BasicData;
+    data?: { $id: string };
 
     @property()
     value?: any;
@@ -37,7 +36,7 @@ class DataBase extends LitElement {
     }
 
     @consume({ context: formState })
-    formState: stateData = {};
+    formState: answerData = {};
 }
 
 export const PtBase = BaseMixin(LitElement, false);
