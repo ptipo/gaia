@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import {
-    AppInstance,
-    Concept,
-    type BaseConceptModel,
-} from '@gaia/configurator';
+import { AppInstance, Concept, type BaseConceptModel } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
 import { createId } from '@paralleldrive/cuid2';
 import deepcopy from 'deepcopy';
@@ -60,10 +56,7 @@ const onCreate = (candidate: Concept) => {
     emit('change', nextModel);
 
     if (!props.item.inline) {
-        onEnterConcept(
-            { concept: candidate, model: newItem, parentKey: [] },
-            currentItemCount
-        );
+        onEnterConcept({ concept: candidate, model: newItem, parentKey: [] }, currentItemCount);
     }
 };
 
@@ -73,10 +66,7 @@ const createItem = (concept: Concept) => {
         currentModel: props.model,
         rootModel: rootModel?.value,
     };
-    return (
-        props.item.newItemProvider?.(concept, context) ??
-        app!.createConceptInstance(concept)
-    );
+    return props.item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
 };
 
 const findConcept = (name: string) => {
@@ -101,11 +91,7 @@ const onAddSibling = (index: number) => {
     }
 
     const newItem = createItem(concept);
-    const nextModel = [
-        ...props.model.slice(0, index + 1),
-        newItem,
-        ...props.model.slice(index + 1),
-    ];
+    const nextModel = [...props.model.slice(0, index + 1), newItem, ...props.model.slice(index + 1)];
     emit('change', nextModel);
 };
 
@@ -132,15 +118,10 @@ const onDeleteElement = async (index: number) => {
     }
     if (
         await confirmDelete(
-            typeof elementModel.name === 'string' && elementModel.name
-                ? elementModel.name
-                : elementConcept.displayName
+            typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName
         )
     ) {
-        const nextModel = [
-            ...props.model.slice(0, index),
-            ...props.model.slice(index + 1),
-        ];
+        const nextModel = [...props.model.slice(0, index), ...props.model.slice(index + 1)];
         emit('change', nextModel);
     }
 };
@@ -156,17 +137,9 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
         <div v-if="!inline" class="mb-2">{{ item.name }}</div>
 
         <!-- draggable element list -->
-        <draggable
-            class="flex flex-col gap-2"
-            v-model="draggableState"
-            item-key="$id"
-            @end="onDragEnd"
-        >
+        <draggable class="flex flex-col gap-2" v-model="draggableState" item-key="$id" @end="onDragEnd">
             <template #item="{ element, index }">
-                <div
-                    :class="{ 'border rounded p-3': !inline }"
-                    class="flex items-center w-full"
-                >
+                <div :class="{ 'border rounded p-3': !inline }" class="flex items-center w-full">
                     <div class="flex-grow">
                         <ConceptElement
                             v-if="findConcept(element.$concept)"
@@ -174,6 +147,7 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
                             :key="element.$id"
                             :model="element"
                             :inlineEditing="item.inline"
+                            :allowDelete="props.model.length > 1"
                             @addSibling="() => onAddSibling(index)"
                             @clone="() => onCloneElement(index)"
                             @delete="() => onDeleteElement(index)"
@@ -190,21 +164,18 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
             <el-button
                 v-if="item.candidates.length === 1"
                 link
+                type="info"
                 class="self-start"
                 @click="() => onCreate(item.candidates[0])"
                 >+ 添加{{ item.name }}</el-button
             >
             <el-dropdown v-else>
-                <el-button link class="self-start"
-                    >+ 添加{{ item.name }}</el-button
-                >
+                <el-button link type="info" class="self-start">+ 添加{{ item.name }}</el-button>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item
-                            v-for="candidate in item.candidates"
-                            @click="() => onCreate(candidate)"
-                            >{{ candidate.displayName }}</el-dropdown-item
-                        >
+                        <el-dropdown-item v-for="candidate in item.candidates" @click="() => onCreate(candidate)">{{
+                            candidate.displayName
+                        }}</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
