@@ -47,6 +47,7 @@
         "vite": "^5.2.0",
         "vite-plugin-filter-replace": "^0.1.13",
         "vue-tsc": "^2.0.6",
-        "vue3-json-viewer": "^2.2.2"
+        "vue3-json-viewer": "^2.2.2",
+        "@gaia/samples": "workspace:*"
     }
 }

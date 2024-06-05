@@ -1,0 +1,20 @@
+{
+    "name": "@gaia/samples",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "exports": {
+        "./form": "./dist/form/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc --watch"
+    },
+    "dependencies": {
+        "@gaia/configurator": "workspace:*",
+        "ts-pattern": "^5.1.1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
