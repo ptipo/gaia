@@ -1,7 +1,7 @@
 import { createContext } from '@lit/context';
 
-export type stateData = {
+export type answerData = {
     [key: string]: any;
 };
 
-export const formState = createContext<stateData>(Symbol('form-state'));
+export const formState = createContext<answerData>(Symbol('form-state'));
