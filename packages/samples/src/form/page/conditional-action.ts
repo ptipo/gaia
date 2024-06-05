@@ -39,6 +39,7 @@ export const ConditionalAction = defineConcept({
             child: {
                 type: 'has-many',
                 name: '动作',
+                inline: true,
                 help: '当条件为真时执行的动作。',
                 candidates: [GoToPageAction],
             },
