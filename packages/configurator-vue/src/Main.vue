@@ -12,15 +12,16 @@ const app = createAppInstance(FormApp);
 const model = ref<BaseConceptModel>(app.model);
 
 const onAppChange = (data: BaseConceptModel) => {
+    app.model = data;
     model.value = data;
 };
 
 const onSave = () => {
     localStorage.setItem('gaia-app-config', app.stringifyModel(model.value));
     ElNotification({
-        title: 'Success',
-        message: 'Configuration saved',
+        title: 'Configuration saved',
         type: 'success',
+        duration: 2000,
     });
 };
 
@@ -29,15 +30,15 @@ const onLoad = () => {
     if (data) {
         model.value = app.loadModel(data);
         ElNotification({
-            title: 'Success',
-            message: 'Configuration loaded',
+            title: 'Configuration loaded',
             type: 'success',
+            duration: 2000,
         });
     } else {
         ElNotification({
-            title: 'Error',
-            message: 'No configuration found',
+            title: 'No configuration found',
             type: 'error',
+            duration: 2000,
         });
     }
 };
