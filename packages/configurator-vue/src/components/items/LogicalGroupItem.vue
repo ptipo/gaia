@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 import LogicalGroupElement from './logical-group/LogicalGroupElement.vue';
+import { composeLogicalGroupData } from '@/lib/logical-group-utils';
 
 type ModelType = Array<{
     $id: string;
@@ -76,38 +77,7 @@ const emitChange = () => {
         return;
     }
 
-    let groupData: inferConfigItem<LogicalGroupItem> | undefined = undefined;
-
-    for (let i = 0; i < _model.value.length; i++) {
-        const row = _model.value[i];
-        if (!row.left || !row.operator) {
-            groupData = undefined;
-            break;
-        }
-
-        if (i !== 0 && !row.groupOperator) {
-            groupData = undefined;
-            break;
-        }
-
-        if (i === 0) {
-            groupData = {
-                left: row.left,
-                operator: row.operator,
-                right: row.right,
-            };
-        } else {
-            groupData = {
-                groupOperator: row.groupOperator!,
-                first: groupData!,
-                second: {
-                    left: row.left,
-                    operator: row.operator,
-                    right: row.right,
-                },
-            };
-        }
-    }
+    const groupData = composeLogicalGroupData(_model.value);
 
     if (groupData) {
         console.log('LogicalGroupItem ready, emitting change:', groupData);

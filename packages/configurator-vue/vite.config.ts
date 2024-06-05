@@ -10,13 +10,7 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        vue({
-            template: {
-                compilerOptions: {
-                    isCustomElement: (tag) => ['pt-form'].includes(tag),
-                },
-            },
-        }),
+        vue(),
         AutoImport({
             resolvers: [
                 // ElementPlusResolver(),
@@ -47,8 +41,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
-            name: 'AppSettingsPanel',
-            format: ['es'],
+            name: 'AppConfigurator',
             fileName: 'index',
         },
         rollupOptions: {

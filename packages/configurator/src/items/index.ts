@@ -41,6 +41,7 @@ export { IfItem } from './if';
 export { ImageInfo, ImageItem } from './image';
 export {
     LogicalGroup,
+    LogicalGroupAssociation,
     LogicalGroupItem,
     LogicalLeftOperandCandidates,
     LogicalOperator,

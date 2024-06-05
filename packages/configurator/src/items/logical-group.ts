@@ -43,9 +43,7 @@ export interface LogicalGroupItem extends ConfigItemBase {
     /**
      * Callback for providing left operand candidates
      */
-    leftProvider: (
-        context: ProviderContext
-    ) => LogicalLeftOperandCandidates | Promise<LogicalLeftOperandCandidates>;
+    leftProvider: (context: ProviderContext) => LogicalLeftOperandCandidates | Promise<LogicalLeftOperandCandidates>;
 
     /**
      * Callback for providing logical operators candidates
@@ -66,41 +64,45 @@ export interface LogicalGroupItem extends ConfigItemBase {
 }
 
 export const LogicalItemSchema = z.object({
+    kind: z.literal('expression'),
     left: z.unknown(),
     right: z.unknown().optional(),
     operator: z.string(),
 });
 
+export type LogicalGroupAssociation = {
+    kind: 'association';
+
+    /**
+     * Boolean operator for combining the two groups
+     */
+    groupOperator: 'and' | 'or';
+
+    /**
+     * The first group
+     */
+    first: LogicalGroup;
+
+    /**
+     * The second group
+     */
+    second: LogicalGroup;
+};
+
 /**
  * Logical group.
  */
-export type LogicalGroup =
-    | z.infer<typeof LogicalItemSchema>
-    | {
-          /**
-           * Boolean operator for combining the two groups
-           */
-          groupOperator: 'and' | 'or';
-
-          /**
-           * The first group
-           */
-          first: LogicalGroup;
-
-          /**
-           * The second group
-           */
-          second: LogicalGroup;
-      };
+export type LogicalGroup = z.infer<typeof LogicalItemSchema> | LogicalGroupAssociation;
 
 const getGroupSchema = (): z.ZodType<LogicalGroup> =>
     z.union([
         LogicalItemSchema,
         z.object({
+            kind: z.literal('association'),
             groupOperator: z.union([z.literal('and'), z.literal('or')]),
             first: z.lazy(() => getGroupSchema()),
             second: z.lazy(() => getGroupSchema()),
         }),
     ]);
 
-export const getSchema = () => getGroupSchema().optional();
+export const getSchema = () => getGroupSchema();

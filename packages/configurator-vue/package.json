@@ -8,7 +8,8 @@
         "build:lib": "vue-tsc --declaration --emitDeclarationOnly && vite build && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
         "build:app": "vite -c vite-app.config.ts build",
         "preview": "vite preview -c vite-app.config.ts",
-        "lint": "vue-tsc --noEmit"
+        "lint": "vue-tsc --noEmit",
+        "test": "jest"
     },
     "exports": {
         ".": {
@@ -33,6 +34,7 @@
         "vuedraggable": "^4.1.0"
     },
     "devDependencies": {
+        "@gaia/samples": "workspace:*",
         "@iconify-json/ep": "^1.1.15",
         "@types/capitalize": "^2.0.2",
         "@vitejs/plugin-vue": "^5.0.4",
@@ -47,7 +49,6 @@
         "vite": "^5.2.0",
         "vite-plugin-filter-replace": "^0.1.13",
         "vue-tsc": "^2.0.6",
-        "vue3-json-viewer": "^2.2.2",
-        "@gaia/samples": "workspace:*"
+        "vue3-json-viewer": "^2.2.2"
     }
 }
