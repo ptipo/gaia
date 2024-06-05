@@ -3,12 +3,7 @@ import { P, match } from 'ts-pattern';
 import { z } from 'zod';
 import { getConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
-import type {
-    BaseConceptModel,
-    DeepPartialConcept,
-    inferConcept,
-    inferPartialConcept,
-} from './inference';
+import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
 import { NonPrimitiveTypes } from './types';
@@ -51,8 +46,7 @@ export class AppInstance<TConcept extends Concept> {
      */
     createConceptInstance<TConcept extends Concept>(
         concept: TConcept,
-        data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> &
-            Record<string, unknown>
+        data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> & Record<string, unknown>
     ): inferPartialConcept<TConcept> {
         const result: any = {
             $id: createId(),
@@ -78,14 +72,9 @@ export class AppInstance<TConcept extends Concept> {
      */
     createItemModel(item: ConfigItem): any {
         return match(item)
-            .with(
-                { type: P.union('text', 'number', 'switch', 'select') },
-                (item) => item.default
-            )
+            .with({ type: P.union('text', 'number', 'switch', 'select') }, (item) => item.default)
             .with({ type: 'image' }, () => ({ url: undefined }))
-            .with({ type: 'has' }, (item) =>
-                this.createConceptInstance(item.concept)
-            )
+            .with({ type: 'has' }, (item) => this.createConceptInstance(item.concept))
             .with({ type: 'has-many' }, () => [
                 /* TODO: 初始项 */
             ])
@@ -126,14 +115,13 @@ export class AppInstance<TConcept extends Concept> {
         const { model } = schema.parse(deserialized);
         this._model = model;
         this.reindexConceptInstances(this._model);
+        return model;
     }
 
     /**
      * Resolves a `ConceptRef` to a `ConceptInstance`.
      */
-    resolveConcept<TConcept extends Concept>(
-        ref: ConceptRef
-    ): inferConcept<TConcept> | undefined {
+    resolveConcept<TConcept extends Concept>(ref: ConceptRef): inferConcept<TConcept> | undefined {
         return this.conceptInstances[ref.$id] as inferConcept<TConcept>;
     }
 
@@ -171,17 +159,13 @@ export interface AppDef<TConcept extends Concept> {
 /**
  * Defines an app definition.
  */
-export function defineApp<TConcept extends Concept>(
-    concept: TConcept
-): AppDef<TConcept> {
+export function defineApp<TConcept extends Concept>(concept: TConcept): AppDef<TConcept> {
     return { concept };
 }
 
 /**
  * Creates an app instance.
  */
-export function createAppInstance<TConcept extends Concept>(
-    def: AppDef<TConcept>
-) {
+export function createAppInstance<TConcept extends Concept>(def: AppDef<TConcept>) {
     return new AppInstance(def);
 }

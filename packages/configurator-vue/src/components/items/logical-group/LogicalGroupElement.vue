@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import {
-    modelEquals,
-    type AppInstance,
-    type BaseConceptModel,
-    type Concept,
-} from '@gaia/configurator';
+import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@gaia/configurator';
 import type {
     LogicalGroupItem,
     LogicalLeftOperandCandidates,
@@ -51,17 +46,13 @@ onMounted(async () => {
 
     if (props.model.left && leftOperandOptions.value) {
         // restore left operand from model
-        left.value = leftOperandOptions.value.find((item) =>
-            modelEquals(item.value, props.model.left)
-        );
+        left.value = leftOperandOptions.value.find((item) => modelEquals(item.value, props.model.left));
     }
 
     if (left.value) {
         await getOperator();
         if (props.model.operator && operatorOptions.value) {
-            operator.value = operatorOptions.value.find((item) =>
-                modelEquals(item.key, props.model.operator)
-            )?.key;
+            operator.value = operatorOptions.value.find((item) => modelEquals(item.key, props.model.operator))?.key;
         }
     }
 
@@ -146,10 +137,7 @@ const onLeftOperandChange = async () => {
 
 const onOperatorChange = async () => {
     await getRightOperandOptions();
-    if (
-        rightOperandOptions.value?.kind === 'select' &&
-        rightOperandOptions.value.multiple
-    ) {
+    if (rightOperandOptions.value?.kind === 'select' && rightOperandOptions.value.multiple) {
         right.value = [];
     } else {
         right.value = undefined;
@@ -164,26 +152,29 @@ const onRightOperandChange = (value: any) => {
 };
 
 const checkEmitChange = () => {
-    if (
-        left.value &&
-        operator.value &&
-        (right.value || rightOperandOptions.value?.kind === 'none')
-    ) {
-        console.log('Logical group item ready:', {
-            left: left.value,
-            operator: operator.value,
-            right: right.value,
-        });
-        emit('change', {
+    if (left.value && operator.value && (right.value || rightOperandOptions.value?.kind === 'none')) {
+        let rightValue: any;
+        if (rightOperandOptions.value?.kind === 'select') {
+            if (rightOperandOptions.value.multiple) {
+                // right value is the value nested inside select option array
+                rightValue = right.value.map((item: any) => item.value);
+            } else {
+                // right value is the value nested inside select option
+                rightValue = right.value.value;
+            }
+        } else {
+            // right value is input's value
+            rightValue = right.value;
+        }
+
+        const emitData = {
             groupOperator: groupOperator.value as 'and' | 'or',
             left: left.value?.value,
             operator: operator.value,
-            right:
-                rightOperandOptions.value?.kind === 'select'
-                    ? // for select operand, the real value is wrapped inside the 'value' key
-                      right.value.value
-                    : right.value,
-        });
+            right: rightValue,
+        };
+        console.log('Logical group item ready:', emitData);
+        emit('change', emitData);
     }
 };
 </script>
@@ -191,11 +182,7 @@ const checkEmitChange = () => {
 <template>
     <div class="flex flex-col gap-2">
         <div v-if="groupOperator" class="w-20">
-            <el-select
-                v-model="groupOperator"
-                placeholder="请选择"
-                @change="checkEmitChange"
-            >
+            <el-select v-model="groupOperator" placeholder="请选择" @change="checkEmitChange">
                 <el-option label="并且" value="and" />
                 <el-option label="或" value="or" />
             </el-select>
@@ -203,21 +190,10 @@ const checkEmitChange = () => {
         <div class="w-full flex items-center">
             <el-form class="flex flex-grow gap-1 justify-between">
                 <!-- left operand -->
-                <el-select
-                    placeholder="请选择"
-                    value-key="key"
-                    v-model="left"
-                    @change="onLeftOperandChange"
-                >
-                    <el-option-group
-                        v-for="group in leftOperandOptionsGroups"
-                        :label="group"
-                        :key="group"
-                    >
+                <el-select placeholder="请选择" value-key="key" v-model="left" @change="onLeftOperandChange">
+                    <el-option-group v-for="group in leftOperandOptionsGroups" :label="group" :key="group">
                         <el-option
-                            v-for="option in getLeftOperandOptionsByGroup(
-                                group
-                            )"
+                            v-for="option in getLeftOperandOptionsByGroup(group)"
                             :key="option.key"
                             :label="option.label"
                             :value="option"
@@ -270,8 +246,7 @@ const checkEmitChange = () => {
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="$emit('delete')"
-                                ><el-icon><i-ep-delete /></el-icon
-                                >删除</el-dropdown-item
+                                ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
                             >
                         </el-dropdown-menu>
                     </template>
