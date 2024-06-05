@@ -1,5 +1,5 @@
 {
-    "name": "supa-form",
+    "name": "@gaia/supa-form",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -8,11 +8,14 @@
         "./config": "./dist/config/index.js"
     },
     "scripts": {
-        "dev": "vite --port 5001",
-        "build": "tsc && vite build",
+        "dev": "vite --port 5001 -c vite-app.config.ts dev",
+        "build:lib": "tsc && vite build",
+        "build:app": "vue-tsc && vite build -c vite-app.config.ts",
+        "build": "run-p build:*",
         "watch:tsc": "tsc -w",
         "watch:vite": "vite build --watch",
-        "watch": "run-p watch:*"
+        "watch": "run-p watch:*",
+        "preview": "vite preview -c vite-app.config.ts"
     },
     "dependencies": {
         "@gaia/configurator": "workspace:*",
@@ -24,6 +27,14 @@
         "tailwindcss": "^3.4.3",
         "ts-pattern": "^5.1.1",
         "vite": "^5.2.0"
+    },
+    "devDependencies": {
+        "@gaia/configurator-vue": "workspace:*",
+        "@vitejs/plugin-vue": "^5.0.4",
+        "element-plus": "^2.7.3",
+        "vue": "^3.4.21",
+        "vue-tsc": "^2.0.6",
+        "vue3-json-viewer": "^2.2.2"
     },
     "keywords": [],
     "author": "",
