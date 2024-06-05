@@ -3,7 +3,7 @@ const { tailwindTransform } = require('postcss-lit');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: {
-        files: ['./src/**/*.{ts,js,css}'],
+        files: ['./src/**/*.{ts,js,css,vue}', './configurator.html'],
         transform: {
             ts: tailwindTransform,
         },
