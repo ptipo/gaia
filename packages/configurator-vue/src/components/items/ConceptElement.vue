@@ -9,15 +9,29 @@ import HasManyItemComponent from './HasManyItem.vue';
 
 const props = withDefaults(
     defineProps<{
+        /**
+         * The concept of the element
+         */
         concept: Concept;
+
+        /**
+         * The model of the concept
+         */
         model: BaseConceptModel;
+
         /**
          * Whether to enable inline editing
          */
         inlineEditing?: boolean;
+
+        /**
+         * Whether to allow delete
+         */
+        allowDelete?: boolean;
     }>(),
     {
         inlineEditing: false,
+        allowDelete: true,
     }
 );
 
@@ -168,7 +182,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
                     <el-dropdown-item divided @click="$emit('clone', { concept, model })"
                         ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
                     >
-                    <el-dropdown-item @click="$emit('delete', { concept, model })"
+                    <el-dropdown-item @click="$emit('delete', { concept, model })" :disabled="!allowDelete"
                         ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
                     >
                 </el-dropdown-menu>

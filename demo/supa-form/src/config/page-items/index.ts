@@ -10,12 +10,28 @@ import { QAQuestion } from './question/qa-question';
  * 所有页面内容项，包含问题和元素
  */
 
-const allPageItemMap = { ChoiceQuestion, CopyToClipboard, EmailQuestion, ImageElement, QAQuestion, TextElement };
+const allPageItemMap = {
+    QAQuestion,
+    ChoiceQuestion,
+    EmailQuestion,
+    ImageElement,
+    TextElement,
+    CopyToClipboard,
+};
 
 export const AllPageItems = Object.values(allPageItemMap);
 
-export { ChoiceQuestion, CopyToClipboard, EmailQuestion, ImageElement, QAQuestion, TextElement };
+export {
+    ChoiceQuestion,
+    CopyToClipboard,
+    EmailQuestion,
+    ImageElement,
+    QAQuestion,
+    TextElement,
+};
 
 export type AllPageItemsTypesMap = {
-    [K in keyof typeof allPageItemMap]: inferConcept<(typeof allPageItemMap)[K]>;
+    [K in keyof typeof allPageItemMap]: inferConcept<
+        (typeof allPageItemMap)[K]
+    >;
 };

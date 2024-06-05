@@ -10,7 +10,9 @@
     "scripts": {
         "dev": "vite --port 5001",
         "build": "tsc && vite build",
-        "build:watch": "tsc -w"
+        "watch:tsc": "tsc -w",
+        "watch:vite": "vite build --watch",
+        "watch": "run-p watch:*"
     },
     "dependencies": {
         "@gaia/configurator": "workspace:*",
