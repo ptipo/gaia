@@ -14,4 +14,5 @@ export type CommonProps<TItem extends ConfigItemBase> = {
  */
 export type CommonEvents<TItem extends ConfigItemBase> = {
     (e: 'change', data: inferConfigItem<TItem>): void;
+    (e: 'drop'): void;
 };

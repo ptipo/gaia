@@ -9,6 +9,7 @@ export const ImageChoice = defineConcept({
     items: {
         name: {
             type: 'text',
+            name: '选项',
             required: true,
         },
 
@@ -17,6 +18,7 @@ export const ImageChoice = defineConcept({
          */
         value: {
             type: 'image',
+            name: '图片',
             required: true,
         },
 

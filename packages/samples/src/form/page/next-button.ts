@@ -35,13 +35,12 @@ export const NextButton = defineConcept({
             type: 'if',
 
             // 仅在动作为“前往指定页面”时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.action === 'goToPage',
+            conditionProvider: ({ currentModel }) => currentModel.action === 'goToPage',
 
             child: {
                 type: 'dynamic-select',
                 name: '前往页面',
-
+                required: true,
                 // 从root model获取所有页面
                 provider: ({ rootModel }) => getAllPages(rootModel),
             },
@@ -55,12 +54,12 @@ export const NextButton = defineConcept({
             type: 'if',
 
             // 仅在动作为“根据回答，执行不同动作”时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.action === 'conditional',
+            conditionProvider: ({ currentModel }) => currentModel.action === 'conditional',
 
             child: {
                 type: 'has-many',
                 name: '条件和动作',
+                required: true,
                 candidates: [ConditionalAction],
             },
 

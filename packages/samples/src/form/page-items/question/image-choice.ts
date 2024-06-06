@@ -7,16 +7,18 @@ export const ImageChoice = defineConcept({
     displayName: '图片选项',
 
     items: {
-        name: {
+        value: {
             type: 'text',
+            name: '选项',
             required: true,
         },
 
         /**
          * 内容
          */
-        value: {
+        image: {
             type: 'image',
+            name: '图片',
             required: true,
         },
 

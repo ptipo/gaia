@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { wrap } from '../schema';
 import { RGBA, isRGBA } from '../types';
 import { ConfigItemBase } from './common';
 
@@ -14,4 +15,4 @@ export interface ColorItem extends ConfigItemBase {
     default?: RGBA;
 }
 
-export const getSchema = () => z.custom<RGBA>(isRGBA);
+export const getSchema = (item: ConfigItemBase) => wrap(item, z.custom<RGBA>(isRGBA));

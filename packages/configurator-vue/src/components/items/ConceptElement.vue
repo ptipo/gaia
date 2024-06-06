@@ -182,7 +182,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
                     <el-dropdown-item divided @click="$emit('clone', { concept, model })"
                         ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
                     >
-                    <el-dropdown-item @click="$emit('delete', { concept, model })" :disabled="!allowDelete"
+                    <el-dropdown-item @click="$emit('delete', { concept, model })"
                         ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
                     >
                 </el-dropdown-menu>

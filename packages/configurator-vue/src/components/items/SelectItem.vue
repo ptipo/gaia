@@ -23,12 +23,8 @@ const options = computed(() => {
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" />
-        <el-select
-            v-model="_model"
-            placeholder="请选择"
-            @change="$emit('change', _model)"
-        >
+        <ItemLabel :item="item" :model="props.model" />
+        <el-select v-model="_model" placeholder="请选择" @change="$emit('change', _model)">
             <el-option
                 v-for="option in options"
                 :key="option.value"

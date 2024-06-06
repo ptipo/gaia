@@ -8,13 +8,15 @@ import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
 import { ElNotification } from 'element-plus';
+import type { EditPathRecord } from '@gaia/configurator';
 
 const app = createAppInstance(FormApp);
 const model = ref<BaseConceptModel>(app.model);
+const currentPath = ref<EditPathRecord[]>([{ parentKey: [], concept: app.concept }]);
 const formEl = ref<HTMLElement>();
 
 const onAppChange = (data: BaseConceptModel) => {
-    app.model = data;
+    app.model = data as typeof app.model;
     model.value = data;
     resetFormConfig();
 };
@@ -89,7 +91,7 @@ const onLoad = () => {
             </div>
         </div>
         <div class="w-[480px] border rounded h-full">
-            <AppConfigurator :app="app" :model="model" @change="onAppChange" />
+            <AppConfigurator :app="app" :model="model" v-model:currentPath="currentPath" @change="onAppChange" />
         </div>
     </div>
 </template>

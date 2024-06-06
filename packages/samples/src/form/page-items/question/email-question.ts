@@ -12,10 +12,5 @@ export const EmailQuestion = defineConcept({
 
     items: {
         ...QuestionCommonItems,
-
-        /**
-         * 邮箱
-         */
-        email: { type: 'text', kind: 'email' },
     },
 });

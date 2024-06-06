@@ -1,14 +1,14 @@
 import { z } from 'zod';
-import { ConfigItem, getConfigItemSchema } from '../config-item';
-import { ConfigItemBase } from './common';
 import { ConfigGroups } from '..';
+import { ConfigItem, makeConfigItemSchema } from '../config-item';
+import { wrap } from '../schema';
+import { ConfigItemBase } from './common';
 
 /**
  * An item that groups other items.
  */
-export interface GroupItem<
-    TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>
-> extends ConfigItemBase {
+export interface GroupItem<TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>>
+    extends ConfigItemBase {
     type: 'group';
 
     /**
@@ -49,13 +49,16 @@ export function defineGroupItem<TItems extends Record<string, ConfigItem>>(
 
 export const getSchema = (item: ConfigItemBase) => {
     const myItem = item as GroupItem;
-    return z.object(
-        Object.entries(myItem.items).reduce(
-            (acc, [key, item]) => ({
-                ...acc,
-                [key]: getConfigItemSchema(item),
-            }),
-            {}
+    return wrap(
+        item,
+        z.object(
+            Object.entries(myItem.items).reduce(
+                (acc, [key, item]) => ({
+                    ...acc,
+                    [key]: makeConfigItemSchema(item),
+                }),
+                {}
+            )
         )
     );
 };

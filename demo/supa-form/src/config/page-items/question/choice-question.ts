@@ -21,6 +21,8 @@ export const ChoiceQuestion = defineConcept({
         kind: {
             type: 'select',
             name: '类型',
+            required: true,
+            default: 'single',
             options: { single: '单选', multiple: '多选' },
             groupKey: 'choice',
         },
@@ -31,6 +33,8 @@ export const ChoiceQuestion = defineConcept({
         choiceKind: {
             type: 'select',
             name: '选项类型',
+            required: true,
+            default: 'text',
             options: { text: '文字选项', image: '图片选项' },
             groupKey: 'choice',
         },
@@ -42,8 +46,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.choiceKind === 'image',
+            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'image',
 
             child: {
                 type: 'switch',
@@ -59,12 +62,12 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在文字选项时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.choiceKind === 'text',
+            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'text',
 
             child: {
                 type: 'has-many',
                 name: '文字选项',
+                required: true,
                 candidates: [TextChoice],
 
                 // 响应子项内容变化
@@ -90,12 +93,12 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.choiceKind === 'image',
+            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'image',
 
             child: {
                 type: 'has-many',
                 name: '图片选项',
+                required: true,
                 candidates: [ImageChoice],
 
                 // 响应子项内容变化
@@ -120,8 +123,7 @@ export const ChoiceQuestion = defineConcept({
             type: 'if',
 
             // 仅在多选时显示
-            conditionProvider: ({ currentModel }) =>
-                currentModel.kind === 'multiple',
+            conditionProvider: ({ currentModel }) => currentModel.kind === 'multiple',
 
             child: {
                 type: 'dynamic-select',
@@ -130,9 +132,8 @@ export const ChoiceQuestion = defineConcept({
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
                     const choices =
-                        (currentModel.choiceKind === 'text'
-                            ? currentModel.textChoices
-                            : currentModel.imageChoices) ?? [];
+                        (currentModel.choiceKind === 'text' ? currentModel.textChoices : currentModel.imageChoices) ??
+                        [];
                     return Array.from(new Array(choices.length), (_, i) => ({
                         key: i + 1,
                         label: (i + 1).toString(),
@@ -163,8 +164,6 @@ export const ChoiceQuestion = defineConcept({
     },
 
     summary: ({ currentModel }) => {
-        return `${currentModel.name || '选择'} ${
-            currentModel.required ? '*' : ''
-        }`;
+        return `${currentModel.name || '选择'} ${currentModel.required ? '*' : ''}`;
     },
 });

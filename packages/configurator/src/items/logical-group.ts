@@ -1,5 +1,6 @@
 import { ProviderContext } from '@/types';
 import { z } from 'zod';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
@@ -105,4 +106,4 @@ const getGroupSchema = (): z.ZodType<LogicalGroup> =>
         }),
     ]);
 
-export const getSchema = () => getGroupSchema();
+export const getSchema = (item: ConfigItemBase) => wrap(item, getGroupSchema());

@@ -31,7 +31,8 @@
         "element-plus": "^2.7.3",
         "ts-pattern": "^5.1.1",
         "vue": "^3.4.21",
-        "vuedraggable": "^4.1.0"
+        "vuedraggable": "^4.1.0",
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "@gaia/samples": "workspace:*",

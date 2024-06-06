@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { ZodSchema } from 'zod';
 import { ConfigItemType } from '../config-item';
 import { getSchema as getColorItemSchema } from './color';
 import { ConfigItemBase } from './common';
@@ -15,7 +15,7 @@ import { getSchema as getSwitchItemSchema } from './switch';
 import { getSchema as getTextItemSchema } from './text';
 
 export const Schemas: {
-    [Key in ConfigItemType]: (item: ConfigItemBase) => z.ZodTypeAny;
+    [Key in ConfigItemType]: (item: ConfigItemBase) => ZodSchema;
 } = {
     color: getColorItemSchema,
     'dynamic-select': getDynamicSelectItemSchema,

@@ -1,13 +1,11 @@
 import { z } from 'zod';
-import { ConfigItem, getConfigItemSchema } from './config-item';
+import { ConfigItem, makeConfigItemSchema } from './config-item';
 import { NonPrimitiveTypes, ProviderContext } from './types';
 
 /**
  * A configurable abstract concept containing a set of config items.
  */
-export type Concept<
-    TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>
-> = {
+export type Concept<TItems extends Record<string, ConfigItem> = Record<string, ConfigItem>> = {
     /**
      * Concept name
      */
@@ -59,9 +57,7 @@ export type ConfigGroups = {
 /**
  * Defines a concept.
  */
-export function defineConcept<TItems extends Concept['items']>(
-    def: Concept<TItems>
-) {
+export function defineConcept<TItems extends Concept['items']>(def: Concept<TItems>) {
     return def;
 }
 
@@ -70,13 +66,12 @@ export function defineConcept<TItems extends Concept['items']>(
  * @param concept
  * @returns
  */
-export function getConceptSchema<TConcept extends Concept>(
-    concept: TConcept
-): z.ZodObject<z.ZodRawShape> {
+export function makeConceptSchema<TConcept extends Concept>(concept: TConcept) {
     return z.object({
-        ...mapConfigItems(concept.items),
+        $id: z.string(),
         $type: z.literal(NonPrimitiveTypes.concept),
-        $concept: z.string(),
+        $concept: z.literal(concept.name),
+        ...mapConfigItems(concept.items),
     });
 }
 
@@ -84,8 +79,12 @@ function mapConfigItems(items: Record<string, ConfigItem>) {
     return Object.entries(items).reduce(
         (acc, [key, item]) => ({
             ...acc,
-            [key]: getConfigItemSchema(item),
+            [key]: makeConfigItemSchema(item),
         }),
         {}
     );
+}
+
+export function isConcept(value: unknown): value is Concept {
+    return typeof value === 'object' && !!value && 'items' in value && typeof value === 'object';
 }

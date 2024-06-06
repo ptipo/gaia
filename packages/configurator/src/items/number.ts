@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
@@ -32,7 +33,5 @@ export const getSchema = (item: ConfigItemBase) => {
     if (!myItem.allowNegative) {
         result = result.positive();
     }
-    return myItem.default !== undefined
-        ? result.default(myItem.default)
-        : result;
+    return myItem.default !== undefined ? result.default(myItem.default) : wrap(item, result);
 };

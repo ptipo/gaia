@@ -30,17 +30,14 @@ const onBeforeUpload = async (rawFile: UploadRawFile) => {
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" />
+        <ItemLabel :item="item" :model="props.model" />
         <el-upload
             accept="image/*"
             :show-file-list="false"
             :before-upload="onBeforeUpload"
             :on-success="onUploadSuccess"
         >
-            <div
-                v-if="!imageUrl"
-                class="w-32 h-32 flex items-center justify-center border border-dashed rounded"
-            >
+            <div v-if="!imageUrl" class="w-32 h-32 flex items-center justify-center border border-dashed rounded">
                 <el-icon size="16"><i-ep-plus /> </el-icon>
             </div>
             <el-image v-else :src="imageUrl" class="w-full" />

@@ -8,3 +8,5 @@ export type EnterConceptData = {
     model: BaseConceptModel;
     parentKey: Array<string | number>;
 };
+
+export type EditPathRecord = { parentKey: Array<number | string>; concept: Concept };

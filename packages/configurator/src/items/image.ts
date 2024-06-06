@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { NonPrimitiveTypes } from '../types';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
@@ -9,13 +9,15 @@ export interface ImageItem extends ConfigItemBase {
     type: 'image';
 }
 
-export const getSchema = () =>
-    z.object({
-        $type: z.literal(NonPrimitiveTypes.image),
-        url: z.string(),
-        width: z.number().positive().optional(),
-        height: z.number().positive().optional(),
-    });
+export const getSchema = (item: ConfigItemBase) =>
+    wrap(
+        item,
+        z.object({
+            url: z.string(),
+            width: z.number().positive().optional(),
+            height: z.number().positive().optional(),
+        })
+    );
 
 /**
  * 图片资源信息

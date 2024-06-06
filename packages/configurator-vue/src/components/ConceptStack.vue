@@ -1,29 +1,28 @@
 <script setup lang="ts">
 import { BaseConceptModel, Concept } from '@gaia/configurator';
 import deepcopy from 'deepcopy';
-import { computed, ref } from 'vue';
-import ConceptConfigurator from './Concept.vue';
+import { computed } from 'vue';
+import ConceptConfigurator from './ConceptConfigurator.vue';
+import type { EditPathRecord } from './types';
 
 const props = defineProps<{
     rootConcept: Concept;
     rootModel: BaseConceptModel;
 }>();
 
+const currentPath = defineModel<EditPathRecord[]>('currentPath', { required: true });
+
 const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
 }>();
 
-// keep track of a stack of concepts
-type Record = { parentKey: Array<number | string>; concept: Concept };
-const stack = ref<Record[]>([{ parentKey: [], concept: props.rootConcept }]);
-
 const currentConcept = computed(() => {
-    const record = stack.value[stack.value.length - 1];
+    const record = currentPath.value[currentPath.value.length - 1];
     return record.concept;
 });
 
 const currentModel = computed(() => {
-    const record = stack.value[stack.value.length - 1];
+    const record = currentPath.value[currentPath.value.length - 1];
     let curr: any = props.rootModel;
     for (const key of record.parentKey) {
         curr = curr[key];
@@ -35,11 +34,11 @@ const currentModel = computed(() => {
 });
 
 const previousConcept = computed(() => {
-    return stack.value[stack.value.length - 2]?.concept;
+    return currentPath.value[currentPath.value.length - 2]?.concept;
 });
 
 const onChange = (data: BaseConceptModel) => {
-    const record = stack.value[stack.value.length - 1];
+    const record = currentPath.value[currentPath.value.length - 1];
     if (record.parentKey.length === 0) {
         emit('change', data);
         return;
@@ -60,20 +59,20 @@ const onChange = (data: BaseConceptModel) => {
     emit('change', nextModel);
 };
 
-const onEnter = (data: Record) => {
-    const prevKey = stack.value[stack.value.length - 1]?.parentKey ?? [];
+const onEnter = (data: EditPathRecord) => {
+    const prevKey = currentPath.value[currentPath.value.length - 1]?.parentKey ?? [];
     const newKey = [...prevKey, ...data.parentKey];
-    stack.value = [...stack.value, { ...data, parentKey: newKey }];
+    currentPath.value = [...currentPath.value, { parentKey: newKey, concept: data.concept }];
 };
 
 const goBack = () => {
-    stack.value.pop();
+    currentPath.value = currentPath.value.slice(0, -1);
 };
 </script>
 
 <template>
     <el-page-header v-if="previousConcept" @back="goBack" class="mb-4">
-        <template #title>{{ previousConcept.displayName }}</template>
+        <template #title>{{ currentConcept.displayName }}</template>
     </el-page-header>
     <ConceptConfigurator
         :concept="currentConcept"

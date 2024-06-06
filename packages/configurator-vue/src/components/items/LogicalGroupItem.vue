@@ -88,7 +88,7 @@ const emitChange = () => {
 
 <template>
     <div>
-        <ItemLabel :item="item" />
+        <ItemLabel :item="item" :model="props.model" />
         <div class="flex flex-col gap-2 mt-2">
             <LogicalGroupElement
                 v-for="row in _model"

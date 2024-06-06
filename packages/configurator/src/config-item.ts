@@ -40,6 +40,6 @@ export type ConfigItemType = ConfigItem['type'];
 /**
  * Gets a Zod schema for validating the model of a config item
  */
-export function getConfigItemSchema(item: ConfigItemBase) {
+export function makeConfigItemSchema(item: ConfigItemBase) {
     return Schemas[item.type](item);
 }

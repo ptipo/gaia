@@ -1,11 +1,11 @@
-import { Concept, getConceptSchema } from '../concept';
+import { Concept, makeConceptSchema } from '../concept';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
  * 包含另外一个`Concept` (one-to-one)
  */
-export interface HasItem<TChild extends Concept = Concept>
-    extends ConfigItemBase {
+export interface HasItem<TChild extends Concept = Concept> extends ConfigItemBase {
     type: 'has';
 
     /**
@@ -14,5 +14,4 @@ export interface HasItem<TChild extends Concept = Concept>
     concept: TChild;
 }
 
-export const getSchema = (item: ConfigItemBase) =>
-    getConceptSchema((item as HasItem).concept);
+export const getSchema = (item: ConfigItemBase) => wrap(item, makeConceptSchema((item as HasItem).concept));

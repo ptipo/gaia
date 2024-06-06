@@ -1,12 +1,27 @@
 import { createId } from '@paralleldrive/cuid2';
 import { P, match } from 'ts-pattern';
 import { z } from 'zod';
-import { getConceptSchema, type Concept } from './concept';
+import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
 import { NonPrimitiveTypes } from './types';
+
+/**
+ * Config validation issue.
+ */
+export type ValidationIssue = {
+    /**
+     * Path to the issue.
+     */
+    path: (string | number)[];
+
+    /**
+     * Issue message.
+     */
+    message: string;
+};
 
 /**
  * Instance of an app.
@@ -58,7 +73,10 @@ export class AppInstance<TConcept extends Concept> {
             if (data?.[key] !== undefined) {
                 result[key] = data[key];
             } else {
-                result[key] = this.createItemModel(value);
+                const subModel = this.createItemModel(value);
+                if (subModel !== undefined) {
+                    result[key] = subModel;
+                }
             }
         }
 
@@ -72,8 +90,8 @@ export class AppInstance<TConcept extends Concept> {
      */
     createItemModel(item: ConfigItem): any {
         return match(item)
-            .with({ type: P.union('text', 'number', 'switch', 'select') }, (item) => item.default)
-            .with({ type: 'image' }, () => ({ url: undefined }))
+            .with({ type: P.union('text', 'number', 'switch', 'select'), required: true }, (item) => item.default)
+            .with({ type: 'image', required: true }, () => ({}))
             .with({ type: 'has' }, (item) => this.createConceptInstance(item.concept))
             .with({ type: 'has-many' }, () => [
                 /* TODO: 初始项 */
@@ -86,13 +104,15 @@ export class AppInstance<TConcept extends Concept> {
         const result: any = {};
         for (const [key, child] of Object.entries(item.items)) {
             const itemValue = this.createItemModel(child);
-            result[key] = itemValue;
+            if (itemValue !== undefined) {
+                result[key] = itemValue;
+            }
         }
         return result;
     }
 
     private createModelSchema() {
-        return getConceptSchema(this.concept);
+        return makeConceptSchema(this.concept);
     }
 
     /**
@@ -145,6 +165,29 @@ export class AppInstance<TConcept extends Concept> {
                 }
                 this.reindexConceptInstances(item);
             }
+        }
+    }
+
+    /**
+     * Validates app's model.
+     */
+    validateModel(
+        model: unknown
+    ):
+        | { success: true; data: inferConcept<TConcept>; issues?: never }
+        | { success: false; issues: ValidationIssue[]; data?: never } {
+        const { error, data } = this.schema.safeParse(model);
+        if (error) {
+            const issues = error.issues.map((issue) => {
+                const message = match(issue)
+                    .with({ code: 'invalid_type', received: 'undefined' }, () => '未设置')
+                    .with({ code: 'too_small', type: P.union('array', 'string') }, () => '未设置')
+                    .otherwise(() => issue.code + ':' + issue.message);
+                return { message, path: issue.path };
+            });
+            return { success: false, issues };
+        } else {
+            return { success: true, data: data as inferConcept<TConcept> };
         }
     }
 }

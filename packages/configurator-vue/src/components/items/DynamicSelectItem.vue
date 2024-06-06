@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import {
-    modelEquals,
-    type AppInstance,
-    type BaseConceptModel,
-    type Concept,
-} from '@gaia/configurator';
-import type {
-    DynamicSelectItem,
-    DynamicSelectOption,
-} from '@gaia/configurator/items';
+import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@gaia/configurator';
+import type { DynamicSelectItem, DynamicSelectOption } from '@gaia/configurator/items';
 import { inject, onMounted, ref, watch, type Ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
@@ -46,9 +38,7 @@ const fillOptions = async () => {
 
     // update model
     if (_model.value === undefined) {
-        _model.value = result.find((option) =>
-            modelEquals(option.value, props.model)
-        );
+        _model.value = result.find((option) => modelEquals(option.value, props.model));
     }
 };
 
@@ -63,7 +53,7 @@ watch([rootModel], async () => {
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" v-model="enabled" />
+        <ItemLabel :item="item" :model="props.model" v-model:enabled="enabled" />
         <el-select
             v-if="!item.guarded || enabled"
             v-model="_model"
@@ -71,12 +61,7 @@ watch([rootModel], async () => {
             value-key="key"
             @change="(option) => emit('change', option.value)"
         >
-            <el-option
-                v-for="option in options"
-                :key="option.key"
-                :label="option.label"
-                :value="option"
-            />
+            <el-option v-for="option in options" :key="option.key" :label="option.label" :value="option" />
         </el-select>
     </el-form-item>
 </template>
