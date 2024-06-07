@@ -60,11 +60,63 @@ export class PtForm extends PtBaseShadow {
         const currentPage = contentPages.find((x) => x.$id === this.pageId);
 
         if (currentPage) {
-            return html` <div>${keyed(this.pageId, html`<pt-form-page .page=${currentPage}></pt-form-page>`)}</div>
-                <div class="flex justify-center items-center ">
-                    <button class="py-2 px-4" type="button" @click=${this.prePage}>Pre</button>
+            const showNextButton = this.shouldShowNextButton();
 
-                    <button type="button" class="py-2 px-4" @click=${this.nextPage}>Next</button>
+            console.log('showNextButton' + showNextButton);
+            return html` <div>
+                    ${keyed(
+                        this.pageId,
+                        html`<pt-form-page
+                            @pt-form-state-changed=${this.onFormStateChange}
+                            .page=${currentPage}
+                        ></pt-form-page>`
+                    )}
+                </div>
+                <div class="flex justify-center ">
+                    <button
+                        @click=${() => this.prePage()}
+                        type="button"
+                        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                    >
+                        <svg
+                            class="flex-shrink-0 size-3.5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="m15 18-6-6 6-6"></path>
+                        </svg>
+                        <span class="hidden sm:block">Prev</span>
+                    </button>
+                    <button
+                        @click=${() => this.nextPage()}
+                        type="button"
+                        class="${showNextButton
+                            ? ''
+                            : 'hidden'} min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                    >
+                        <span class="hidden sm:block">Next</span>
+                        <svg
+                            class="flex-shrink-0 size-3.5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                    </button>
                 </div>`;
         } else {
             const completePage = completePages.find((x) => x.$id == this.pageId);
@@ -120,6 +172,16 @@ export class PtForm extends PtBaseShadow {
         } else {
             this.pageId = this.config?.completePages[0].$id!;
         }
+    }
+
+    private onFormStateChange() {
+        console.log('form state changed');
+        this.requestUpdate();
+    }
+
+    private shouldShowNextButton() {
+        const currentPage = this.config?.contentPages.find((x) => x.$id == this.pageId);
+        return currentPage?.pageItems.every((x) => !this.formState[x.$id] || this.formState[x.$id].isValid);
     }
 }
 
