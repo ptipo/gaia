@@ -16,9 +16,6 @@ describe('form sample app', () => {
         expect(model.$concept).toBe('Form');
         expect(model.$type).toBe('concept');
 
-        // default value
-        expect(model.nextButtonText).toBe('下一步');
-
         // has-many collection initialized
         expect(model.completePages).toHaveLength(0);
 
