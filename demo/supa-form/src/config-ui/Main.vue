@@ -1,23 +1,33 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
-import { AppConfigurator } from '@gaia/configurator-vue';
+import { AppConfigurator, ValidationIssues, type EditPathRecord, type Issue } from '@gaia/configurator-vue';
 import '@gaia/configurator-vue/dist/index.css';
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import { ElNotification } from 'element-plus';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
-import { ElNotification } from 'element-plus';
-import type { EditPathRecord } from '@gaia/configurator';
 
+// form app
 const app = createAppInstance(FormApp);
+
+// form model
 const model = ref<BaseConceptModel>(app.model);
+
+// current edit path in the configurator
 const currentPath = ref<EditPathRecord[]>([{ parentKey: [], concept: app.concept }]);
+
+// validation issues
+const issues = ref<Issue[]>([]);
+
+// form element
 const formEl = ref<HTMLElement>();
 
 const onAppChange = (data: BaseConceptModel) => {
     app.model = data as typeof app.model;
     model.value = data;
+    validate(model.value);
     resetFormConfig();
 };
 
@@ -29,6 +39,7 @@ function onReset() {
 }
 
 onMounted(async () => {
+    validate(model.value);
     document.addEventListener('pt-form-submit', function (event: any) {
         alert(`form submit data:${JSON.stringify(event.detail, null, 2)}`);
     });
@@ -36,7 +47,7 @@ onMounted(async () => {
 });
 
 const resetFormConfig = () => {
-    formEl?.value.setAttribute('config', app.stringifyModel(model.value));
+    formEl?.value?.setAttribute('config', app.stringifyModel(model.value));
 };
 
 const onSave = () => {
@@ -66,6 +77,20 @@ const onLoad = () => {
         });
     }
 };
+
+const onNavigateError = (path: EditPathRecord[]) => {
+    currentPath.value = path;
+};
+
+const validate = (model: BaseConceptModel) => {
+    const validationResult = app.validateModel(model);
+    if (!validationResult.success) {
+        issues.value = validationResult.issues;
+        console.log('Validation issues:', validationResult.issues);
+    } else {
+        issues.value = [];
+    }
+};
 </script>
 
 <template>
@@ -75,23 +100,48 @@ const onLoad = () => {
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
                 <el-button @click="onLoad">Load</el-button>
+                <el-button @click="onReset"> Reset </el-button>
             </div>
-            <div class="border rounded bg-cyan-50 w-full h-1/2 overflow-auto">
+            <div class="border rounded bg-cyan-50 w-full flex-grow overflow-auto">
                 <pt-form id="pt-form" ref="formEl"></pt-form>
             </div>
-            <button
-                type="button"
-                @click="onReset"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-                Reset
-            </button>
-            <div class="w-full h-1/2 overflow-auto border rounded">
-                <JsonViewer :value="model" expanded :expandDepth="10" copyable class="h-full" />
-            </div>
+            <el-tabs class="w-full h-1/2">
+                <el-tab-pane label="Json">
+                    <div class="overflow-auto border rounded">
+                        <JsonViewer :value="model" expanded :expandDepth="10" copyable class="h-full" />
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane :label="`Issues (${issues.length})`">
+                    <div class="h-full border rounded">
+                        <ValidationIssues
+                            v-if="issues.length > 0"
+                            :issues="issues"
+                            :concept="app.concept"
+                            :model="model"
+                            @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
+                        />
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
         </div>
         <div class="w-[480px] border rounded h-full">
             <AppConfigurator :app="app" :model="model" v-model:currentPath="currentPath" @change="onAppChange" />
         </div>
     </div>
 </template>
+
+<style>
+.el-tab-pane {
+    height: 100%;
+}
+
+.el-tabs {
+    display: flex;
+    flex-direction: column;
+}
+
+.el-tabs__content {
+    flex: 1;
+    overflow: auto;
+}
+</style>

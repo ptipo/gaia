@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "vite --port 5002",
         "build": "run-p build:*",
-        "build:lib": "vue-tsc --declaration --emitDeclarationOnly && vite build && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
+        "build:lib": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
         "build:app": "vite -c vite-app.config.ts build",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit",
