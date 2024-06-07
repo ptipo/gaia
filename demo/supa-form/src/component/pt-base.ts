@@ -19,28 +19,53 @@ const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom
     return PtBase as T;
 };
 
-class DataBase extends LitElement {
+abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     @property({ type: Object })
     data?: { $id: string };
 
-    @property()
-    value?: any;
+    @property({ type: Object })
+    value: QuestionState<T> = new QuestionState<T>();
 
     connectedCallback() {
         super.connectedCallback();
-        this.value = this.formState[this.data!.$id] || '';
+        if (this.formState[this.data!.$id]) {
+            this.value = this.formState[this.data!.$id];
+        }
     }
+
+    abstract isValidate(): boolean;
 
     updated() {
         this.formState[this.data!.$id] = this.value;
+
+        const isValid = this.isValidate();
+
+        if (isValid !== this.value.isValid) {
+            this.value.isValid = isValid;
+            this.dispatchUpdate();
+        }
+    }
+
+    dispatchUpdate() {
+        this.dispatchEvent(new CustomEvent('pt-form-state-changed', { bubbles: true, composed: false }));
     }
 
     @consume({ context: formState })
     formState: answerData = {};
 }
 
+export class QuestionState<T> {
+    data?: T;
+    isValid: boolean;
+
+    constructor(data?: T, isValid = true) {
+        this.data = data;
+        this.isValid = isValid;
+    }
+}
+
 export const PtBase = BaseMixin(LitElement, false);
 
 export const PtBaseShadow = BaseMixin(LitElement, true);
 
-export const PtBaseData = BaseMixin(DataBase, false);
+export const PtBaseData = DataBase;

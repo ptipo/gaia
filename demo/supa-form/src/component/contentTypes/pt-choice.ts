@@ -1,24 +1,37 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBaseData } from '../pt-base';
+import { PtBaseData, QuestionState } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 
 @customElement('pt-choice')
-export class PtChoice extends PtBaseData {
+export class PtChoice extends PtBaseData<Set<string>> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['ChoiceQuestion'];
 
-    @property({ attribute: false })
-    value?: Set<string>;
+    randomSeed?: number[];
+
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.data?.randomOrder) {
+            this.randomSeed = Array.from(this.data!.textChoices!, (x) => Math.random() - 0.5);
+        }
+    }
 
     render() {
-        if (!this.value) {
-            this.value = new Set([this.data!.textChoices!.find((x) => x.defaultSelected)!.$id]);
+        if (!this.value.data) {
+            this.value.data = new Set(this.data!.textChoices!.filter((x) => x.defaultSelected).map((x) => x.$id));
+        }
+
+        if (this.data?.required) {
+            this.value.isValid = this.value.data.size > 0;
         }
 
         const isSingleChoice = this.data?.kind == 'single';
         const choices = this.data?.randomOrder
-            ? this.data?.textChoices?.sort(() => Math.random() - 0.5)
+            ? this.data?.textChoices
+                  ?.map((x, i) => ({ value: x, sort: this.randomSeed![i] }))
+                  .sort((a, b) => a.sort - b.sort)
+                  .map((x) => x.value)
             : this.data?.textChoices;
 
         const isFlat = this.data?.flatMode as boolean;
@@ -37,7 +50,7 @@ export class PtChoice extends PtBaseData {
                                     type="${isSingleChoice ? 'radio' : 'checkbox'}"
                                     name="choices"
                                     value="${x.value}"
-                                    ?checked=${this.value ? this.value!.has(x.$id) : x.defaultSelected}
+                                    ?checked=${this.value ? this.value.data!.has(x.$id) : x.defaultSelected}
                                     @change=${(e: any) => this.onChange(e)}
                                     class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
                                     checked
@@ -67,14 +80,19 @@ export class PtChoice extends PtBaseData {
         if (isSelected) {
             const limitSelectedItems = this.data?.limitSelectedItems;
 
-            if (limitSelectedItems && this.value?.size == limitSelectedItems) {
+            if (limitSelectedItems && this.value.data!.size == limitSelectedItems) {
                 input.checked = false;
                 return;
             }
-
-            this.value?.add(choice!.$id);
+            this.value.data!.add(choice!.$id);
         } else {
-            this.value?.delete(choice!.$id);
+            this.value.data!.delete(choice!.$id);
         }
+
+        this.requestUpdate();
+    }
+
+    isValidate() {
+        return this.data?.required ? this.value.data!.size > 0 : true;
     }
 }

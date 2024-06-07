@@ -4,15 +4,13 @@ import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 
 @customElement('pt-email')
-export class PtEmail extends PtBaseData {
+export class PtEmail extends PtBaseData<string> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['EmailQuestion'];
 
-    @property()
-    value?: string;
-
     render() {
         const description = this.data?.description;
+
         return html` <div class="mb-5">
             <label for="${this.data?.$id!}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Your email</label
@@ -21,16 +19,31 @@ export class PtEmail extends PtBaseData {
             <input
                 type="email"
                 id="${this.data?.$id!}"
-                @change=${(e: any) => this.onChange(e.target.value)}
-                .value=${this.value!}
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                @input=${(e: any) => this.onChange(e.target.value)}
+                .value=${this.value?.data || ''}
+                class=" ${this.value?.data && !this.isValidate()
+                    ? 'border-rose-600'
+                    : ' border-gray-300'}  bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@abc.com"
                 required
             />
         </div>`;
     }
 
+    isValidate() {
+        if (this.value.data) {
+            return this.isValidEmail(this.value.data);
+        } else {
+            return !this.data?.required;
+        }
+    }
+
+    isValidEmail(email: string) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     onChange(value: string) {
-        this.value = value;
+        this.value!.data = value;
+        this.requestUpdate();
     }
 }
