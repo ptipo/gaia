@@ -8,7 +8,6 @@ import { ElNotification } from 'element-plus';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
-import { ElNotification } from 'element-plus';
 import type { EditPathRecord } from '@gaia/configurator';
 
 // form app
