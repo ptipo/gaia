@@ -27,7 +27,7 @@ export class PtChoice extends PtBaseData {
         return html`
             <fieldset>
                 <legend>${this.data?.question}</legend>
-                ${description ? html`<p class="mt-2 text-lg text-gray-600">${description}</p>` : ''}
+                ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
                 <div class="flex ${isFlat ? '' : 'flex-col'}">
                     ${choices!.map(
                         (x) => html`

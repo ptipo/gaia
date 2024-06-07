@@ -46,6 +46,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
+      copy-component:
+        specifier: ^0.3.0
+        version: 0.3.0
       lit:
         specifier: ^3.1.3
         version: 3.1.3
@@ -2137,6 +2140,10 @@ packages:
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
     dev: true
+
+  /copy-component@0.3.0:
+    resolution: {integrity: sha512-gFAxGkd1mOgLU1/xSRI3laXOU9yqTCywVkhSSjWmuaOWjGAKwYQdx0dIhw8JnAJBN6UdZmj3yR66iiDHeNxZVQ==}
+    dev: false
 
   /create-jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2):
     resolution: {integrity: sha512-Adz2bdH0Vq3F53KEMJOoftQFutWCukm6J24wbPWRO4k1kMY7gS7ds/uoJkNuV8wDCtWWnuwGcJwpWcih+zEW1Q==}
