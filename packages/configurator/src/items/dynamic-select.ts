@@ -1,6 +1,7 @@
-import { z } from 'zod';
-import { ConfigItemBase } from './common';
 import { ProviderContext } from '@/types';
+import { z } from 'zod';
+import { wrap } from '../schema';
+import { ConfigItemBase } from './common';
 
 /**
  * A dynamic select option.
@@ -36,16 +37,17 @@ export interface DynamicSelectItem<TValue> extends ConfigItemBase {
     /**
      * Callback for computing options.
      */
-    provider: (
-        context: ProviderContext
-    ) => DynamicSelectOption<TValue>[] | Promise<DynamicSelectOption<TValue>[]>;
+    provider: (context: ProviderContext) => DynamicSelectOption<TValue>[] | Promise<DynamicSelectOption<TValue>[]>;
 }
 
-export const getSchema = () =>
-    z.array(
-        z.object({
-            label: z.string(),
-            value: z.any(),
-            group: z.string().optional(),
-        })
+export const getSchema = (item: ConfigItemBase) =>
+    wrap(
+        item,
+        z.custom(
+            (data) => {
+                console.log(item);
+                return data !== undefined;
+            },
+            { message: '未设置' }
+        )
     );

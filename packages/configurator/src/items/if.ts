@@ -1,5 +1,6 @@
 import { ProviderContext } from '@/types';
-import { ConfigItem, getConfigItemSchema } from '../config-item';
+import { ConfigItem, makeConfigItemSchema } from '../config-item';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
@@ -19,5 +20,4 @@ export interface IfItem extends ConfigItemBase {
     child: ConfigItem;
 }
 
-export const getSchema = (item: ConfigItemBase) =>
-    getConfigItemSchema((item as IfItem).child).optional();
+export const getSchema = (item: ConfigItemBase) => wrap(item, makeConfigItemSchema((item as IfItem).child));

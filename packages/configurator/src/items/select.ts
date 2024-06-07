@@ -1,11 +1,11 @@
 import { z } from 'zod';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
  * 固定选择配置项
  */
-export interface SelectItem<TKey extends string = string>
-    extends ConfigItemBase {
+export interface SelectItem<TKey extends string = string> extends ConfigItemBase {
     type: 'select';
 
     /**
@@ -21,7 +21,15 @@ export interface SelectItem<TKey extends string = string>
 
 export const getSchema = (item: ConfigItemBase) => {
     const myItem = item as SelectItem;
-    return myItem.default !== undefined
-        ? z.string().default(myItem.default)
-        : z.string();
+    if (myItem.default !== undefined) {
+        return z
+            .string()
+            .default(myItem.default)
+            .refine((value) => value in myItem.options, { message: 'Invalid option' });
+    } else {
+        return wrap(
+            item,
+            z.string().refine((value) => value in myItem.options, { message: 'Invalid option' })
+        );
+    }
 };

@@ -1,6 +1,6 @@
 import { ProviderContext } from '@/types';
-import { z } from 'zod';
-import { Concept, getConceptSchema } from '../concept';
+import { ZodDiscriminatedUnionOption, z } from 'zod';
+import { Concept, makeConceptSchema } from '../concept';
 import { BaseConceptModel } from '../inference';
 import { ConfigItemBase } from './common';
 
@@ -38,16 +38,22 @@ export const getSchema = (item: ConfigItemBase) => {
         return z.never();
     }
 
-    const candidates = myItem.candidates.map((concept) => getConceptSchema(concept));
-    return z.array(
+    const candidates = myItem.candidates.map((concept) => makeConceptSchema(concept));
+    let result = z.array(
         candidates.length > 1
-            ? z.union(
-                  candidates as unknown as readonly [
-                      ReturnType<typeof getConceptSchema>,
-                      ReturnType<typeof getConceptSchema>,
-                      ...ReturnType<typeof getConceptSchema>[]
+            ? z.discriminatedUnion(
+                  '$concept',
+                  candidates as unknown as [
+                      ZodDiscriminatedUnionOption<'$concept'>,
+                      ...ZodDiscriminatedUnionOption<'$concept'>[]
                   ]
               )
             : candidates[0]
     );
+
+    if (item.required) {
+        return result.nonempty();
+    } else {
+        return result;
+    }
 };

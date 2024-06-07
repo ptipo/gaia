@@ -12,6 +12,7 @@ export const TextChoice = defineConcept({
          */
         value: {
             type: 'text',
+            name: '选项',
             required: true,
         },
 

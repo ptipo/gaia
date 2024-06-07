@@ -2,13 +2,22 @@
 import { getItemComponent } from '@/lib/component';
 import { CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
 import type { BaseConceptModel, Concept } from '@gaia/configurator';
-import { computed, defineAsyncComponent, inject, type Ref } from 'vue';
+import { computed, defineAsyncComponent, inject, ref, watch, type Ref } from 'vue';
 import { EnterConceptData } from './types';
 
 const props = defineProps<{
     concept: Concept;
     model: BaseConceptModel;
 }>();
+
+const _model = ref<BaseConceptModel>(props.model);
+
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = value;
+    }
+);
 
 const emit = defineEmits<{
     (e: 'enter', data: EnterConceptData): void;
@@ -30,8 +39,7 @@ const groups = computed(() => {
     }> = Object.entries(props.concept.groups)
         .filter(
             ([_, value]) =>
-                value.aspect === currentAspect?.value ||
-                (!value.aspect && currentAspect?.value === DEFAULT_ASPECT)
+                value.aspect === currentAspect?.value || (!value.aspect && currentAspect?.value === DEFAULT_ASPECT)
         )
         .map(([key, value]) => ({
             key,
@@ -55,15 +63,18 @@ const getGroupItems = (groupKey: string | undefined) => {
                 itemAspect = group.aspect;
             }
         }
-        return (
-            item.groupKey === groupKey && itemAspect === currentAspect?.value
-        );
+        return item.groupKey === groupKey && itemAspect === currentAspect?.value;
     });
 };
 
 const onChange = (key: string, data: unknown) => {
-    const nextModel = { ...props.model, [key]: data };
-    emit('change', nextModel);
+    _model.value = { ..._model.value, [key]: data };
+    emit('change', _model.value);
+};
+
+const onDrop = (key: string) => {
+    delete _model.value[key];
+    emit('change', _model.value);
 };
 
 const onEnter = (key: string, data: EnterConceptData) => {
@@ -90,9 +101,10 @@ const childComponents = computed(() => {
                         :key="key"
                         :is="childComponents[key]"
                         :item="item"
-                        :model="model[key]"
-                        :parentModel="model"
+                        :model="_model[key]"
+                        :parentModel="_model"
                         @change="(data: unknown) => onChange(key, data)"
+                        @drop="() => onDrop(key)"
                         @enter="(data: EnterConceptData) => onEnter(key, data)"
                     />
                 </div>

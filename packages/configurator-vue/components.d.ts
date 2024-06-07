@@ -7,8 +7,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    App: typeof import('./src/components/App.vue')['default']
-    Concept: typeof import('./src/components/Concept.vue')['default']
+    AppConfigurator: typeof import('./src/components/AppConfigurator.vue')['default']
+    ConceptConfigurator: typeof import('./src/components/ConceptConfigurator.vue')['default']
     ConceptElement: typeof import('./src/components/items/ConceptElement.vue')['default']
     ConceptStack: typeof import('./src/components/ConceptStack.vue')['default']
     DynamicSelectItem: typeof import('./src/components/items/DynamicSelectItem.vue')['default']
@@ -20,6 +20,7 @@ declare module 'vue' {
     IEpInfoFilled: typeof import('~icons/ep/info-filled')['default']
     IEpMoreFilled: typeof import('~icons/ep/more-filled')['default']
     IEpPlus: typeof import('~icons/ep/plus')['default']
+    IEpWarning: typeof import('~icons/ep/warning')['default']
     IfItem: typeof import('./src/components/items/IfItem.vue')['default']
     ImageItem: typeof import('./src/components/items/ImageItem.vue')['default']
     ItemLabel: typeof import('./src/components/items/ItemLabel.vue')['default']
@@ -29,5 +30,6 @@ declare module 'vue' {
     SelectItem: typeof import('./src/components/items/SelectItem.vue')['default']
     SwitchItem: typeof import('./src/components/items/SwitchItem.vue')['default']
     TextItem: typeof import('./src/components/items/TextItem.vue')['default']
+    ValidationIssues: typeof import('./src/components/ValidationIssues.vue')['default']
   }
 }

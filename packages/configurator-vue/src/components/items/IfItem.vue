@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import type {
-    AppInstance,
-    BaseConceptModel,
-    Concept,
-} from '@gaia/configurator';
+import type { AppInstance, BaseConceptModel, Concept } from '@gaia/configurator';
 import type { IfItem } from '@gaia/configurator/items';
-import { Ref, computed, inject, watch } from 'vue';
+import { Ref, computed, inject, onMounted, watch } from 'vue';
 import type { EnterConceptData } from '../types';
 import type { CommonEvents, CommonProps } from './common';
 
@@ -36,10 +32,19 @@ const condition = computed(() => {
     });
 });
 
-watch(condition, (value, oldValue) => {
-    if (value && !oldValue) {
+onMounted(() => {
+    if (condition.value && !props.model) {
+        emit('change', app!.createItemModel(props.item.child));
+    }
+});
+
+watch(condition, (value) => {
+    if (value) {
         // recreate model
         emit('change', app!.createItemModel(props.item.child));
+    } else {
+        // clear model
+        emit('drop');
     }
 });
 </script>

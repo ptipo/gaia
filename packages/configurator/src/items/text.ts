@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
@@ -30,7 +31,8 @@ export interface TextItem extends ConfigItemBase {
 
 export const getSchema = (item: ConfigItemBase) => {
     const myItem = item as TextItem;
-    let result = z.string();
+
+    let result = z.string().min(1);
 
     switch (myItem.kind) {
         case 'text':
@@ -45,7 +47,5 @@ export const getSchema = (item: ConfigItemBase) => {
             break;
     }
 
-    return myItem.default !== undefined
-        ? result.default(myItem.default)
-        : result;
+    return myItem.default !== undefined ? result.default(myItem.default) : wrap(item, result);
 };
