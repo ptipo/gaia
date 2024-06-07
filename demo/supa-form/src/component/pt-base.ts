@@ -19,7 +19,7 @@ const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom
     return PtBase as T;
 };
 
-class DataBase<T> extends LitElement {
+abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     @property({ type: Object })
     data?: { $id: string };
 
@@ -33,9 +33,7 @@ class DataBase<T> extends LitElement {
         }
     }
 
-    isValidate() {
-        return true;
-    }
+    abstract isValidate(): boolean;
 
     updated() {
         this.formState[this.data!.$id] = this.value;
@@ -70,4 +68,4 @@ export const PtBase = BaseMixin(LitElement, false);
 
 export const PtBaseShadow = BaseMixin(LitElement, true);
 
-export const PtBaseData = BaseMixin(DataBase, false);
+export const PtBaseData = DataBase;
