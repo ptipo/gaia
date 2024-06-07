@@ -28,5 +28,5 @@ module.exports = {
         },
     },
     darkMode: 'selector',
-    plugins: [],
+    plugins: [require('@tailwindcss/forms')],
 };

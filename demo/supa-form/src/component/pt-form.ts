@@ -60,12 +60,7 @@ export class PtForm extends PtBaseShadow {
         const currentPage = contentPages.find((x) => x.$id === this.pageId);
 
         if (currentPage) {
-            return html`<h1
-                    class="mb-1 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white"
-                >
-                    This is a Form
-                </h1>
-                <div>${keyed(this.pageId, html`<pt-form-page .page=${currentPage}></pt-form-page>`)}</div>
+            return html` <div>${keyed(this.pageId, html`<pt-form-page .page=${currentPage}></pt-form-page>`)}</div>
                 <div class="flex justify-center items-center ">
                     <button class="py-2 px-4" type="button" @click=${this.prePage}>Pre</button>
 
