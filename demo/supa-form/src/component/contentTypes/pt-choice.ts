@@ -19,7 +19,7 @@ export class PtChoice extends PtBaseData<Set<string>> {
 
     render() {
         if (!this.value.data) {
-            this.value.data = new Set([this.data!.textChoices!.find((x) => x.defaultSelected)!.$id]);
+            this.value.data = new Set(this.data!.textChoices!.filter((x) => x.defaultSelected).map((x) => x.$id));
         }
 
         if (this.data?.required) {
