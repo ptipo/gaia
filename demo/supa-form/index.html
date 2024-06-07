@@ -3,25 +3,13 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>&lt;my-element> Demo</title>
-
-        <script type="module" src="src/component/pt-form.ts"></script>
-        <style>
-            p {
-                border: solid 1px blue;
-                padding: 8px;
-            }
-        </style>
+        <title>Supa Form Builder</title>
+        <script type="module" src="src/index.ts"></script>
     </head>
 
-    <body>
-        <div id="app"></div>
+    <body class="flex h-screen">
+        <div class="w-full h-full max-w-screen-2xl mx-auto p-4 bg-slate-50" id="app"></div>
     </body>
 
-    <script>
-        app.addEventListener("pt-form-submit", function(event) {
-          alert(JSON.stringify(event.detail));
-        });
-    </script>
-    <script type="module" src="src/main.ts"></script>
+    <script type="module" src="src/config-ui/main.ts"></script>
 </html>

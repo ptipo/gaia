@@ -11,15 +11,6 @@ const config: UserConfig = {
                 },
             },
         }),
-        {
-            name: 'use-configurator-html',
-            transformIndexHtml: {
-                order: 'pre',
-                handler() {
-                    return fs.readFileSync('./configurator.html', 'utf-8');
-                },
-            },
-        },
     ],
 
     build: {
