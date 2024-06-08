@@ -2,7 +2,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { PtBase } from '../pt-base';
 import { html } from 'lit/static-html.js';
 import { AllPageItemsTypesMap } from '../../config/page-items';
-import 'copy-component';
+import './pt-copy-component';
 
 @customElement('pt-copy-to-clipboard')
 export class PtCopyToClipboard extends PtBase {
@@ -15,7 +15,7 @@ export class PtCopyToClipboard extends PtBase {
     render() {
         const content = this.data?.content;
 
-        return html` <copy-component @copy=${this.onCopy.bind(this)}>
+        return html` <pt-copy-component @copy=${this.onCopy.bind(this)}>
             <div class="inline-flex items-center gap-x-3">
                 <div id="hs-clipboard-basic" class="text-sm font-medium text-gray-800 dark:text-white">${content}</div>
                 <button
@@ -55,7 +55,7 @@ export class PtCopyToClipboard extends PtBase {
                     </svg>
                 </button>
             </div>
-        </copy-component>`;
+        </pt-copy-component>`;
     }
 
     private onCopy() {
