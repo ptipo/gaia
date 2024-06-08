@@ -33,12 +33,12 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
         }
     }
 
-    abstract isValidate(): boolean;
+    abstract isValidated(): boolean;
 
     updated() {
         this.formState[this.data!.$id] = this.value;
 
-        const isValid = this.isValidate();
+        const isValid = this.isValidated();
 
         if (isValid !== this.value.isValid) {
             this.value.isValid = isValid;
