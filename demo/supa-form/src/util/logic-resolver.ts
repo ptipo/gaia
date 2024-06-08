@@ -29,6 +29,8 @@ export function validateLogic(model: typeof app.model, condition: LogicalGroup, 
             case ChoiceQuestion.name: {
                 const fieldId = field.$id;
                 const answerData = data[fieldId];
+
+                if (!answerData) return false;
                 const choiceQuestion = findPageItemConfigById(model, fieldId) as AllPageItemsTypesMap['ChoiceQuestion'];
 
                 const dataValue = answerData.data as Map<string, string>;

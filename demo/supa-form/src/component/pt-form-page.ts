@@ -5,7 +5,7 @@ import { getContentTypeComponent } from './contentTypes';
 import { unsafeStatic, html } from 'lit/static-html.js';
 
 @customElement('pt-form-page')
-class PtFormPage extends PtBase {
+export class PtFormPage extends PtBase {
     @property()
     name?: string;
 
@@ -17,13 +17,12 @@ class PtFormPage extends PtBase {
 
         return html`<h2 class="text-m font-extrabold dark:text-white">${this.page.name}</h2>
 
-        ${pageItems.map((item) => {
-            const tagName = getContentTypeComponent(item.$concept);
+            ${pageItems.map((item) => {
+                const tagName = getContentTypeComponent(item.$concept);
 
-            return html`<div class="mb-5"></div><${unsafeStatic(tagName)} data=${JSON.stringify(
-                item
-            )} ></${unsafeStatic(tagName)}></div>`;
-        })}
-        `;
+                return html`<div class="mb-5"></div><${unsafeStatic(tagName)} data=${JSON.stringify(
+                    item
+                )} ></${unsafeStatic(tagName)}></div>`;
+            })} `;
     }
 }
