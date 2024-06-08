@@ -40,10 +40,8 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 
         const isValid = this.isValidated();
 
-        if (isValid !== this.value.isValid) {
-            this.value.isValid = isValid;
-            this.dispatchUpdate();
-        }
+        this.value.isValid = isValid;
+        this.dispatchUpdate();
     }
 
     dispatchUpdate() {

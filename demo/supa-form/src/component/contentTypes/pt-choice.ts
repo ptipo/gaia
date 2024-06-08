@@ -108,6 +108,11 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                 input.checked = false;
                 return;
             }
+
+            const isSingleChoice = this.data?.kind == 'single';
+            if (isSingleChoice) {
+                this.value.data!.clear();
+            }
             this.value.data!.set(choice!.$id, '');
         } else {
             this.value.data!.delete(choice!.$id);
@@ -122,8 +127,6 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         const choiceId = input.dataset.choiceId!;
 
         this.value.data!.set(choiceId, value);
-
-        console.log(this.value.data);
     }
 
     isValidated() {

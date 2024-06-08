@@ -9,7 +9,7 @@ class PtText extends PtBase {
     data?: AllPageItemsTypesMap['TextElement'];
 
     render() {
-        const tagName = this.data?.kind!;
+        const tagName = this.data?.kind || 'p';
         return html`<${unsafeStatic(tagName)}>${this.data?.content}</${unsafeStatic(tagName)}>`;
     }
 }
