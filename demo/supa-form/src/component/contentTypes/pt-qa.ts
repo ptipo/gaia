@@ -36,7 +36,7 @@ export class PtQA extends PtBaseData<string> {
             ></textarea>`;
     }
 
-    isValidate() {
+    isValidated() {
         return this.data?.required ? !!this.value.data : true;
     }
 
