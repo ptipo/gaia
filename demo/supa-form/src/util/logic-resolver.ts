@@ -23,19 +23,21 @@ export function validateLogic(model: typeof app.model, condition: LogicalGroup, 
             case EmailQuestion.name: {
                 const answerData = data[field.$id];
                 const expectedData = condition.right as string;
-                return validateValue(operator, expectedData, answerData);
+                const dataValue = answerData.data as string;
+                return validateValue(operator, expectedData, dataValue);
             }
             case ChoiceQuestion.name: {
                 const fieldId = field.$id;
                 const answerData = data[fieldId];
                 const choiceQuestion = findPageItemConfigById(model, fieldId) as AllPageItemsTypesMap['ChoiceQuestion'];
 
+                const dataValue = answerData.data as Map<string, string>;
                 if (choiceQuestion.kind == 'single') {
                     const expectedData = (condition.right as ConceptRef).$id;
-                    return validateValue(operator, expectedData, answerData);
+                    return validateValue(operator, dataValue.keys().next().value, expectedData);
                 } else {
                     const expectedData = (condition.right as ConceptRef[]).map((x) => x.$id);
-                    return validateArrayValue(operator, expectedData, answerData);
+                    return validateArrayValue(operator, Array.from(dataValue.keys()), expectedData);
                 }
             }
         }
@@ -65,17 +67,17 @@ function validateValue(op: ComparisonOperator, left: string, right: string) {
 export function validateArrayValue(op: ComparisonOperator, left: string[], right: string[]) {
     switch (op) {
         case ComparisonOperator.SelectedAll:
-            return left === right;
-        case ComparisonOperator.SelectedOne:
             return right.every((r) => left.includes(r));
+        case ComparisonOperator.SelectedOne:
+            return right.some((r) => left.includes(r));
         case ComparisonOperator.NotSelectedAll:
             return right.some((r) => !left.includes(r));
         case ComparisonOperator.NotSelectedAny:
-            return right.some((r) => !left.includes(r));
+            return right.every((r) => !left.includes(r));
         case ComparisonOperator.Empty:
-            return right.length === 0;
+            return left.length === 0;
         case ComparisonOperator.NotEmpty:
-            return right.length !== 0;
+            return left.length !== 0;
     }
     throw new Error(`Invalid operator ${op}`);
 }

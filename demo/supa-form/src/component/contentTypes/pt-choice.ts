@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
+import { ImageInfo } from '@gaia/configurator/items';
 
 @customElement('pt-choice')
 export class PtChoice extends PtBaseData<Map<string, string>> {
@@ -18,9 +19,12 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     }
 
     render() {
+        const isImageChoice = this.data?.choiceKind == 'image';
+        const targetChoices = isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
         if (!this.value.data) {
             this.value.data = new Map(
-                this.data!.textChoices!.filter((x) => x.defaultSelected)
+                targetChoices!
+                    .filter((x) => x.defaultSelected)
                     .map((x) => x.$id)
                     .map((x) => [x, x])
             );
@@ -31,12 +35,13 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         }
 
         const isSingleChoice = this.data?.kind == 'single';
+
         const choices = this.data?.randomOrder
-            ? this.data?.textChoices
+            ? targetChoices
                   ?.map((x, i) => ({ value: x, sort: this.randomSeed![i] }))
                   .sort((a, b) => a.sort - b.sort)
                   .map((x) => x.value)
-            : this.data?.textChoices;
+            : targetChoices;
 
         const isFlat = this.data?.flatMode as boolean;
         const description = this.data?.description;
@@ -61,13 +66,17 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                         checked
                                         required
                                     />
-
-                                    <label
-                                        for="${x.$id}"
-                                        class="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300"
-                                    >
-                                        ${x.value}
-                                    </label>
+                                    ${isImageChoice
+                                        ? html` <img
+                                              class="max-w-sm object-cover object-center"
+                                              src="${(x.value as ImageInfo).url}"
+                                          />`
+                                        : html`<label
+                                              for="${x.$id}"
+                                              class="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300"
+                                          >
+                                              ${x.value}
+                                          </label>`}
                                 </div>
                                 ${x.additionalInput && this.value.data!.has(x.$id)
                                     ? html`<textarea
@@ -86,9 +95,11 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     onChange(e: Event) {
         const input = e.target as HTMLInputElement;
-        const value = input.value;
         const isSelected = input.checked;
-        const choice = this.data!.textChoices?.find((x) => x.value == value);
+
+        const isImageChoice = this.data?.choiceKind == 'image';
+        const targetChoices = isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
+        const choice = targetChoices?.find((x) => x.$id == input.id);
 
         if (isSelected) {
             const limitSelectedItems = this.data?.limitSelectedItems;

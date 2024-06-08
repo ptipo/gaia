@@ -1,7 +1,8 @@
 import { createContext } from '@lit/context';
+import { QuestionState } from './component/pt-base';
 
 export type answerData = {
-    [key: string]: any;
+    [key: string]: QuestionState<any>;
 };
 
 export const formState = createContext<answerData>(Symbol('form-state'));
