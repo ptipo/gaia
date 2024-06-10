@@ -1,9 +1,4 @@
-import {
-    BaseConceptModel,
-    Concept,
-    ProviderContext,
-    defineConcept,
-} from '@gaia/configurator';
+import { BaseConceptModel, Concept, ProviderContext, defineConcept } from '@gaia/configurator';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
 import { NextButton } from './next-button';
@@ -40,6 +35,8 @@ export const ContentPage = defineConcept({
             concept: NextButton,
         },
     },
+
+    selectable: true,
 });
 
 // 根据不同的内容项类型，生成默认带自增序号的名称
@@ -61,9 +58,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
 
     // 生成带自增序号的问题名称
     const nameWithSuffix = `${mappedName}${
-        currentModel.filter(
-            (item: BaseConceptModel) => item.$concept === concept.name
-        ).length + 1
+        currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name).length + 1
     }`;
     return app.createConceptInstance(concept, {
         name: nameWithSuffix,

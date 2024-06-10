@@ -42,6 +42,11 @@ const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
 
     /**
+     * Emitted when the selection is changed
+     */
+    (e: 'selected', data: { concept: Concept; model: BaseConceptModel }): void;
+
+    /**
      * Emitted when a sibling is added
      */
     (e: 'addSibling', data: { concept: Concept; model: BaseConceptModel }): void;
@@ -102,7 +107,7 @@ const onEdit = (key: string, item: ConfigItem) => {
         emit('enter', {
             concept: item.concept,
             model: props.model[key] as BaseConceptModel,
-            parentKey: [key],
+            path: [key],
         });
         return;
     }
@@ -135,18 +140,30 @@ const onCancelEdit = () => {
 };
 
 const onEditNested = () => {
-    if (!props.inlineEditing) {
+    // enter nested editing of a concept
+    emit('enter', {
+        concept: props.concept,
+        model: props.model,
+        path: [],
+    });
+};
+
+const onClickNested = () => {
+    if (props.inlineEditing) {
+        // selecting
+        emit('selected', { concept: props.concept, model: props.model });
+    } else {
         // enter nested editing of a concept
         emit('enter', {
             concept: props.concept,
             model: props.model,
-            parentKey: [],
+            path: [],
         });
     }
 };
 
 const onEnterNested = (parentKey: string, data: EnterConceptData) => {
-    emit('enter', { ...data, parentKey: [parentKey, ...data.parentKey] });
+    emit('enter', { ...data, path: [parentKey, ...data.path] });
 };
 
 const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
@@ -156,7 +173,13 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
 </script>
 
 <template>
-    <div class="flex justify-between" :class="{ 'cursor-pointer': !inlineEditing }" @click="onEditNested">
+    <div
+        class="flex justify-between"
+        :class="{
+            'cursor-pointer': !inlineEditing || concept.selectable,
+        }"
+        @click="onClickNested"
+    >
         <div>
             {{ elementSummary }}
         </div>

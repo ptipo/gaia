@@ -30,6 +30,11 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * Callback for computing a summary text
      */
     summary?: (context: ProviderContext) => string;
+
+    /**
+     * If the concept can be selected as a preview target
+     */
+    selectable?: boolean;
 };
 
 export type ConceptTemplate = {

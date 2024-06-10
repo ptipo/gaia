@@ -90,7 +90,10 @@ export class AppInstance<TConcept extends Concept> {
      */
     createItemModel(item: ConfigItem): any {
         return match(item)
-            .with({ type: P.union('text', 'number', 'switch', 'select'), required: true }, (item) => item.default)
+            .with(
+                { type: P.union('text', 'number', 'switch', 'select'), default: P.not(undefined) },
+                (item) => item.default
+            )
             .with({ type: 'image', required: true }, () => ({}))
             .with({ type: 'has' }, (item) => this.createConceptInstance(item.concept))
             .with({ type: 'has-many' }, () => [

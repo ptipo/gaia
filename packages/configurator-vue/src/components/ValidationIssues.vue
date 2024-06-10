@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { BaseConceptModel, Concept, isConcept } from '@gaia/configurator';
+import type { BaseConceptModel, Concept } from '@gaia/configurator';
 import { computed } from 'vue';
-import { EditPathRecord } from './types';
+import type { EditPathRecord } from './types';
 
 const props = defineProps<{
     issues: Issue[];
@@ -20,22 +20,16 @@ export type Issue = {
 
 const parseIssue = (issue: Issue) => {
     const path: string[] = [];
-    const conceptPath: EditPathRecord[] = [{ parentKey: [], concept: props.concept }];
 
     let currentModel: any = props.model;
     let currentItem: any = props.concept;
-    let nextConceptPrefix: (string | number)[] = [];
 
     for (const part of issue.path) {
-        nextConceptPrefix.push(part);
         if (typeof part === 'number') {
             currentModel = currentModel[part];
             if (currentItem.type === 'has-many' && currentModel.$concept) {
                 // follow has-many relation
                 const concept = currentItem.candidates.find((c: Concept) => c.name === currentModel.$concept);
-                if (concept && !currentItem.inline) {
-                    conceptPath.push({ parentKey: [...nextConceptPrefix], concept });
-                }
                 currentItem = concept;
             } else {
                 currentItem = undefined;
@@ -47,10 +41,6 @@ const parseIssue = (issue: Issue) => {
         } else {
             currentModel = currentModel[part];
             currentItem = unwrap(currentItem?.items?.[part]);
-
-            if (isConcept(currentItem)) {
-                conceptPath.push({ parentKey: [...nextConceptPrefix], concept: currentItem });
-            }
 
             if (currentModel?.name) {
                 path.push(currentModel.name);
@@ -64,7 +54,7 @@ const parseIssue = (issue: Issue) => {
         }
     }
 
-    return { issue, path, conceptPath };
+    return { issue, path };
 };
 
 const unwrap = (item: any) => {
@@ -87,9 +77,9 @@ const formatPath = ({ issue, path }: ParsedIssue) => {
     return `${issue.message}: ${path.join(' -> ')}`;
 };
 
-const onIssueClick = ({ conceptPath }: ParsedIssue) => {
-    console.log(conceptPath);
-    emit('navigate', conceptPath);
+const onIssueClick = ({ issue }: ParsedIssue) => {
+    console.log(issue.path);
+    emit('navigate', issue.path);
 };
 
 const issues = computed(() => props.issues.map(parseIssue));

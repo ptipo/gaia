@@ -6,7 +6,23 @@ import { type BaseConceptModel, type Concept } from '@gaia/configurator';
 export type EnterConceptData = {
     concept: Concept;
     model: BaseConceptModel;
-    parentKey: Array<string | number>;
+    path: Array<string | number>;
 };
 
-export type EditPathRecord = { parentKey: Array<number | string>; concept: Concept };
+export type EditPathRecord = string | number;
+
+/**
+ * Concept and its model.
+ */
+export type ConceptModelPair = {
+    concept: Concept;
+    model: BaseConceptModel;
+};
+
+/**
+ * Data for a selected concept instance.
+ */
+export type SelectionData = {
+    concept: Concept;
+    id: string;
+};
