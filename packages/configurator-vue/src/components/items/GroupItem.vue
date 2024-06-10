@@ -26,7 +26,7 @@ const onChange = (key: string, data: unknown) => {
 };
 
 const onEnter = (key: string, data: EnterConceptData) => {
-    emit('enter', { ...data, parentKey: [key, ...data.parentKey] });
+    emit('enter', { ...data, path: [key, ...data.path] });
 };
 </script>
 

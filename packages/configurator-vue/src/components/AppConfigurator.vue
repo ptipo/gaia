@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_ASPECT_KEY, DEFAULT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
+import { APP_KEY, CURRENT_ASPECT_KEY, CURRENT_SELECTION, DEFAULT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept } from '@gaia/configurator';
 import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
-import type { EditPathRecord } from './types';
+import type { EditPathRecord, SelectionData } from './types';
 
 const activeAspect = ref(DEFAULT_ASPECT);
 
@@ -12,10 +12,15 @@ const props = defineProps<{
     model: BaseConceptModel;
 }>();
 
-const currentPath = defineModel<EditPathRecord[]>('currentPath', { required: true });
+// v-model for currently selected concept instance
+const selection = defineModel<SelectionData>('selection');
+
+// v-model for the current edit path
+const editPath = defineModel<EditPathRecord[]>('editPath', { default: [] });
 
 const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
+    (e: 'selectionChange', data: SelectionData): void;
 }>();
 
 const _model = ref<BaseConceptModel>(props.model);
@@ -27,14 +32,17 @@ watch(
     }
 );
 
-// provide the root model to children
+// provide the root model to descendants
 provide(ROOT_MODEL_KEY, _model);
 
-// provide the current aspect to children
+// provide the current aspect to descendants
 provide(CURRENT_ASPECT_KEY, activeAspect);
 
-// provide the current app to children
+// provide the current app to descendants
 provide(APP_KEY, props.app);
+
+// provide the current selected concept instance to descendants
+provide(CURRENT_SELECTION, selection);
 
 const aspects = [
     { label: 'Content', aspect: 'content' },
@@ -45,18 +53,25 @@ const aspects = [
 const onChange = (data: BaseConceptModel) => {
     emit('change', data);
 };
+
+const onSelectionChange = (data: SelectionData) => {
+    selection.value = data;
+};
 </script>
 
 <template>
-    <div class="p-4 h-full overflow-auto text-sm">
+    <div class="flex flex-col p-4 text-sm h-full">
         <el-tabs v-model="activeAspect">
-            <el-tab-pane v-for="{ label, aspect } in aspects" :label="label" :name="aspect"></el-tab-pane>
+            <el-tab-pane v-for="{ label, aspect } in aspects" :label="label" :name="aspect"> </el-tab-pane>
         </el-tabs>
-        <ConceptStack
-            :root-concept="app.concept"
-            :root-model="_model"
-            v-model:currentPath="currentPath"
-            @change="onChange"
-        ></ConceptStack>
+        <div class="flex-grow overflow-auto">
+            <ConceptStack
+                :root-concept="app.concept"
+                :root-model="_model"
+                v-model:editPath="editPath"
+                @change="onChange"
+                @selectionChange="onSelectionChange"
+            ></ConceptStack>
+        </div>
     </div>
 </template>

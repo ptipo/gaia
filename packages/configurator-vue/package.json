@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite --port 5002",
+        "watch": "vue-tsc --noEmit --watch",
         "build": "run-p build:*",
         "build:lib": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
         "build:app": "vite -c vite-app.config.ts build",

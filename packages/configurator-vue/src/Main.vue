@@ -2,18 +2,19 @@
 import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
 import { config as FormApp } from '@gaia/samples/form';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import ValidationIssues, { Issue } from './components/ValidationIssues.vue';
-import type { EditPathRecord } from './components/types';
+import { SelectionData, type EditPathRecord } from './components/types';
 
 const app = createAppInstance(FormApp);
 const model = ref<BaseConceptModel>(app.model);
 const issues = ref<Issue[]>([]);
-const currentPath = ref<EditPathRecord[]>([{ parentKey: [], concept: app.concept }]);
+const editPath = ref<EditPathRecord[]>([]);
+const selection = ref<SelectionData>();
 
 onMounted(() => {
     validate(model.value);
@@ -54,15 +55,8 @@ const onLoad = () => {
 };
 
 const onNavigateError = (path: EditPathRecord[]) => {
-    console.log(
-        'Navigate to:',
-        JSON.stringify(
-            path.map((item) => ({ parentKey: item.parentKey, concept: item.concept.name })),
-            null,
-            2
-        )
-    );
-    currentPath.value = path;
+    console.log('Navigate to:', JSON.stringify(path));
+    editPath.value = path;
 };
 
 const validate = (model: BaseConceptModel) => {
@@ -74,6 +68,10 @@ const validate = (model: BaseConceptModel) => {
         issues.value = [];
     }
 };
+
+watch(selection, (value) => {
+    console.log('Selection changed:', value?.concept.name, value?.id);
+});
 </script>
 
 <template>
@@ -101,7 +99,13 @@ const validate = (model: BaseConceptModel) => {
             </div>
         </div>
         <div class="w-[480px] border rounded h-full">
-            <AppConfigurator :app="app" :model="model" v-model:currentPath="currentPath" @change="onAppChange" />
+            <AppConfigurator
+                :app="app"
+                :model="model"
+                v-model:editPath="editPath"
+                v-model:selection="selection"
+                @change="onAppChange"
+            />
         </div>
     </div>
 </template>

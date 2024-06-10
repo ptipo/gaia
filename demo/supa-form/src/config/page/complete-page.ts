@@ -23,4 +23,6 @@ export const CompletePage = defineConcept({
             candidates: [TextElement, ImageElement],
         },
     },
+
+    selectable: true,
 });

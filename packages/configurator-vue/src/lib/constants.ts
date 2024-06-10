@@ -14,6 +14,11 @@ export const ROOT_MODEL_KEY = 'rootModel';
 export const CURRENT_ASPECT_KEY = 'currentAspect';
 
 /**
+ * Currently selected concept instance.
+ */
+export const CURRENT_SELECTION = 'currentSelection';
+
+/**
  * Default aspect for a group if not set.
  */
 export const DEFAULT_ASPECT = 'content';

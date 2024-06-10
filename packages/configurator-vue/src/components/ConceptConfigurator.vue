@@ -3,7 +3,7 @@ import { getItemComponent } from '@/lib/component';
 import { CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
 import type { BaseConceptModel, Concept } from '@gaia/configurator';
 import { computed, defineAsyncComponent, inject, ref, watch, type Ref } from 'vue';
-import { EnterConceptData } from './types';
+import type { EnterConceptData, SelectionData } from './types';
 
 const props = defineProps<{
     concept: Concept;
@@ -22,6 +22,7 @@ watch(
 const emit = defineEmits<{
     (e: 'enter', data: EnterConceptData): void;
     (e: 'change', data: BaseConceptModel): void;
+    (e: 'selectionChange', data: SelectionData): void;
 }>();
 
 const currentAspect = inject<Ref<string>>(CURRENT_ASPECT_KEY);
@@ -78,7 +79,7 @@ const onDrop = (key: string) => {
 };
 
 const onEnter = (key: string, data: EnterConceptData) => {
-    emit('enter', { ...data, parentKey: [key, ...data.parentKey] });
+    emit('enter', { ...data, path: [key, ...data.path] });
 };
 
 const childComponents = computed(() => {
@@ -90,7 +91,7 @@ const childComponents = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 pb-4">
         <div v-for="(group, index) in groups">
             <div v-if="group.items.length > 0">
                 <el-divider v-if="index > 0" class="mt-1 mb-4" />
@@ -104,6 +105,7 @@ const childComponents = computed(() => {
                         :model="_model[key]"
                         :parentModel="_model"
                         @change="(data: unknown) => onChange(key, data)"
+                        @selectionChange="(data: SelectionData) => $emit('selectionChange', data)"
                         @drop="() => onDrop(key)"
                         @enter="(data: EnterConceptData) => onEnter(key, data)"
                     />

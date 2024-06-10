@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
 import { AppInstance, Concept, type BaseConceptModel } from '@gaia/configurator';
 import type { HasManyItem } from '@gaia/configurator/items';
@@ -7,7 +7,7 @@ import { createId } from '@paralleldrive/cuid2';
 import deepcopy from 'deepcopy';
 import { inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
-import type { EnterConceptData } from '../types';
+import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
 import type { CommonEvents, CommonProps } from './common';
 
 const props = withDefaults(
@@ -32,6 +32,7 @@ const emit = defineEmits<
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION);
 
 // mutable state for draggable
 const draggableState = ref(props.model);
@@ -56,7 +57,7 @@ const onCreate = (candidate: Concept) => {
     emit('change', nextModel);
 
     if (!props.item.inline) {
-        onEnterConcept({ concept: candidate, model: newItem, parentKey: [] }, currentItemCount);
+        onEnterConcept({ concept: candidate, model: newItem, path: [] }, currentItemCount);
     }
 };
 
@@ -128,7 +129,15 @@ const onDeleteElement = async (index: number) => {
 
 const onEnterConcept = (data: EnterConceptData, index: number) => {
     // append key and forward to parent
-    emit('enter', { ...data, parentKey: [index, ...data.parentKey] });
+    emit('enter', { ...data, path: [index, ...data.path] });
+};
+
+const onElementSelected = ({ model, concept }: ConceptModelPair) => {
+    emit('selectionChange', { concept, id: model.$id });
+};
+
+const isSelected = (element: BaseConceptModel) => {
+    return currentSelection?.value?.concept.name === element.$concept && currentSelection?.value?.id === element.$id;
 };
 </script>
 
@@ -139,7 +148,10 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
         <!-- draggable element list -->
         <draggable class="flex flex-col gap-2" v-model="draggableState" item-key="$id" @end="onDragEnd">
             <template #item="{ element, index }">
-                <div :class="{ 'border rounded p-3': !inline }" class="flex items-center w-full">
+                <div
+                    :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
+                    class="flex items-center w-full"
+                >
                     <div class="flex-grow">
                         <ConceptElement
                             v-if="findConcept(element.$concept)"
@@ -153,6 +165,7 @@ const onEnterConcept = (data: EnterConceptData, index: number) => {
                             @delete="() => onDeleteElement(index)"
                             @enter="(data: EnterConceptData) => onEnterConcept(data, index)"
                             @change="(data: BaseConceptModel) => onChangeElement(data, index)"
+                            @selected="(data: ConceptModelPair) => onElementSelected(data)"
                         />
                     </div>
                 </div>
