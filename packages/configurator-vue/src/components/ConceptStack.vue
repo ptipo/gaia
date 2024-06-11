@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type BaseConceptModel, type Concept } from '@gaia/configurator';
+import type { BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
 import deepcopy from 'deepcopy';
 import { computed, ref, watch } from 'vue';
 import ConceptConfigurator from './ConceptConfigurator.vue';
@@ -60,9 +60,9 @@ const refreshStack = (newPath: EditPathRecord[]) => {
                 if (!item.inline) {
                     conceptStack.value.push({ concept: item, model, path: [...cumulatedPath] });
                 }
-            } else if (item?.type === 'if') {
+            } else {
                 // unwrap 'if'
-                item = item.child;
+                item = unwrapIf(item);
             }
         }
 
@@ -86,6 +86,13 @@ watch(
         refreshStack(editPath.value);
     }
 );
+
+const unwrapIf = (item: ConfigItem | undefined): ConfigItem | undefined => {
+    if (item?.type !== 'if') {
+        return item;
+    }
+    return unwrapIf(item.child);
+};
 
 const currentConcept = computed(() => {
     const record = conceptStack.value[conceptStack.value.length - 1];
@@ -119,7 +126,20 @@ const onChange = (data: BaseConceptModel) => {
     }
 
     // update the parent object
-    curr[path[path.length - 1]] = data;
+    const key = path[path.length - 1];
+    curr[key] = data;
+
+    if (typeof key === 'number') {
+        // it must belong to a "has-many" item of a parent concept
+        const prevKey = path[path.length - 2];
+        if (prevKey) {
+            const parentItem = unwrapIf(parentConcept.value.items[prevKey]);
+            if (parentItem?.type === 'has-many') {
+                // call the "onChildChange" hook
+                parentItem.onChildChange?.(data, curr);
+            }
+        }
+    }
 
     emit('change', nextModel);
 };

@@ -77,6 +77,10 @@ const findConcept = (name: string) => {
 const onChangeElement = (data: BaseConceptModel, index: number) => {
     const nextModel = [...props.model];
     nextModel[index] = data;
+
+    // call the onChildChange hook
+    props.item.onChildChange?.(nextModel[index], nextModel);
+
     emit('change', nextModel);
 };
 
