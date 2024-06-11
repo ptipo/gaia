@@ -87,7 +87,7 @@ watch(
     }
 );
 
-const unwrapIf = (item: ConfigItem): ConfigItem => {
+const unwrapIf = (item: ConfigItem | undefined): ConfigItem | undefined => {
     if (item?.type !== 'if') {
         return item;
     }
@@ -134,7 +134,7 @@ const onChange = (data: BaseConceptModel) => {
         const prevKey = path[path.length - 2];
         if (prevKey) {
             const parentItem = unwrapIf(parentConcept.value.items[prevKey]);
-            if (parentItem.type === 'has-many') {
+            if (parentItem?.type === 'has-many') {
                 // call the "onChildChange" hook
                 parentItem.onChildChange?.(data, curr);
             }
