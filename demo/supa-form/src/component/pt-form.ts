@@ -15,6 +15,9 @@ export class PtForm extends PtBaseShadow {
     @property()
     name?: string;
 
+    @property({ type: Object, attribute: 'edit-selection' })
+    editSelection?: { id: string };
+
     @property({
         type: Object,
         converter: {
@@ -49,6 +52,10 @@ export class PtForm extends PtBaseShadow {
             return html``;
         }
 
+        if (this.editSelection) {
+            this.pageId = this.editSelection.id;
+        }
+
         if (!this.pageId) {
             this.pageId = contentPages[0].$id;
         }
@@ -61,70 +68,73 @@ export class PtForm extends PtBaseShadow {
 
             const progress: number = this.getCurrentProgress() * 100;
 
-            return html`<div>
-                    <div
-                        class="flex w-full h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
-                        role="progressbar"
-                    >
+            return html`
+                    <div class="mt-4">
                         <div
-                            class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
-                            style="width: ${progress}%"
-                        ></div>
+                            class="flex w-full h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                            role="progressbar"
+                        >
+                            <div
+                                class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                style="width: ${progress}%"
+                            ></div>
+                        </div>
+                        ${keyed(
+                            this.pageId,
+                            html`<pt-form-page
+                                class="mt-4 block"
+                                @pt-form-state-changed=${this.onFormStateChange}
+                                .page=${this.currentContentPage}
+                            ></pt-form-page>`
+                        )}
                     </div>
-                    ${keyed(
-                        this.pageId,
-                        html`<pt-form-page
-                            @pt-form-state-changed=${this.onFormStateChange}
-                            .page=${this.currentContentPage}
-                        ></pt-form-page>`
-                    )}
+                    <div class="flex justify-center ">
+                        <button
+                            @click=${() => this.prePage()}
+                            type="button"
+                            class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                        >
+                            <svg
+                                class="flex-shrink-0 size-3.5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="m15 18-6-6 6-6"></path>
+                            </svg>
+                            <span class="hidden sm:block">Prev</span>
+                        </button>
+                        <button
+                            @click=${() => this.nextPage()}
+                            type="button"
+                            class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                        >
+                            <span class="hidden sm:block">${isSubmitReady ? 'Submit' : 'Next'}</span>
+                            <svg
+                                class="flex-shrink-0 size-3.5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="fixed w-full font-light leading-[1.2] right-0 bottom-0">sdfdsf</div>
                 </div>
-                <div class="flex justify-center ">
-                    <button
-                        @click=${() => this.prePage()}
-                        type="button"
-                        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                    >
-                        <svg
-                            class="flex-shrink-0 size-3.5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="m15 18-6-6 6-6"></path>
-                        </svg>
-                        <span class="hidden sm:block">Prev</span>
-                    </button>
-                    <button
-                        @click=${() => this.nextPage()}
-                        type="button"
-                        class="${showNextButton
-                            ? ''
-                            : 'hidden'} min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                    >
-                        <span class="hidden sm:block">${isSubmitReady ? 'Submit' : 'Next'}</span>
-                        <svg
-                            class="flex-shrink-0 size-3.5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="m9 18 6-6-6-6"></path>
-                        </svg>
-                    </button>
-                </div>`;
+            `;
         } else {
             const completePage = completePages.find((x) => x.$id == this.pageId);
             return html`<pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
