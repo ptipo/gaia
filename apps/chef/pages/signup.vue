@@ -14,7 +14,7 @@ async function signup(e: Event) {
             body: new FormData(e.target as HTMLFormElement),
         });
     } catch (e: any) {
-        alert('Failed to sign up: ' + (e.data?.message ?? e.message));
+        ElMessage.error(e.data?.message ?? e.message);
         return;
     }
     await navigateTo('/');
@@ -25,7 +25,7 @@ async function signup(e: Event) {
     <section class="bg-gray-50 dark:bg-gray-900 w-full">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
             <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                Welcome to GAIA
+                欢迎访问GAIA
             </a>
             <div
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
@@ -34,12 +34,12 @@ async function signup(e: Event) {
                     <h1
                         class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
                     >
-                        Create an account
+                        新建一个账号
                     </h1>
                     <form class="space-y-4 md:space-y-6" action="#" @submit.prevent="signup">
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Your email</label
+                                >邮箱</label
                             >
                             <input
                                 type="email"
@@ -53,7 +53,7 @@ async function signup(e: Event) {
                         </div>
                         <div>
                             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Password</label
+                                >密码</label
                             >
                             <input
                                 type="password"
@@ -69,7 +69,7 @@ async function signup(e: Event) {
                             <label
                                 for="confirm-password"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Confirm password</label
+                                >确认密码</label
                             >
                             <input
                                 type="password"
@@ -88,31 +88,32 @@ async function signup(e: Event) {
                                     aria-describedby="terms"
                                     type="checkbox"
                                     class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                                    required=""
+                                    required
                                 />
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="terms" class="font-light text-gray-500 dark:text-gray-300"
-                                    >I accept the
+                                    >我同意
                                     <a
                                         class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                         href="#"
-                                        >Terms and Conditions</a
+                                        >暂时还没写的使用条款</a
                                     ></label
                                 >
                             </div>
                         </div>
-                        <button
-                            type="submit"
-                            class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                        <el-button
+                            type="primary"
+                            size="large"
+                            class="w-full"
                             :disabled="!email || !password || password !== confirmPassword"
                         >
-                            Create an account
-                        </button>
+                            创建账号
+                        </el-button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Already have an account?
+                            已有账号？
                             <a href="/signin" class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                                >Login here</a
+                                >登录</a
                             >
                         </p>
                     </form>

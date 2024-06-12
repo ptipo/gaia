@@ -1,0 +1,60 @@
+generator client {
+  provider = 'prisma-client-js'
+}
+
+datasource db {
+  provider = 'postgresql'
+  url      = env('DATABASE_URL')
+}
+
+plugin hooks {
+  provider = '@zenstackhq/tanstack-query'
+  target = 'vue'
+  output = 'composables/data'
+}
+
+abstract model EntityBase {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+abstract model EntityWithOwner extends EntityBase {
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @default(auth().id)
+
+  @@allow('all', auth() == owner)
+}
+
+model User extends EntityBase {
+  email    String    @unique
+  password String    @omit
+  sessions Session[]
+  apps     App[]
+  assets   Asset[]
+
+  @@allow('read', true)
+  @@allow('all', auth() == this)
+}
+
+model App extends EntityWithOwner {
+  name    String  @length(1)
+  version String  @default('1.0.0')
+  assets  Asset[]
+
+  @@allow('read', auth() != null)
+}
+
+model Asset extends EntityWithOwner {
+  name   String @length(1)
+  app    App    @relation(fields: [appId], references: [id])
+  appId  String
+  config Json?
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
