@@ -38,9 +38,11 @@ model User extends EntityBase {
 }
 
 model App extends EntityWithOwner {
-  name    String  @length(1)
-  version String  @default('1.0.0')
-  assets  Asset[]
+  name        String  @length(1) @unique
+  version     String  @default('1.0.0')
+  assets      Asset[]
+  bundle      String
+  htmlTagName String
 
   @@allow('read', auth() != null)
 }

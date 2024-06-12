@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { App } from '@prisma/client';
+import type { App, Asset } from '@prisma/client';
 import { useCreateAsset, useFindManyAsset } from '~/composables/data';
-import { prompt } from '~/lib/message';
+import { prompt, success } from '~/lib/message';
 
 const { mutateAsync: createAsset } = useCreateAsset();
 
@@ -18,22 +18,28 @@ const onCreate = async ({ app }: { app: App }) => {
     const created = await createAsset({
         data: { name, app: { connect: { id: app.id } } },
     });
-    ElNotification({
-        title: '资产创建成功',
-        type: 'success',
-    });
+    success('资产创建成功');
+};
+
+const onAssetClick = (asset: Asset) => {
+    navigateTo(`/asset/${asset.id}`);
 };
 </script>
 
 <template>
     <div class="w-full h-full">
-        <el-container class="h-full">
+        <el-container v-loading="isLoading" class="h-full">
             <el-header><NavBar @create="onCreate" /></el-header>
             <el-main>
                 <div class="flex flex-col items-center w-full h-full">
                     <h1 class="text-3xl mt-8 mb-12">我的资产</h1>
-                    <div v-if="!isLoading" class="flex flex-wrap gap-8">
-                        <AssetCard v-for="asset in assets" :key="asset.id" :asset="asset" />
+                    <div v-if="assets" class="flex flex-wrap container mx-auto gap-8">
+                        <AssetCard
+                            v-for="asset in assets"
+                            :key="asset.id"
+                            :asset="asset"
+                            @click="() => onAssetClick(asset)"
+                        />
                     </div>
                 </div>
             </el-main>

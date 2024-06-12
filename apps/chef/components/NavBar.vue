@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { App } from '@prisma/client';
 import { useFindManyApp } from '~/composables/data';
+import { error } from '~/lib/message';
 
 const user = useUser();
 
@@ -16,7 +17,7 @@ async function logout() {
             method: 'POST',
         });
     } catch (e: any) {
-        ElMessage.error(e.data?.message ?? e.message);
+        error(e.data?.message ?? e.message);
         return;
     }
     await navigateTo('/signin');

@@ -6,6 +6,10 @@ import { confirmDelete } from '~/lib/message';
 
 const props = defineProps<{ asset: Asset & { owner: User; app: App } }>();
 
+defineEmits<{
+    (e: 'click'): void;
+}>();
+
 const { mutateAsync: deleteAsset } = useDeleteAsset();
 
 const onDelete = async () => {
@@ -28,7 +32,7 @@ const onDelete = async () => {
                 </template>
             </el-dropdown>
         </div>
-        <div class="text-xl flex-grow flex items-center justify-center">
+        <div class="text-xl flex-grow flex items-center justify-center" @click="() => $emit('click')">
             <div>{{ asset.name }}</div>
         </div>
         <div class="flex flex-col text-xs text-gray-500 italic gap-1 self-start">

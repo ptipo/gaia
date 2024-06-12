@@ -35,3 +35,25 @@ export async function confirmDelete(message: string) {
         return false;
     }
 }
+
+/**
+ * Show a success notification.
+ */
+export function success(message: string) {
+    ElNotification({
+        title: message,
+        type: 'success',
+        duration: 2000,
+    });
+}
+
+/**
+ * Show an error notification.
+ */
+export function error(message: string) {
+    ElNotification({
+        title: message,
+        type: 'error',
+        duration: 2000,
+    });
+}

@@ -96,12 +96,21 @@ const metadata = {
                     isDataModel: true,
                     isArray: true,
                     backLink: 'app',
+                }, bundle: {
+                    name: "bundle",
+                    type: "String",
+                }, htmlTagName: {
+                    name: "htmlTagName",
+                    type: "String",
                 },
             }
             , uniqueConstraints: {
                 id: {
                     name: "id",
                     fields: ["id"]
+                }, name: {
+                    name: "name",
+                    fields: ["name"]
                 },
             }
             ,
