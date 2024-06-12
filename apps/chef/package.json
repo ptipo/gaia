@@ -6,27 +6,36 @@
     "scripts": {
         "build": "nuxt build",
         "dev": "nuxt dev --port 5100",
-        "db:generate": "prisma generate",
+        "db:generate": "zenstack generate && prisma generate",
         "db:push": "prisma db push",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare"
     },
     "dependencies": {
+        "@element-plus/nuxt": "^1.0.9",
+        "@hebilicious/vue-query-nuxt": "^0.3.0",
         "@lucia-auth/adapter-prisma": "^4.0.1",
         "@node-rs/argon2": "^1.8.3",
         "@prisma/client": "5.15.0",
+        "@tanstack/vue-query": "^5.44.0",
+        "@zenstackhq/runtime": "2.2.1",
+        "@zenstackhq/server": "^2.2.1",
+        "@zenstackhq/tanstack-query": "^2.2.1",
+        "dayjs": "^1.11.11",
         "lucia": "^3.2.0",
         "nuxt": "^3.11.2",
         "oslo": "^1.2.0",
         "vue": "^3.4.27",
         "vue-router": "^4.3.2",
-        "zod": "^3.23.8"
+        "zod": "^3.23.8",
+        "@gaia/configurator-vue": "workspace:*"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.19",
         "postcss": "^8.4.38",
         "prisma": "^5.15.0",
-        "tailwindcss": "^3.4.3"
+        "tailwindcss": "^3.4.3",
+        "zenstack": "2.2.1"
     }
 }

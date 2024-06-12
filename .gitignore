@@ -132,3 +132,5 @@ dist
 .coverage
 
 .DS_Store
+
+.zenstack_repl_history

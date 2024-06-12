@@ -1,23 +1,42 @@
 <script lang="ts" setup>
-const user = useUser();
+import type { App } from '@prisma/client';
+import { useCreateAsset, useFindManyAsset } from '~/composables/data';
+import { prompt } from '~/lib/message';
 
-async function logout() {
-    try {
-        await $fetch('/api/logout', {
-            method: 'POST',
-        });
-    } catch (e: any) {
-        alert('Failed to logout: ' + (e.data?.message ?? e.message));
+const { mutateAsync: createAsset } = useCreateAsset();
+
+const { data: assets, isLoading } = useFindManyAsset({
+    include: { owner: true, app: true },
+    orderBy: { createdAt: 'desc' },
+});
+
+const onCreate = async ({ app }: { app: App }) => {
+    const name = await prompt('创建资产', '请输入资产名称');
+    if (!name) {
         return;
     }
-    await navigateTo('/signin');
-}
+    const created = await createAsset({
+        data: { name, app: { connect: { id: app.id } } },
+    });
+    ElNotification({
+        title: '资产创建成功',
+        type: 'success',
+    });
+};
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 items-center">
-        <h1 class="text-3xl">Welcome to GAIA</h1>
-        <div>You are: {{ user?.email }}</div>
-        <button @click="logout">Logout</button>
+    <div class="w-full h-full">
+        <el-container class="h-full">
+            <el-header><NavBar @create="onCreate" /></el-header>
+            <el-main>
+                <div class="flex flex-col items-center w-full h-full">
+                    <h1 class="text-3xl mt-8 mb-12">我的资产</h1>
+                    <div v-if="!isLoading" class="flex flex-wrap gap-8">
+                        <AssetCard v-for="asset in assets" :key="asset.id" :asset="asset" />
+                    </div>
+                </div>
+            </el-main>
+        </el-container>
     </div>
 </template>
