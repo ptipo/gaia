@@ -19,13 +19,4 @@ export default defineNuxtConfig({
             include: ['dayjs', 'dayjs/plugin/*'],
         },
     },
-
-    build: {
-        // https://github.com/nuxt/nuxt/issues/19265
-        transpile: ['tslib'],
-    },
-
-    alias: {
-        tslib: 'tslib/tslib.es6.js',
-    },
 });
