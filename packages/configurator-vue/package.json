@@ -1,5 +1,5 @@
 {
-    "name": "@gaia/configurator-vue",
+    "name": "@hayadev/configurator-vue",
     "version": "1.0.0",
     "type": "module",
     "scripts": {
@@ -25,7 +25,7 @@
     "style": "dist/index.css",
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.1",
-        "@gaia/configurator": "workspace:*",
+        "@hayadev/configurator": "workspace:*",
         "@paralleldrive/cuid2": "^2.2.2",
         "capitalize": "^2.0.4",
         "deepcopy": "^2.1.0",
@@ -36,7 +36,7 @@
         "zod": "^3.23.8"
     },
     "devDependencies": {
-        "@gaia/samples": "workspace:*",
+        "@hayadev/samples": "workspace:*",
         "@iconify-json/ep": "^1.1.15",
         "@types/capitalize": "^2.0.2",
         "@vitejs/plugin-vue": "^5.0.4",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@gaia/configurator';
-import type { DynamicSelectItem, DynamicSelectOption } from '@gaia/configurator/items';
+import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@hayadev/configurator';
+import type { DynamicSelectItem, DynamicSelectOption } from '@hayadev/configurator/items';
 import { inject, onMounted, ref, watch, type Ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';

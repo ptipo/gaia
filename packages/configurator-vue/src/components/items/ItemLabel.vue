@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { makeConfigItemSchema } from '@gaia/configurator';
-import type { ConfigItemBase } from '@gaia/configurator/items';
+import { makeConfigItemSchema } from '@hayadev/configurator';
+import type { ConfigItemBase } from '@hayadev/configurator/items';
 import { ref, watch } from 'vue';
 
 const props = defineProps<{

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NumberItem } from '@gaia/configurator/items';
+import type { NumberItem } from '@hayadev/configurator/items';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';

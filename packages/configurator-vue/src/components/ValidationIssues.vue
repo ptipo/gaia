@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept } from '@gaia/configurator';
+import type { BaseConceptModel, Concept } from '@hayadev/configurator';
 import { computed } from 'vue';
 import type { EditPathRecord } from './types';
 

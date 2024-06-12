@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TextItem } from '@gaia/configurator/items';
+import type { TextItem } from '@hayadev/configurator/items';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';

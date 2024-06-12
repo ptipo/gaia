@@ -1,4 +1,4 @@
-import { createRef } from '@gaia/configurator';
+import { createRef } from '@hayadev/configurator';
 
 /**
  * 从root model获取所有页面

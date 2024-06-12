@@ -1,4 +1,4 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineConcept } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 import { ImageChoice } from './image-choice';
 import { TextChoice } from './text-choice';

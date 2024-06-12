@@ -1,6 +1,6 @@
-import { inferConfigItem } from '@gaia/configurator';
-import type { LogicalGroupItem } from '@gaia/configurator/items';
-import { LogicalGroupAssociation } from '@gaia/configurator/items';
+import { inferConfigItem } from '@hayadev/configurator';
+import type { LogicalGroupItem } from '@hayadev/configurator/items';
+import { LogicalGroupAssociation } from '@hayadev/configurator/items';
 
 /**
  * Composes a flat list of logical expression items into a tree hierarchy

@@ -1,4 +1,4 @@
-import { BaseConceptModel, Concept, ProviderContext, defineConcept } from '@gaia/configurator';
+import { BaseConceptModel, Concept, ProviderContext, defineConcept } from '@hayadev/configurator';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
 import { NextButton } from './next-button';

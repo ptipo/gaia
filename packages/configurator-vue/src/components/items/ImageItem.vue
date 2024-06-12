@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageItem } from '@gaia/configurator/items';
+import { ImageItem } from '@hayadev/configurator/items';
 import { UploadFile, UploadRawFile } from 'element-plus';
 import { ref } from 'vue';
 import type { CommonEvents, CommonProps } from './common';

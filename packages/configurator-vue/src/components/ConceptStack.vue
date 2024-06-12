@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
+import type { BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
 import { computed, ref, watch } from 'vue';
 import ConceptConfigurator from './ConceptConfigurator.vue';

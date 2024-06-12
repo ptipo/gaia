@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { BaseConceptModel, inferConfigItem } from '@gaia/configurator';
-import { type LogicalGroupItem } from '@gaia/configurator/items';
+import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
+import { type LogicalGroupItem } from '@hayadev/configurator/items';
 import { createId } from '@paralleldrive/cuid2';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';

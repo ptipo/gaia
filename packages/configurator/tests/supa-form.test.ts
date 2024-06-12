@@ -1,4 +1,4 @@
-import { NonPrimitiveTypes, createAppInstance, createRef } from '@gaia/configurator';
+import { NonPrimitiveTypes, createAppInstance, createRef } from '@hayadev/configurator';
 import { describe } from '@jest/globals';
 import { inspect } from 'util';
 import { config } from './app-config/form';

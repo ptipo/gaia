@@ -2,7 +2,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
-import { ImageInfo } from '@gaia/configurator/items';
+import { ImageInfo } from '@hayadev/configurator/items';
 
 @customElement('pt-choice')
 export class PtChoice extends PtBaseData<Map<string, string>> {

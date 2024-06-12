@@ -1,4 +1,4 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineConcept } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 import { ConditionalAction } from './conditional-action';
 

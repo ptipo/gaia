@@ -5,8 +5,8 @@ import {
     defineConcept,
     inferConcept,
     type BaseConceptModel,
-} from '@gaia/configurator';
-import { LogicalLeftOperandCandidates, LogicalRightOperandCandidates } from '@gaia/configurator/items';
+} from '@hayadev/configurator';
+import { LogicalLeftOperandCandidates, LogicalRightOperandCandidates } from '@hayadev/configurator/items';
 import { P, match } from 'ts-pattern';
 import { ChoiceQuestion } from '../page-items';
 import { ContentPage } from './content-page';

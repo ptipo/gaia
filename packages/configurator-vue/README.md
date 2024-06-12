@@ -1,1 +1,1 @@
-# GAIA Configurator UI - Vue 3
+# HAYA Configurator UI - Vue 3

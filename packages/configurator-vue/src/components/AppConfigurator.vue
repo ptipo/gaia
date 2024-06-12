@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_ASPECT_KEY, CURRENT_SELECTION, DEFAULT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
-import type { AppInstance, BaseConceptModel, Concept } from '@gaia/configurator';
+import type { AppInstance, BaseConceptModel, Concept } from '@hayadev/configurator';
 import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
 import type { EditPathRecord, SelectionData } from './types';

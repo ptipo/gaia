@@ -1,4 +1,4 @@
-# GAIA
+# HAYA
 
 ## PNPM Workspace
 
@@ -17,6 +17,6 @@
 
 ### demo
 
-Gaia App 示例
+Haya App 示例
 
 -   supa-form: 多步表单

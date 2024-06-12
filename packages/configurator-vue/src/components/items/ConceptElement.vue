@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@gaia/configurator';
-import type { HasManyItem } from '@gaia/configurator/items';
+import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
+import type { HasManyItem } from '@hayadev/configurator/items';
 import { Ref, computed, inject, ref } from 'vue';
 import { EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';

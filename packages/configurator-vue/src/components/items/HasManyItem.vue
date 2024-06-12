@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import { AppInstance, Concept, type BaseConceptModel } from '@gaia/configurator';
-import type { HasManyItem } from '@gaia/configurator/items';
+import { AppInstance, Concept, type BaseConceptModel } from '@hayadev/configurator';
+import type { HasManyItem } from '@hayadev/configurator/items';
 import { createId } from '@paralleldrive/cuid2';
 import deepcopy from 'deepcopy';
 import { inject, ref, watch, type Ref } from 'vue';

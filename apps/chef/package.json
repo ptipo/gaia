@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "@element-plus/nuxt": "^1.0.9",
-        "@gaia/configurator-vue": "workspace:*",
+        "@hayadev/configurator-vue": "workspace:*",
         "@hebilicious/vue-query-nuxt": "^0.3.0",
         "@lucia-auth/adapter-prisma": "^4.0.1",
         "@node-rs/argon2": "^1.8.3",

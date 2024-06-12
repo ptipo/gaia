@@ -1,4 +1,4 @@
-import { defineConcept } from '@gaia/configurator';
+import { defineConcept } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 
 /**
@@ -39,8 +39,6 @@ export const QAQuestion = defineConcept({
     },
 
     summary: ({ currentModel }) => {
-        return `${currentModel.name || '问答'} ${
-            currentModel.required ? '*' : ''
-        }`;
+        return `${currentModel.name || '问答'} ${currentModel.required ? '*' : ''}`;
     },
 });

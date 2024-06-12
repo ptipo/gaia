@@ -8,8 +8,8 @@
         "declaration": true,
         "paths": {
             "@/*": ["./src/*"],
-            "@gaia/configurator": ["./src/index"],
-            "@gaia/configurator/*": ["./src/*"]
+            "@hayadev/configurator": ["./src/index"],
+            "@hayadev/configurator/*": ["./src/*"]
         }
     }
 }
