@@ -1,6 +1,6 @@
-import { LogicalGroup } from '@gaia/configurator/items';
+import { LogicalGroup } from '@hayadev/configurator/items';
 import { answerData } from '../state';
-import { ConceptRef } from '@gaia/configurator';
+import { ConceptRef } from '@hayadev/configurator';
 import { AllPageItemsTypesMap, ChoiceQuestion, EmailQuestion, QAQuestion } from '../config/page-items';
 import { app } from '../app';
 import { findPageItemConfigById } from './model-util';

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import type { GroupItem } from '@gaia/configurator/items';
+import type { GroupItem } from '@hayadev/configurator/items';
 import { computed, defineAsyncComponent } from 'vue';
 import type { EnterConceptData } from '../types';
 import type { CommonEvents, CommonProps } from './common';

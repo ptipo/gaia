@@ -1,4 +1,4 @@
-import { defineGroupItem } from '@gaia/configurator/items';
+import { defineGroupItem } from '@hayadev/configurator/items';
 
 /**
  * 语言设置

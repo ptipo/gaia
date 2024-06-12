@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
-import { config as FormApp } from '@gaia/samples/form';
+import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
+import { config as FormApp } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
 import { onMounted, ref, watch } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
@@ -27,7 +27,7 @@ const onAppChange = (data: BaseConceptModel) => {
 };
 
 const onSave = () => {
-    localStorage.setItem('gaia-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -36,7 +36,7 @@ const onSave = () => {
 };
 
 const onLoad = () => {
-    const data = localStorage.getItem('gaia-app-config');
+    const data = localStorage.getItem('haya-app-config');
     if (data) {
         model.value = app.loadModel(data);
         validate(model.value);

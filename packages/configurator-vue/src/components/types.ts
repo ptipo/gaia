@@ -1,4 +1,4 @@
-import { type BaseConceptModel, type Concept } from '@gaia/configurator';
+import { type BaseConceptModel, type Concept } from '@hayadev/configurator';
 
 /**
  * Type for notifying entering of a concept editing.

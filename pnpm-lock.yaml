@@ -42,7 +42,7 @@ importers:
       '@element-plus/nuxt':
         specifier: ^1.0.9
         version: 1.0.9(@element-plus/icons-vue@2.3.1)(element-plus@2.7.3)
-      '@gaia/configurator-vue':
+      '@hayadev/configurator-vue':
         specifier: workspace:*
         version: link:../../packages/configurator-vue
       '@hebilicious/vue-query-nuxt':
@@ -109,7 +109,7 @@ importers:
 
   demo/supa-form:
     dependencies:
-      '@gaia/configurator':
+      '@hayadev/configurator':
         specifier: workspace:*
         version: link:../../packages/configurator
       '@lit/context':
@@ -137,7 +137,7 @@ importers:
         specifier: ^5.2.0
         version: 5.2.11(@types/node@20.12.12)(sass@1.77.2)
     devDependencies:
-      '@gaia/configurator-vue':
+      '@hayadev/configurator-vue':
         specifier: workspace:*
         version: link:../../packages/configurator-vue
       '@tailwindcss/forms':
@@ -183,7 +183,7 @@ importers:
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.4.27)
-      '@gaia/configurator':
+      '@hayadev/configurator':
         specifier: workspace:*
         version: link:../configurator
       '@paralleldrive/cuid2':
@@ -211,7 +211,7 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
-      '@gaia/samples':
+      '@hayadev/samples':
         specifier: workspace:*
         version: link:../samples
       '@iconify-json/ep':
@@ -262,7 +262,7 @@ importers:
 
   packages/samples:
     dependencies:
-      '@gaia/configurator':
+      '@hayadev/configurator':
         specifier: workspace:*
         version: link:../configurator
       ts-pattern:

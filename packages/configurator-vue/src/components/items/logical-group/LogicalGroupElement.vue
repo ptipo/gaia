@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@gaia/configurator';
+import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@hayadev/configurator';
 import type {
     LogicalGroupItem,
     LogicalLeftOperandCandidates,
     LogicalOperator,
     LogicalRightOperandCandidates,
-} from '@gaia/configurator/items';
+} from '@hayadev/configurator/items';
 import { Ref, computed, inject, onMounted, ref } from 'vue';
 
 type ModelType = {

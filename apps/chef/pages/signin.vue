@@ -59,7 +59,7 @@ async function onSubmit() {
 <template>
     <section class="w-full">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="#" class="flex items-center mb-6 text-2xl font-semibold">欢迎访问GAIA</a>
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold">欢迎访问HAYA</a>
             <div class="w-full rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">登录</h1>

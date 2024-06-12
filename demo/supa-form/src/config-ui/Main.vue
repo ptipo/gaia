@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { BaseConceptModel, createAppInstance } from '@gaia/configurator';
+import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
 import {
     AppConfigurator,
     ValidationIssues,
     type EditPathRecord,
     type Issue,
     type SelectionData,
-} from '@gaia/configurator-vue';
-import '@gaia/configurator-vue/dist/index.css';
+} from '@hayadev/configurator-vue';
+import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
 import { onMounted, ref, watch } from 'vue';
 import { JsonViewer } from 'vue3-json-viewer';
@@ -62,7 +62,7 @@ const resetFormConfig = () => {
 };
 
 const onSave = () => {
-    localStorage.setItem('gaia-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -71,7 +71,7 @@ const onSave = () => {
 };
 
 const onLoad = () => {
-    const data = localStorage.getItem('gaia-app-config');
+    const data = localStorage.getItem('haya-app-config');
     if (data) {
         model.value = app.loadModel(data);
         ElNotification({

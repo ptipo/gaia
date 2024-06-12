@@ -1,5 +1,5 @@
-import type { inferConfigItem } from '@gaia/configurator';
-import type { ConfigItemBase } from '@gaia/configurator/items';
+import type { inferConfigItem } from '@hayadev/configurator';
+import type { ConfigItemBase } from '@hayadev/configurator/items';
 import type { SelectionData } from '../types';
 
 /**

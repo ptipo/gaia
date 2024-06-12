@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SwitchItem } from '@gaia/configurator/items';
+import type { SwitchItem } from '@hayadev/configurator/items';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';

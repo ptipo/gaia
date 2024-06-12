@@ -1,5 +1,5 @@
 {
-    "name": "@gaia/configurator",
+    "name": "@hayadev/configurator",
     "version": "1.0.0",
     "description": "Headless web app configurator",
     "main": "index.js",

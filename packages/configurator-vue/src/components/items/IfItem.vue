@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import type { AppInstance, BaseConceptModel, Concept } from '@gaia/configurator';
-import type { IfItem } from '@gaia/configurator/items';
+import type { AppInstance, BaseConceptModel, Concept } from '@hayadev/configurator';
+import type { IfItem } from '@hayadev/configurator/items';
 import { Ref, computed, inject, onMounted, watch } from 'vue';
 import type { EnterConceptData } from '../types';
 import type { CommonEvents, CommonProps } from './common';

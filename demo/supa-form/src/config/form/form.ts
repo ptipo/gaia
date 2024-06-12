@@ -1,4 +1,4 @@
-import { BaseConceptModel, defineConcept } from '@gaia/configurator';
+import { BaseConceptModel, defineConcept } from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
@@ -32,9 +32,7 @@ export const Form = defineConcept({
             groupKey: 'contentPages',
             newItemProvider: (concept, context) => {
                 const { app, currentModel } = context;
-                const existing = currentModel.filter(
-                    (item: BaseConceptModel) => item.$concept === concept.name
-                );
+                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
                 return app.createConceptInstance(ContentPage, {
                     name: `表单页${existing.length + 1}`,
                     pageItems: [
@@ -75,9 +73,7 @@ export const Form = defineConcept({
             groupKey: 'completePages',
             newItemProvider: (concept, context) => {
                 const { app, currentModel } = context;
-                const existing = currentModel.filter(
-                    (item: BaseConceptModel) => item.$concept === concept.name
-                );
+                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
                 return app.createConceptInstance(CompletePage, {
                     name: `结束页${existing.length + 1}`,
                     pageItems: [

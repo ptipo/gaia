@@ -8,7 +8,7 @@ import { provide } from '@lit/context';
 import { formState, answerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
 import { validateLogic } from '../util/logic-resolver';
-import { ConceptRef } from '@gaia/configurator';
+import { ConceptRef } from '@hayadev/configurator';
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {

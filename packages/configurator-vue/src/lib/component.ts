@@ -1,4 +1,4 @@
-import type { ConfigItem } from '@gaia/configurator';
+import type { ConfigItem } from '@hayadev/configurator';
 import capitalize from 'capitalize';
 import { defineAsyncComponent } from 'vue';
 

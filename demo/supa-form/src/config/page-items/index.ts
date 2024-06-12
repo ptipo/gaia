@@ -1,4 +1,4 @@
-import { inferConcept } from '@gaia/configurator';
+import { inferConcept } from '@hayadev/configurator';
 import { CopyToClipboard } from './element/copy-to-clipboard-element';
 import { ImageElement } from './element/image-element';
 import { TextElement } from './element/text-element';
@@ -21,17 +21,8 @@ const allPageItemMap = {
 
 export const AllPageItems = Object.values(allPageItemMap);
 
-export {
-    ChoiceQuestion,
-    CopyToClipboard,
-    EmailQuestion,
-    ImageElement,
-    QAQuestion,
-    TextElement,
-};
+export { ChoiceQuestion, CopyToClipboard, EmailQuestion, ImageElement, QAQuestion, TextElement };
 
 export type AllPageItemsTypesMap = {
-    [K in keyof typeof allPageItemMap]: inferConcept<
-        (typeof allPageItemMap)[K]
-    >;
+    [K in keyof typeof allPageItemMap]: inferConcept<(typeof allPageItemMap)[K]>;
 };
