@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "nuxt build",
+        "build": "zenstack generate && nuxt build",
         "dev": "nuxt dev --port 5100",
         "db:generate": "zenstack generate && prisma generate",
         "db:push": "prisma db push",
