@@ -57,7 +57,7 @@ importers:
         specifier: ^5.44.0
         version: 5.44.0(vue@3.4.27)
       '@zenstackhq/runtime':
-        specifier: 2.2.1
+        specifier: ^2.2.1
         version: 2.2.1(@prisma/client@5.15.0)
       '@zenstackhq/server':
         specifier: ^2.2.1
@@ -103,7 +103,7 @@ importers:
         specifier: ^3.4.3
         version: 3.4.3(ts-node@10.9.2)
       zenstack:
-        specifier: 2.2.1
+        specifier: ^2.2.1
         version: 2.2.1(@prisma/client@5.15.0)(prisma@5.15.0)
 
   demo/supa-form:
