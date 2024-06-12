@@ -3,14 +3,14 @@ import { prisma } from '../db';
 import { validateEmailData, validatePasswordData } from '../utils/form';
 
 export default eventHandler(async (event) => {
-    const formData = await readFormData(event);
-    const email = validateEmailData(formData.get('email'));
-    const password = validatePasswordData(formData.get('password'));
+    const data = await readBody(event);
+    const email = validateEmailData(data.email);
+    const password = validatePasswordData(data.password);
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (!existingUser) {
         throw createError({
-            message: 'Incorrect username or password',
+            message: '邮箱或密码不正确',
             statusCode: 400,
         });
     }
@@ -23,7 +23,7 @@ export default eventHandler(async (event) => {
     });
     if (!passwordMatch) {
         throw createError({
-            message: 'Incorrect username or password',
+            message: '邮箱或密码不正确',
             statusCode: 400,
         });
     }

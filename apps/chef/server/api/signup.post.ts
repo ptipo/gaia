@@ -4,9 +4,9 @@ import { prisma } from '../db';
 import { validateEmailData, validatePasswordData } from '../utils/form';
 
 export default eventHandler(async (event) => {
-    const formData = await readFormData(event);
-    const email = validateEmailData(formData.get('email'));
-    const password = validatePasswordData(formData.get('password'));
+    const data = await readBody(event);
+    const email = validateEmailData(data.email);
+    const password = validatePasswordData(data.password);
 
     const hashedPassword = await new Argon2id().hash(password);
 
@@ -20,7 +20,7 @@ export default eventHandler(async (event) => {
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
             throw createError({
-                message: 'Username already used',
+                message: '邮箱已被注册',
                 statusCode: 500,
             });
         } else {
