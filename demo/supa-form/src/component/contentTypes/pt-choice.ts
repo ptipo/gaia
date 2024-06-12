@@ -47,14 +47,16 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         const description = this.data?.description;
 
         return html`
-            <fieldset>
-                <legend>${this.data?.question}</legend>
+            <fieldset class="flex">
+                <legend class="mb-8 text-2xl  text-black font-black	">${this.data?.question}</legend>
                 ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
-                <div class="flex ${isFlat ? '' : 'flex-col'}">
+                <div class="flex-auto flex gap-4 ${isFlat ? '' : 'flex-col'}">
                     ${choices!.map(
                         (x) => html`
-                            <div>
-                                <div class="flex items-center mb-4">
+                            <div class="flex-auto">
+                                <label
+                                    class="flex items-center  border rounded-md border-gray-300 p-2 has-[:checked]:bg-gray-100 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                >
                                     <input
                                         id="${x.$id}"
                                         type="${isSingleChoice ? 'radio' : 'checkbox'}"
@@ -62,7 +64,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                         value="${x.value}"
                                         ?checked=${this.value ? this.value.data!.has(x.$id) : x.defaultSelected}
                                         @change=${(e: any) => this.onChange(e)}
-                                        class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                                        class=" w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
                                         checked
                                         required
                                     />
@@ -77,7 +79,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                           >
                                               ${x.value}
                                           </label>`}
-                                </div>
+                                </label>
                                 ${x.additionalInput && this.value.data!.has(x.$id)
                                     ? html`<textarea
                                           data-choice-id="${x.$id}"

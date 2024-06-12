@@ -3,6 +3,7 @@ import { PtBase } from './pt-base';
 import { app } from '../app';
 import { getContentTypeComponent } from './contentTypes';
 import { unsafeStatic, html } from 'lit/static-html.js';
+import { css } from 'lit';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -12,17 +13,23 @@ export class PtFormPage extends PtBase {
     @property({ type: Object })
     page: (typeof app.model.contentPages)[number] = {} as any;
 
+    static styles = css`
+        :host {
+            display: block;
+        }
+    `;
+
     render() {
         const pageItems = this.page!.pageItems ?? [];
 
-        return html`<h2 class="text-m font-extrabold dark:text-white">${this.page.name}</h2>
-
+        return html`<div class="flex flex-col mt-10 px-10 gap-y-10">
             ${pageItems.map((item) => {
                 const tagName = getContentTypeComponent(item.$concept);
 
-                return html`<div class="mb-5"></div><${unsafeStatic(tagName)} data=${JSON.stringify(
-                    item
-                )} ></${unsafeStatic(tagName)}></div>`;
-            })} `;
+                return html`<${unsafeStatic(tagName)} class="block" data=${JSON.stringify(item)} ></${unsafeStatic(
+                    tagName
+                )}></div>`;
+            })}
+        </div> `;
     }
 }

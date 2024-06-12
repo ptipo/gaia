@@ -54,6 +54,7 @@ onMounted(async () => {
         alert(`form submit data:${JSON.stringify(event.detail, null, 2)}`);
     });
     resetFormConfig();
+    onLoad();
 });
 
 const resetFormConfig = () => {
@@ -122,7 +123,7 @@ watch(selection, (value) => {
                 <el-button @click="onLoad">Load</el-button>
                 <el-button @click="onReset"> Reset </el-button>
             </div>
-            <div class="border rounded bg-cyan-50 w-full flex-grow overflow-auto">
+            <div class="border rounded bg-white w-full flex-grow overflow-auto">
                 <pt-form id="pt-form" ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">

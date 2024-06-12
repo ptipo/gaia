@@ -134,7 +134,7 @@ function provideRightOperand(
 
     return match(operator)
         .with(
-            P.union('selected', 'notSelected', 'selectedOne'),
+            P.union('selected', 'notSelected'),
             () =>
                 ({
                     kind: 'select',
@@ -146,7 +146,7 @@ function provideRightOperand(
                 } as const)
         )
         .with(
-            P.union('selectedAll', 'notSelectedAll', 'notSelectedAny'),
+            P.union('selectedAll', 'notSelectedAll', 'notSelectedAny', 'selectedOne'),
             () =>
                 ({
                     kind: 'select',

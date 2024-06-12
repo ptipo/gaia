@@ -11,23 +11,19 @@ export class PtEmail extends PtBaseData<string> {
     render() {
         const description = this.data?.description;
 
-        return html` <div class="mb-5">
-            <label for="${this.data?.$id!}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your email</label
-            >
-            ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
-            <input
-                type="email"
-                id="${this.data?.$id!}"
-                @input=${(e: any) => this.onChange(e.target.value)}
-                .value=${this.value?.data || ''}
-                class=" ${this.value?.data && !this.isValidated()
-                    ? 'border-rose-600'
-                    : ' border-gray-300'}  bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@abc.com"
-                required
-            />
-        </div>`;
+        return html` ${description ? html`<p class="text-sm text-gray-500 mb-2">${description}</p>` : ''}
+            <span class="mb-8 text-2xl  text-black font-black	">${this.data?.question}</span>
+
+            <div class="mt-4">
+                <span>
+                    <input
+                        class="w-full text-lg"
+                        type="email"
+                        @input=${(e: any) => this.onChange(e.target.value)}
+                        placeholder="please input your email"
+                    />
+                </span>
+            </div>`;
     }
 
     isValidated() {
