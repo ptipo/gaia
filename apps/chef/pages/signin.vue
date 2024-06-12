@@ -1,72 +1,93 @@
 <script lang="ts" setup>
+import type { FormInstance, FormRules } from 'element-plus';
+import { z } from 'zod';
+
 definePageMeta({
     layout: 'auth',
 });
 
-async function login(e: Event) {
-    try {
-        await $fetch('/api/login', {
-            method: 'POST',
-            body: new FormData(e.target as HTMLFormElement),
-        });
-    } catch (e: any) {
-        ElMessage.error(e.data?.message ?? e.message);
-        return;
+const formState = reactive({
+    email: '',
+    password: '',
+});
+
+const formRef = ref<FormInstance>();
+
+const rules = reactive<FormRules<typeof formState>>({
+    email: [{ validator: validateEmail, trigger: 'blur' }],
+    password: [{ validator: validatePassword, trigger: 'blur' }],
+});
+
+function validateEmail(_rule: any, value: any, callback: any) {
+    if (value === '') {
+        callback(new Error('请输入邮箱'));
+    } else {
+        const { success } = z.string().email().safeParse(value);
+        if (!success) {
+            callback(new Error('请输入正确的邮箱'));
+        } else {
+            callback();
+        }
     }
-    await navigateTo('/');
+}
+
+function validatePassword(_rule: any, value: any, callback: any) {
+    if (value === '') {
+        callback(new Error('请输入密码'));
+    } else {
+        callback();
+    }
+}
+
+async function onSubmit() {
+    formRef.value.validate(async (valid) => {
+        if (valid) {
+            try {
+                await $fetch('/api/login', {
+                    method: 'POST',
+                    body: { email: formState.email, password: formState.password },
+                });
+                await navigateTo('/');
+            } catch (err) {
+                ElMessage.error(err.data?.message ?? err.message);
+            }
+        }
+    });
 }
 </script>
 
 <template>
-    <section class="bg-gray-50 dark:bg-gray-900 w-full">
+    <section class="w-full">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-                >欢迎访问GAIA</a
-            >
-            <div
-                class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-            >
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold">欢迎访问GAIA</a>
+            <div class="w-full rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1
-                        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">登录</h1>
+                    <el-form
+                        class="space-y-4 md:space-y-6"
+                        ref="formRef"
+                        :rules="rules"
+                        :model="formState"
+                        label-position="top"
                     >
-                        登录
-                    </h1>
-                    <form class="space-y-4 md:space-y-6" action="#" @submit.prevent="login">
-                        <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >邮箱</label
-                            >
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="name@company.com"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >密码</label
-                            >
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="••••••••"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required
-                            />
-                        </div>
-                        <el-button type="primary" size="large" class="w-full"> 登录 </el-button>
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="formState.email" type="email" />
+                        </el-form-item>
+
+                        <el-form-item label="密码" prop="password">
+                            <el-input v-model="formState.password" type="password" />
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" size="large" class="w-full" @click="onSubmit"> 登录 </el-button>
+                        </el-form-item>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             还没有账号？
                             <a href="/signup" class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >注册</a
                             >
                         </p>
-                    </form>
+                    </el-form>
                 </div>
             </div>
         </div>

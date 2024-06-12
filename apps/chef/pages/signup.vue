@@ -1,122 +1,112 @@
 <script lang="ts" setup>
+import type { FormInstance, FormRules } from 'element-plus';
+import { z } from 'zod';
+
 definePageMeta({
     layout: 'auth',
 });
 
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
+const formState = reactive({
+    email: '',
+    password: '',
+    confirmPassword: '',
+});
 
-async function signup(e: Event) {
-    try {
-        await $fetch('/api/signup', {
-            method: 'POST',
-            body: new FormData(e.target as HTMLFormElement),
-        });
-    } catch (e: any) {
-        ElMessage.error(e.data?.message ?? e.message);
-        return;
+const formRef = ref<FormInstance>();
+
+const rules = reactive<FormRules<typeof formState>>({
+    email: [{ validator: validateEmail, trigger: 'blur' }],
+    password: [{ validator: validatePassword, trigger: 'blur' }],
+    confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+});
+
+function validateEmail(_rule: any, value: any, callback: any) {
+    if (value === '') {
+        callback(new Error('请输入邮箱'));
+    } else {
+        const { success } = z.string().email().safeParse(value);
+        if (!success) {
+            callback(new Error('请输入正确的邮箱'));
+        } else {
+            callback();
+        }
     }
-    await navigateTo('/');
+}
+
+function validatePassword(_rule: any, value: any, callback: any) {
+    if (value === '') {
+        callback(new Error('请输入密码'));
+    } else {
+        if (formState.confirmPassword !== '') {
+            formRef.value.validateField('confirmPassword');
+        }
+        callback();
+    }
+}
+
+function validateConfirmPassword(_rule: any, value: any, callback: any) {
+    if (value === '') {
+        callback(new Error('请输入确认密码'));
+    } else if (value !== formState.password) {
+        callback(new Error('两次输入密码不一致'));
+    } else {
+        callback();
+    }
+}
+
+async function onSubmit() {
+    formRef.value.validate(async (valid) => {
+        if (valid) {
+            try {
+                await $fetch('/api/signup', {
+                    method: 'POST',
+                    body: { email: formState.email, password: formState.password },
+                });
+                await navigateTo('/');
+            } catch (err) {
+                ElMessage.error(err.data?.message ?? err.message);
+            }
+        }
+    });
 }
 </script>
 
 <template>
-    <section class="bg-gray-50 dark:bg-gray-900 w-full">
+    <section class="w-full">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                欢迎访问GAIA
-            </a>
-            <div
-                class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-            >
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold"> 欢迎访问GAIA </a>
+            <div class="w-full rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1
-                        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                    <h1 class="text-xl font-bold leading-tight tracking-tight">新建一个账号</h1>
+                    <el-form
+                        class="space-y-4 md:space-y-6"
+                        ref="formRef"
+                        :rules="rules"
+                        :model="formState"
+                        label-position="top"
                     >
-                        新建一个账号
-                    </h1>
-                    <form class="space-y-4 md:space-y-6" action="#" @submit.prevent="signup">
-                        <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >邮箱</label
-                            >
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="name@company.com"
-                                required
-                                v-model="email"
-                            />
-                        </div>
-                        <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >密码</label
-                            >
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="••••••••"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required
-                                v-model="password"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                for="confirm-password"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >确认密码</label
-                            >
-                            <input
-                                type="password"
-                                name="confirm-password"
-                                id="confirm-password"
-                                placeholder="••••••••"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required
-                                v-model="confirmPassword"
-                            />
-                        </div>
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input
-                                    id="terms"
-                                    aria-describedby="terms"
-                                    type="checkbox"
-                                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                                    required
-                                />
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="terms" class="font-light text-gray-500 dark:text-gray-300"
-                                    >我同意
-                                    <a
-                                        class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                                        href="#"
-                                        >暂时还没写的使用条款</a
-                                    ></label
-                                >
-                            </div>
-                        </div>
-                        <el-button
-                            type="primary"
-                            size="large"
-                            class="w-full"
-                            :disabled="!email || !password || password !== confirmPassword"
-                        >
-                            创建账号
-                        </el-button>
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="formState.email" type="email" />
+                        </el-form-item>
+
+                        <el-form-item label="密码" prop="password">
+                            <el-input v-model="formState.password" type="password" />
+                        </el-form-item>
+
+                        <el-form-item label="确认密码" prop="confirmPassword">
+                            <el-input v-model="formState.confirmPassword" type="password" />
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" size="large" class="w-full" @click="onSubmit"> 注册 </el-button>
+                        </el-form-item>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             已有账号？
                             <a href="/signin" class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >登录</a
                             >
                         </p>
-                    </form>
+                    </el-form>
                 </div>
             </div>
         </div>
