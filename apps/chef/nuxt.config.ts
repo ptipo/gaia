@@ -24,4 +24,8 @@ export default defineNuxtConfig({
         // https://github.com/nuxt/nuxt/issues/19265
         transpile: ['tslib'],
     },
+
+    alias: {
+        tslib: 'tslib/tslib.es6.js',
+    },
 });
