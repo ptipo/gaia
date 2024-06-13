@@ -174,17 +174,22 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
 
 <template>
     <div
-        class="flex justify-between"
+        class="flex justify-between gap-1 w-full"
         :class="{
             'cursor-pointer': !inlineEditing || concept.selectable,
         }"
-        @click="onClickNested"
     >
-        <div>
+        <div
+            class="flex-grow"
+            @click="onClickNested"
+            :class="{
+                'hover:bg-slate-100': !inlineEditing,
+            }"
+        >
             {{ elementSummary }}
         </div>
         <el-dropdown trigger="click" v-if="model">
-            <el-icon class="cursor-pointer">
+            <el-icon>
                 <i-ep-more-filled />
             </el-icon>
             <template #dropdown>
