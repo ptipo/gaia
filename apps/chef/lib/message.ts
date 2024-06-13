@@ -43,7 +43,7 @@ export function success(message: string) {
     ElNotification({
         title: message,
         type: 'success',
-        duration: 2000,
+        duration: 1500,
     });
 }
 
@@ -54,6 +54,6 @@ export function error(message: string) {
     ElNotification({
         title: message,
         type: 'error',
-        duration: 2000,
+        duration: 1500,
     });
 }

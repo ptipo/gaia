@@ -3,7 +3,7 @@ import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
 import { AppInstance, Concept, type BaseConceptModel } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
-import { createId } from '@paralleldrive/cuid2';
+import { v4 as uuid } from 'uuid';
 import deepcopy from 'deepcopy';
 import { inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
@@ -107,7 +107,7 @@ const onCloneElement = (index: number) => {
     }
 
     const cloned = deepcopy(elementModel);
-    cloned.$id = createId();
+    cloned.$id = uuid();
     const nextModel = [...props.model, cloned];
     emit('change', nextModel);
 };
