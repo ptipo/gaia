@@ -75,7 +75,7 @@ const goBack = () => {
                 <el-button type="primary">发布</el-button>
             </div>
         </div>
-        <div v-if="asset" class="flex gap-4 w-full h-full">
+        <div v-if="app && model" class="flex gap-4 w-full h-full">
             <div class="flex-grow border-1 rounded bg-slate-100"></div>
             <div class="w-80 border rounded" v-if="app">
                 <AppConfigurator

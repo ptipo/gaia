@@ -20,7 +20,7 @@ const onDelete = async () => {
 </script>
 
 <template>
-    <div class="flex flex-col items-center w-64 h-48 border rounded-lg shadow-lg relative p-4 cursor-pointer group">
+    <div class="flex flex-col items-center w-64 h-48 border rounded-lg shadow-lg relative p-4 group">
         <div class="flex justify-between w-full">
             <div class="text-xs text-blue-400 italic self-start">{{ asset.app.name }}</div>
             <el-dropdown trigger="click"
@@ -32,12 +32,14 @@ const onDelete = async () => {
                 </template>
             </el-dropdown>
         </div>
-        <div class="text-xl flex-grow flex items-center justify-center" @click="() => $emit('click')">
-            <div>{{ asset.name }}</div>
-        </div>
-        <div class="flex flex-col text-xs text-gray-500 italic gap-1 self-start">
-            <div>创建于 {{ fromNow(asset.createdAt) }}</div>
-            <div>更新于 {{ fromNow(asset.updatedAt) }}</div>
+        <div class="flex flex-col flex-grow w-full cursor-pointer" @click="() => $emit('click')">
+            <div class="text-xl flex-grow flex items-center justify-center">
+                <div>{{ asset.name }}</div>
+            </div>
+            <div class="flex flex-col w-full text-xs text-gray-500 italic gap-1 self-start">
+                <div>创建于 {{ fromNow(asset.createdAt) }}</div>
+                <div>更新于 {{ fromNow(asset.updatedAt) }}</div>
+            </div>
         </div>
     </div>
 </template>
