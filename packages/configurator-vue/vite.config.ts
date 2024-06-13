@@ -46,15 +46,16 @@ export default defineConfig({
         },
         rollupOptions: {
             external: ['vue', 'element-plus'],
-
             output: {
                 globals: {
                     vue: 'Vue',
+                    'element-plus': 'ElementPlus',
                 },
             },
         },
         commonjsOptions: {
             esmExternals: ['vue', 'element-plus'],
         },
+        sourcemap: true,
     },
 });

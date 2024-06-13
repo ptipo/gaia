@@ -5,9 +5,7 @@
     "scripts": {
         "dev": "vite --port 5002",
         "watch": "vue-tsc --noEmit --watch",
-        "build": "run-p build:*",
-        "build:lib": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
-        "build:app": "vite -c vite-app.config.ts build",
+        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit",
         "test": "jest"
@@ -24,16 +22,18 @@
     },
     "style": "dist/index.css",
     "dependencies": {
-        "@element-plus/icons-vue": "^2.3.1",
         "@hayadev/configurator": "workspace:*",
         "@paralleldrive/cuid2": "^2.2.2",
         "capitalize": "^2.0.4",
         "deepcopy": "^2.1.0",
-        "element-plus": "^2.7.3",
         "ts-pattern": "^5.1.1",
-        "vue": "^3.4.21",
         "vuedraggable": "^4.1.0",
         "zod": "^3.23.8"
+    },
+    "peerDependencies": {
+        "vue": "^3.4.21",
+        "@element-plus/icons-vue": "^2.3.1",
+        "element-plus": "^2.7.3"
     },
     "devDependencies": {
         "@hayadev/samples": "workspace:*",

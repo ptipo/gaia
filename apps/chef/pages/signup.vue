@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from 'element-plus';
 import { z } from 'zod';
+import { error } from '~/lib/message';
 
 definePageMeta({
     layout: 'auth',
@@ -64,7 +65,7 @@ async function onSubmit() {
                 });
                 await navigateTo('/');
             } catch (err) {
-                ElMessage.error(err.data?.message ?? err.message);
+                error(err.data?.message ?? err.message);
             }
         }
     });

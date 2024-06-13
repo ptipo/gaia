@@ -29,15 +29,17 @@ model User {
 /// @@allow('all', auth() == owner)
 /// @@allow('read', auth() != null)
 model App {
-  id        String   @id() @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String
+  id          String   @id() @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String
   /// @length(1)
-  name      String
-  version   String   @default("1.0.0")
-  assets    Asset[]
+  name        String   @unique()
+  version     String   @default("1.0.0")
+  assets      Asset[]
+  bundle      String
+  htmlTagName String
 }
 
 /// @@allow('all', auth() == owner)
