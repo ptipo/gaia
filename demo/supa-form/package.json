@@ -15,6 +15,7 @@
         "build:lib": "tsc && vite build",
         "build:app": "vue-tsc && vite build -c vite-app.config.ts",
         "build": "run-p build:*",
+        "publish": "npm publish --access public",
         "watch:tsc": "tsc -w",
         "watch:vite": "vite build --watch",
         "watch": "run-p watch:*",

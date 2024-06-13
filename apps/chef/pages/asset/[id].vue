@@ -3,7 +3,7 @@ import type { AppInstance, Concept } from '@hayadev/configurator';
 import { createAppInstance, type BaseConceptModel } from '@hayadev/configurator';
 import { AppConfigurator, type EditPathRecord, type Issue, type SelectionData } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Prisma } from '@prisma/client';
+import type { App, Asset, Prisma } from '@prisma/client';
 import { useDeleteAsset, useFindUniqueAsset, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
@@ -24,6 +24,8 @@ const selection = ref<SelectionData>();
 
 // validation issues
 const issues = ref<Issue[]>([]);
+
+const isPublishingAsset = ref(false);
 
 const { data: asset } = useFindUniqueAsset({
     where: { id: route.params.id as string },
@@ -57,7 +59,7 @@ const createAppElement = async (app: App) => {
     }
 
     if (asset.value?.config) {
-        model.value = appInstance.value.model = asset.value.config as typeof appInstance.value.model;
+        model.value = appInstance.value.model = (asset.value.config as Prisma.JsonObject).model as BaseConceptModel;
     }
 
     if (appContainerEl.value) {
@@ -93,12 +95,7 @@ const onAppChange = (data: BaseConceptModel) => {
 const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
-            await saveAsset({
-                where: { id: asset.value.id },
-                data: {
-                    config: model.value as Prisma.JsonObject,
-                },
-            });
+            await doSaveAsset(asset.value);
             success('保存成功！');
         } catch (err) {
             error(`暂时无法保存，请稍后再试`);
@@ -120,6 +117,33 @@ const onDelete = async () => {
             }
         }
     }
+};
+
+const onPublish = async () => {
+    if (asset.value) {
+        await doSaveAsset(asset.value);
+
+        try {
+            const { data } = await $fetch('/api/publish', {
+                method: 'POST',
+                body: JSON.stringify({ id: asset.value.id }),
+            });
+            console.log('Publish response:', data);
+            success('发布成功！');
+        } catch (err) {
+            error(`暂时无法发布，请稍后再试`);
+            console.error('Failed to publish asset:', err);
+        }
+    }
+};
+
+const doSaveAsset = (asset: Asset & { app: App }) => {
+    return saveAsset({
+        where: { id: asset.id },
+        data: {
+            config: { model: model.value as Prisma.JsonObject, appVersion: asset.app.version },
+        },
+    });
 };
 
 const resetFormConfig = () => {
@@ -148,7 +172,7 @@ const goBack = async () => {
             <div class="flex button-group">
                 <el-button @click="onSave" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
-                <el-button type="primary">发布</el-button>
+                <el-button type="primary" @click="onPublish" v-loading="isPublishingAsset">发布</el-button>
             </div>
         </div>
 
