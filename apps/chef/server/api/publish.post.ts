@@ -28,6 +28,8 @@ export default eventHandler(async (event) => {
 
     const pageContent = makePageContent(asset);
     const { publishPageBucket, publishPagePath, public: publicConfig } = useRuntimeConfig();
+    console.log('Publishing to:', publishPageBucket, publishPagePath, publicConfig.publishPageAccessPoint);
+
     const s3 = new S3Client();
     const params = {
         Bucket: publishPageBucket,
