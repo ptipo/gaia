@@ -23,22 +23,23 @@
     "style": "dist/index.css",
     "dependencies": {
         "@hayadev/configurator": "workspace:*",
-        "@paralleldrive/cuid2": "^2.2.2",
         "capitalize": "^2.0.4",
         "deepcopy": "^2.1.0",
         "ts-pattern": "^5.1.1",
+        "uuid": "^10.0.0",
         "vuedraggable": "^4.1.0",
         "zod": "^3.23.8"
     },
     "peerDependencies": {
-        "vue": "^3.4.21",
         "@element-plus/icons-vue": "^2.3.1",
-        "element-plus": "^2.7.3"
+        "element-plus": "^2.7.3",
+        "vue": "^3.4.21"
     },
     "devDependencies": {
         "@hayadev/samples": "workspace:*",
         "@iconify-json/ep": "^1.1.15",
         "@types/capitalize": "^2.0.2",
+        "@types/uuid": "^9.0.8",
         "@vitejs/plugin-vue": "^5.0.4",
         "autoprefixer": "^10.4.19",
         "postcss": "^8.4.38",

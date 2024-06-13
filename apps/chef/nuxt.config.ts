@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     imports: {
         transform: {
             // prevent nuxt from analyzing supa-form bundle code
-            exclude: [/\.*supa\-form.*/],
+            exclude: [/.*supa\-form.*/],
         },
     },
 

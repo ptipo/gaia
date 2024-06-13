@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
 import { type LogicalGroupItem } from '@hayadev/configurator/items';
-import { createId } from '@paralleldrive/cuid2';
+import { v4 as uuid } from 'uuid';
 import { ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
@@ -37,11 +37,11 @@ function transformModel(model: inferConfigItem<LogicalGroupItem>): ModelType {
 
     while (current) {
         if (!('groupOperator' in current)) {
-            result.push({ ...current, $id: createId() });
+            result.push({ ...current, $id: uuid() });
             break;
         } else {
             result.push({
-                $id: createId(),
+                $id: uuid(),
                 ...current.second,
                 groupOperator: current.groupOperator,
             });
@@ -54,9 +54,9 @@ function transformModel(model: inferConfigItem<LogicalGroupItem>): ModelType {
 
 const onAddCondition = () => {
     if (_model.value.length === 0) {
-        _model.value = [{ $id: createId() }];
+        _model.value = [{ $id: uuid() }];
     } else {
-        _model.value = [..._model.value, { $id: createId(), groupOperator: 'and' }];
+        _model.value = [..._model.value, { $id: uuid(), groupOperator: 'and' }];
     }
 };
 

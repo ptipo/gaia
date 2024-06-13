@@ -1,5 +1,5 @@
-import { createId } from '@paralleldrive/cuid2';
 import { P, match } from 'ts-pattern';
+import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
@@ -64,7 +64,7 @@ export class AppInstance<TConcept extends Concept> {
         data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> & Record<string, unknown>
     ): inferPartialConcept<TConcept> {
         const result: any = {
-            $id: createId(),
+            $id: uuid(),
             $type: NonPrimitiveTypes.concept,
             $concept: concept.name,
         };
