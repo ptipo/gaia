@@ -186,7 +186,7 @@ const isSelected = (element: BaseConceptModel) => {
                 @click="() => onCreate(item.candidates[0])"
                 >+ 添加{{ item.name }}</el-button
             >
-            <el-dropdown v-else>
+            <el-dropdown trigger="click" v-else>
                 <el-button link type="info" class="self-start">+ 添加{{ item.name }}</el-button>
                 <template #dropdown>
                     <el-dropdown-menu>

@@ -183,7 +183,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
         <div>
             {{ elementSummary }}
         </div>
-        <el-dropdown v-if="model">
+        <el-dropdown trigger="click" v-if="model">
             <el-icon class="cursor-pointer">
                 <i-ep-more-filled />
             </el-icon>

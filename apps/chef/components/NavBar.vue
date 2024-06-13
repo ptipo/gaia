@@ -27,7 +27,7 @@ async function logout() {
 <template>
     <nav class="border-b border-gray-200 px-4 lg:px-6 py-2.5">
         <div class="flex gap-2 justify-end items-center">
-            <el-dropdown
+            <el-dropdown trigger="click"
                 ><el-button type="primary" :loading="isLoading">+ 新建资产</el-button>
                 <template #dropdown>
                     <el-dropdown-menu>
