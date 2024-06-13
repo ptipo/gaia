@@ -1,5 +1,8 @@
-import { verifyRequestOrigin } from 'lucia';
+import { PrismaClient } from '@prisma/client';
+import { enhance } from '@zenstackhq/runtime';
 import type { Session, User } from 'lucia';
+import { verifyRequestOrigin } from 'lucia';
+import { prisma } from '../db';
 
 // https://lucia-auth.com/guides/validate-session-cookies/
 export default defineEventHandler(async (event) => {
@@ -27,11 +30,13 @@ export default defineEventHandler(async (event) => {
     }
     event.context.session = session;
     event.context.user = user;
+    event.context.db = enhance(prisma, { user: user ? { id: user.id } : undefined });
 });
 
 declare module 'h3' {
     interface H3EventContext {
         user: User | null;
         session: Session | null;
+        db: PrismaClient;
     }
 }

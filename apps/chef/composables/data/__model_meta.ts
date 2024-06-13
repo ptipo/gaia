@@ -164,6 +164,10 @@ const metadata = {
                     name: "config",
                     type: "Json",
                     isOptional: true,
+                }, publishUrl: {
+                    name: "publishUrl",
+                    type: "String",
+                    isOptional: true,
                 },
             }
             , uniqueConstraints: {

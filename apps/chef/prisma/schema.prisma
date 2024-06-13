@@ -44,16 +44,17 @@ model App {
 
 /// @@allow('all', auth() == owner)
 model Asset {
-  id        String   @id() @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String
+  id         String   @id() @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt()
+  owner      User     @relation(fields: [ownerId], references: [id])
+  ownerId    String
   /// @length(1)
-  name      String
-  app       App      @relation(fields: [appId], references: [id])
-  appId     String
-  config    Json?
+  name       String
+  app        App      @relation(fields: [appId], references: [id])
+  appId      String
+  config     Json?
+  publishUrl String?
 }
 
 model Session {
