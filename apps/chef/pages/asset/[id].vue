@@ -22,6 +22,10 @@ const editPath = ref<EditPathRecord[]>([]);
 // current selected concept instance
 const selection = ref<SelectionData>();
 
+// renaming
+const editNameEl = ref<HTMLElement>();
+const editName = ref<string | undefined>();
+
 // validation issues
 const issues = ref<Issue[]>([]);
 
@@ -122,6 +126,19 @@ const onDelete = async () => {
     }
 };
 
+const onEditNameComplete = async () => {
+    if (!asset.value || !editName.value) {
+        return;
+    }
+
+    await saveAsset({
+        where: { id: asset.value.id },
+        data: { name: editName.value },
+    });
+
+    editName.value = undefined;
+};
+
 const resetFormConfig = () => {
     if (appEl.value && appInstance.value && model.value) {
         appEl.value.setAttribute('config', appInstance.value.stringifyModel(model.value));
@@ -139,9 +156,20 @@ const goBack = async () => {
         <div class="flex justify-between">
             <el-page-header @back="goBack">
                 <template #content>
-                    <div class="flex items-center group">
+                    <div v-if="editName === undefined" class="flex items-center group">
                         <span class="text-large font-600 mr-3"> {{ asset?.name }} </span>
-                        <el-icon class="invisible group-hover:visible cursor-pointer"><ElIconEditPen /></el-icon>
+                        <el-icon class="invisible group-hover:visible cursor-pointer" @click="editName = asset?.name"
+                            ><ElIconEditPen
+                        /></el-icon>
+                    </div>
+                    <div v-else>
+                        <el-input
+                            ref="editNameEl"
+                            v-model="editName"
+                            placeholder="请输入资产名称"
+                            @blur="onEditNameComplete"
+                            @keyup.enter="onEditNameComplete"
+                        />
                     </div>
                 </template>
             </el-page-header>
