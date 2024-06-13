@@ -135,6 +135,7 @@ const goBack = async () => {
 
 <template>
     <el-container class="flex flex-col gap-4 h-full p-8">
+        <!-- header -->
         <div class="flex justify-between">
             <el-page-header @back="goBack">
                 <template #content>
@@ -150,8 +151,13 @@ const goBack = async () => {
                 <el-button type="primary">发布</el-button>
             </div>
         </div>
-        <div v-loading="!appInstance && !hasError" class="flex gap-4 w-full h-full">
+
+        <!-- configurator -->
+        <div v-loading="!appInstance && !hasError" class="flex flex-grow overflow-hidden gap-4 w-full">
+            <!-- configurator panel -->
             <div class="flex-grow border rounded" ref="appContainerEl"></div>
+
+            <!-- preview -->
             <div class="w-80 border rounded" v-if="appInstance">
                 <AppConfigurator
                     :app="appInstance"
