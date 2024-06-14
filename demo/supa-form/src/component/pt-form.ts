@@ -132,7 +132,13 @@ export class PtForm extends PtBaseShadow {
                             </svg>
                         </button>
                     </div>
-                    <div class="fixed w-full font-light leading-[1.2] right-0 bottom-0">sdfdsf</div>
+                   
+                    <div class="sticky bg-white opacity-90 w-full h-16  bottom-0 ">
+                        <div class="flex h-full items-center">
+                        <span class="mr-10 ml-auto ">Next</span>
+                        </div>
+                    </div>
+                 
                 </div>
             `;
         } else {
