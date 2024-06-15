@@ -75,11 +75,11 @@ export class PtForm extends PtBaseShadow {
             return html`
                     <div class="mt-4">
                         <div
-                            class="flex w-full h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                            class="flex h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                             role="progressbar"
                         >
                             <div
-                                class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
                                 style="width: ${progress}%"
                             ></div>
                         </div>
@@ -93,54 +93,12 @@ export class PtForm extends PtBaseShadow {
                             ></pt-form-page>`
                         )}
                     </div>
-                    <div class="flex justify-center ">
-                        <button
-                            @click=${() => this.prePage()}
-                            type="button"
-                            class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                        >
-                            <svg
-                                class="flex-shrink-0 size-3.5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="m15 18-6-6 6-6"></path>
-                            </svg>
-                            <span class="hidden sm:block">Prev</span>
-                        </button>
-                        <button
-                            @click=${() => this.nextPage()}
-                            type="button"
-                            class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                        >
-                            <span class="hidden sm:block">${isSubmitReady ? 'Submit' : 'Next'}</span>
-                            <svg
-                                class="flex-shrink-0 size-3.5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="m9 18 6-6-6-6"></path>
-                            </svg>
-                        </button>
-                    </div>
-                   
-                    <div class="sticky bg-white opacity-90 w-full h-16  bottom-0 ">
-                        <div class="flex h-full items-center">
-                        <span class="mr-10 ml-auto ">Next</span>
+                    <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
+                        <div class="flex h-full items-center justify-end ">
+                            <span class="w-44 max-w-[33%] mr-10">
+                        <button @click=${() =>
+                            this.nextPage()} class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >NEXT</button>
+                        </span>
                         </div>
                     </div>
                  
@@ -170,8 +128,8 @@ export class PtForm extends PtBaseShadow {
         }
     }
 
-    private nextPage() {
-        const isValid = this.pageRef.value?.validatePage();
+    private async nextPage() {
+        const isValid = await this.pageRef.value?.validatePage();
 
         if (!isValid) {
             console.error('page is not valid');

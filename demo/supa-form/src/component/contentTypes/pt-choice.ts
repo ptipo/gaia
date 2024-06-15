@@ -19,9 +19,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     connectedCallback() {
         super.connectedCallback();
-        if (this.data?.randomOrder) {
-            this.randomSeed = Array.from(this.data!.textChoices!, (x) => Math.random() - 0.5);
-        }
+        this.randomSeed = Array.from(this.data!.textChoices!, (x) => Math.random() - 0.5);
     }
 
     getInputComponent(

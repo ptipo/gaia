@@ -42,7 +42,6 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 
     getValidateError() {
         if (this.data?.required && this.isEmptyData()) {
-            console.log('this.mandatoryErrorMessage', this.mandatoryErrorMessage);
             return this.mandatoryErrorMessage;
         }
     }

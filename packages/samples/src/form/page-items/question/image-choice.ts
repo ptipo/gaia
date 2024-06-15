@@ -13,6 +13,12 @@ export const ImageChoice = defineConcept({
             required: true,
         },
 
+        source: {
+            type: 'text',
+            name: '来源',
+            required: true,
+        },
+
         /**
          * 内容
          */

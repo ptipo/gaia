@@ -1,6 +1,7 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { PtBase } from '../pt-base';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('pt-question')
 export class PtQuestionBase extends PtBase {
@@ -13,6 +14,9 @@ export class PtQuestionBase extends PtBase {
     @property()
     placeholder?: string;
 
+    @property()
+    value?: string;
+
     render() {
         return html`
             ${this.description ? html`<p class="text-sm text-gray-500 mb-2">${this.description}</p>` : ''}
@@ -20,7 +24,11 @@ export class PtQuestionBase extends PtBase {
 
             <div class="mt-4">
                 <span>
-                    <input class="w-full text-lg" placeholder="${this.placeholder ? this.placeholder : ''}" />
+                    <input
+                        class="w-full text-lg"
+                        value=${ifDefined(this.value)}
+                        placeholder=${ifDefined(this.placeholder)}
+                    />
                 </span>
             </div>
         `;
