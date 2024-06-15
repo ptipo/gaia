@@ -10,7 +10,7 @@ class PtImage extends PtBase {
 
     render() {
         return html`
-        <img class="h-auto max-w-md" src="${this.data?.image!.url!}" alt="image description">
+            <img class="h-auto max-w-md" src="${this.data?.source || this.data?.image!.url!}" alt="image description" />
         `;
     }
 }
