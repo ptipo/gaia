@@ -9,6 +9,8 @@ import { formState, answerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
 import { validateLogic } from '../util/logic-resolver';
 import { ConceptRef } from '@hayadev/configurator';
+import { PtFormPage } from './pt-form-page';
+import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
@@ -42,6 +44,8 @@ export class PtForm extends PtBaseShadow {
     formState: answerData = {};
 
     private pageIdStack: string[] = [];
+
+    pageRef: Ref<PtFormPage> = createRef();
 
     render() {
         console.log(this.config);
@@ -82,6 +86,7 @@ export class PtForm extends PtBaseShadow {
                         ${keyed(
                             this.pageId,
                             html`<pt-form-page
+                                ${ref(this.pageRef)}
                                 class="mt-4 block"
                                 @pt-form-state-changed=${this.onFormStateChange}
                                 .page=${this.currentContentPage}
@@ -166,6 +171,13 @@ export class PtForm extends PtBaseShadow {
     }
 
     private nextPage() {
+        const isValid = this.pageRef.value?.validatePage();
+
+        if (!isValid) {
+            console.error('page is not valid');
+            return;
+        }
+
         this.pageIdStack.push(this.pageId);
         const contentPages = this.config?.contentPages!;
         const nextButton = this.currentContentPage?.nextButton!;

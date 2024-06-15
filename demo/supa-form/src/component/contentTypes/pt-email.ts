@@ -2,28 +2,22 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
+import './pt-question-base';
 
 @customElement('pt-email')
 export class PtEmail extends PtBaseData<string> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['EmailQuestion'];
 
+    mandatoryErrorMessage = 'Please fill this in';
+
     render() {
         const description = this.data?.description;
 
-        return html` ${description ? html`<p class="text-sm text-gray-500 mb-2">${description}</p>` : ''}
-            <span class="mb-8 text-2xl  text-black font-black	">${this.data?.question}</span>
-
-            <div class="mt-4">
-                <span>
-                    <input
-                        class="w-full text-lg"
-                        type="email"
-                        @input=${(e: any) => this.onChange(e.target.value)}
-                        placeholder="please input your email"
-                    />
-                </span>
-            </div>`;
+        return html`<pt-question
+            @input=${(e: any) => this.onChange(e.target.value)}
+            description=${description!}
+        ></pt-question> `;
     }
 
     isValidated() {
@@ -36,6 +30,18 @@ export class PtEmail extends PtBaseData<string> {
 
     isValidEmail(email: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    override getValidateError() {
+        let baseError = super.getValidateError();
+
+        if (baseError) {
+            return baseError;
+        }
+
+        if (!this.isValidEmail(this.value.data!)) {
+            return 'Please enter a valid email';
+        }
     }
 
     onChange(value: string) {

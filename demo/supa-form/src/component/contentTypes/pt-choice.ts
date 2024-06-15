@@ -13,6 +13,8 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     @property({ type: Object })
     data?: ChoiceQuestionType;
 
+    override mandatoryErrorMessage = 'Please make the selection';
+
     randomSeed?: number[];
 
     connectedCallback() {
@@ -33,13 +35,14 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
             value="${choice.value}"
             ?checked=${this.value ? this.value.data!.has(choice.$id) : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
-            class="mr-2 mt-1 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            class="mr-2 mt-1 w-4 h-4 text-black bg-gray-100 border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             checked
             required
         />`;
     }
 
     render() {
+        console.log(this.showValidationError);
         const isImageChoice = this.data?.choiceKind == 'image';
         const targetChoices = isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
         if (!this.value.data) {
@@ -74,7 +77,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                 ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
                 <div class="flex flex-auto flex-wrap gap-4 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
-                        (choice, index) => html`
+                        (choice) => html`
                             ${when(
                                 isImageChoice,
                                 () =>
@@ -92,9 +95,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                                     <div>
                                                         <img
                                                             class="max-w-full max-h-full h-auto"
-                                                            src="${index % 2
-                                                                ? 'https://zenstack.dev/assets/images/cover-64ee3034e0ba5cd8e94748a9421acb3c.png'
-                                                                : 'https://cdnimg.vivaia.com/VA/image/Banner/20240513_6837/13.png'}"
+                                                            src="${choice.source || choice.value}"
                                                         />
                                                     </div>
                                                 </label>
@@ -123,7 +124,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                                 ${this.getInputComponent(choice, isSingleChoice)}
                                                 <label
                                                     for="${choice.$id}"
-                                                    class="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300"
+                                                    class="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                                 >
                                                     ${choice.value}
                                                 </label>
@@ -183,5 +184,9 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     isValidated() {
         return this.data?.required ? this.value.data!.size > 0 : true;
+    }
+
+    override isEmptyData() {
+        return !this.value.data?.size;
     }
 }

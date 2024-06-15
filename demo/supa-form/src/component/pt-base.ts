@@ -1,4 +1,4 @@
-import { LitElement, css, unsafeCSS } from 'lit';
+import { LitElement, css, html, unsafeCSS } from 'lit';
 import globalStyles from '../global.css?inline';
 import { consume } from '@lit/context';
 import { formState, answerData } from '../state';
@@ -21,10 +21,13 @@ const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom
 
 abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     @property({ type: Object })
-    data?: { $id: string };
+    data?: { $id: string; required: boolean };
 
     @property({ type: Object })
     value: QuestionState<T> = new QuestionState<T>();
+
+    @property({ type: Boolean })
+    showValidationError = false;
 
     connectedCallback() {
         super.connectedCallback();
@@ -34,6 +37,19 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     }
 
     abstract isValidated(): boolean;
+
+    abstract mandatoryErrorMessage: string;
+
+    getValidateError() {
+        if (this.data?.required && this.isEmptyData()) {
+            console.log('this.mandatoryErrorMessage', this.mandatoryErrorMessage);
+            return this.mandatoryErrorMessage;
+        }
+    }
+
+    isEmptyData() {
+        return !this.value.data;
+    }
 
     updated() {
         this.formState[this.data!.$id] = this.value;
