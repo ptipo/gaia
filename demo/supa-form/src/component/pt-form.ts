@@ -75,11 +75,11 @@ export class PtForm extends PtBaseShadow {
             return html`
                     <div class="mt-4">
                         <div
-                            class="flex w-full h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                            class="flex h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                             role="progressbar"
                         >
                             <div
-                                class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
                                 style="width: ${progress}%"
                             ></div>
                         </div>
@@ -170,8 +170,8 @@ export class PtForm extends PtBaseShadow {
         }
     }
 
-    private nextPage() {
-        const isValid = this.pageRef.value?.validatePage();
+    private async nextPage() {
+        const isValid = await this.pageRef.value?.validatePage();
 
         if (!isValid) {
             console.error('page is not valid');

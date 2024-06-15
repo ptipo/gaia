@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import './pt-question-base';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('pt-email')
 export class PtEmail extends PtBaseData<string> {
@@ -17,6 +18,7 @@ export class PtEmail extends PtBaseData<string> {
         return html`<pt-question
             @input=${(e: any) => this.onChange(e.target.value)}
             description=${description!}
+            value=${ifDefined(this.value.data)}
         ></pt-question> `;
     }
 
