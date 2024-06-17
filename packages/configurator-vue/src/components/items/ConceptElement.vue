@@ -3,7 +3,7 @@ import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
 import type { HasItem, HasManyItem } from '@hayadev/configurator/items';
-import { Ref, computed, inject, ref } from 'vue';
+import { Ref, computed, inject, ref, watch } from 'vue';
 import { EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
 
@@ -70,6 +70,17 @@ const emit = defineEmits<{
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
+// mutable model
+const _model = ref<BaseConceptModel>(props.model);
+
+// track prop changes
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = value;
+    }
+);
+
 const showEditDialog = ref(false);
 const currentEditItem = ref<{ key: string; item: ConfigItem } | undefined>();
 const currentEditModel = ref<any>();
@@ -113,7 +124,7 @@ const onEdit = (key: string, item: ConfigItem) => {
         // enter editing of a nested concept
         emit('enter', {
             concept: item.concept,
-            model: props.model[key] as BaseConceptModel,
+            model: _model.value[key] as BaseConceptModel,
             path: [key],
         });
         return;
@@ -121,7 +132,7 @@ const onEdit = (key: string, item: ConfigItem) => {
 
     // pop up the edit dialog
     currentEditItem.value = { key, item };
-    currentEditModel.value = props.model[key];
+    currentEditModel.value = _model.value[key];
     showEditDialog.value = true;
 };
 
@@ -131,11 +142,8 @@ const onCurrentEditChange = (data: any) => {
 
 const onSaveEdit = () => {
     if (currentEditItem.value) {
-        const nextModel = {
-            ...props.model,
-            [currentEditItem.value!.key]: currentEditModel.value,
-        };
-        emit('change', nextModel);
+        _model.value[currentEditItem.value!.key] = currentEditModel.value;
+        emitChange();
     }
     showEditDialog.value = false;
 };
@@ -154,7 +162,7 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
 
     const item = nestedHasMany.value.item;
     const parentKey = nestedHasMany.value.key;
-    const currentModel = props.model[parentKey] as BaseConceptModel[];
+    const currentModel = _model.value[parentKey] as BaseConceptModel[];
     const context = {
         app: app!,
         currentModel,
@@ -167,10 +175,10 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
     // merge the new item into the model
     const currentItemCount = currentModel.length;
     const nextModel = [...currentModel, newItem];
-    const nextParentModel = { ...props.model, [parentKey]: nextModel };
+    _model.value[parentKey] = nextModel;
 
     // notify the change
-    emit('change', nextParentModel);
+    emitChange();
 
     if (!item.inline) {
         // enter nested editing if the item is not inline
@@ -206,8 +214,12 @@ const onEnterNested = (parentKey: string, data: EnterConceptData) => {
 };
 
 const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
-    const nextModel = { ...props.model, [parentKey]: data };
-    emit('change', nextModel);
+    _model.value[parentKey] = data;
+    emitChange();
+};
+
+const emitChange = () => {
+    emit('change', _model.value);
 };
 </script>
 

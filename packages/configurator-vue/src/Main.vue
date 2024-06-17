@@ -2,7 +2,7 @@
 import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
 import { config as FormApp } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
@@ -15,15 +15,21 @@ const model = ref<BaseConceptModel>(app.model);
 const issues = ref<Issue[]>([]);
 const editPath = ref<EditPathRecord[]>([]);
 const selection = ref<SelectionData>();
+const renderJson = ref(true);
 
 onMounted(() => {
     validate(model.value);
 });
 
-const onAppChange = (data: BaseConceptModel) => {
+const onAppChange = async (data: BaseConceptModel) => {
     app.model = data as typeof app.model;
     model.value = data;
     validate(data);
+
+    // make sure JsonViewer is rerendered
+    renderJson.value = false;
+    await nextTick();
+    renderJson.value = true;
 };
 
 const onSave = () => {
@@ -83,7 +89,7 @@ watch(selection, (value) => {
                 <el-button @click="onLoad">Load</el-button>
             </div>
             <div class="flex-grow w-full overflow-auto border rounded">
-                <JsonViewer :value="model" expanded :expandDepth="10" copyable class="h-full" />
+                <JsonViewer v-if="renderJson" :value="model" expanded :expandDepth="10" copyable class="h-full" />
             </div>
             <div class="flex flex-col w-full h-1/5 flex-shrink-0">
                 <p class="text-gray-600 mb-2">Validation issues</p>

@@ -9,7 +9,7 @@ import {
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
@@ -32,11 +32,19 @@ const issues = ref<Issue[]>([]);
 // form element
 const formEl = ref<HTMLElement>();
 
-const onAppChange = (data: BaseConceptModel) => {
+// flag for triggering JsonViewer rerender
+const renderJson = ref(true);
+
+const onAppChange = async (data: BaseConceptModel) => {
     app.model = data as typeof app.model;
     model.value = data;
     validate(model.value);
     resetFormConfig();
+
+    // make sure JsonViewer is rerendered
+    renderJson.value = false;
+    await nextTick();
+    renderJson.value = true;
 };
 
 function onReset() {
@@ -130,7 +138,14 @@ watch(selection, (value) => {
                 <el-tabs class="h-full">
                     <el-tab-pane label="Json">
                         <div class="overflow-auto border rounded h-full">
-                            <JsonViewer :value="model" expanded :expandDepth="10" copyable class="h-full" />
+                            <JsonViewer
+                                v-if="renderJson"
+                                :value="model"
+                                expanded
+                                :expandDepth="10"
+                                copyable
+                                class="h-full"
+                            />
                         </div>
                     </el-tab-pane>
                     <el-tab-pane :label="`Issues (${issues.length})`">
