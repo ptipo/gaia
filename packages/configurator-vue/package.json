@@ -4,7 +4,10 @@
     "type": "module",
     "scripts": {
         "dev": "vite --port 5002",
-        "watch": "vue-tsc --noEmit --watch",
+        "watch": "run-p watch:*",
+        "watch:vite": "vite build --watch",
+        "watch:css": "tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify --watch",
+        "watch:tsc": "vue-tsc --noEmit --watch",
         "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit",

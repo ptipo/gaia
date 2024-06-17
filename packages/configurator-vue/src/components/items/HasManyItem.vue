@@ -17,10 +17,16 @@ const props = withDefaults(
              * Whether to display the items inline
              */
             inline?: boolean;
+
+            /**
+             * Whether to show the create button
+             */
+            showCreateButton?: boolean;
         }
     >(),
     {
         inline: false,
+        showCreateButton: true,
     }
 );
 
@@ -177,25 +183,12 @@ const isSelected = (element: BaseConceptModel) => {
         </draggable>
 
         <!-- footer button -->
-        <div class="flex flex-col mt-2">
-            <el-button
-                v-if="item.candidates.length === 1"
-                link
-                type="info"
-                class="self-start"
-                @click="() => onCreate(item.candidates[0])"
-                >+ 添加{{ item.name }}</el-button
-            >
-            <el-dropdown trigger="click" v-else>
-                <el-button link type="info" class="self-start">+ 添加{{ item.name }}</el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item v-for="candidate in item.candidates" @click="() => onCreate(candidate)">{{
-                            candidate.displayName
-                        }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-        </div>
+        <CreateCandidateButton
+            v-if="showCreateButton"
+            class="mt-2"
+            :name="item.name"
+            :candidates="item.candidates"
+            @create="onCreate"
+        />
     </div>
 </template>

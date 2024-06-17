@@ -92,24 +92,6 @@ export const Form = defineConcept({
         },
 
         /**
-         * 下一步按钮文案
-         */
-        nextButtonText: {
-            type: 'text',
-            name: '下一步按钮文案',
-            default: '下一步',
-        },
-
-        /**
-         * 提交按钮文案
-         */
-        submitButtonText: {
-            type: 'text',
-            name: '提交按钮文案',
-            default: '提交',
-        },
-
-        /**
          * 语言设置
          */
         languageSettings: LanguageSetting,

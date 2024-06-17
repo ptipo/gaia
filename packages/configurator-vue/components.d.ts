@@ -11,6 +11,7 @@ declare module 'vue' {
     ConceptConfigurator: typeof import('./src/components/ConceptConfigurator.vue')['default']
     ConceptElement: typeof import('./src/components/items/ConceptElement.vue')['default']
     ConceptStack: typeof import('./src/components/ConceptStack.vue')['default']
+    CreateCandidateButton: typeof import('./src/components/items/CreateCandidateButton.vue')['default']
     DynamicSelectItem: typeof import('./src/components/items/DynamicSelectItem.vue')['default']
     GroupItem: typeof import('./src/components/items/GroupItem.vue')['default']
     HasManyItem: typeof import('./src/components/items/HasManyItem.vue')['default']

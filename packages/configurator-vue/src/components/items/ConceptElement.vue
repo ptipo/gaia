@@ -2,7 +2,7 @@
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
-import type { HasManyItem } from '@hayadev/configurator/items';
+import type { HasItem, HasManyItem } from '@hayadev/configurator/items';
 import { Ref, computed, inject, ref } from 'vue';
 import { EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
@@ -101,6 +101,13 @@ const nestedHasMany = computed(() => {
     return { key: found[0], item: found[1] as HasManyItem };
 });
 
+// find all 'has' items in the concept (for showing them inline)
+const nestedHas = computed(() => {
+    return Object.entries(props.concept.items)
+        .filter(([_, item]) => item.type === 'has')
+        .map(([key, item]) => ({ key, item: item as HasItem, model: props.model[key] as BaseConceptModel }));
+});
+
 const onEdit = (key: string, item: ConfigItem) => {
     if (item.type === 'has') {
         // enter editing of a nested concept
@@ -137,6 +144,38 @@ const onCancelEdit = () => {
     currentEditItem.value = undefined;
     currentEditModel.value = undefined;
     showEditDialog.value = false;
+};
+
+// create a new child item in the nested has-many collection
+const onCreateNestedHasManyItem = (concept: Concept) => {
+    if (!nestedHasMany.value) {
+        return;
+    }
+
+    const item = nestedHasMany.value.item;
+    const parentKey = nestedHasMany.value.key;
+    const currentModel = props.model[parentKey] as BaseConceptModel[];
+    const context = {
+        app: app!,
+        currentModel,
+        rootModel: rootModel?.value,
+    };
+
+    // call new item provider if available
+    const newItem = item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
+
+    // merge the new item into the model
+    const currentItemCount = currentModel.length;
+    const nextModel = [...currentModel, newItem];
+    const nextParentModel = { ...props.model, [parentKey]: nextModel };
+
+    // notify the change
+    emit('change', nextParentModel);
+
+    if (!item.inline) {
+        // enter nested editing if the item is not inline
+        emit('enter', { concept, model: newItem, path: [currentItemCount] });
+    }
 };
 
 const onEditNested = () => {
@@ -177,15 +216,10 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
         class="flex justify-between gap-1 w-full"
         :class="{
             'cursor-pointer': !inlineEditing || concept.selectable,
+            'hover:bg-slate-100': !inlineEditing,
         }"
     >
-        <div
-            class="flex-grow"
-            @click="onClickNested"
-            :class="{
-                'hover:bg-slate-100': !inlineEditing,
-            }"
-        >
+        <div class="flex-grow" @click="onClickNested">
             {{ elementSummary }}
         </div>
         <el-dropdown trigger="click" v-if="model">
@@ -223,11 +257,31 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
         <HasManyItemComponent
             :item="nestedHasMany.item"
             :model="props.model[nestedHasMany.key] as BaseConceptModel[]"
+            :showCreateButton="false"
             inline
             @change="(data) => onChangeNested(nestedHasMany!.key, data)"
             @enter="(data) => onEnterNested(nestedHasMany!.key, data)"
         />
     </div>
+
+    <!-- editing entrance for 'has' items -->
+    <div
+        v-for="{ key, item, model } in nestedHas"
+        :key="key"
+        class="pt-2 pl-2 hover:bg-slate-100 cursor-pointer"
+        @click="onEnterNested(key, { concept: item.concept, model, path: [] })"
+    >
+        {{ item.name }}
+    </div>
+
+    <!-- create button for nested has-many items -->
+    <CreateCandidateButton
+        v-if="nestedHasMany"
+        class="mt-2"
+        :name="nestedHasMany.item.name"
+        :candidates="nestedHasMany.item.candidates"
+        @create="onCreateNestedHasManyItem"
+    />
 
     <!-- inline-editing dialog -->
     <el-dialog v-model="showEditDialog" v-if="currentEditItem" :title="`修改${currentEditItem.item.name}`" width="500">
