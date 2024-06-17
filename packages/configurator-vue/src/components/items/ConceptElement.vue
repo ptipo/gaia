@@ -88,7 +88,7 @@ const elementSummary = computed(() => {
 // filter items that are inline editable
 const inlineEditableItems = computed(() => {
     return Object.entries(props.concept.items)
-        .filter(([_, value]) => !['has-many'].includes(value.type))
+        .filter(([_, value]) => !['has-many', 'has'].includes(value.type))
         .map(([key, value]) => ({ key, item: value }));
 });
 
