@@ -53,7 +53,7 @@ function makePageContent(asset: Asset & { app: App }) {
         .replaceAll('{{title}}', asset.name)
         .replaceAll('{{bundle}}', getAppBundle(asset.app.bundle))
         .replaceAll('{{tagName}}', asset.app.htmlTagName)
-        .replaceAll('{{config}}', JSON.stringify(asset.config));
+        .replaceAll('{{config}}', escapeHtml(JSON.stringify(asset.config)));
     return result;
 }
 
@@ -63,4 +63,16 @@ function getAppBundle(bundle: string) {
     } else {
         return `https://unpkg.com/${bundle}@latest/dist/index.js`;
     }
+}
+
+function escapeHtml(unsafe: string): string {
+    const escapeMap: { [key: string]: string } = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    };
+
+    return unsafe.replace(/[&<>"']/g, (match) => escapeMap[match]);
 }
