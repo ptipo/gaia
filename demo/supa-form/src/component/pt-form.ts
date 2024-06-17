@@ -74,8 +74,9 @@ export class PtForm extends PtBaseShadow {
 
             return html`
                     <div class="mt-4">
+                        <div class="sticky top-4 ">
                         <div
-                            class="flex h-1 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                            class="flex h-1 bg-gray-200  rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                             role="progressbar"
                         >
                             <div
@@ -83,12 +84,14 @@ export class PtForm extends PtBaseShadow {
                                 style="width: ${progress}%"
                             ></div>
                         </div>
+                        </div>
                         ${keyed(
                             this.pageId,
                             html`<pt-form-page
                                 ${ref(this.pageRef)}
                                 class="mt-4 block"
                                 @pt-form-state-changed=${this.onFormStateChange}
+                                @pt-form-next-page=${this.nextPage}
                                 .page=${this.currentContentPage}
                             ></pt-form-page>`
                         )}
@@ -167,7 +170,7 @@ export class PtForm extends PtBaseShadow {
     }
 
     private onFormStateChange() {
-        this.requestUpdate();
+        console.log('form state changed');
     }
 
     private shouldShowNextButton() {

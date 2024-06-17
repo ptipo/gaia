@@ -1,12 +1,12 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBaseData } from '../pt-base';
+import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
-type GetElementType<T extends any[]> = T extends (infer U)[] ? U : never;
+type GetArrayElementType<T extends any[]> = T extends (infer U)[] ? U : never;
 
 @customElement('pt-choice')
 export class PtChoice extends PtBaseData<Map<string, string>> {
@@ -17,13 +17,20 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     randomSeed?: number[];
 
+    get isImageChoice() {
+        return this.data?.choiceKind == 'image';
+    }
+
     connectedCallback() {
         super.connectedCallback();
-        this.randomSeed = Array.from(this.data!.textChoices!, (x) => Math.random() - 0.5);
+        const choiceLength = this.isImageChoice ? this.data?.imageChoices?.length : this.data?.textChoices?.length;
+        this.randomSeed = new Array(choiceLength!).fill(0).map((x) => Math.random() - 0.5);
     }
 
     getInputComponent(
-        choice: GetElementType<NonNullable<ChoiceQuestionType['textChoices'] | ChoiceQuestionType['imageChoices']>>,
+        choice: GetArrayElementType<
+            NonNullable<ChoiceQuestionType['textChoices'] | ChoiceQuestionType['imageChoices']>
+        >,
         isSingleChoice: boolean
     ) {
         return html` <input
@@ -40,9 +47,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     }
 
     render() {
-        console.log(this.showValidationError);
-        const isImageChoice = this.data?.choiceKind == 'image';
-        const targetChoices = isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
+        const targetChoices = this.isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
         if (!this.value.data) {
             this.value.data = new Map(
                 targetChoices!
@@ -77,7 +82,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                     ${choices!.map(
                         (choice) => html`
                             ${when(
-                                isImageChoice,
+                                this.isImageChoice,
                                 () =>
                                     html`
                                         <div
@@ -165,6 +170,12 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                 this.value.data!.clear();
             }
             this.value.data!.set(choice!.$id, '');
+
+            if (isSingleChoice) {
+                this.dispatchEvent(
+                    new CustomEvent(PtFormSingleChoiceSelectedEventName, { bubbles: true, composed: false })
+                );
+            }
         } else {
             this.value.data!.delete(choice!.$id);
         }
@@ -176,8 +187,6 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         const input = e.target as HTMLTextAreaElement;
         const value = input.value;
         const choiceId = input.dataset.choiceId!;
-
-        this.value.data!.set(choiceId, value);
     }
 
     isValidated() {
