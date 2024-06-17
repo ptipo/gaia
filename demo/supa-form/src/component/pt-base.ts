@@ -4,6 +4,10 @@ import { consume } from '@lit/context';
 import { formState, answerData } from '../state';
 import { property } from 'lit/decorators.js';
 
+export const PtFormStateChangeEventName = 'pt-form-state-changed';
+export const PtFormSingleChoiceSelectedEventName = 'pt-form-single-choice-selected';
+export const PtFormNextPageEventName = 'pt-form-next-page';
+
 type Constructor<T = {}> = new (...args: any[]) => T;
 
 const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom: boolean) => {
@@ -60,7 +64,9 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     }
 
     dispatchUpdate() {
-        this.dispatchEvent(new CustomEvent('pt-form-state-changed', { bubbles: true, composed: false }));
+        this.dispatchEvent(
+            new CustomEvent(PtFormStateChangeEventName, { bubbles: true, composed: false, detail: this.value })
+        );
     }
 
     @consume({ context: formState })

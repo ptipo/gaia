@@ -89,6 +89,15 @@ const onLoad = () => {
     }
 };
 
+const onPreview = () => {
+    // open a new page
+    const newWindow = window.open('./preview', '_blank')!;
+
+    newWindow.onload = () => {
+        newWindow.postMessage({ ptForm: app.stringifyModel(model.value) });
+    };
+};
+
 const onNavigateError = (path: EditPathRecord[]) => {
     console.log('Navigate to:', JSON.stringify(path));
     editPath.value = path;
@@ -122,8 +131,9 @@ watch(selection, (value) => {
                 <el-button @click="onSave">Save</el-button>
                 <el-button @click="onLoad">Load</el-button>
                 <el-button @click="onReset"> Reset </el-button>
+                <el-button @click="onPreview">Preview</el-button>
             </div>
-            <div class="border rounded bg-white w-full flex-grow overflow-auto">
+            <div class="border rounded bg-white w-full h-full flex-grow overflow-auto">
                 <pt-form id="pt-form" ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">

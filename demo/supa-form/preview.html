@@ -3,22 +3,29 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{title}}</title>
+        <title>Supa Form Preview</title>
+        <script type="module" src="src/index.ts"></script>
     </head>
-    <body class="flex h-screen">
-        <script type="module" src="{{bundle}}"></script>
-        <div id="app" class="container"><{{tagName}} class='w-full' config='{{config}}' /></div>
+    <body>
+        <script>
+            window.addEventListener('message', (event) => {
+                // Ensure the message is coming from a trusted origin
+                if (event.origin !== window.location.origin) return;
+
+                const { ptForm } = event.data;
+
+                if (ptForm) {
+                    const form = document.getElementById('pt-form');
+                    form.setAttribute('config', ptForm);
+                }
+            });
+        </script>
+        <div id="app" class="container">
+            <pt-form id="pt-form" style="width: 100%"></pt-form>
+        </div>
     </body>
 
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            margin: 0;
-        }
-
         #app {
             display: flex;
             align-items: center;
