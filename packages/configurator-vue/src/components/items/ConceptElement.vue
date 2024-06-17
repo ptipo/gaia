@@ -173,16 +173,14 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
     const newItem = item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
 
     // merge the new item into the model
-    const currentItemCount = currentModel.length;
-    const nextModel = [...currentModel, newItem];
-    _model.value[parentKey] = nextModel;
+    currentModel.push(newItem);
 
     // notify the change
     emitChange();
 
     if (!item.inline) {
         // enter nested editing if the item is not inline
-        onEnterNested(parentKey, { concept, model: newItem, path: [currentItemCount] });
+        onEnterNested(parentKey, { concept, model: newItem, path: [currentModel.length - 1] });
     }
 };
 
