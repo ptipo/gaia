@@ -15,12 +15,15 @@ class PtFormCompletePage extends PtBase {
     render() {
         const pageItems = this.page!.pageItems ?? [];
 
-        return html` <h1 class='flex justify-center items-center'>${this.page.name}</h1> 
-        ${pageItems.map((item) => {
-            const tagName = getContentTypeComponent(item.$concept);
+        return html`
+            ${pageItems.map((item) => {
+                const tagName = getContentTypeComponent(item.$concept);
 
-            return html`<${unsafeStatic(tagName)} data=${JSON.stringify(item)} ></${unsafeStatic(tagName)}>`;
-        })}
+                return html`<div class="flex flex-col mt-10 px-10 gap-y-10"></div><${unsafeStatic(
+                    tagName
+                )} data=${JSON.stringify(item)} ></${unsafeStatic(tagName)}>
+                 </div>`;
+            })}
         `;
     }
 }

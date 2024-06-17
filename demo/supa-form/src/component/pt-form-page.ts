@@ -1,9 +1,10 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { PtBase, PtBaseData } from './pt-base';
+import { PtBase, PtBaseData, PtFormSingleChoiceSelectedEventName, PtFormNextPageEventName } from './pt-base';
 import { app } from '../app';
 import { getContentTypeComponent } from './contentTypes';
 import { LitElement, html } from 'lit';
 import { when } from 'lit/directives/when.js';
+import { PtChoice } from './contentTypes/pt-choice';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -27,13 +28,29 @@ export class PtFormPage extends PtBase {
             this.page.pageItems.map((item) => {
                 const tagName = getContentTypeComponent(item.$concept);
                 const el = document.createElement(tagName) as LitElement;
+
+                if (this.page.pageItems.length === 1 && el instanceof PtChoice) {
+                    el.addEventListener(PtFormSingleChoiceSelectedEventName, () => {
+                        this.dispatchEvent(new CustomEvent(PtFormNextPageEventName));
+                    });
+                }
+
                 el.style.display = 'block';
                 return [item.$id, el];
             })
         );
+
+        const allQuestions = Array.from(this.pageItems.values()).filter((x) => x instanceof PtBaseData);
+
+        if (allQuestions.length == 1 && allQuestions[0] instanceof PtChoice) {
+            allQuestions[0].addEventListener(PtFormSingleChoiceSelectedEventName, () => {
+                this.dispatchEvent(new CustomEvent(PtFormNextPageEventName));
+            });
+        }
     }
 
     render() {
+        this.isValid = true;
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10">
             ${this.page.pageItems?.map((item) => {
                 const el = this.pageItems?.get(item.$id)!;
@@ -43,7 +60,10 @@ export class PtFormPage extends PtBase {
                 let errorMessage;
                 if (this.showValidationError && el instanceof PtBaseData) {
                     errorMessage = el.getValidateError();
-                    this.isValid = !errorMessage;
+
+                    if (this.isValid) {
+                        this.isValid = !errorMessage;
+                    }
                 }
 
                 return html`<div>
