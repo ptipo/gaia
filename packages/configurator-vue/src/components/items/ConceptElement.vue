@@ -174,7 +174,7 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
 
     if (!item.inline) {
         // enter nested editing if the item is not inline
-        emit('enter', { concept, model: newItem, path: [currentItemCount] });
+        onEnterNested(parentKey, { concept, model: newItem, path: [currentItemCount] });
     }
 };
 
