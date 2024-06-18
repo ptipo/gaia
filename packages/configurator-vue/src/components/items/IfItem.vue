@@ -25,7 +25,7 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const childComponent = getItemComponent(props.item.child);
 
 const condition = computed(() => {
-    return props.item.conditionProvider?.({
+    return props.item.conditionProvider({
         app: app!,
         rootModel: rootModel?.value,
         currentModel: props.parentModel,
@@ -55,7 +55,7 @@ watch(condition, (value) => {
         :is="childComponent"
         :item="item.child"
         :model="model"
-        :parentModel="parentModel"
+        :parent-model="parentModel"
         @change="(data: unknown) => $emit('change', data)"
         @enter="(data: EnterConceptData) => $emit('enter', data)"
     ></component>

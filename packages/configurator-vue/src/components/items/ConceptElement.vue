@@ -256,6 +256,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
     <div v-if="nestedHasMany" class="pt-2 pl-2">
         <HasManyItemComponent
             :item="nestedHasMany.item"
+            :parent-model="props.model"
             :model="props.model[nestedHasMany.key] as BaseConceptModel[]"
             :showCreateButton="false"
             inline
@@ -289,7 +290,7 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
             :is="getItemComponent(currentEditItem.item)"
             :item="currentEditItem.item"
             :model="currentEditModel"
-            :parentModel="model"
+            :parent-model="model"
             @change="(data: any) => onCurrentEditChange(data)"
         ></component>
         <template #footer>

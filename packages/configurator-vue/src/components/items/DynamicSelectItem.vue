@@ -53,7 +53,7 @@ watch([rootModel], async () => {
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" :model="props.model" v-model:enabled="enabled" />
+        <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" v-model:enabled="enabled" />
         <el-select
             v-if="!item.guarded || enabled"
             v-model="_model"

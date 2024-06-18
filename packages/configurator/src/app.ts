@@ -27,12 +27,10 @@ export type ValidationIssue = {
  * Instance of an app.
  */
 export class AppInstance<TConcept extends Concept> {
-    private readonly schema: z.ZodObject<z.ZodRawShape>;
     private conceptInstances: Record<string, BaseConceptModel> = {};
     private _model: inferPartialConcept<TConcept>;
 
     constructor(public readonly def: AppDef<TConcept>) {
-        this.schema = this.createModelSchema();
         this._model = this.createConceptInstance(def.concept);
     }
 
@@ -114,8 +112,13 @@ export class AppInstance<TConcept extends Concept> {
         return result;
     }
 
-    private createModelSchema() {
-        return makeConceptSchema(this.concept);
+    private getModelSchema() {
+        return makeConceptSchema(this.concept, {
+            app: this,
+            rootModel: this.model,
+            currentModel: this.model,
+            parentModel: undefined,
+        });
     }
 
     /**
@@ -179,11 +182,14 @@ export class AppInstance<TConcept extends Concept> {
     ):
         | { success: true; data: inferConcept<TConcept>; issues?: never }
         | { success: false; issues: ValidationIssue[]; data?: never } {
-        const { error, data } = this.schema.safeParse(model);
+        const schema = this.getModelSchema();
+        const { error, data } = schema.safeParse(model);
         if (error) {
             const issues = error.issues.map((issue) => {
+                // TODO: move code to message translation out of the "configurator" package
                 const message = match(issue)
                     .with({ code: 'invalid_type', received: 'undefined' }, () => '未设置')
+                    .with({ code: 'invalid_type', received: 'array' }, () => '至少需要一项')
                     .with({ code: 'too_small', type: P.union('array', 'string') }, () => '未设置')
                     .otherwise(() => issue.code + ':' + issue.message);
                 return { message, path: issue.path };

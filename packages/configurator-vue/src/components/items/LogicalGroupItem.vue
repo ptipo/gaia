@@ -88,14 +88,14 @@ const emitChange = () => {
 
 <template>
     <div>
-        <ItemLabel :item="item" :model="props.model" />
+        <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" />
         <div class="flex flex-col gap-2 mt-2">
             <LogicalGroupElement
                 v-for="row in _model"
                 :item="props.item"
                 :key="row.$id"
                 :model="row"
-                :parentModel="props.parentModel"
+                :parent-model="props.parentModel"
                 @change="(data) => onElementChange(data, row.$id)"
                 @delete="() => onElementDelete(row.$id)"
             />
