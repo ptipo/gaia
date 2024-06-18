@@ -1,7 +1,8 @@
-import { ProviderContext } from '@/types';
+import type { ProviderContext } from '@/types';
 import { z } from 'zod';
+import type { GetSchemaFunction } from '.';
 import { wrap } from '../schema';
-import { ConfigItemBase } from './common';
+import type { ConfigItemBase } from './common';
 
 /**
  * A dynamic select option.
@@ -40,12 +41,12 @@ export interface DynamicSelectItem<TValue> extends ConfigItemBase {
     provider: (context: ProviderContext) => DynamicSelectOption<TValue>[] | Promise<DynamicSelectOption<TValue>[]>;
 }
 
-export const getSchema = (item: ConfigItemBase) =>
+// TODO: call items provider and build a stricter Zod schema
+export const getSchema: GetSchemaFunction = (item: ConfigItemBase) =>
     wrap(
         item,
         z.custom(
             (data) => {
-                console.log(item);
                 return data !== undefined;
             },
             { message: '未设置' }

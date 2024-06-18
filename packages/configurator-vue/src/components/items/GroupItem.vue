@@ -38,7 +38,7 @@ const onEnter = (key: string, data: EnterConceptData) => {
                 :is="childComponents[key]"
                 :item="item"
                 :model="model[key]"
-                :parentModel="model"
+                :parent-model="model"
                 @change="(data: unknown) => onChange(key, data)"
                 @enter="(data: EnterConceptData) => onEnter(key, data)"
             />

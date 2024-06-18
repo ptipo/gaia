@@ -40,6 +40,16 @@ const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
 
 const createAppElement = async (app: App) => {
+    if (appEl.value) {
+        // already created
+        return;
+    }
+
+    if (!asset.value) {
+        // asset not ready
+        return;
+    }
+
     if (!app.bundle) {
         console.error('No bundle found in the app instance.');
         return;
@@ -101,8 +111,26 @@ const onAppChange = (data: BaseConceptModel) => {
     }
     console.log('App change:', data);
     appInstance.value.model = model.value = data as typeof appInstance.value.model;
-    // validate(model.value);
-    resetFormConfig();
+
+    if (validate(model.value)) {
+        resetFormConfig();
+    }
+};
+
+const validate = (model: BaseConceptModel) => {
+    if (!appInstance.value) {
+        return;
+    }
+
+    const validationResult = appInstance.value.validateModel(model);
+    if (!validationResult.success) {
+        issues.value = validationResult.issues;
+        console.log('Validation issues:', validationResult.issues);
+        return false;
+    } else {
+        issues.value = [];
+        return true;
+    }
 };
 
 const onSave = async () => {

@@ -9,6 +9,7 @@ import { inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
 import type { CommonEvents, CommonProps } from './common';
+import ItemLabel from './ItemLabel.vue';
 
 const props = withDefaults(
     defineProps<
@@ -153,7 +154,7 @@ const isSelected = (element: BaseConceptModel) => {
 
 <template>
     <div class="flex flex-col">
-        <div v-if="!inline" class="mb-2">{{ item.name }}</div>
+        <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
         <draggable class="flex flex-col gap-2" v-model="draggableState" item-key="$id" @end="onDragEnd">

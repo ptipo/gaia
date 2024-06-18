@@ -14,7 +14,7 @@ const _model = ref(props.model);
 <template>
     <el-form-item class="m-0">
         <div class="flex justify-between w-full">
-            <ItemLabel :item="item" :model="props.model" />
+            <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" />
             <el-switch v-model="_model" @change="$emit('change', _model)" />
         </div>
     </el-form-item>

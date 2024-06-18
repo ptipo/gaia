@@ -27,6 +27,7 @@ export const Form = defineConcept({
         contentPages: {
             type: 'has-many',
             name: '表单页',
+            required: true,
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',

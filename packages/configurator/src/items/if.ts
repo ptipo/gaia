@@ -1,7 +1,8 @@
-import { ProviderContext } from '@/types';
-import { ConfigItem, makeConfigItemSchema } from '../config-item';
-import { wrap } from '../schema';
-import { ConfigItemBase } from './common';
+import type { ProviderContext } from '@/types';
+import { z } from 'zod';
+import { GetSchemaContext } from '.';
+import { makeConfigItemSchema, type ConfigItem } from '../config-item';
+import type { ConfigItemBase } from './common';
 
 /**
  * A conditional config item.
@@ -20,4 +21,24 @@ export interface IfItem extends ConfigItemBase {
     child: ConfigItem;
 }
 
-export const getSchema = (item: ConfigItemBase) => wrap(item, makeConfigItemSchema((item as IfItem).child));
+export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
+    const myItem = item as IfItem;
+    let condition: boolean;
+    try {
+        condition = myItem.conditionProvider({
+            app: context.app,
+            rootModel: context.rootModel,
+            currentModel: context.parentModel,
+        });
+    } catch (err: any) {
+        throw new Error('Error while evaluating if condition: ' + err.message);
+    }
+
+    if (condition) {
+        // enabled
+        return makeConfigItemSchema(myItem.child, context);
+    } else {
+        // not enabled
+        return z.undefined();
+    }
+};

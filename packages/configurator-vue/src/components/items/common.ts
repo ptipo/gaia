@@ -1,4 +1,4 @@
-import type { inferConfigItem } from '@hayadev/configurator';
+import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
 import type { ConfigItemBase } from '@hayadev/configurator/items';
 import type { SelectionData } from '../types';
 
@@ -8,6 +8,7 @@ import type { SelectionData } from '../types';
 export type CommonProps<TItem extends ConfigItemBase> = {
     item: TItem;
     model: inferConfigItem<TItem>;
+    parentModel: BaseConceptModel;
 };
 
 /**
