@@ -1,16 +1,30 @@
 <script setup lang="ts">
-import { makeConfigItemSchema } from '@hayadev/configurator';
+import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { makeConfigItemSchema, type AppInstance, type BaseConceptModel, type Concept } from '@hayadev/configurator';
 import type { ConfigItemBase } from '@hayadev/configurator/items';
-import { ref, watch } from 'vue';
+import { computed, inject, ref, watch, type Ref } from 'vue';
 
 const props = defineProps<{
     item: ConfigItemBase;
     model: unknown | undefined;
+    parentModel: BaseConceptModel;
 }>();
 
+const app = inject<AppInstance<Concept>>(APP_KEY);
+const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+
 const enabled = defineModel<boolean>('enabled');
-const schema = makeConfigItemSchema(props.item);
+
 const errorMessage = ref('');
+
+const schema = computed(() =>
+    makeConfigItemSchema(props.item, {
+        app: app!,
+        rootModel: rootModel?.value!,
+        parentModel: props.parentModel,
+        currentModel: props.model,
+    })
+);
 
 const validate = () => {
     errorMessage.value = '';
@@ -23,7 +37,7 @@ const validate = () => {
         }
     }
 
-    const parseResult = schema.safeParse(props.model);
+    const parseResult = schema.value.safeParse(props.model);
     if (parseResult.error) {
         errorMessage.value = parseResult.error.issues.map((issue) => issue.message).join(', ');
     }

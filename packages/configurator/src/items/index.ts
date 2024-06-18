@@ -13,9 +13,20 @@ import { getSchema as getNumberItemSchema } from './number';
 import { getSchema as getSelectItemSchema } from './select';
 import { getSchema as getSwitchItemSchema } from './switch';
 import { getSchema as getTextItemSchema } from './text';
+import { ProviderContext } from '..';
+
+/**
+ * Context for building a Zod schema for validating a config item.
+ */
+export type GetSchemaContext = ProviderContext & { parentModel: any };
+
+/**
+ * Function that gets a Zod schema for validating the model of a config item.
+ */
+export type GetSchemaFunction = (item: ConfigItemBase, context: GetSchemaContext) => ZodSchema;
 
 export const Schemas: {
-    [Key in ConfigItemType]: (item: ConfigItemBase) => ZodSchema;
+    [Key in ConfigItemType]: GetSchemaFunction;
 } = {
     color: getColorItemSchema,
     'dynamic-select': getDynamicSelectItemSchema,

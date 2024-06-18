@@ -1,18 +1,19 @@
 import {
-    ColorItem,
-    ConfigItemBase,
-    DynamicSelectItem,
-    GroupItem,
-    HasItem,
-    HasManyItem,
-    IfItem,
-    ImageItem,
-    LogicalGroupItem,
-    NumberItem,
     Schemas,
-    SelectItem,
-    SwitchItem,
-    TextItem,
+    type ColorItem,
+    type ConfigItemBase,
+    type DynamicSelectItem,
+    type GetSchemaContext,
+    type GroupItem,
+    type HasItem,
+    type HasManyItem,
+    type IfItem,
+    type ImageItem,
+    type LogicalGroupItem,
+    type NumberItem,
+    type SelectItem,
+    type SwitchItem,
+    type TextItem,
 } from './items';
 
 /**
@@ -40,6 +41,6 @@ export type ConfigItemType = ConfigItem['type'];
 /**
  * Gets a Zod schema for validating the model of a config item
  */
-export function makeConfigItemSchema(item: ConfigItemBase) {
-    return Schemas[item.type](item);
+export function makeConfigItemSchema(item: ConfigItemBase, context: GetSchemaContext) {
+    return Schemas[item.type](item, context);
 }

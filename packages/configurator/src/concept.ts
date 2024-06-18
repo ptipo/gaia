@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
+import type { GetSchemaContext } from './items';
 import { NonPrimitiveTypes, ProviderContext } from './types';
 
 /**
@@ -71,20 +72,24 @@ export function defineConcept<TItems extends Concept['items']>(def: Concept<TIte
  * @param concept
  * @returns
  */
-export function makeConceptSchema<TConcept extends Concept>(concept: TConcept) {
+export function makeConceptSchema<TConcept extends Concept>(concept: TConcept, context: GetSchemaContext) {
     return z.object({
         $id: z.string(),
         $type: z.literal(NonPrimitiveTypes.concept),
         $concept: z.literal(concept.name),
-        ...mapConfigItems(concept.items),
+        ...mapConfigItems(concept.items, context),
     });
 }
 
-function mapConfigItems(items: Record<string, ConfigItem>) {
+function mapConfigItems(items: Record<string, ConfigItem>, context: GetSchemaContext) {
     return Object.entries(items).reduce(
         (acc, [key, item]) => ({
             ...acc,
-            [key]: makeConfigItemSchema(item),
+            [key]: makeConfigItemSchema(item, {
+                ...context,
+                currentModel: context.currentModel[key],
+                parentModel: context.currentModel,
+            }),
         }),
         {}
     );

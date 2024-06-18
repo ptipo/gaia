@@ -74,7 +74,7 @@ const unwrap = (item: any) => {
 type ParsedIssue = ReturnType<typeof parseIssue>;
 
 const formatPath = ({ issue, path }: ParsedIssue) => {
-    return `${issue.message}: ${path.join(' -> ')}`;
+    return `${issue.message}: ${path.join(' > ')}`;
 };
 
 const onIssueClick = ({ issue }: ParsedIssue) => {

@@ -25,7 +25,7 @@ const _model = ref<string | undefined>(props.model);
 
 <template>
     <el-form-item class="m-0">
-        <ItemLabel :item="item" :model="props.model" v-model:enabled="enabled" />
+        <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" v-model:enabled="enabled" />
         <el-input v-if="!item.guarded || enabled" v-model="_model" @change="$emit('change', _model)" />
     </el-form-item>
 </template>

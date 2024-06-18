@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { ConfigGroups } from '..';
-import { ConfigItem, makeConfigItemSchema } from '../config-item';
+import type { GetSchemaContext } from '.';
+import type { ConfigGroups } from '..';
+import { makeConfigItemSchema, type ConfigItem } from '../config-item';
 import { wrap } from '../schema';
-import { ConfigItemBase } from './common';
+import type { ConfigItemBase } from './common';
 
 /**
  * An item that groups other items.
@@ -47,7 +48,7 @@ export function defineGroupItem<TItems extends Record<string, ConfigItem>>(
     return { type: 'group', ...def };
 }
 
-export const getSchema = (item: ConfigItemBase) => {
+export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
     const myItem = item as GroupItem;
     return wrap(
         item,
@@ -55,7 +56,11 @@ export const getSchema = (item: ConfigItemBase) => {
             Object.entries(myItem.items).reduce(
                 (acc, [key, item]) => ({
                     ...acc,
-                    [key]: makeConfigItemSchema(item),
+                    [key]: makeConfigItemSchema(item, {
+                        ...context,
+                        parentModel: context.currentModel,
+                        currentModel: context.currentModel[key],
+                    }),
                 }),
                 {}
             )

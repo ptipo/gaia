@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import type { GetSchemaFunction } from '.';
 import { wrap } from '../schema';
-import { RGBA, isRGBA } from '../types';
-import { ConfigItemBase } from './common';
+import { isRGBA, type RGBA } from '../types';
+import type { ConfigItemBase } from './common';
 
 /**
  * 颜色配置项
@@ -15,4 +16,4 @@ export interface ColorItem extends ConfigItemBase {
     default?: RGBA;
 }
 
-export const getSchema = (item: ConfigItemBase) => wrap(item, z.custom<RGBA>(isRGBA));
+export const getSchema: GetSchemaFunction = (item: ConfigItemBase) => wrap(item, z.custom<RGBA>(isRGBA));

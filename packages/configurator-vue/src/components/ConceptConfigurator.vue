@@ -103,7 +103,7 @@ const childComponents = computed(() => {
                         :is="childComponents[key]"
                         :item="item"
                         :model="_model[key]"
-                        :parentModel="_model"
+                        :parent-model="_model"
                         @change="(data: unknown) => onChange(key, data)"
                         @selectionChange="(data: SelectionData) => $emit('selectionChange', data)"
                         @drop="() => onDrop(key)"
