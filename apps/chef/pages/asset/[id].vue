@@ -86,6 +86,15 @@ watch(
     { immediate: true }
 );
 
+watch(selection, (value) => {
+    console.log('Selection changed:', value?.concept.name, value?.id);
+    if (!value) {
+        appEl.value?.removeAttribute('edit-selection');
+    } else {
+        appEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
+    }
+});
+
 const onAppChange = (data: BaseConceptModel) => {
     if (!appInstance.value) {
         return;
