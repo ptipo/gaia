@@ -47,15 +47,6 @@ const onAppChange = async (data: BaseConceptModel) => {
     renderJson.value = true;
 };
 
-function onReset() {
-    const parent = formEl.value?.parentElement!;
-    if (parent) {
-        parent.removeChild(formEl.value!);
-        parent.innerHTML = `<pt-form id="pt-form" config=${app.stringifyModel(model.value)} ></pt-form>`;
-        formEl.value = document.getElementById('pt-form')!;
-    }
-}
-
 onMounted(async () => {
     validate(model.value);
     document.addEventListener('pt-form-submit', function (event: any) {
@@ -123,11 +114,8 @@ const validate = (model: BaseConceptModel) => {
 
 watch(selection, (value) => {
     console.log('Selection changed:', value?.concept.name, value?.id);
-    if (!value) {
-        formEl.value?.removeAttribute('edit-selection');
-    } else {
-        formEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
-    }
+
+    formEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
 });
 </script>
 
@@ -138,11 +126,10 @@ watch(selection, (value) => {
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
                 <el-button @click="onLoad">Load</el-button>
-                <el-button @click="onReset"> Reset </el-button>
                 <el-button @click="onPreview">Preview</el-button>
             </div>
             <div class="border rounded bg-white w-full h-full flex-grow overflow-auto">
-                <pt-form id="pt-form" ref="formEl"></pt-form>
+                <pt-form id="pt-form" edit-selection='{"id":""}' ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">
                 <el-tabs class="h-full">

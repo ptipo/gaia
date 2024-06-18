@@ -14,9 +14,11 @@ export class PtEmail extends PtBaseData<string> {
 
     render() {
         const description = this.data?.description;
+        const question = this.data?.question;
 
         return html`<pt-question
             @input=${(e: any) => this.onChange(e.target.value)}
+            question=${question!}
             description=${description!}
             value=${ifDefined(this.value.data)}
         ></pt-question> `;

@@ -11,6 +11,7 @@ import { validateLogic } from '../util/logic-resolver';
 import { ConceptRef } from '@hayadev/configurator';
 import { PtFormPage } from './pt-form-page';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import { v4 as uuid } from 'uuid';
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
@@ -86,7 +87,8 @@ export class PtForm extends PtBaseShadow {
                         </div>
                         </div>
                         ${keyed(
-                            this.pageId,
+                            // in edit mode, always rerender the page to reset the state
+                            this.editSelection ? uuid() : this.pageId,
                             html`<pt-form-page
                                 ${ref(this.pageRef)}
                                 class="mt-4 block"

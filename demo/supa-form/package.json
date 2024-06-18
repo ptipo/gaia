@@ -36,6 +36,7 @@
     "devDependencies": {
         "@hayadev/configurator-vue": "workspace:*",
         "@tailwindcss/forms": "^0.5.7",
+        "@types/uuid": "^9.0.8",
         "@vitejs/plugin-vue": "^5.0.4",
         "commander": "^12.1.0",
         "element-plus": "^2.7.3",

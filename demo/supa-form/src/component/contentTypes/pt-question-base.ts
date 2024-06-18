@@ -20,7 +20,7 @@ export class PtQuestionBase extends PtBase {
     render() {
         return html`
             ${this.description ? html`<p class="text-sm text-gray-500 mb-2">${this.description}</p>` : ''}
-            <span class="mb-8 text-2xl  text-black font-black	">${this.question}</span>
+            <span class="mb-8 text-2xl  text-black font-black">${this.question}</span>
 
             <div class="mt-4">
                 <span>
