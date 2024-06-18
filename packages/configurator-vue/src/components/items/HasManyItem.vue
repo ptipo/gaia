@@ -3,9 +3,9 @@ import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
 import { AppInstance, Concept, type BaseConceptModel } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
-import { v4 as uuid } from 'uuid';
 import deepcopy from 'deepcopy';
-import { inject, ref, watch, type Ref } from 'vue';
+import { v4 as uuid } from 'uuid';
+import { computed, inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
 import type { CommonEvents, CommonProps } from './common';
@@ -37,41 +37,49 @@ const emit = defineEmits<
     }
 >();
 
+// mutable model
+const _model = ref<BaseConceptModel[]>([...(props.model ?? [])]);
+
+// track props changes
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = [...(value ?? [])];
+    }
+);
+
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION);
 
-// mutable state for draggable
-const draggableState = ref(props.model);
-
-// draggable drag end
-const onDragEnd = () => {
-    emit('change', draggableState.value);
+// draggable state changed
+const onDragChanged = () => {
+    emitChange();
 };
 
-// sync prop's model change to draggableState
-watch(
-    () => props.model,
-    (newValue) => {
-        draggableState.value = newValue;
-    }
-);
+// compute a stable draggable group key to ensure items can only be dragged among
+// compatible containers
+const draggableGroup = computed(() => {
+    return props.item.candidates
+        .map((c) => c.name)
+        .sort()
+        .join('-');
+});
 
 const onCreate = (candidate: Concept) => {
     const newItem = createItem(candidate);
-    const currentItemCount = props.model.length;
-    const nextModel = [...props.model, newItem];
-    emit('change', nextModel);
+    _model.value.push(newItem);
+    emitChange();
 
     if (!props.item.inline) {
-        onEnterConcept({ concept: candidate, model: newItem, path: [] }, currentItemCount);
+        onEnterConcept({ concept: candidate, model: newItem, path: [] }, _model.value.length - 1);
     }
 };
 
 const createItem = (concept: Concept) => {
     const context = {
         app: app!,
-        currentModel: props.model,
+        currentModel: _model.value,
         rootModel: rootModel?.value,
     };
     return props.item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
@@ -82,17 +90,16 @@ const findConcept = (name: string) => {
 };
 
 const onChangeElement = (data: BaseConceptModel, index: number) => {
-    const nextModel = [...props.model];
-    nextModel[index] = data;
+    _model.value[index] = data;
 
     // call the onChildChange hook
-    props.item.onChildChange?.(nextModel[index], nextModel);
+    props.item.onChildChange?.(data, _model.value);
 
-    emit('change', nextModel);
+    emitChange();
 };
 
 const onAddSibling = (index: number) => {
-    const model = props.model[index];
+    const model = _model.value[index];
     if (!model) {
         return;
     }
@@ -103,24 +110,24 @@ const onAddSibling = (index: number) => {
     }
 
     const newItem = createItem(concept);
-    const nextModel = [...props.model.slice(0, index + 1), newItem, ...props.model.slice(index + 1)];
-    emit('change', nextModel);
+    _model.value.splice(index + 1, 0, newItem);
+    emitChange();
 };
 
 const onCloneElement = (index: number) => {
-    const elementModel = props.model[index];
+    const elementModel = _model.value[index];
     if (!elementModel) {
         return;
     }
 
     const cloned = deepcopy(elementModel);
     cloned.$id = uuid();
-    const nextModel = [...props.model, cloned];
-    emit('change', nextModel);
+    _model.value.push(cloned);
+    emitChange();
 };
 
 const onDeleteElement = async (index: number) => {
-    const elementModel = props.model[index];
+    const elementModel = _model.value[index];
     if (!elementModel) {
         return;
     }
@@ -133,8 +140,8 @@ const onDeleteElement = async (index: number) => {
             typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName
         )
     ) {
-        const nextModel = [...props.model.slice(0, index), ...props.model.slice(index + 1)];
-        emit('change', nextModel);
+        _model.value.splice(index, 1);
+        emitChange();
     }
 };
 
@@ -147,6 +154,10 @@ const onElementSelected = ({ model, concept }: ConceptModelPair) => {
     emit('selectionChange', { concept, id: model.$id });
 };
 
+const emitChange = () => {
+    emit('change', _model.value);
+};
+
 const isSelected = (element: BaseConceptModel) => {
     return currentSelection?.value?.concept.name === element.$concept && currentSelection?.value?.id === element.$id;
 };
@@ -157,7 +168,13 @@ const isSelected = (element: BaseConceptModel) => {
         <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
-        <draggable class="flex flex-col gap-2" v-model="draggableState" item-key="$id" @end="onDragEnd">
+        <draggable
+            class="flex flex-col gap-2"
+            v-model="_model"
+            :group="draggableGroup"
+            item-key="$id"
+            @change="onDragChanged"
+        >
             <template #item="{ element, index }">
                 <div
                     :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
@@ -170,7 +187,7 @@ const isSelected = (element: BaseConceptModel) => {
                             :key="element.$id"
                             :model="element"
                             :inlineEditing="item.inline"
-                            :allowDelete="props.model.length > 1"
+                            :allowDelete="_model.length > 1"
                             @addSibling="() => onAddSibling(index)"
                             @clone="() => onCloneElement(index)"
                             @delete="() => onDeleteElement(index)"
