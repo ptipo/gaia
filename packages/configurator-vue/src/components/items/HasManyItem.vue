@@ -37,13 +37,13 @@ const emit = defineEmits<
 >();
 
 // mutable model
-const _model = ref<BaseConceptModel[]>(props.model);
+const _model = ref<BaseConceptModel[]>([...(props.model ?? [])]);
 
 // track props changes
 watch(
     () => props.model,
     (value) => {
-        _model.value = value;
+        _model.value = [...(value ?? [])];
     }
 );
 

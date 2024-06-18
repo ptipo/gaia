@@ -71,13 +71,13 @@ const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
 // mutable model
-const _model = ref<BaseConceptModel>(props.model);
+const _model = ref<BaseConceptModel>({ ...props.model });
 
 // track prop changes
 watch(
     () => props.model,
     (value) => {
-        _model.value = value;
+        _model.value = { ...value };
     }
 );
 
@@ -163,6 +163,7 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
     const item = nestedHasMany.value.item;
     const parentKey = nestedHasMany.value.key;
     const currentModel = _model.value[parentKey] as BaseConceptModel[];
+    const currentModelLength = currentModel.length;
     const context = {
         app: app!,
         currentModel,
@@ -173,14 +174,14 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
     const newItem = item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
 
     // merge the new item into the model
-    currentModel.push(newItem);
+    _model.value[parentKey] = [...currentModel, newItem];
 
     // notify the change
     emitChange();
 
     if (!item.inline) {
         // enter nested editing if the item is not inline
-        onEnterNested(parentKey, { concept, model: newItem, path: [currentModel.length - 1] });
+        onEnterNested(parentKey, { concept, model: newItem, path: [currentModelLength] });
     }
 };
 

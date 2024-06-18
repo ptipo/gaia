@@ -23,12 +23,12 @@ const emit = defineEmits<{
     (e: 'selectionChange', data: SelectionData): void;
 }>();
 
-const _model = ref<BaseConceptModel>(props.model);
+const _model = ref<BaseConceptModel>({ ...props.model });
 
 watch(
     () => props.model,
     (value) => {
-        _model.value = value;
+        _model.value = { ...value };
     }
 );
 

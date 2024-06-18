@@ -2,7 +2,7 @@
 import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
 import { type LogicalGroupItem } from '@hayadev/configurator/items';
 import { v4 as uuid } from 'uuid';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 import LogicalGroupElement from './logical-group/LogicalGroupElement.vue';
@@ -25,6 +25,12 @@ const props = defineProps<
 const emit = defineEmits<CommonEvents<LogicalGroupItem>>();
 
 const _model = ref<ModelType>(transformModel(props.model));
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = transformModel(value);
+    }
+);
 
 function transformModel(model: inferConfigItem<LogicalGroupItem>): ModelType {
     const result: ModelType = [];
