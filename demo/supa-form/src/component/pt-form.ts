@@ -48,6 +48,17 @@ export class PtForm extends PtBaseShadow {
 
     pageRef: Ref<PtFormPage> = createRef();
 
+    connectedCallback() {
+        super.connectedCallback();
+
+        this.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission
+                this.nextPage();
+            }
+        });
+    }
+
     render() {
         console.log(this.config);
 
