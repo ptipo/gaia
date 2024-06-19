@@ -90,7 +90,7 @@ const onLoad = () => {
 
 const onPreview = () => {
     // open a new page
-    const newWindow = window.open('./preview', '_blank')!;
+    const newWindow = window.open('./preview.html', '_blank')!;
 
     newWindow.onload = () => {
         newWindow.postMessage({ ptForm: app.stringifyModel(model.value) });
