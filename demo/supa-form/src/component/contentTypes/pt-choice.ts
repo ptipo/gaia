@@ -117,7 +117,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                         <label
                                             class="flex cursor-pointer gap-y-4 flex-col justify-center items-center ${isFlat
                                                 ? 'max-w-60'
-                                                : 'max-w-full'}  border rounded-md p-2 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
+                                                : 'max-w-full'}  border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
                                         >
                                             <div class="flex flex-auto items-center">
                                                 <div class="flex items-center flex-col  gap-y-4 cursor-pointer">
@@ -153,7 +153,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                 () =>
                                     html`
                                         <label
-                                            class="h-10 flex items-center border rounded-md p-2 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                            class="h-10 flex items-center border rounded-md p-4 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
                                         >
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label

@@ -25,6 +25,16 @@ module.exports = {
                     950: '#172554',
                 },
             },
+            keyframes: {
+                wiggle: {
+                    '0%, 100%': { transform: 'rotate(-3deg)' },
+                    '50%': { transform: 'rotate(3deg)' },
+                },
+                ffadeInUp: {
+                    '0%': { opacity: 0, transform: 'translate3d(0, 12px, 0)' },
+                    '100%': { opacity: 1, transform: 'none' },
+                },
+            },
         },
     },
     darkMode: 'selector',
