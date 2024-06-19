@@ -25,7 +25,7 @@ export class PtQuestionBase extends PtBase {
             <div class="mt-4">
                 <span>
                     <input
-                        class="w-full text-lg border-b-gray-400 focus:border-gray-400 appearance-none bg-transparent leading-[1.48] text-[0.72em] font-black ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
+                        class="w-full text-lg border-b-gray-400 focus:border-gray-400 appearance-none bg-transparent text-[0.72em] font-black ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
                         value=${ifDefined(this.value)}
                         placeholder=${ifDefined(this.placeholder)}
                     />

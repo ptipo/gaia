@@ -139,7 +139,13 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                                 ${this.getInputComponent(choice, isSingleChoice)}
                                                 ${when(
                                                     this.data?.showTextWithImage,
-                                                    () => html`<label>${choice.name}</label>`
+                                                    // make line-height 1 to align with the input box
+                                                    () =>
+                                                        html`<label
+                                                            for="${choice.$id}"
+                                                            class="cursor-pointer leading-none"
+                                                            >${choice.name}</label
+                                                        >`
                                                 )}
                                             </div>
                                         </label>
@@ -152,7 +158,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
                                                 for="${choice.$id}"
-                                                class="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                                class="cursor-pointer block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                             >
                                                 ${choice.value}
                                             </label>
