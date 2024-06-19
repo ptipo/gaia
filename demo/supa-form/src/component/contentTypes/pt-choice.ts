@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
+import './pt-question-base';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
@@ -106,7 +107,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
             <fieldset class="flex">
                 <legend class="mb-8 text-2xl  text-black font-black	">${this.data?.question}</legend>
                 ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
-                <div class="flex flex-auto flex-wrap gap-4 ${isFlat ? '' : 'flex-col'} items-stretch">
+                <div class="flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice) => html`
                             ${when(
@@ -145,26 +146,24 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                     `,
                                 () =>
                                     html`
-                                        <div class="flex-auto">
+                                        <label
+                                            class="h-10 flex items-center border rounded-md p-2 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                        >
+                                            ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
-                                                class="flex items-center border rounded-md p-2 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                                for="${choice.$id}"
+                                                class="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                             >
-                                                ${this.getInputComponent(choice, isSingleChoice)}
-                                                <label
-                                                    for="${choice.$id}"
-                                                    class="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                                >
-                                                    ${choice.value}
-                                                </label>
+                                                ${choice.value}
                                             </label>
-                                            ${choice.additionalInput && this.value.data!.has(choice.$id)
-                                                ? html`<textarea
-                                                      data-choice-id="${choice.$id}"
-                                                      @input=${this.onInputChange}
-                                                      .value=${this.value.data?.get(choice.$id)!}
-                                                  ></textarea>`
-                                                : ''}
-                                        </div>
+                                        </label>
+                                        ${choice.additionalInput && this.value.data!.has(choice.$id)
+                                            ? html` <pt-question
+                                                  data-choice-id="${choice.$id}"
+                                                  @input=${this.onInputChange}
+                                                  .value=${this.value.data?.get(choice.$id)}
+                                              ></pt-question>`
+                                            : ''}
                                     `
                             )}
                         `

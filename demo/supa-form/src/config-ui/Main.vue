@@ -135,14 +135,7 @@ watch(selection, (value) => {
                 <el-tabs class="h-full">
                     <el-tab-pane label="Json">
                         <div class="overflow-auto border rounded h-full">
-                            <JsonViewer
-                                v-if="renderJson"
-                                :value="model"
-                                expanded
-                                :expandDepth="10"
-                                copyable
-                                class="h-full"
-                            />
+                            <JsonViewer v-if="renderJson" :value="model" :expandDepth="0" copyable class="h-full" />
                         </div>
                     </el-tab-pane>
                     <el-tab-pane :label="`Issues (${issues.length})`">
