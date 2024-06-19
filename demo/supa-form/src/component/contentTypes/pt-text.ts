@@ -10,6 +10,6 @@ class PtText extends PtBase {
 
     render() {
         const tagName = this.data?.kind || 'p';
-        return html`<${unsafeStatic(tagName)}>${this.data?.content}</${unsafeStatic(tagName)}>`;
+        return html`<${unsafeStatic(tagName)} class="break-words">${this.data?.content}</${unsafeStatic(tagName)}>`;
     }
 }
