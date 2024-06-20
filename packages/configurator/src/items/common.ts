@@ -33,4 +33,9 @@ export interface ConfigItemBase {
      * Item's group key
      */
     groupKey?: string;
+
+    /**
+     * If the item is preferably displayed inline
+     */
+    inline?: boolean;
 }

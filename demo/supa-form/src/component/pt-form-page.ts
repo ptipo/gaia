@@ -51,7 +51,7 @@ export class PtFormPage extends PtBase {
 
     render() {
         this.isValid = true;
-        return html`<div class="flex flex-col mt-10 px-10 gap-y-10">
+        return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item) => {
                 const el = this.pageItems?.get(item.$id)!;
 

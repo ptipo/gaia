@@ -239,7 +239,7 @@ const checkEmitChange = () => {
                 <el-select v-else disabled placeholder="--" />
             </el-form>
             <div class="ml-1">
-                <el-dropdown>
+                <el-dropdown trigger="click">
                     <el-icon class="cursor-pointer">
                         <i-ep-more-filled />
                     </el-icon>

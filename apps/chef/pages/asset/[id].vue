@@ -81,6 +81,7 @@ const createAppElement = async (app: App) => {
         console.log('Creating app element:', app.htmlTagName);
         const el = document.createElement(app.htmlTagName);
         el.setAttribute('config', appInstance.value.stringifyModel(model.value));
+        el.setAttribute('edit-selection', '{"id":""}');
         appContainerEl.value.appendChild(el);
         appEl.value = el;
     }
@@ -98,11 +99,7 @@ watch(
 
 watch(selection, (value) => {
     console.log('Selection changed:', value?.concept.name, value?.id);
-    if (!value) {
-        appEl.value?.removeAttribute('edit-selection');
-    } else {
-        appEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
-    }
+    appEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
 });
 
 const onAppChange = (data: BaseConceptModel) => {

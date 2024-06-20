@@ -20,12 +20,12 @@ export class PtQuestionBase extends PtBase {
     render() {
         return html`
             ${this.description ? html`<p class="text-sm text-gray-500 mb-2">${this.description}</p>` : ''}
-            <span class="mb-8 text-2xl  text-black font-black	">${this.question}</span>
+            <span class="mb-8 text-2xl  text-black font-black">${this.question}</span>
 
             <div class="mt-4">
                 <span>
                     <input
-                        class="w-full text-lg"
+                        class="w-full text-lg border-b-gray-400 focus:border-gray-400 appearance-none bg-transparent text-[0.72em] font-black ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
                         value=${ifDefined(this.value)}
                         placeholder=${ifDefined(this.placeholder)}
                     />

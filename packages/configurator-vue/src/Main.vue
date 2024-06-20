@@ -19,6 +19,7 @@ const renderJson = ref(true);
 
 onMounted(() => {
     validate(model.value);
+    onLoad(false);
 });
 
 const onAppChange = async (data: BaseConceptModel) => {
@@ -41,7 +42,7 @@ const onSave = () => {
     });
 };
 
-const onLoad = () => {
+const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
         model.value = app.loadModel(data);
@@ -51,7 +52,7 @@ const onLoad = () => {
             type: 'success',
             duration: 2000,
         });
-    } else {
+    } else if (reportError) {
         ElNotification({
             title: 'No configuration found',
             type: 'error',

@@ -33,6 +33,7 @@ export const ContentPage = defineConcept({
             type: 'has',
             name: '下一步',
             concept: NextButton,
+            inline: true,
         },
     },
 

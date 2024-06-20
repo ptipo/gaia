@@ -14,6 +14,7 @@ declare module 'vue' {
     CreateCandidateButton: typeof import('./src/components/items/CreateCandidateButton.vue')['default']
     DynamicSelectItem: typeof import('./src/components/items/DynamicSelectItem.vue')['default']
     GroupItem: typeof import('./src/components/items/GroupItem.vue')['default']
+    HasItem: typeof import('./src/components/items/HasItem.vue')['default']
     HasManyItem: typeof import('./src/components/items/HasManyItem.vue')['default']
     IEpDelete: typeof import('~icons/ep/delete')['default']
     IEpDocumentCopy: typeof import('~icons/ep/document-copy')['default']

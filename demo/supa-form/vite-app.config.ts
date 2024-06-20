@@ -15,6 +15,12 @@ const config: UserConfig = {
 
     build: {
         outDir: 'app-dist',
+        rollupOptions: {
+            input: {
+                main: 'index.html',
+                preview: 'preview.html', // Specify the path for preview.html
+            },
+        },
     },
 };
 
