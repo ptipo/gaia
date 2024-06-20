@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import { AppInstance, Concept, type BaseConceptModel } from '@hayadev/configurator';
+import { type AppInstance, type Concept, type BaseConceptModel, incrementName } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
 import deepcopy from 'deepcopy';
 import { v4 as uuid } from 'uuid';
@@ -10,7 +10,6 @@ import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
-import { incrementName } from '@/lib/model';
 
 const props = withDefaults(
     defineProps<
