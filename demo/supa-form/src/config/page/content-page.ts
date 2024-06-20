@@ -1,6 +1,8 @@
 import { BaseConceptModel, Concept, ProviderContext, defineConcept } from '@hayadev/configurator';
+import deepcopy from 'deepcopy';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
+import { incrementName } from '../util';
 import { NextButton } from './next-button';
 
 /**
@@ -24,6 +26,7 @@ export const ContentPage = defineConcept({
             name: '内容项',
             candidates: AllPageItems,
             newItemProvider,
+            cloneItemProvider,
         },
 
         /**
@@ -63,6 +66,17 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
     }`;
     return app.createConceptInstance(concept, {
         name: nameWithSuffix,
-        question: nameWithSuffix,
+        question: mappedName,
     });
+}
+
+function cloneItemProvider(concept: Concept, source: BaseConceptModel, context: ProviderContext) {
+    const result = deepcopy(source);
+    const newName = incrementName(
+        result.name as string,
+        context.currentModel.map((question: any) => question.name)
+    );
+    result.name = newName;
+    result.question = newName;
+    return result;
 }

@@ -87,7 +87,7 @@ watch(selection, (value) => {
             <div class="text-2xl text-slate-500">Configuration Preview</div>
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
-                <el-button @click="onLoad">Load</el-button>
+                <el-button @click="() => onLoad()">Load</el-button>
             </div>
             <div class="flex-grow w-full overflow-auto border rounded">
                 <JsonViewer v-if="renderJson" :value="model" expanded :expandDepth="10" copyable class="h-full" />

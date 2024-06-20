@@ -28,6 +28,11 @@ export interface HasManyItem<TCandidate extends Concept = Concept> extends Confi
     newItemProvider?: (concept: Concept, context: ProviderContext) => BaseConceptModel;
 
     /**
+     * Callback for cloning an existing concept instance
+     */
+    cloneItemProvider?: (concept: Concept, source: BaseConceptModel, context: ProviderContext) => BaseConceptModel;
+
+    /**
      * Callback for handling model changes of a child item
      */
     onChildChange?: (changedItem: BaseConceptModel, currentModel: BaseConceptModel[]) => void;

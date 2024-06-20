@@ -9,7 +9,7 @@ import {
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref, watch, nextTick } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
@@ -125,7 +125,7 @@ watch(selection, (value) => {
             <div class="text-2xl text-slate-500 mt-4">Supa Form Builder</div>
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
-                <el-button @click="onLoad">Load</el-button>
+                <el-button @click="() => onLoad()">Load</el-button>
                 <el-button @click="onPreview">Preview</el-button>
             </div>
             <div class="border rounded bg-white w-full h-full flex-grow overflow-auto">

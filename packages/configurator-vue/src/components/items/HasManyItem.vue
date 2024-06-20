@@ -111,11 +111,30 @@ const onCloneElement = (index: number) => {
         return;
     }
 
-    const cloned = deepcopy(elementModel);
-    cloned.$id = uuid();
-    if (typeof cloned.name === 'string') {
-        cloned.name = incrementName(cloned.name);
+    const concept = findConcept(elementModel.$concept);
+    if (!concept) {
+        return;
     }
+
+    let cloned: BaseConceptModel;
+
+    if (props.item.cloneItemProvider) {
+        cloned = props.item.cloneItemProvider?.(concept, elementModel, {
+            app,
+            rootModel: rootModel?.value,
+            currentModel: props.model,
+        });
+    } else {
+        cloned = deepcopy(elementModel);
+        if (typeof cloned.name === 'string') {
+            cloned.name = incrementName(
+                cloned.name,
+                props.model.map((item) => item.name as string)
+            );
+        }
+    }
+
+    cloned.$id = uuid();
     _model.value.push(cloned);
     emitChange();
 };
