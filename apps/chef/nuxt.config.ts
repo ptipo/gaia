@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 
     vite: {
         optimizeDeps: {
-            include: ['dayjs', 'dayjs/plugin/*'],
+            include: ['dayjs', 'dayjs/plugin/*', '@node-rs/argon2'],
         },
     },
 
