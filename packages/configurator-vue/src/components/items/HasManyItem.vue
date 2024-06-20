@@ -162,7 +162,6 @@ const isSelected = (element: BaseConceptModel) => {
         <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
-        <!-- the "handle" class is used for controlling vue-draggable's activation element -->
         <draggable
             class="flex flex-col gap-2"
             handle=".handle"
