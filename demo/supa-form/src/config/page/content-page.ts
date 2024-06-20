@@ -66,7 +66,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
     }`;
     return app.createConceptInstance(concept, {
         name: nameWithSuffix,
-        question: mappedName,
+        question: nameWithSuffix,
     });
 }
 
