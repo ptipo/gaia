@@ -9,8 +9,7 @@
         "skipLibCheck": true,
         "declaration": true,
         "rootDir": "src",
-        "outDir": "dist",
-        "preserveSymlinks": true
+        "outDir": "dist"
     },
     "include": ["src"]
 }
