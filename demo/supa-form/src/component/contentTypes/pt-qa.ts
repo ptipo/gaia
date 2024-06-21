@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBaseData, QuestionState } from '../pt-base';
+import { FormSubmitData, PtBaseData, QuestionState } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import './pt-question-base';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -41,5 +41,9 @@ export class PtQA extends PtBaseData<string> {
     onChange(value: string) {
         this.value!.data = value;
         this.requestUpdate();
+    }
+
+    override getSubmitData() {
+        return { name: this.data?.name!, value: this.value.data! };
     }
 }

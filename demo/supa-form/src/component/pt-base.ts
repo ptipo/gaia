@@ -44,6 +44,8 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 
     abstract mandatoryErrorMessage: string;
 
+    abstract getSubmitData(): FormSubmitData;
+
     getValidateError() {
         if (this.data?.required && this.isEmptyData()) {
             return this.mandatoryErrorMessage;
@@ -55,11 +57,8 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     }
 
     updated() {
-        this.formState[this.data!.$id] = this.value;
-
-        const isValid = this.isValidated();
-
-        this.value.isValid = isValid;
+        const questionData = (this.formState[this.data!.$id] = this.value);
+        questionData.submitData = this.getSubmitData();
         this.dispatchUpdate();
     }
 
@@ -73,14 +72,14 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     formState: answerData = {};
 }
 
+export interface FormSubmitData {
+    name: string;
+    value: string;
+}
+
 export class QuestionState<T> {
     data?: T;
-    isValid: boolean;
-
-    constructor(data?: T, isValid = true) {
-        this.data = data;
-        this.isValid = isValid;
-    }
+    submitData?: FormSubmitData;
 }
 
 export const PtBase = BaseMixin(LitElement, false);

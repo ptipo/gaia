@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
+import { FormSubmitData, PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
 import './pt-question-base';
@@ -20,6 +20,10 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     get isImageChoice() {
         return this.data?.choiceKind == 'image';
+    }
+
+    get targetChoices() {
+        return this.isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
     }
 
     imageSkeleton = html`
@@ -56,7 +60,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         return html`<input
             id="${choice.$id}"
             type="${isSingleChoice ? 'radio' : 'checkbox'}"
-            name="choices"
+            name="${this.data?.$id!}"
             value="${choice.value}"
             ?checked=${this.value ? this.value.data!.has(choice.$id) : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
@@ -73,28 +77,22 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     }
 
     render() {
-        const targetChoices = this.isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
         if (!this.value.data) {
             this.value.data = new Map(
-                targetChoices!
-                    .filter((x) => x.defaultSelected)
+                this.targetChoices!.filter((x) => x.defaultSelected)
                     .map((x) => x.$id)
                     .map((x) => [x, x])
             );
         }
 
-        if (this.data?.required) {
-            this.value.isValid = this.value.data.size > 0;
-        }
-
         const isSingleChoice = this.data?.kind == 'single';
 
         const choices = this.data?.randomOrder
-            ? targetChoices
+            ? this.targetChoices
                   ?.map((x, i) => ({ value: x, sort: this.randomSeed![i] }))
                   .sort((a, b) => a.sort - b.sort)
                   .map((x) => x.value)
-            : targetChoices;
+            : this.targetChoices;
 
         const isFlat = this.data?.flatMode as boolean;
         const description = this.data?.description;
@@ -180,9 +178,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         const input = e.target as HTMLInputElement;
         const isSelected = input.checked;
 
-        const isImageChoice = this.data?.choiceKind == 'image';
-        const targetChoices = isImageChoice ? this.data?.imageChoices : this.data?.textChoices;
-        const choice = targetChoices?.find((x) => x.$id == input.id);
+        const choice = this.targetChoices?.find((x) => x.$id == input.id);
 
         if (isSelected) {
             const limitSelectedItems = this.data?.limitSelectedItems;
@@ -211,9 +207,11 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     }
 
     onInputChange(e: Event) {
-        const input = e.target as HTMLTextAreaElement;
+        const input = e.target as HTMLInputElement;
         const value = input.value;
-        const choiceId = input.dataset.choiceId!;
+        const choiceId = (e.currentTarget as HTMLElement).dataset.choiceId!;
+
+        this.value.data!.set(choiceId, value);
     }
 
     isValidated() {
@@ -222,5 +220,19 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     override isEmptyData() {
         return !this.value.data?.size;
+    }
+
+    override getSubmitData() {
+        const submitValue = Array.from(this.value.data!.entries())
+            .map(([key, value]) => {
+                if (value) {
+                    return value;
+                } else {
+                    const choice = this.targetChoices?.find((x) => x.$id == key);
+                    return choice?.name;
+                }
+            })
+            .join(',');
+        return { name: this.data?.name!, value: submitValue };
     }
 }
