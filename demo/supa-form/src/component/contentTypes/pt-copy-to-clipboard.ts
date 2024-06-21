@@ -19,7 +19,7 @@ export class PtCopyToClipboard extends PtBase {
             <div class="inline-flex items-center gap-x-3">
                 <div
                     id="hs-clipboard-basic"
-                    class=" bg-white border  border-black  rounded-md px-4 py-2 text-sm font-medium  dark:text-white"
+                    class=" bg-white border break-words border-black  rounded-md px-4 py-2 text-sm font-medium  dark:text-white"
                 >
                     ${content}
                 </div>
