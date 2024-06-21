@@ -110,10 +110,12 @@ export class PtForm extends PtBaseShadow {
                         )}
                     </div>
                     <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
-                        <div class="flex h-full items-center justify-end ">
+                        <div class="flex h-full items-center justify-end gap-x-8">
+                        <button type="button" @click=${this.prePage} class="text-gray-500">Back</button>
                             <span class="w-44 max-w-[33%] mr-10">
-                        <button @click=${() =>
-                            this.nextPage()} class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >NEXT</button>
+                        <button @click=${
+                            this.nextPage
+                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >NEXT</button>
                         </span>
                         </div>
                     </div>
