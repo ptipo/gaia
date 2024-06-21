@@ -17,6 +17,9 @@ export class PtQuestionBase extends PtBase {
     @property()
     value?: string;
 
+    @property()
+    inputType: 'email' | 'text' = 'text';
+
     render() {
         return html`
             ${this.description ? html`<p class="text-sm text-gray-500 mb-2">${this.description}</p>` : ''}
@@ -28,6 +31,7 @@ export class PtQuestionBase extends PtBase {
                         class="w-full text-lg border-b-gray-400 focus:border-gray-400 appearance-none bg-transparent text-[0.72em] font-black ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
                         value=${ifDefined(this.value)}
                         placeholder=${ifDefined(this.placeholder)}
+                        type=${this.inputType}
                     />
                 </span>
             </div>

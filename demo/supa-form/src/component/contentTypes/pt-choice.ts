@@ -23,10 +23,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     }
 
     imageSkeleton = html`
-        <div
-            role="status"
-            class="pt-choice-skeleton max-w-full max-h-full h-auto w-60 animate-pulse rtl:space-x-reverse flex items-center"
-        >
+        <div role="status" class="pt-choice-skeleton max-w-full max-h-full h-auto w-60 animate-pulse flex items-center">
             <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
                 <svg
                     class="w-10 h-10 text-gray-200 dark:text-gray-600"
@@ -119,8 +116,8 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                                 ? 'max-w-60'
                                                 : 'max-w-full'}  border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
                                         >
-                                            <div class="flex flex-auto items-center">
-                                                <div class="flex items-center flex-col  gap-y-4 cursor-pointer">
+                                            <div class="flex flex-auto items-center w-full">
+                                                <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
                                                     ${this.imageSkeleton}
                                                     <img
                                                         @load=${this.imageLoad}

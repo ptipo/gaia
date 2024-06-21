@@ -21,6 +21,7 @@ export class PtEmail extends PtBaseData<string> {
             question=${question!}
             description=${description!}
             value=${ifDefined(this.value.data)}
+            inputType="email"
         ></pt-question> `;
     }
 
@@ -43,7 +44,7 @@ export class PtEmail extends PtBaseData<string> {
             return baseError;
         }
 
-        if (!this.isValidEmail(this.value.data!)) {
+        if (this.value.data && !this.isValidEmail(this.value.data!)) {
             return 'Please enter a valid email';
         }
     }
