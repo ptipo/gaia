@@ -79,9 +79,6 @@ export class PtForm extends PtBaseShadow {
         const completePages = this.config?.completePages ?? [];
 
         if (this.currentContentPage) {
-            const showNextButton = this.shouldShowNextButton();
-            const isSubmitReady = showNextButton && this.isSubmitReady();
-
             const progress: number = this.getCurrentProgress() * 100;
 
             return html`
@@ -123,12 +120,13 @@ export class PtForm extends PtBaseShadow {
                 </div>
             `;
         } else {
+            this.submitPage();
             const completePage = completePages.find((x) => x.$id == this.pageId);
             return html`<pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
         }
     }
 
-    private onSubmit(e: Event) {
+    private submitPage() {
         console.log(`submit form data ${JSON.stringify(this.formState)}`);
 
         const options = {
@@ -137,7 +135,7 @@ export class PtForm extends PtBaseShadow {
             composed: true,
         };
 
-        this.dispatchEvent(new CustomEvent('pt-form-submit', options));
+        this.dispatchEvent(new CustomEvent('form-complete', options));
     }
 
     private prePage() {
@@ -186,10 +184,7 @@ export class PtForm extends PtBaseShadow {
 
     private onFormStateChange() {
         console.log('form state changed');
-    }
-
-    private shouldShowNextButton() {
-        return this.currentContentPage?.pageItems.every((x) => !this.formState[x.$id] || this.formState[x.$id].isValid);
+        console.log(JSON.stringify(this.formState));
     }
 
     private isSubmitReady() {

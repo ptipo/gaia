@@ -53,4 +53,8 @@ export class PtEmail extends PtBaseData<string> {
         this.value!.data = value;
         this.requestUpdate();
     }
+
+    override getSubmitData() {
+        return { name: this.data?.name!, value: this.value.data! };
+    }
 }
