@@ -17,11 +17,16 @@ export class PtCopyToClipboard extends PtBase {
 
         return html` <pt-copy-component @copy=${this.onCopy.bind(this)}>
             <div class="inline-flex items-center gap-x-3">
-                <div id="hs-clipboard-basic" class="text-sm font-medium text-gray-800 dark:text-white">${content}</div>
+                <div
+                    id="hs-clipboard-basic"
+                    class=" bg-white border  border-black  rounded-md px-4 py-2 text-sm font-medium  dark:text-white"
+                >
+                    ${content}
+                </div>
                 <button
                     slot="button"
                     type="button"
-                    class="p-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
+                    class="p-2 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
                 >
                     <svg
                         class="${this.isCopied && 'hidden'} size-4 group-hover:rotate-6 transition"
