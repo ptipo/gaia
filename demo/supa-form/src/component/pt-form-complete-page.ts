@@ -19,7 +19,7 @@ class PtFormCompletePage extends PtBase {
             ${pageItems.map((item) => {
                 const tagName = getContentTypeComponent(item.$concept);
 
-                return html`<div class="flex flex-col mt-10 px-10 gap-y-10"></div><${unsafeStatic(
+                return html`<div class="flex flex-col mt-10 px-10 gap-y-10"><${unsafeStatic(
                     tagName
                 )} data=${JSON.stringify(item)} ></${unsafeStatic(tagName)}>
                  </div>`;
