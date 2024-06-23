@@ -223,6 +223,7 @@ const onClickNested = () => {
 const onEnterNested = (parentKey: string, data: EnterConceptData) => {
     closeMenu();
     emit('enter', { ...data, path: [parentKey, ...data.path] });
+    emit('selected', { concept: props.concept, model: props.model });
 };
 
 const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {

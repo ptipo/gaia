@@ -74,6 +74,8 @@ const onCreate = (candidate: Concept) => {
     if (!props.item.inline) {
         onEnterConcept({ concept: candidate, model: newItem, path: [] }, _model.value.length - 1);
     }
+
+    emit('selectionChange', { concept: candidate, id: newItem.$id });
 };
 
 const createItem = (concept: Concept) => {
