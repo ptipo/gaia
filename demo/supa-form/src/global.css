@@ -16,11 +16,16 @@
 
 :root {
     --ptform-bg-color: #fff;
-    --ptform-main-text-color: #181818;
+    --ptform-main-text-color: black;
     --ptform-secondary-text-color: #999;
     --ptform-tertiary-text-color: #f1f1f1;
     --ptform-main-accent-color: #0dbc79;
     --ptform-secondary-accent-color: #bbebd5;
+    --ptform-font-family: 'Noto Sans JP', sans-serif;
+}
+
+:host {
+    font-family: var(--ptform-font-family);
 }
 
 input,
@@ -30,4 +35,11 @@ input[type='email'] {
     -moz-appearance: none;
     appearance: none;
     --tw-ring-shadow: 0 0 #000 !important;
+}
+
+p,
+label,
+span,
+legend {
+    color: var(--ptform-main-text-color);
 }

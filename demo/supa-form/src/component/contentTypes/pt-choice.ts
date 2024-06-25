@@ -153,7 +153,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
                                                 for="${choice.$id}"
-                                                class="cursor-pointer block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                                class="cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
                                             >
                                                 ${choice.value}
                                             </label>
