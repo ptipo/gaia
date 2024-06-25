@@ -41,5 +41,6 @@ p,
 label,
 span,
 legend {
+    @apply break-words;
     color: var(--ptform-main-text-color);
 }

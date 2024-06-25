@@ -100,8 +100,11 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
         return html`
             <fieldset class="flex">
-                <legend class="mb-8 text-2xl  text-black font-black	">${this.data?.question}</legend>
-                ${description ? html`<p class="mt-2 text-s text-gray-600">${description}</p>` : ''}
+                <legend class="mb-5">
+                    <span class="text-2xl font-bold">${this.data?.question}</span>
+                    ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
+                </legend>
+
                 <div class="flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice) => html`
