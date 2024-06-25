@@ -31,6 +31,8 @@ const issues = ref<Issue[]>([]);
 
 const isPublishingAsset = ref(false);
 
+const isMobile = ref(false);
+
 const { data: asset } = useFindUniqueAsset({
     where: { id: route.params.id as string },
     include: { app: true },
@@ -241,8 +243,37 @@ const goBack = async () => {
         <!-- configurator -->
         <div v-loading="!appInstance && !hasError" class="flex flex-grow overflow-hidden gap-4 w-full">
             <!-- configurator panel -->
-            <div class="flex-grow border rounded" ref="appContainerEl"></div>
+            <div class="flex-grow rounded">
+                <div class="rounded-md shadow-sm mt-1 mb-4" role="group">
+                    <button
+                        @click="
+                            () => {
+                                isMobile = true;
+                            }
+                        "
+                        class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                    >
+                        Mobile
+                    </button>
+                    <button
+                        autofocus
+                        @click="
+                            () => {
+                                isMobile = false;
+                            }
+                        "
+                        class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                    >
+                        Desktop
+                    </button>
+                </div>
 
+                <div
+                    ref="appContainerEl"
+                    class="h-3/4 overflow-auto ml-auto mr-auto"
+                    :class="isMobile ? 'w-80' : 'w-full'"
+                ></div>
+            </div>
             <!-- preview -->
             <div class="w-80 border rounded" v-if="appInstance">
                 <AppConfigurator
