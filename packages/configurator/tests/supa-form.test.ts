@@ -1,7 +1,7 @@
 import { NonPrimitiveTypes, createAppInstance, createRef } from '@hayadev/configurator';
 import { describe } from '@jest/globals';
 import { inspect } from 'util';
-import { config } from './app-config/form';
+import { FormApp as config } from './app-config/form';
 import { ChoiceQuestion, QAQuestion, TextElement } from './app-config/form/page-items';
 import { TextChoice } from './app-config/form/page-items/question/text-choice';
 import { CompletePage } from './app-config/form/page/complete-page';

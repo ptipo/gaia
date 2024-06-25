@@ -9,7 +9,7 @@ import {
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref, watch, nextTick } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import { FormApp } from '../config';
@@ -55,7 +55,7 @@ onMounted(async () => {
         alert(`form submit data:${JSON.stringify(event.detail, null, 2)}`);
     });
     resetFormConfig();
-    onLoad();
+    onLoad(false);
 });
 
 const resetFormConfig = () => {
@@ -71,7 +71,7 @@ const onSave = () => {
     });
 };
 
-const onLoad = () => {
+const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
         model.value = app.loadModel(data);
@@ -81,7 +81,7 @@ const onLoad = () => {
             duration: 2000,
         });
         resetFormConfig();
-    } else {
+    } else if (reportError) {
         ElNotification({
             title: 'No configuration found',
             type: 'error',
@@ -127,7 +127,7 @@ watch(selection, (value) => {
             <div class="text-2xl text-slate-500 mt-4">Supa Form Builder</div>
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
-                <el-button @click="onLoad">Load</el-button>
+                <el-button @click="() => onLoad()">Load</el-button>
                 <el-button @click="onPreview">Preview</el-button>
                 <el-button
                     @click="

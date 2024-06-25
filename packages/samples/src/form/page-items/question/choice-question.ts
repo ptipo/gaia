@@ -22,8 +22,8 @@ export const ChoiceQuestion = defineConcept({
             type: 'select',
             name: '类型',
             required: true,
-            options: { single: '单选', multiple: '多选' },
             default: 'single',
+            options: { single: '单选', multiple: '多选' },
             groupKey: 'choice',
         },
 
@@ -33,8 +33,9 @@ export const ChoiceQuestion = defineConcept({
         choiceKind: {
             type: 'select',
             name: '选项类型',
-            options: { text: '文字选项', image: '图片选项' },
+            required: true,
             default: 'text',
+            options: { text: '文字选项', image: '图片选项' },
             groupKey: 'choice',
         },
 

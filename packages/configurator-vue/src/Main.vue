@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
-import { config as FormApp } from '@hayadev/samples/form';
+import { FormApp } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref, watch, nextTick } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
@@ -19,6 +19,7 @@ const renderJson = ref(true);
 
 onMounted(() => {
     validate(model.value);
+    onLoad(false);
 });
 
 const onAppChange = async (data: BaseConceptModel) => {
@@ -41,7 +42,7 @@ const onSave = () => {
     });
 };
 
-const onLoad = () => {
+const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
         model.value = app.loadModel(data);
@@ -51,7 +52,7 @@ const onLoad = () => {
             type: 'success',
             duration: 2000,
         });
-    } else {
+    } else if (reportError) {
         ElNotification({
             title: 'No configuration found',
             type: 'error',
@@ -86,7 +87,7 @@ watch(selection, (value) => {
             <div class="text-2xl text-slate-500">Configuration Preview</div>
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
-                <el-button @click="onLoad">Load</el-button>
+                <el-button @click="() => onLoad()">Load</el-button>
             </div>
             <div class="flex-grow w-full overflow-auto border rounded">
                 <JsonViewer v-if="renderJson" :value="model" expanded :expandDepth="10" copyable class="h-full" />

@@ -1,4 +1,5 @@
-import { BaseConceptModel, Concept, ProviderContext, defineConcept } from '@hayadev/configurator';
+import { BaseConceptModel, Concept, ProviderContext, defineConcept, incrementName } from '@hayadev/configurator';
+import deepcopy from 'deepcopy';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
 import { NextButton } from './next-button';
@@ -24,6 +25,7 @@ export const ContentPage = defineConcept({
             name: '内容项',
             candidates: AllPageItems,
             newItemProvider,
+            cloneItemProvider,
         },
 
         /**
@@ -33,6 +35,7 @@ export const ContentPage = defineConcept({
             type: 'has',
             name: '下一步',
             concept: NextButton,
+            inline: true,
         },
     },
 
@@ -64,4 +67,16 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
         name: nameWithSuffix,
         question: nameWithSuffix,
     });
+}
+
+function cloneItemProvider(concept: Concept, source: BaseConceptModel, context: ProviderContext) {
+    const result = deepcopy(source);
+    const newName = incrementName(
+        result.name as string,
+        context.currentModel.map((question: any) => question.name),
+        { suffix: '副本' }
+    );
+    result.name = newName;
+    result.question = newName;
+    return result;
 }

@@ -11,5 +11,7 @@ export const ImageElement = defineConcept({
          * 图片
          */
         image: { type: 'image' },
+
+        source: { type: 'text', name: '来源' },
     },
 });

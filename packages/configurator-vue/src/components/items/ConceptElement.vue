@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import DragAnchor from '@/assets/icon/drag-anchor.svg';
 import { getItemComponent } from '@/lib/component';
 import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
-import type { HasItem, HasManyItem } from '@hayadev/configurator/items';
+import type { HasManyItem } from '@hayadev/configurator/items';
+import type { DropdownInstance } from 'element-plus';
 import { Ref, computed, inject, ref, watch } from 'vue';
-import { EnterConceptData } from '../types';
+import type { ConceptModelPair, EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
 
 const props = withDefaults(
@@ -18,6 +20,11 @@ const props = withDefaults(
          * The model of the concept
          */
         model: BaseConceptModel;
+
+        /**
+         * The parent "has-many" item
+         */
+        parent: HasManyItem;
 
         /**
          * Whether to enable inline editing
@@ -73,6 +80,11 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 // mutable model
 const _model = ref<BaseConceptModel>({ ...props.model });
 
+// showing secondary-level menu
+const showCandidateCreateMenu = ref(false);
+
+const menuEl = ref<DropdownInstance>();
+
 // track prop changes
 watch(
     () => props.model,
@@ -112,11 +124,11 @@ const nestedHasMany = computed(() => {
     return { key: found[0], item: found[1] as HasManyItem };
 });
 
-// find all 'has' items in the concept (for showing them inline)
-const nestedHas = computed(() => {
+// items that should be displayed inline
+const inlineItems = computed(() => {
     return Object.entries(props.concept.items)
-        .filter(([_, item]) => item.type === 'has')
-        .map(([key, item]) => ({ key, item: item as HasItem, model: props.model[key] as BaseConceptModel }));
+        .filter(([_, item]) => item.inline)
+        .map(([key, item]) => ({ key, item, model: props.model[key] as BaseConceptModel }));
 });
 
 const onEdit = (key: string, item: ConfigItem) => {
@@ -209,6 +221,7 @@ const onClickNested = () => {
 };
 
 const onEnterNested = (parentKey: string, data: EnterConceptData) => {
+    closeMenu();
     emit('enter', { ...data, path: [parentKey, ...data.path] });
     emit('selected', { concept: props.concept, model: props.model });
 };
@@ -218,55 +231,121 @@ const onChangeNested = (parentKey: string, data: BaseConceptModel[]) => {
     emitChange();
 };
 
+const onClone = (data: ConceptModelPair) => {
+    closeMenu();
+    emit('clone', data);
+};
+
+const onDelete = (data: ConceptModelPair) => {
+    closeMenu();
+    emit('delete', data);
+};
+
+const onAddSibling = (concept: Concept) => {
+    closeMenu();
+    emit('addSibling', { concept, model: props.model });
+};
+
 const emitChange = () => {
     emit('change', _model.value);
+};
+
+const closeMenu = () => {
+    menuEl.value?.handleClose();
+    showCandidateCreateMenu.value = false;
 };
 </script>
 
 <template>
-    <div
-        class="flex justify-between gap-1 w-full"
-        :class="{
-            'cursor-pointer': !inlineEditing || concept.selectable,
-            'hover:bg-slate-100': !inlineEditing,
-        }"
-    >
-        <div class="flex-grow" @click="onClickNested">
-            {{ elementSummary }}
-        </div>
-        <el-dropdown trigger="click" v-if="model">
-            <el-icon>
-                <i-ep-more-filled />
-            </el-icon>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <div v-if="inlineEditing">
-                        <el-dropdown-item v-for="{ key, item } in inlineEditableItems" @click="onEdit(key, item)"
-                            ><el-icon><i-ep-edit /></el-icon> {{ item.name }}</el-dropdown-item
-                        >
-                    </div>
-                    <div v-else>
-                        <el-dropdown-item @click="onEditNested"
-                            ><el-icon><i-ep-edit /></el-icon> 设置</el-dropdown-item
-                        >
-                    </div>
-                    <el-dropdown-item divided @click="$emit('addSibling', { concept, model })"
-                        ><el-icon><i-ep-plus /></el-icon>在下方添加{{ concept.displayName }}</el-dropdown-item
-                    >
-                    <el-dropdown-item divided @click="$emit('clone', { concept, model })"
-                        ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
-                    >
-                    <el-dropdown-item @click="$emit('delete', { concept, model })"
-                        ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
-                    >
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
-    </div>
+    <div class="flex flex-col gap-2">
+        <div
+            class="flex justify-between gap-1 w-full group"
+            :class="{
+                'cursor-pointer': !inlineEditing || concept.selectable,
+                'hover:bg-slate-100': !inlineEditing,
+            }"
+        >
+            <div class="flex-grow" @click="onClickNested">
+                {{ elementSummary }}
+            </div>
+            <el-dropdown
+                trigger="click"
+                v-if="model"
+                ref="menuEl"
+                :hide-on-click="false"
+                @visible-change="
+                    () => {
+                        showCandidateCreateMenu = false;
+                    }
+                "
+            >
+                <el-icon class="hidden group-hover:block">
+                    <el-tooltip content="拖拽移动，点击打开菜单" placement="top" :show-after="600">
+                        <img class="handle" :src="DragAnchor" />
+                    </el-tooltip>
+                </el-icon>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <template v-if="!showCandidateCreateMenu">
+                            <div v-if="inlineEditing">
+                                <el-dropdown-item
+                                    v-for="{ key, item } in inlineEditableItems"
+                                    @click="onEdit(key, item)"
+                                    ><el-icon><i-ep-edit /></el-icon> {{ item.name }}</el-dropdown-item
+                                >
+                            </div>
+                            <div v-else>
+                                <el-dropdown-item @click="onEditNested"
+                                    ><el-icon><i-ep-edit /></el-icon> 设置</el-dropdown-item
+                                >
+                            </div>
+                            <el-dropdown-item
+                                v-if="parent.candidates.length === 1"
+                                divided
+                                @click="() => onAddSibling(parent.candidates[0])"
+                                ><el-icon><i-ep-plus /></el-icon>在下方添加{{
+                                    parent.candidates.length === 1 ? concept.displayName : parent.name
+                                }}</el-dropdown-item
+                            >
+                            <el-dropdown-item
+                                v-else
+                                divided
+                                @click="
+                                    () => {
+                                        showCandidateCreateMenu = true;
+                                    }
+                                "
+                                ><el-icon><i-ep-plus /></el-icon>在下方添加{{
+                                    parent.candidates.length === 1 ? concept.displayName : parent.name
+                                }}</el-dropdown-item
+                            >
 
-    <!-- inline listing has-many -->
-    <div v-if="nestedHasMany" class="pt-2 pl-2">
+                            <el-dropdown-item divided @click="() => onClone({ concept, model })"
+                                ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
+                            >
+                            <el-dropdown-item @click="() => onDelete({ concept, model })"
+                                ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
+                            >
+                        </template>
+                        <!-- showing candidate create menu items -->
+                        <template v-else>
+                            <el-dropdown-item
+                                v-for="candidate in parent.candidates"
+                                :key="candidate.name"
+                                @click="() => onAddSibling(candidate)"
+                            >
+                                {{ candidate.displayName ?? candidate.name }}
+                            </el-dropdown-item>
+                        </template>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </div>
+
+        <!-- inline listing has-many -->
         <HasManyItemComponent
+            class="pl-2"
+            v-if="nestedHasMany"
             :item="nestedHasMany.item"
             :parent-model="props.model"
             :model="props.model[nestedHasMany.key] as BaseConceptModel[]"
@@ -275,41 +354,47 @@ const emitChange = () => {
             @change="(data) => onChangeNested(nestedHasMany!.key, data)"
             @enter="(data) => onEnterNested(nestedHasMany!.key, data)"
         />
-    </div>
 
-    <!-- editing entrance for 'has' items -->
-    <div
-        v-for="{ key, item, model } in nestedHas"
-        :key="key"
-        class="pt-2 pl-2 hover:bg-slate-100 cursor-pointer"
-        @click="onEnterNested(key, { concept: item.concept, model, path: [] })"
-    >
-        {{ item.name }}
-    </div>
-
-    <!-- create button for nested has-many items -->
-    <CreateCandidateButton
-        v-if="nestedHasMany"
-        class="mt-2"
-        :name="nestedHasMany.item.name"
-        :candidates="nestedHasMany.item.candidates"
-        @create="onCreateNestedHasManyItem"
-    />
-
-    <!-- inline-editing dialog -->
-    <el-dialog v-model="showEditDialog" v-if="currentEditItem" :title="`修改${currentEditItem.item.name}`" width="500">
+        <!-- inline listing other items -->
         <component
-            :is="getItemComponent(currentEditItem.item)"
-            :item="currentEditItem.item"
-            :model="currentEditModel"
+            v-for="{ key, item, model: itemModel } in inlineItems"
+            class="pl-2"
+            :key="key"
+            :is="getItemComponent(item)"
+            :item="item"
+            :model="itemModel"
             :parent-model="model"
-            @change="(data: any) => onCurrentEditChange(data)"
+            @change="(data: any) => onChangeNested(key, data)"
+            @enter="(data: any) => onEnterNested(key, data)"
         ></component>
-        <template #footer>
-            <div class="dialog-footer">
-                <el-button @click="onCancelEdit">取消</el-button>
-                <el-button type="primary" @click="onSaveEdit">保存</el-button>
-            </div>
-        </template>
-    </el-dialog>
+
+        <!-- create button for nested has-many items -->
+        <CreateCandidateButton
+            v-if="nestedHasMany"
+            :name="nestedHasMany.item.name"
+            :candidates="nestedHasMany.item.candidates"
+            @create="onCreateNestedHasManyItem"
+        />
+        <!-- inline-editing dialog -->
+        <el-dialog
+            v-model="showEditDialog"
+            v-if="currentEditItem"
+            :title="`修改${currentEditItem.item.name}`"
+            width="500"
+        >
+            <component
+                :is="getItemComponent(currentEditItem.item)"
+                :item="currentEditItem.item"
+                :model="currentEditModel"
+                :parent-model="model"
+                @change="(data: any) => onCurrentEditChange(data)"
+            ></component>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="onCancelEdit">取消</el-button>
+                    <el-button type="primary" @click="onSaveEdit">保存</el-button>
+                </div>
+            </template>
+        </el-dialog>
+    </div>
 </template>

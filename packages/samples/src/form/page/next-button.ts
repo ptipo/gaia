@@ -41,6 +41,7 @@ export const NextButton = defineConcept({
                 type: 'dynamic-select',
                 name: '前往页面',
                 required: true,
+
                 // 从root model获取所有页面
                 provider: ({ rootModel }) => getAllPages(rootModel),
             },

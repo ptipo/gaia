@@ -18,7 +18,11 @@ const onCreate = async ({ app }: { app: App }) => {
     const created = await createAsset({
         data: { name, app: { connect: { id: app.id } } },
     });
-    success('资产创建成功');
+
+    if (created) {
+        success('资产创建成功');
+        navigateTo(`/asset/${created.id}`);
+    }
 };
 
 const onAssetClick = (asset: Asset) => {

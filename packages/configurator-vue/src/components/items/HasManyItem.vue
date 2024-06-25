@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import { AppInstance, Concept, type BaseConceptModel } from '@hayadev/configurator';
+import { type AppInstance, type Concept, type BaseConceptModel, incrementName } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
 import deepcopy from 'deepcopy';
 import { v4 as uuid } from 'uuid';
 import { computed, inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
-import type { CommonEvents, CommonProps } from './common';
 import ItemLabel from './ItemLabel.vue';
+import type { CommonEvents, CommonProps } from './common';
 
 const props = withDefaults(
     defineProps<
@@ -100,17 +100,7 @@ const onChangeElement = (data: BaseConceptModel, index: number) => {
     emitChange();
 };
 
-const onAddSibling = (index: number) => {
-    const model = _model.value[index];
-    if (!model) {
-        return;
-    }
-
-    const concept = findConcept(model.$concept);
-    if (!concept) {
-        return;
-    }
-
+const onAddSibling = (index: number, { concept }: ConceptModelPair) => {
     const newItem = createItem(concept);
     _model.value.splice(index + 1, 0, newItem);
     emitChange();
@@ -122,7 +112,29 @@ const onCloneElement = (index: number) => {
         return;
     }
 
-    const cloned = deepcopy(elementModel);
+    const concept = findConcept(elementModel.$concept);
+    if (!concept) {
+        return;
+    }
+
+    let cloned: BaseConceptModel;
+
+    if (props.item.cloneItemProvider) {
+        cloned = props.item.cloneItemProvider?.(concept, elementModel, {
+            app,
+            rootModel: rootModel?.value,
+            currentModel: props.model,
+        });
+    } else {
+        cloned = deepcopy(elementModel);
+        if (typeof cloned.name === 'string') {
+            cloned.name = incrementName(
+                cloned.name,
+                props.model.map((item) => item.name as string)
+            );
+        }
+    }
+
     cloned.$id = uuid();
     _model.value.push(cloned);
     emitChange();
@@ -166,12 +178,13 @@ const isSelected = (element: BaseConceptModel) => {
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col gap-2">
         <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
         <draggable
             class="flex flex-col gap-2"
+            handle=".handle"
             v-model="_model"
             :group="draggableGroup"
             item-key="$id"
@@ -188,9 +201,10 @@ const isSelected = (element: BaseConceptModel) => {
                             :concept="findConcept(element.$concept)"
                             :key="element.$id"
                             :model="element"
+                            :parent="props.item"
                             :inlineEditing="item.inline"
                             :allowDelete="_model.length > 1"
-                            @addSibling="() => onAddSibling(index)"
+                            @add-sibling="(data: ConceptModelPair) => onAddSibling(index, data)"
                             @clone="() => onCloneElement(index)"
                             @delete="() => onDeleteElement(index)"
                             @enter="(data: EnterConceptData) => onEnterConcept(data, index)"
@@ -205,7 +219,6 @@ const isSelected = (element: BaseConceptModel) => {
         <!-- footer button -->
         <CreateCandidateButton
             v-if="showCreateButton"
-            class="mt-2"
             :name="item.name"
             :candidates="item.candidates"
             @create="onCreate"
