@@ -35,6 +35,8 @@ const formEl = ref<HTMLElement>();
 // flag for triggering JsonViewer rerender
 const renderJson = ref(true);
 
+const isMobile = ref(false);
+
 const onAppChange = async (data: BaseConceptModel) => {
     app.model = data as typeof app.model;
     model.value = data;
@@ -127,8 +129,16 @@ watch(selection, (value) => {
                 <el-button @click="onSave">Save</el-button>
                 <el-button @click="() => onLoad()">Load</el-button>
                 <el-button @click="onPreview">Preview</el-button>
+                <el-button
+                    @click="
+                        () => {
+                            isMobile = !isMobile;
+                        }
+                    "
+                    >{{ isMobile ? 'Mobile' : 'Desktop' }}</el-button
+                >
             </div>
-            <div class="border rounded bg-white w-full h-full flex-grow overflow-auto">
+            <div class="border rounded bg-white h-full flex-grow overflow-auto" :class="isMobile ? 'w-80' : 'w-full'">
                 <pt-form id="pt-form" edit-selection='{"id":""}' ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">

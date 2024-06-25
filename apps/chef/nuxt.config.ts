@@ -47,4 +47,16 @@ export default defineNuxtConfig({
             publishPageAccessPoint: '',
         },
     },
+
+    hooks: {
+        'vite:extendConfig'(viteInlineConfig, env) {
+            viteInlineConfig.server = {
+                ...viteInlineConfig.server,
+                hmr: {
+                    protocol: 'ws',
+                    host: 'localhost',
+                },
+            };
+        },
+    },
 });
