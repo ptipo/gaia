@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1 {
+        @apply text-2xl;
+    }
+    h2 {
+        @apply text-xl;
+    }
+    h3 {
+        @apply text-lg;
+    }
+}
+
+:host {
+    font-family: var(--ptform-font-family, 'Noto Sans JP,sans-serif');
+}
+
+input,
+input[type='text'],
+input[type='email'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    --tw-ring-shadow: 0 0 #000 !important;
+}
+
+p,
+label,
+span,
+legend {
+    @apply break-words;
+    color: var(--ptform-main-text-color, black);
+}
