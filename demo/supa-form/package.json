@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@hayadev/configurator": "workspace:*",
+        "@lit-labs/observers": "^2.0.2",
         "@lit/context": "^1.1.1",
         "autoprefixer": "^10.4.19",
         "deepcopy": "^2.1.0",

@@ -133,6 +133,9 @@ importers:
       '@hayadev/configurator':
         specifier: workspace:*
         version: link:../../packages/configurator
+      '@lit-labs/observers':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@lit/context':
         specifier: ^1.1.1
         version: 1.1.1
@@ -2758,6 +2761,12 @@ packages:
 
   /@kwsites/promise-deferred@1.1.1:
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
+    dev: false
+
+  /@lit-labs/observers@2.0.2:
+    resolution: {integrity: sha512-eZb5+W9Cb0e/Y5m1DNxBSGTvGB2TAVTGMnTxL/IzFhPQEcZIAHewW1eVBhN8W07A5tirRaAmmF6fGL1V20p3gQ==}
+    dependencies:
+      '@lit/reactive-element': 2.0.4
     dev: false
 
   /@lit-labs/ssr-dom-shim@1.2.0:
