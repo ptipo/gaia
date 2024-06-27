@@ -271,7 +271,7 @@ const goBack = async () => {
                 <div
                     ref="appContainerEl"
                     class="h-3/4 overflow-auto ml-auto mr-auto"
-                    :class="isMobile ? 'w-80' : 'w-full'"
+                    :class="isMobile ? 'w-[375px]' : 'w-full'"
                 ></div>
             </div>
             <!-- preview -->

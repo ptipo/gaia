@@ -5,6 +5,9 @@ import { getContentTypeComponent } from './contentTypes';
 import { LitElement, html } from 'lit';
 import { when } from 'lit/directives/when.js';
 import { PtChoice } from './contentTypes/pt-choice';
+import { provide } from '@lit/context';
+import { formWidth } from '../state';
+import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -13,6 +16,22 @@ export class PtFormPage extends PtBase {
 
     @property({ type: Object })
     page: (typeof app.model.contentPages)[number] = {} as any;
+
+    @provide({ context: formWidth })
+    @state()
+    private widthLevel = 1;
+
+    screenWidthLevel = [375, 768, 820, 1024, Infinity];
+
+    private _observer = new ResizeController(this, {
+        callback: () => {
+            const { width } = this.getBoundingClientRect();
+            const level = this.screenWidthLevel.findIndex((x) => x > width + 4) + 1;
+            if (level != this.widthLevel) {
+                this.widthLevel = level;
+            }
+        },
+    });
 
     @state()
     showValidationError = false;

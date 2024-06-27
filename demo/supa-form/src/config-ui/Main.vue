@@ -138,7 +138,10 @@ watch(selection, (value) => {
                     >{{ isMobile ? 'Mobile' : 'Desktop' }}</el-button
                 >
             </div>
-            <div class="border rounded bg-white h-full flex-grow overflow-auto" :class="isMobile ? 'w-80' : 'w-full'">
+            <div
+                class="border rounded bg-white h-full flex-grow overflow-auto"
+                :class="isMobile ? 'w-[375px]' : 'w-full'"
+            >
                 <pt-form id="pt-form" edit-selection='{"id":""}' ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">

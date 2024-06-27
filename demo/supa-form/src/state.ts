@@ -6,3 +6,5 @@ export type answerData = {
 };
 
 export const formState = createContext<answerData>(Symbol('form-state'));
+
+export const formWidth = createContext<number>(Symbol('form-width'));

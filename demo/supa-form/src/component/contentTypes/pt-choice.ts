@@ -1,9 +1,11 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { FormSubmitData, PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
+import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
 import './pt-question-base';
+import { consume } from '@lit/context';
+import { formWidth } from '../../state';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
@@ -13,6 +15,9 @@ type GetArrayElementType<T extends any[]> = T extends (infer U)[] ? U : never;
 export class PtChoice extends PtBaseData<Map<string, string>> {
     @property({ type: Object })
     data?: ChoiceQuestionType;
+
+    @consume({ context: formWidth, subscribe: true })
+    widthLevel = 2;
 
     override mandatoryErrorMessage = 'Please make the selection';
 
@@ -113,16 +118,17 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                 () =>
                                     html`
                                         <label
-                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center ${isFlat
-                                                ? 'max-w-60'
-                                                : 'max-w-full'}  border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
+                                            style="${isFlat
+                                                ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
+                                                : ''}"
+                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
                                                     ${this.imageSkeleton}
                                                     <img
                                                         @load=${this.imageLoad}
-                                                        class="pt-choice-image hidden max-w-full max-h-full h-auto w-60"
+                                                        class="pt-choice-image hidden max-w-full max-h-full h-auto"
                                                         src="${choice.source || choice.value}"
                                                     />
                                                 </div>

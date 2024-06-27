@@ -1,5 +1,5 @@
-import { LitElement, css, html, unsafeCSS } from 'lit';
-import globalStyles from '../global.css?inline';
+import { LitElement, unsafeCSS } from 'lit';
+import globalStyles from './form.css?inline';
 import { consume } from '@lit/context';
 import { formState, answerData } from '../state';
 import { property } from 'lit/decorators.js';
