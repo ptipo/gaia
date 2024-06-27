@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
@@ -118,10 +118,10 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                 () =>
                                     html`
                                         <label
-                                            style="width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);"
-                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center ${isFlat
-                                                ? ''
-                                                : 'max-w-full'}  border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
+                                            style="${isFlat
+                                                ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
+                                                : ''}"
+                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
