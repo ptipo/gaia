@@ -45,16 +45,7 @@ export class PtFormPage extends PtBase {
 
         this.pageItems = new Map(
             this.page.pageItems.map((item) => {
-                const tagName = getContentTypeComponent(item.$concept);
-                const el = document.createElement(tagName) as LitElement;
-
-                if (this.page.pageItems.length === 1 && el instanceof PtChoice) {
-                    el.addEventListener(PtFormSingleChoiceSelectedEventName, () => {
-                        this.dispatchEvent(new CustomEvent(PtFormNextPageEventName));
-                    });
-                }
-
-                el.style.display = 'block';
+                const el = this.getLitElementFromPageItem(item);
                 return [item.$id, el];
             })
         );
@@ -73,6 +64,11 @@ export class PtFormPage extends PtBase {
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item) => {
                 const el = this.pageItems?.get(item.$id)!;
+
+                if (!el) {
+                    // this happens in the edit-mode
+                    this.pageItems?.set(item.$id, this.getLitElementFromPageItem(item));
+                }
 
                 el.setAttribute('data', JSON.stringify(item));
 
@@ -100,6 +96,13 @@ export class PtFormPage extends PtBase {
 
         console.log('this.isValid', this.isValid);
         return this.isValid;
+    }
+
+    private getLitElementFromPageItem(item: (typeof this.page.pageItems)[number]) {
+        const tagName = getContentTypeComponent(item.$concept);
+        const el = document.createElement(tagName) as LitElement;
+        el.style.display = 'block';
+        return el;
     }
 }
 

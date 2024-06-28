@@ -1,4 +1,4 @@
-import { LitElement, html, css, unsafeCSS } from 'lit';
+import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { app } from '../app';
 import './pt-form-page';
@@ -11,8 +11,6 @@ import { validateLogic } from '../util/logic-resolver';
 import { ConceptRef } from '@hayadev/configurator';
 import { PtFormPage } from './pt-form-page';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import { v4 as uuid } from 'uuid';
-
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
@@ -82,21 +80,22 @@ export class PtForm extends PtBaseShadow {
             const progress: number = this.getCurrentProgress() * 100;
 
             return html`
-                    <div class="mt-4">
-                        <div class="sticky top-4 ">
-                        <div
-                            class="flex h-1 bg-gray-200  rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
-                            role="progressbar"
-                        >
-                            <div
-                                class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
-                                style="width: ${progress}%"
-                            ></div>
+            
+                    <div>
+                        <div class="sticky top-0 h-8 bg-white opacity-100">
+                            <div class="flex flex-col h-full justify-center">
+                                <div
+                                    class="flex h-1 bg-gray-200  rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                                    role="progressbar">
+                                    <div
+                                        class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                        style="width: ${progress}%">
+                                    </div>
+                              </div>
                         </div>
                         </div>
                         ${keyed(
-                            // in edit mode, always rerender the page to reset the state
-                            this.editSelection ? uuid() : this.pageId,
+                            this.pageId,
                             html`<pt-form-page
                                 ${ref(this.pageRef)}
                                 class="mt-4 block"
