@@ -4,13 +4,14 @@ import { PtBaseData } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import './pt-question-base';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { msg } from '@lit/localize';
 
 @customElement('pt-email')
 export class PtEmail extends PtBaseData<string> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['EmailQuestion'];
 
-    mandatoryErrorMessage = 'Please fill this in';
+    mandatoryErrorMessage = msg('Please fill this in');
 
     render() {
         const description = this.data?.description;
@@ -45,7 +46,7 @@ export class PtEmail extends PtBaseData<string> {
         }
 
         if (this.value.data && !this.isValidEmail(this.value.data!)) {
-            return 'Please enter a valid email';
+            return msg('Please enter a valid email');
         }
     }
 

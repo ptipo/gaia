@@ -11,6 +11,8 @@ import { validateLogic } from '../util/logic-resolver';
 import { ConceptRef } from '@hayadev/configurator';
 import { PtFormPage } from './pt-form-page';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import { setLocale } from './localization';
+
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
@@ -59,6 +61,12 @@ export class PtForm extends PtBaseShadow {
 
     render() {
         console.log(this.config);
+
+        const language = this.config?.languageSettings.language;
+
+        if (language) {
+            setLocale(language);
+        }
 
         const contentPages = this.config?.contentPages;
 

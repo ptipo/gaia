@@ -8,6 +8,7 @@ import { PtChoice } from './contentTypes/pt-choice';
 import { provide } from '@lit/context';
 import { formWidth } from '../state';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
+import { msg } from '@lit/localize';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -63,11 +64,12 @@ export class PtFormPage extends PtBase {
         this.isValid = true;
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item) => {
-                const el = this.pageItems?.get(item.$id)!;
+                let el = this.pageItems?.get(item.$id)!;
 
                 if (!el) {
                     // this happens in the edit-mode
-                    this.pageItems?.set(item.$id, this.getLitElementFromPageItem(item));
+                    el = this.getLitElementFromPageItem(item);
+                    this.pageItems?.set(item.$id, el);
                 }
 
                 el.setAttribute('data', JSON.stringify(item));
@@ -83,7 +85,10 @@ export class PtFormPage extends PtBase {
 
                 return html`<div>
                     ${el}
-                    ${when(errorMessage, () => html`<p class="text-red-500  font-normal mt-2">${errorMessage!}</p>`)}
+                    ${when(
+                        errorMessage,
+                        () => html`<p class="text-red-500  font-normal mt-2">${msg(errorMessage!)}</p>`
+                    )}
                 </div>`;
             })}
         </div> `;
