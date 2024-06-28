@@ -1,4 +1,6 @@
 import { defineConcept } from '@hayadev/configurator';
+import { AlignmentItems } from '../common';
+
 /**
  * 文本元素
  */
@@ -26,5 +28,7 @@ export const TextElement = defineConcept({
          * 内容
          */
         content: { type: 'text', name: '内容', multiline: true },
+
+        ...AlignmentItems,
     },
 });
