@@ -9,12 +9,15 @@ class PtImage extends PtBase {
     data?: AllPageItemsTypesMap['ImageElement'];
 
     render() {
+        const align = this.data?.align || 'center';
+        const maxWidth = this.data?.maxWidth || 100;
         return html`
-            <div class="w-full flex justify-center">
+            <div class="w-full flex" style="justify-content:${align}">
                 <img
                     class="h-auto object-contain"
                     src="${this.data?.source || this.data?.image!.url!}"
-                    alt="image description"
+                    style="max-width:${maxWidth}%"
+                    alt="image"
                 />
             </div>
         `;
