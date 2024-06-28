@@ -6,6 +6,7 @@ import { when } from 'lit/directives/when.js';
 import './pt-question-base';
 import { consume } from '@lit/context';
 import { formWidth } from '../../state';
+import { localized, msg } from '@lit/localize';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
@@ -19,7 +20,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
     @consume({ context: formWidth, subscribe: true })
     widthLevel = 2;
 
-    override mandatoryErrorMessage = 'Please make the selection';
+    override mandatoryErrorMessage = msg('Please make the selection');
 
     randomSeed?: number[];
 

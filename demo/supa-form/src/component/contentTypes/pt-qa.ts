@@ -4,13 +4,14 @@ import { FormSubmitData, PtBaseData, QuestionState } from '../pt-base';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import './pt-question-base';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { msg } from '@lit/localize';
 
 @customElement('pt-qa')
 export class PtQA extends PtBaseData<string> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['QAQuestion'];
 
-    mandatoryErrorMessage = 'Please fill this in';
+    mandatoryErrorMessage = msg('Please fill this in');
 
     connectedCallback() {
         super.connectedCallback();
