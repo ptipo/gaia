@@ -31,16 +31,26 @@ export default eventHandler(async (event) => {
     console.log('Publishing to:', publishPageBucket, publishPagePath, publicConfig.publishPageAccessPoint);
 
     const s3 = new S3Client();
-    const params = {
+    const htmlParams = {
         Bucket: publishPageBucket,
         Key: `${publishPagePath}/${asset.id}/index.html`,
         Body: pageContent,
         ContentType: 'text/html',
     };
-    const command = new PutObjectCommand(params);
+    const command = new PutObjectCommand(htmlParams);
 
-    const result = await s3.send(command);
-    console.log('S3 uploaded:', result);
+    let result = await s3.send(command);
+    console.log('html uploaded:', result);
+
+    const configParams = {
+        Bucket: publishPageBucket,
+        Key: `${publishPagePath}/${asset.id}/config.json`,
+        Body: JSON.stringify(asset.config),
+        ContentType: 'application/json',
+    };
+
+    result = await s3.send(new PutObjectCommand(configParams));
+    console.log('config uploaded:', result);
 
     const publishUrl = `${publicConfig.publishPageAccessPoint}/${asset.id}`;
     await event.context.db.asset.update({ where: { id }, data: { publishUrl } });

@@ -7,14 +7,11 @@
     </head>
     <body class="flex h-screen">
         <script type="module" src="{{bundle}}"></script>
-        <div id="app" class="container"><{{tagName}} class='w-full' config='{{config}}' /></div>
+        <div id="app" class="container"><{{tagName}} style='width:100%' config='{{config}}' /></div>
     </body>
 
     <style>
         body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             width: 100%;
             margin: 0;
         }

@@ -52,6 +52,7 @@ export const ChoiceQuestion = defineConcept({
                 type: 'switch',
                 name: '显示选项文字',
                 groupKey: 'choice',
+                default: true,
             },
         },
 
