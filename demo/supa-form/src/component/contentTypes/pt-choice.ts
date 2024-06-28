@@ -238,7 +238,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                     return value;
                 } else {
                     const choice = this.targetChoices?.find((x) => x.$id == key);
-                    return choice?.name;
+                    return choice?.value;
                 }
             })
             .join(',');

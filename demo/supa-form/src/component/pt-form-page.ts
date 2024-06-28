@@ -63,11 +63,12 @@ export class PtFormPage extends PtBase {
         this.isValid = true;
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item) => {
-                const el = this.pageItems?.get(item.$id)!;
+                let el = this.pageItems?.get(item.$id)!;
 
                 if (!el) {
                     // this happens in the edit-mode
-                    this.pageItems?.set(item.$id, this.getLitElementFromPageItem(item));
+                    el = this.getLitElementFromPageItem(item);
+                    this.pageItems?.set(item.$id, el);
                 }
 
                 el.setAttribute('data', JSON.stringify(item));
