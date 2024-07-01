@@ -18,7 +18,7 @@ export class PtForm extends PtBaseShadow {
     @property()
     name?: string;
 
-    private _editSelection: { id: string };
+    private _editSelection?: { id: string };
 
     @property({ type: Object, attribute: 'edit-selection' })
     set editSelection(value: { id: string }) {
@@ -26,7 +26,7 @@ export class PtForm extends PtBaseShadow {
         this.pageId = value.id;
     }
 
-    get editSelection() {
+    get editSelection(): { id: string } | undefined {
         return this._editSelection;
     }
 
