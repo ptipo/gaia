@@ -18,8 +18,17 @@ export class PtForm extends PtBaseShadow {
     @property()
     name?: string;
 
+    private _editSelection: { id: string };
+
     @property({ type: Object, attribute: 'edit-selection' })
-    editSelection?: { id: string };
+    set editSelection(value: { id: string }) {
+        this._editSelection = value;
+        this.pageId = value.id;
+    }
+
+    get editSelection() {
+        return this._editSelection;
+    }
 
     @property({
         type: Object,
@@ -72,10 +81,6 @@ export class PtForm extends PtBaseShadow {
 
         if (!contentPages?.length) {
             return html``;
-        }
-
-        if (this.editSelection) {
-            this.pageId = this.editSelection.id;
         }
 
         if (!this.pageId) {
@@ -146,12 +151,41 @@ export class PtForm extends PtBaseShadow {
     }
 
     private prePage() {
-        if (this.pageIdStack.length) {
-            this.pageId = this.pageIdStack.pop()!;
+        if (this.editSelection) {
+            const contentPages = this.config?.contentPages!;
+
+            const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
+
+            if (currentPageIndex != 0) {
+                this.pageId = contentPages[currentPageIndex - 1].$id;
+            }
+        } else {
+            if (this.pageIdStack.length) {
+                this.pageId = this.pageIdStack.pop()!;
+            }
         }
     }
 
     private async nextPage() {
+        const contentPages = this.config?.contentPages!;
+        const completePages = this.config?.completePages!;
+
+        const currentPageId = this.pageId;
+
+        if (this.editSelection) {
+            const currentPageIndex = contentPages
+                .map((x) => x.$id)
+                .concat(completePages.map((x) => x.$id)!)
+                .indexOf(this.pageId);
+
+            this.pageId =
+                currentPageIndex < contentPages.length - 1
+                    ? contentPages[currentPageIndex + 1].$id
+                    : completePages[0].$id!;
+
+            return;
+        }
+
         const isValid = await this.pageRef.value?.validatePage();
 
         if (!isValid) {
@@ -160,7 +194,6 @@ export class PtForm extends PtBaseShadow {
         }
 
         this.pageIdStack.push(this.pageId);
-        const contentPages = this.config?.contentPages!;
         const nextButton = this.currentContentPage?.nextButton!;
 
         const nextAction = nextButton.action;
@@ -172,48 +205,24 @@ export class PtForm extends PtBaseShadow {
             if (satisfiedCondition) {
                 const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
                 this.pageId = targePage;
-                return;
             }
         } else if (nextAction == 'goToPage') {
             const targePage = (nextButton.targetPage as ConceptRef).$id;
             this.pageId = targePage;
-            return;
-        }
-
-        const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
-
-        if (currentPageIndex < contentPages.length - 1) {
-            this.pageId = contentPages[currentPageIndex + 1].$id;
         } else {
-            this.pageId = this.config?.completePages[0].$id!;
+            const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
+
+            if (currentPageIndex < contentPages.length - 1) {
+                this.pageId = contentPages[currentPageIndex + 1].$id;
+            } else {
+                this.pageId = completePages[0].$id!;
+            }
         }
     }
 
     private onFormStateChange() {
         console.log('form state changed');
         console.log(JSON.stringify(this.formState));
-    }
-
-    private isSubmitReady() {
-        const contentPages = this.config?.contentPages!;
-        const nextButton = this.currentContentPage?.nextButton!;
-        const nextAction = nextButton!.action;
-
-        if (nextAction == 'next') {
-            const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
-            return currentPageIndex == contentPages.length - 1;
-        } else if (nextAction == 'goToPage') {
-            const targePage = (nextButton.targetPage as ConceptRef).$id;
-            return this.isCompletePage(targePage);
-        } else {
-            const satisfiedCondition = nextButton.conditionalAction?.find((x) =>
-                validateLogic(this.config!, x.condition!, this.formState)
-            );
-            if (satisfiedCondition) {
-                const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
-                return this.isCompletePage(targePage);
-            }
-        }
     }
 
     private isCompletePage(pageId: string) {
@@ -225,6 +234,16 @@ export class PtForm extends PtBaseShadow {
         const currentPageIndex = contentPages?.findIndex((x) => x.$id == this.pageId);
 
         return currentPageIndex != undefined ? (currentPageIndex + 1) / (contentPages!.length + 1) : 1;
+    }
+
+    private emitPageChangeEvent(currentPageId: string, nextPageId: string) {
+        const options = {
+            detail: { currentPageId, nextPageId },
+            bubbles: true,
+            composed: true,
+        };
+
+        this.dispatchEvent(new CustomEvent('form-page-change', options));
     }
 }
 
