@@ -8,12 +8,12 @@ export const QuestionCommonItems = {
     /**
      * 表单项名称
      */
-    name: { type: 'text', name: '表单项名称', required: true },
+    name: { type: 'text', name: '表单项名称', required: true, groupKey: 'basic' },
 
     /**
      * 问题
      */
-    question: { type: 'text', name: '问题' },
+    question: { type: 'text', name: '问题', groupKey: 'basic' },
 
     /**
      * 描述信息
@@ -22,12 +22,13 @@ export const QuestionCommonItems = {
         type: 'text',
         guarded: true,
         name: '描述',
+        groupKey: 'basic',
     },
 
     /**
      * 是否必填
      */
-    required: { type: 'switch', name: '必填', default: false },
+    required: { type: 'switch', name: '必填', default: false, groupKey: 'basic' },
 
     /**
      * 是否保存为用户标签
