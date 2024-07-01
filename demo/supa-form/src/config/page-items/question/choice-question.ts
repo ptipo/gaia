@@ -10,7 +10,7 @@ export const ChoiceQuestion = defineConcept({
     name: 'ChoiceQuestion',
     displayName: '选择题',
 
-    groups: { ...QuestionCommonGroups, choice: { name: '选项' } },
+    groups: { basic: QuestionCommonGroups.basic, choice: { name: '选项' }, data: QuestionCommonGroups.data },
 
     items: {
         ...QuestionCommonItems,
@@ -54,6 +54,8 @@ export const ChoiceQuestion = defineConcept({
                 groupKey: 'choice',
                 default: true,
             },
+
+            groupKey: 'choice',
         },
 
         /**
