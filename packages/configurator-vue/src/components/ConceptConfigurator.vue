@@ -97,18 +97,18 @@ const childComponents = computed(() => {
                 <el-divider v-if="index > 0" class="mt-1 mb-4" />
                 <div class="text-gray-500 mb-4">{{ group.name }}</div>
                 <div class="flex flex-col gap-4">
-                    <component
-                        v-for="[key, item] in group.items"
-                        :key="key"
-                        :is="childComponents[key]"
-                        :item="item"
-                        :model="_model[key]"
-                        :parent-model="_model"
-                        @change="(data: unknown) => onChange(key, data)"
-                        @selectionChange="(data: SelectionData) => $emit('selectionChange', data)"
-                        @drop="() => onDrop(key)"
-                        @enter="(data: EnterConceptData) => onEnter(key, data)"
-                    />
+                    <div v-for="[key, item] in group.items" :key="key">
+                        <component
+                            :is="childComponents[key]"
+                            :item="item"
+                            :model="_model[key]"
+                            :parent-model="_model"
+                            @change="(data: unknown) => onChange(key, data)"
+                            @selectionChange="(data: SelectionData) => $emit('selectionChange', data)"
+                            @drop="() => onDrop(key)"
+                            @enter="(data: EnterConceptData) => onEnter(key, data)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
