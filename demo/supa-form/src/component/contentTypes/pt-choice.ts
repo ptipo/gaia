@@ -13,7 +13,7 @@ type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 type GetArrayElementType<T extends any[]> = T extends (infer U)[] ? U : never;
 
 @customElement('pt-choice')
-export class PtChoice extends PtBaseData<Map<string, string>> {
+export class PtChoice extends PtBaseData<Array<[string, string]>> {
     @property({ type: Object })
     data?: ChoiceQuestionType;
 
@@ -63,12 +63,13 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         >,
         isSingleChoice: boolean
     ) {
+        const isChecked = this.isChoiceChecked(choice.$id);
         return html`<input
             id="${choice.$id}"
             type="${isSingleChoice ? 'radio' : 'checkbox'}"
             name="${this.data?.$id!}"
             value="${choice.value}"
-            ?checked=${this.value ? this.value.data!.has(choice.$id) : choice.defaultSelected}
+            ?checked=${this.value ? isChecked : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
             class="mr-2 w-4 h-4 cursor-pointer text-black border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             checked
@@ -84,11 +85,9 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
 
     render() {
         if (!this.value.data) {
-            this.value.data = new Map(
-                this.targetChoices!.filter((x) => x.defaultSelected)
-                    .map((x) => x.$id)
-                    .map((x) => [x, x])
-            );
+            this.value.data = this.targetChoices!.filter((x) => x.defaultSelected)
+                .map((x) => x.$id)
+                .map((x) => [x, '']);
         }
 
         const isSingleChoice = this.data?.kind == 'single';
@@ -168,11 +167,11 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                                                 ${choice.value}
                                             </label>
                                         </label>
-                                        ${choice.additionalInput && this.value.data!.has(choice.$id)
+                                        ${choice.additionalInput && this.isChoiceChecked(choice.$id)
                                             ? html` <pt-question
                                                   data-choice-id="${choice.$id}"
                                                   @input=${this.onInputChange}
-                                                  .value=${this.value.data?.get(choice.$id)}
+                                                  .value=${this.getChoiceData(choice.$id)[1]}
                                               ></pt-question>`
                                             : ''}
                                     `
@@ -193,16 +192,16 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         if (isSelected) {
             const limitSelectedItems = this.data?.limitSelectedItems;
 
-            if (limitSelectedItems && this.value.data!.size == limitSelectedItems) {
+            if (limitSelectedItems && this.value.data!.length == limitSelectedItems) {
                 input.checked = false;
                 return;
             }
 
             const isSingleChoice = this.data?.kind == 'single';
             if (isSingleChoice) {
-                this.value.data!.clear();
+                this.value.data = [];
             }
-            this.value.data!.set(choice!.$id, '');
+            this.value.data = [...this.value.data!, [choice!.$id, '']];
 
             if (isSingleChoice) {
                 this.dispatchEvent(
@@ -210,7 +209,7 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
                 );
             }
         } else {
-            this.value.data!.delete(choice!.$id);
+            this.value.data = this.value.data?.filter((x) => x[0] != choice!.$id);
         }
 
         this.requestUpdate();
@@ -221,20 +220,20 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
         const value = input.value;
         const choiceId = (e.currentTarget as HTMLElement).dataset.choiceId!;
 
-        this.value.data!.set(choiceId, value);
+        this.getChoiceData(choiceId)[1] = value;
     }
 
     isValidated() {
-        return this.data?.required ? this.value.data!.size > 0 : true;
+        return this.data?.required ? this.value.data!.length > 0 : true;
     }
 
     override isEmptyData() {
-        return !this.value.data?.size;
+        return !this.value.data?.length;
     }
 
     override getSubmitData() {
-        const submitValue = Array.from(this.value.data!.entries())
-            .map(([key, value]) => {
+        const submitValue = this.value
+            .data!.map(([key, value]) => {
                 if (value) {
                     return value;
                 } else {
@@ -244,5 +243,13 @@ export class PtChoice extends PtBaseData<Map<string, string>> {
             })
             .join(',');
         return { name: this.data?.name!, value: submitValue };
+    }
+
+    private isChoiceChecked(choiceId: string) {
+        return this.value.data!.find((x) => x[0] == choiceId) ? true : false;
+    }
+
+    private getChoiceData(choiceId: string) {
+        return this.value.data!.find((x) => x[0] == choiceId)!;
     }
 }

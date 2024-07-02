@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { app } from '../app';
 import './pt-form-page';
 import './pt-form-complete-page';
-import { PtBaseShadow } from './pt-base';
+import { PtBaseShadow, QuestionState } from './pt-base';
 import { provide } from '@lit/context';
 import { formState, answerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
@@ -12,6 +12,9 @@ import { ConceptRef } from '@hayadev/configurator';
 import { PtFormPage } from './pt-form-page';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { setLocale } from './localization';
+import { StorageWrapper } from './storage-wrapper';
+
+type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
@@ -57,6 +60,20 @@ export class PtForm extends PtBaseShadow {
 
     pageRef: Ref<PtFormPage> = createRef();
 
+    private storageWrapper?: StorageWrapper;
+
+    private retentionMap: Map<retention, number> = new Map([
+        ['once', 0],
+        ['oneDay', 24 * 60 * 60 * 1000],
+        ['oneWeek', 7 * 24 * 60 * 60 * 1000],
+        ['oneMonth', 30 * 24 * 60 * 60 * 1000],
+        ['forever', Infinity],
+    ]);
+
+    get storageKey() {
+        return `pt-form-${this.config?.$id}`;
+    }
+
     connectedCallback() {
         super.connectedCallback();
 
@@ -71,13 +88,39 @@ export class PtForm extends PtBaseShadow {
     render() {
         console.log(this.config);
 
+        const contentPages = this.config?.contentPages;
+
+        const dataRetention = this.config?.dataCollection.drip.retention;
+
+        if (dataRetention && !this.storageWrapper) {
+            const loadStorageWrapper = new StorageWrapper();
+            const loadedFromState = loadStorageWrapper.get(this.storageKey);
+
+            if (loadedFromState) {
+                // load form state from storage
+                this.storageWrapper = loadStorageWrapper;
+                this.formState = loadedFromState;
+
+                if (this.formState.currentPageId) {
+                    // check if the last saved page is still in the content pages
+                    if (contentPages?.find((x) => x.$id == this.formState.currentPageId)) {
+                        this.pageId = this.formState.currentPageId;
+                    }
+                }
+            } else {
+                if (dataRetention == 'once') {
+                    this.storageWrapper = new StorageWrapper('sessionstorage');
+                } else {
+                    this.storageWrapper = new StorageWrapper('localstorage', this.retentionMap.get(dataRetention));
+                }
+            }
+        }
+
         const language = this.config?.languageSettings.language;
 
         if (language) {
             setLocale(language);
         }
-
-        const contentPages = this.config?.contentPages;
 
         if (!contentPages?.length) {
             return html``;
@@ -218,6 +261,10 @@ export class PtForm extends PtBaseShadow {
                 this.pageId = completePages[0].$id!;
             }
         }
+
+        // save form state to storage
+        this.formState.currentPageId = this.pageId;
+        this.storageWrapper?.set(this.storageKey, this.formState);
     }
 
     private onFormStateChange() {

@@ -4,15 +4,15 @@
 <body>
 <trans-unit id="s6fc73ba7929aa5d6">
   <source>Please make the selection</source>
-  <target>哎哟! 请做出选择</target>
+  <target>请做出选择</target>
 </trans-unit>
 <trans-unit id="se8cd0d023e89f577">
   <source>Please fill this in</source>
-  <target>请填入这个</target>
+  <target>请填写此项</target>
 </trans-unit>
 <trans-unit id="s618f82f6f2816e6c">
   <source>Please enter a valid email</source>
-  <target>嗯... 那封电子邮件看起来是无效的</target>
+  <target>请输入有效的邮件地址</target>
 </trans-unit>
 </body>
 </file>
