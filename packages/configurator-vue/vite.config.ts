@@ -36,6 +36,7 @@ export default defineConfig({
             '@components': resolve(__dirname, './src/components'),
             '@assets': resolve(__dirname, './src/assets'),
         },
+        preserveSymlinks: true,
     },
 
     build: {
