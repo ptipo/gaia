@@ -1,4 +1,4 @@
-import { ConceptRef, defineConcept } from '@hayadev/configurator';
+import { defineConcept } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 
 /**
