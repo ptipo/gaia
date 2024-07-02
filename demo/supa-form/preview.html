@@ -12,7 +12,11 @@
                 // Ensure the message is coming from a trusted origin
                 if (event.origin !== window.location.origin) return;
 
-                const { ptForm } = event.data;
+                let { ptForm } = event.data;
+
+                if (!ptForm) {
+                    ptForm = localStorage.getItem('haya-app-config');
+                }
 
                 if (ptForm) {
                     const form = document.getElementById('pt-form');
