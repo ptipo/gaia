@@ -7,7 +7,7 @@ import type {
     LogicalOperator,
     LogicalRightOperandCandidates,
 } from '@hayadev/configurator/items';
-import { Ref, computed, inject, onMounted, ref } from 'vue';
+import { Ref, computed, inject, onMounted, ref, watch } from 'vue';
 
 type ModelType = {
     groupOperator?: 'and' | 'or';
@@ -42,6 +42,21 @@ const right = ref<any>();
 const operator = ref<string | undefined>(props.model.operator);
 
 onMounted(async () => {
+    await refreshState();
+});
+
+watch(
+    () => props.model,
+    async () => {
+        await refreshState();
+    }
+);
+
+const refreshState = async () => {
+    left.value = undefined;
+    operator.value = undefined;
+    right.value = undefined;
+
     await getLeftOperandOptions();
 
     if (props.model.left && leftOperandOptions.value) {
@@ -61,15 +76,29 @@ onMounted(async () => {
 
         if (props.model.right && rightOperandOptions.value) {
             if (rightOperandOptions.value.kind === 'select') {
-                right.value = rightOperandOptions.value.items.find((item) =>
-                    modelEquals(item.value, props.model.right)
-                );
+                if (rightOperandOptions.value.multiple) {
+                    let arr: any[];
+                    if (!Array.isArray(props.model.right)) {
+                        arr = [props.model.right];
+                    } else {
+                        arr = props.model.right as any[];
+                    }
+                    // filter items in the right operand options
+                    right.value = rightOperandOptions.value.items.filter((item) =>
+                        arr.some((v) => modelEquals(v, item.value))
+                    );
+                } else {
+                    // find the item in the right operand options
+                    right.value = rightOperandOptions.value.items.find((item) =>
+                        modelEquals(item.value, props.model.right)
+                    );
+                }
             } else {
                 right.value = props.model.right;
             }
         }
     }
-});
+};
 
 const getLeftOperandOptions = async () => {
     const items = await props.item.leftProvider({
