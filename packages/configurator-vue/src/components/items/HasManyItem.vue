@@ -175,6 +175,10 @@ const emitChange = () => {
 const isSelected = (element: BaseConceptModel) => {
     return currentSelection?.value?.concept.name === element.$concept && currentSelection?.value?.id === element.$id;
 };
+
+const reachedMaxItems = computed(() => {
+    return props.item.maxItems !== undefined && _model.value.length >= props.item.maxItems;
+});
 </script>
 
 <template>
@@ -204,6 +208,8 @@ const isSelected = (element: BaseConceptModel) => {
                             :parent="props.item"
                             :inlineEditing="item.inline"
                             :allowDelete="_model.length > 1"
+                            :allowClone="!reachedMaxItems"
+                            :allowAddSibling="!reachedMaxItems"
                             @add-sibling="(data: ConceptModelPair) => onAddSibling(index, data)"
                             @clone="() => onCloneElement(index)"
                             @delete="() => onDeleteElement(index)"
@@ -218,7 +224,7 @@ const isSelected = (element: BaseConceptModel) => {
 
         <!-- footer button -->
         <CreateCandidateButton
-            v-if="showCreateButton"
+            v-if="showCreateButton && !reachedMaxItems"
             :name="item.name"
             :candidates="item.candidates"
             @create="onCreate"

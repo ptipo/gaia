@@ -39,7 +39,10 @@ const validate = () => {
 
     const parseResult = schema.value.safeParse(props.model);
     if (parseResult.error) {
-        errorMessage.value = parseResult.error.issues.map((issue) => issue.message).join(', ');
+        errorMessage.value = parseResult.error.issues
+            .filter((issue) => issue.path.length === 0) // only show current-level error
+            .map((issue) => issue.message)
+            .join(', ');
     }
 };
 

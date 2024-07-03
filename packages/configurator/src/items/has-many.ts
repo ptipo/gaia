@@ -23,6 +23,16 @@ export interface HasManyItem<TCandidate extends Concept = Concept> extends Confi
     inline?: boolean;
 
     /**
+     * Minimum number of items required
+     */
+    minItems?: number;
+
+    /**
+     * Maximum number of items allowed
+     */
+    maxItems?: number;
+
+    /**
      * Callback for creating a new concept instance
      */
     newItemProvider?: (concept: Concept, context: ProviderContext) => BaseConceptModel;
@@ -44,9 +54,12 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
         return z.never();
     }
 
+    const minItems = myItem.minItems ?? item.required ? 1 : 0;
+    const maxItems = myItem.maxItems ?? Infinity;
+
     if (context.currentModel === undefined) {
-        if (item.required) {
-            return z.never({ message: '至少需要一项' });
+        if (minItems > 0) {
+            return z.never({ message: `至少需要${minItems}项` });
         } else {
             return z.undefined();
         }
@@ -56,8 +69,12 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
         throw new Error('Expected current model to be an array');
     }
 
-    if (item.required && context.currentModel.length === 0) {
-        return z.never({ message: '至少需要一项' });
+    if (context.currentModel.length < minItems) {
+        return z.never({ message: `至少需要${minItems}项` });
+    }
+
+    if (context.currentModel.length > maxItems) {
+        return z.never({ message: `最多只能有${maxItems}项` });
     }
 
     // build a tuple schema that validates each item according to its concept and model

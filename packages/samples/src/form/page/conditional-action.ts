@@ -42,6 +42,8 @@ export const ConditionalAction = defineConcept({
                 inline: true,
                 help: '当条件为真时执行的动作。',
                 candidates: [GoToPageAction],
+                minItems: 1,
+                maxItems: 1,
             },
         },
     },

@@ -45,9 +45,9 @@ provide(APP_KEY, props.app);
 provide(CURRENT_SELECTION, selection);
 
 const aspects = [
-    { label: 'Content', aspect: 'content' },
-    { label: 'Design', aspect: 'design' },
-    { label: 'Setting', aspect: 'setting' },
+    { label: '内容', aspect: 'content' },
+    { label: '设计', aspect: 'design' },
+    { label: '设置', aspect: 'setting' },
 ] as const;
 
 const onChange = (data: BaseConceptModel) => {
@@ -57,11 +57,16 @@ const onChange = (data: BaseConceptModel) => {
 const onSelectionChange = (data: SelectionData) => {
     selection.value = data;
 };
+
+const onAspectChange = () => {
+    // reset edit path to root when switching aspect
+    editPath.value = [];
+};
 </script>
 
 <template>
     <div class="flex flex-col p-4 text-sm h-full">
-        <el-tabs v-model="activeAspect">
+        <el-tabs v-model="activeAspect" @tab-change="onAspectChange">
             <el-tab-pane v-for="{ label, aspect } in aspects" :label="label" :name="aspect"> </el-tab-pane>
         </el-tabs>
         <div class="flex-grow overflow-auto">

@@ -92,6 +92,7 @@ const childComponents = computed(() => {
 
 <template>
     <div class="flex flex-col gap-4 pb-4">
+        <div v-if="groups.length === 0" class="text-gray-500">没有该类别的配置项</div>
         <div v-for="(group, index) in groups">
             <div v-if="group.items.length > 0">
                 <el-divider v-if="index > 0" class="mt-1 mb-4" />
