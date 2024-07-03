@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS } from 'lit';
 import globalStyles from './form.css?inline';
 import { consume } from '@lit/context';
-import { formState, answerData } from '../state';
+import { formState, FormAnswerData } from '../state';
 import { property } from 'lit/decorators.js';
 
 export const PtFormStateChangeEventName = 'pt-form-state-changed';
@@ -35,8 +35,8 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 
     connectedCallback() {
         super.connectedCallback();
-        if (this.formState[this.data!.$id]) {
-            this.value = this.formState[this.data!.$id];
+        if (this.formState.answers[this.data!.$id]) {
+            this.value = this.formState.answers[this.data!.$id];
         }
     }
 
@@ -57,7 +57,7 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     }
 
     updated() {
-        const questionData = (this.formState[this.data!.$id] = this.value);
+        const questionData = (this.formState.answers[this.data!.$id] = this.value);
         questionData.submitData = this.getSubmitData();
         this.dispatchUpdate();
     }
@@ -69,7 +69,7 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     }
 
     @consume({ context: formState })
-    formState: answerData = {};
+    formState: FormAnswerData = { answers: {} };
 }
 
 export interface FormSubmitData {
