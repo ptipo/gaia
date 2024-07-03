@@ -251,6 +251,7 @@ const checkEmitChange = () => {
                     placeholder="请选择"
                     :multiple="rightOperandOptions?.multiple"
                     v-model="right"
+                    value-key="key"
                     @change="onRightOperandChange"
                 >
                     <el-option
