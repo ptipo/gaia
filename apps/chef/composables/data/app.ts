@@ -234,7 +234,7 @@ export function useCountApp<TArgs extends Prisma.AppCountArgs, TQueryFnData = TA
     return useModelQuery<TQueryFnData, TData, TError>('App', `${endpoint}/app/count`, args, options, fetch);
 }
 
-export function useCheckApp<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; version?: string; bundle?: string; htmlTagName?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCheckApp<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; bundle?: string; htmlTagName?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<boolean, boolean, TError>('App', `${endpoint}/app/check`, args, options, fetch);
 }

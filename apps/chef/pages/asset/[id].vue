@@ -59,14 +59,14 @@ const createAppElement = async (app: App) => {
 
     try {
         console.log('Loading app bundle from:', app.bundle);
-        const module = await loadAppBundle(app.bundle);
+        const { module, version } = await loadAppBundle(app.bundle);
 
         if (!module.config) {
             console.error('No config found in the app bundle.');
             return;
         }
 
-        appInstance.value = createAppInstance(module.config);
+        appInstance.value = createAppInstance(module.config, version);
         model.value = appInstance.value.model;
     } catch (err) {
         error(`Failed to load app bundle: ${err}`);
@@ -178,10 +178,14 @@ const onPublish = async () => {
 };
 
 const doSaveAsset = (asset: Asset & { app: App }) => {
+    if (!appInstance.value || !model.value) {
+        return;
+    }
+    const serializedModel = appInstance.value.stringifyModel(model.value);
     return saveAsset({
         where: { id: asset.id },
         data: {
-            config: { model: model.value as Prisma.JsonObject, appVersion: asset.app.version },
+            config: JSON.parse(serializedModel),
         },
     });
 };

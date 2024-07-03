@@ -86,10 +86,6 @@ const metadata = {
                 }, name: {
                     name: "name",
                     type: "String",
-                }, version: {
-                    name: "version",
-                    type: "String",
-                    attributes: [{ "name": "@default", "args": [{ "value": "1.0.0" }] }],
                 }, assets: {
                     name: "assets",
                     type: "Asset",

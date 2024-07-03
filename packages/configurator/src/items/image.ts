@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
+import { NonPrimitiveTypes } from '..';
 
 /**
  * 图片资源配置项
@@ -13,6 +14,7 @@ export const getSchema = (item: ConfigItemBase) =>
     wrap(
         item,
         z.object({
+            $type: z.literal(NonPrimitiveTypes.image),
             url: z.string(),
             width: z.number().positive().optional(),
             height: z.number().positive().optional(),
