@@ -1,11 +1,11 @@
-import { answerData } from '../state';
+import { FormAnswerData, answerData } from '../state';
 
 type StorageType = 'localstorage' | 'sessionstorage';
 
 export class StorageWrapper {
     constructor(private storageType?: StorageType, readonly ttl?: number) {}
 
-    set(key: string, value: answerData) {
+    set(key: string, value: FormAnswerData) {
         if (this.storageType === 'localstorage') {
             localStorage.setItem(key, JSON.stringify({ value, ttl: Date.now() + this.ttl! }));
         } else {
@@ -13,7 +13,7 @@ export class StorageWrapper {
         }
     }
 
-    get(key: string): answerData | null {
+    get(key: string): FormAnswerData | null {
         let item;
 
         if (this.storageType) {

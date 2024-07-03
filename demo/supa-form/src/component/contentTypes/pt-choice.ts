@@ -233,11 +233,11 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
 
     override getSubmitData() {
         const submitValue = this.value
-            .data!.map(([key, value]) => {
-                if (value) {
-                    return value;
+            .data!.map(([option, additionalInput]) => {
+                const choice = this.targetChoices?.find((x) => x.$id == option);
+                if (additionalInput) {
+                    return `${choice?.value} -- ${additionalInput}`;
                 } else {
-                    const choice = this.targetChoices?.find((x) => x.$id == key);
                     return choice?.value;
                 }
             })

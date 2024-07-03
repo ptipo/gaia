@@ -5,7 +5,7 @@ import './pt-form-page';
 import './pt-form-complete-page';
 import { PtBaseShadow, QuestionState } from './pt-base';
 import { provide } from '@lit/context';
-import { formState, answerData } from '../state';
+import { formState, answerData, FormAnswerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
 import { validateLogic } from '../util/logic-resolver';
 import { ConceptRef } from '@hayadev/configurator';
@@ -54,7 +54,7 @@ export class PtForm extends PtBaseShadow {
 
     @provide({ context: formState })
     @state()
-    formState: answerData = {};
+    formState: FormAnswerData = { answers: {} };
 
     private pageIdStack: string[] = [];
 
@@ -175,22 +175,23 @@ export class PtForm extends PtBaseShadow {
                 </div>
             `;
         } else {
-            this.submitPage();
+            this.submitPage(true);
             const completePage = completePages.find((x) => x.$id == this.pageId);
             return html`<pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
         }
     }
 
-    private submitPage() {
-        console.log(`submit form data ${JSON.stringify(this.formState)}`);
+    private submitPage(isComplete: boolean = false) {
+        const submitData = this.getSubmitDataFromState();
+        console.log(`submit form data ${JSON.stringify(submitData)}`);
 
         const options = {
-            detail: this.formState,
+            detail: submitData,
             bubbles: true,
             composed: true,
         };
 
-        this.dispatchEvent(new CustomEvent('form-complete', options));
+        this.dispatchEvent(new CustomEvent(isComplete ? 'form-answer' : 'form-complete', options));
     }
 
     private prePage() {
@@ -243,7 +244,7 @@ export class PtForm extends PtBaseShadow {
 
         if (nextAction == 'conditional') {
             const satisfiedCondition = nextButton.conditionalAction?.find((x) =>
-                validateLogic(this.config!, x.condition!, this.formState)
+                validateLogic(this.config!, x.condition!, this.formState.answers)
             );
             if (satisfiedCondition) {
                 const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
@@ -262,6 +263,7 @@ export class PtForm extends PtBaseShadow {
             }
         }
 
+        this.submitPage();
         // save form state to storage
         this.formState.currentPageId = this.pageId;
         this.storageWrapper?.set(this.storageKey, this.formState);
@@ -269,7 +271,6 @@ export class PtForm extends PtBaseShadow {
 
     private onFormStateChange() {
         console.log('form state changed');
-        console.log(JSON.stringify(this.formState));
     }
 
     private isCompletePage(pageId: string) {
@@ -291,6 +292,18 @@ export class PtForm extends PtBaseShadow {
         };
 
         this.dispatchEvent(new CustomEvent('form-page-change', options));
+    }
+
+    private getSubmitDataFromState() {
+        const result: { [key: string]: string } = {};
+
+        for (const key in this.formState.answers) {
+            const submitData = this.formState.answers[key].submitData;
+            if (submitData) {
+                result[submitData.name] = submitData.value;
+            }
+        }
+        return result;
     }
 }
 
