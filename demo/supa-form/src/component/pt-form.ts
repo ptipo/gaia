@@ -244,7 +244,7 @@ export class PtForm extends PtBaseShadow {
 
         if (nextAction == 'conditional') {
             const satisfiedCondition = nextButton.conditionalAction?.find((x) =>
-                validateLogic(this.config!, x.condition!, this.formState)
+                validateLogic(this.config!, x.condition!, this.formState.answers)
             );
             if (satisfiedCondition) {
                 const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;

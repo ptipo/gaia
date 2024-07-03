@@ -1,7 +1,7 @@
 import { createContext } from '@lit/context';
 import { QuestionState } from './component/pt-base';
 
-type answerData = {
+export type answerData = {
     [key: string]: QuestionState<any>;
 };
 
