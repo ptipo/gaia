@@ -1,12 +1,15 @@
 import { createContext } from '@lit/context';
 import { QuestionState } from './component/pt-base';
 
-export type answerData = {
+type answerData = {
     [key: string]: QuestionState<any>;
-} & {
-    currentPageId?: string;
 };
 
-export const formState = createContext<answerData>(Symbol('form-state'));
+export class FormAnswerData {
+    answers: answerData = {};
+    currentPageId?: string;
+}
+
+export const formState = createContext<FormAnswerData>(Symbol('form-state'));
 
 export const formWidth = createContext<number>(Symbol('form-width'));
