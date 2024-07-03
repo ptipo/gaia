@@ -16,7 +16,6 @@ async function main() {
         create: {
             name: 'SupaForm',
             owner: { connect: { id: admin.id } },
-            version: '0.1.',
             bundle: '@hayadev/supa-form',
             htmlTagName: 'pt-form',
         },

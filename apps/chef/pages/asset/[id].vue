@@ -91,6 +91,9 @@ const createAppElement = async (app: App) => {
         }
     }
 
+    // trigger an initial validation
+    validate(model.value);
+
     if (appContainerEl.value) {
         appContainerEl.value.innerHTML = '';
         console.log('Creating app element:', app.htmlTagName);
