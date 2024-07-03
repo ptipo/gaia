@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
-import { FormApp } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
+import { FormApp } from './samples/supa-form';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';

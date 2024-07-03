@@ -69,7 +69,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
     });
 }
 
-function cloneItemProvider(concept: Concept, source: BaseConceptModel, context: ProviderContext) {
+function cloneItemProvider(_concept: Concept, source: BaseConceptModel, context: ProviderContext) {
     const result = deepcopy(source);
     const newName = incrementName(
         result.name as string,
