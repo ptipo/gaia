@@ -1,14 +1,13 @@
 import { P, match } from 'ts-pattern';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GetSchemaContext, GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
 import { NonPrimitiveTypes } from './types';
-import { fromError } from 'zod-validation-error';
-import semver from 'semver';
 
 /**
  * Config validation issue.
@@ -33,9 +32,6 @@ export class AppInstance<TConcept extends Concept> {
     private _model: inferPartialConcept<TConcept>;
 
     constructor(public readonly def: AppDef<TConcept>, public readonly version: string) {
-        if (!semver.valid(version)) {
-            throw new Error(`Invalid version: ${version}`);
-        }
         this._model = this.createConceptInstance(def.concept);
     }
 
@@ -139,12 +135,12 @@ export class AppInstance<TConcept extends Concept> {
 
         const schema = z.object({
             model: z.unknown(),
-            appVersion: z.string(),
+            appVersion: z.string().optional(),
         });
         const { error, data } = schema.safeParse(deserialized);
         if (error) {
-            console.error('Invalid model input', error);
-            throw new Error(`Invalid model input: ${fromError(error)}`);
+            this._model = this.createConceptInstance(this.concept);
+            return { model: this._model, appVersion: undefined, error: fromZodError(error) };
         }
 
         const modelSchema = this.getModelSchema({
@@ -155,8 +151,8 @@ export class AppInstance<TConcept extends Concept> {
         });
         const parsedModel = modelSchema.safeParse(data.model);
         if (parsedModel.error) {
-            console.error('Invalid model', parsedModel.error);
-            throw new Error(`Invalid model: ${fromError(parsedModel.error)}`);
+            this._model = this.createConceptInstance(this.concept);
+            return { model: this._model, appVersion: undefined, error: fromZodError(parsedModel.error) };
         }
 
         this._model = parsedModel.data as inferPartialConcept<TConcept>;

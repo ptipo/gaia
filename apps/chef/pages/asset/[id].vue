@@ -3,7 +3,7 @@ import type { AppInstance, Concept } from '@hayadev/configurator';
 import { createAppInstance, type BaseConceptModel } from '@hayadev/configurator';
 import { AppConfigurator, type EditPathRecord, type Issue, type SelectionData } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset, Prisma } from '@prisma/client';
+import type { App, Asset } from '@prisma/client';
 import { useDeleteAsset, useFindUniqueAsset, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
@@ -75,7 +75,20 @@ const createAppElement = async (app: App) => {
     }
 
     if (asset.value?.config) {
-        model.value = appInstance.value.model = (asset.value.config as Prisma.JsonObject).model as BaseConceptModel;
+        const {
+            model: loadedModel,
+            appVersion,
+            error: loadError,
+        } = appInstance.value.loadModel(JSON.stringify(asset.value.config));
+
+        if (loadError) {
+            console.warn('Error loading app model:', loadError.message);
+            error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
+        } else {
+            model.value = loadedModel;
+            console.log('Loaded app model:', model.value);
+            console.log('Model app version:', appVersion);
+        }
     }
 
     if (appContainerEl.value) {
@@ -238,9 +251,11 @@ const goBack = async () => {
                 </template>
             </el-page-header>
             <div class="flex button-group">
-                <el-button @click="onSave" v-loading="isSavingAsset">保存</el-button>
+                <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
-                <el-button type="primary" @click="onPublish" v-loading="isPublishingAsset">发布</el-button>
+                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
+                    >发布</el-button
+                >
             </div>
         </div>
 

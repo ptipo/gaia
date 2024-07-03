@@ -1,17 +1,17 @@
+import { ConceptRef } from '@hayadev/configurator';
+import { provide } from '@lit/context';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { app } from '../app';
-import './pt-form-page';
-import './pt-form-complete-page';
-import { PtBaseShadow, QuestionState } from './pt-base';
-import { provide } from '@lit/context';
-import { formState, answerData, FormAnswerData } from '../state';
 import { keyed } from 'lit/directives/keyed.js';
+import { createRef, Ref, ref } from 'lit/directives/ref.js';
+import { app } from '../app';
+import { FormAnswerData, formState } from '../state';
 import { validateLogic } from '../util/logic-resolver';
-import { ConceptRef } from '@hayadev/configurator';
-import { PtFormPage } from './pt-form-page';
-import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { setLocale } from './localization';
+import { PtBaseShadow } from './pt-base';
+import './pt-form-complete-page';
+import './pt-form-page';
+import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
@@ -38,8 +38,14 @@ export class PtForm extends PtBaseShadow {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                app.loadModel(value);
-                return app.model;
+                const { error, model, appVersion } = app.loadModel(value);
+                if (error) {
+                    console.warn('Error loading model', error.message);
+                    return;
+                }
+                console.log('Loaded model', model);
+                console.log('Model app version', appVersion);
+                return model;
             },
         },
     })
