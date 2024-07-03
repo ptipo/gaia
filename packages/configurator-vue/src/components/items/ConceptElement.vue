@@ -35,10 +35,22 @@ const props = withDefaults(
          * Whether to allow delete
          */
         allowDelete?: boolean;
+
+        /**
+         * Whether to allow clone
+         */
+        allowClone?: boolean;
+
+        /**
+         * Whether to allow add sibling
+         */
+        allowAddSibling?: boolean;
     }>(),
     {
         inlineEditing: false,
         allowDelete: true,
+        allowClone: true,
+        allowAddSibling: true,
     }
 );
 
@@ -111,8 +123,8 @@ const elementSummary = computed(() => {
 // filter items that are inline editable
 const inlineEditableItems = computed(() => {
     return Object.entries(props.concept.items)
-        .filter(([_, value]) => !['has-many', 'has'].includes(value.type))
-        .map(([key, value]) => ({ key, item: value }));
+        .filter(([_, item]) => !['has-many', 'has'].includes(item.type) && !item.inline)
+        .map(([key, item]) => ({ key, item }));
 });
 
 // find the first has-many child item (for inline-listing)
@@ -301,7 +313,7 @@ const closeMenu = () => {
                             </div>
                             <el-dropdown-item
                                 v-if="parent.candidates.length === 1"
-                                divided
+                                :disabled="!allowAddSibling"
                                 @click="() => onAddSibling(parent.candidates[0])"
                                 ><el-icon><i-ep-plus /></el-icon>在下方添加{{
                                     parent.candidates.length === 1 ? concept.displayName : parent.name
@@ -310,6 +322,7 @@ const closeMenu = () => {
                             <el-dropdown-item
                                 v-else
                                 divided
+                                :disabled="!allowAddSibling"
                                 @click="
                                     () => {
                                         showCandidateCreateMenu = true;
@@ -320,7 +333,7 @@ const closeMenu = () => {
                                 }}</el-dropdown-item
                             >
 
-                            <el-dropdown-item divided @click="() => onClone({ concept, model })"
+                            <el-dropdown-item divided :disabled="!allowClone" @click="() => onClone({ concept, model })"
                                 ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
                             >
                             <el-dropdown-item @click="() => onDelete({ concept, model })"
@@ -392,7 +405,7 @@ const closeMenu = () => {
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="onCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="onSaveEdit">保存</el-button>
+                    <el-button type="primary" @click="onSaveEdit">确定</el-button>
                 </div>
             </template>
         </el-dialog>
