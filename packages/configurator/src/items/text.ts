@@ -32,7 +32,10 @@ export interface TextItem extends ConfigItemBase {
 export const getSchema = (item: ConfigItemBase) => {
     const myItem = item as TextItem;
 
-    let result = z.string().min(1);
+    let result = z.string();
+    if (myItem.required) {
+        result = result.min(1);
+    }
 
     switch (myItem.kind) {
         case 'text':

@@ -22,7 +22,7 @@ const onBeforeUpload = async (rawFile: UploadRawFile) => {
     const url = URL.createObjectURL(blob);
     imageUrl.value = url;
 
-    emit('change', { url });
+    emit('change', { $type: 'image', url });
 
     return false;
 };
@@ -40,7 +40,11 @@ const onBeforeUpload = async (rawFile: UploadRawFile) => {
             <div v-if="!imageUrl" class="w-32 h-32 flex items-center justify-center border border-dashed rounded">
                 <el-icon size="16"><i-ep-plus /> </el-icon>
             </div>
-            <el-image v-else :src="imageUrl" class="w-full" />
+            <el-image v-else :src="imageUrl" class="w-full"
+                ><template #placeholder>
+                    <div>Loading...</div>
+                </template></el-image
+            >
         </el-upload>
     </el-form-item>
 </template>

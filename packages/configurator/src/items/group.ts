@@ -60,7 +60,7 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
                     [key]: makeConfigItemSchema(item, {
                         ...context,
                         parentModel: context.currentModel,
-                        currentModel: context.currentModel[key],
+                        currentModel: context.currentModel?.[key],
                     }),
                 }),
                 {}

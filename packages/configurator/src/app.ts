@@ -8,6 +8,7 @@ import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialCo
 import { GetSchemaContext, GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
 import { NonPrimitiveTypes } from './types';
+import { ValidationIssueCode } from './validation';
 
 /**
  * Config validation issue.
@@ -17,6 +18,11 @@ export type ValidationIssue = {
      * Path to the issue.
      */
     path: (string | number)[];
+
+    /**
+     * Issue code.
+     */
+    code: ValidationIssueCode;
 
     /**
      * Issue message.
@@ -93,7 +99,7 @@ export class AppInstance<TConcept extends Concept> {
                 { type: P.union('text', 'number', 'switch', 'select'), default: P.not(undefined) },
                 (item) => item.default
             )
-            .with({ type: 'image', required: true }, () => ({}))
+            .with({ type: 'image', required: true }, () => ({ $type: NonPrimitiveTypes.image }))
             .with({ type: 'has' }, (item) => this.createConceptInstance(item.concept))
             .with({ type: 'has-many' }, () => [
                 /* TODO: 初始项 */
@@ -209,12 +215,12 @@ export class AppInstance<TConcept extends Concept> {
         if (error) {
             const issues = error.issues.map((issue) => {
                 // TODO: move code to message translation out of the "configurator" package
-                const message = match(issue)
-                    .with({ code: 'invalid_type', received: 'undefined' }, () => '未设置')
-                    .with({ code: 'invalid_type', received: 'array' }, () => '至少需要一项')
-                    .with({ code: 'too_small', type: P.union('array', 'string') }, () => '未设置')
-                    .otherwise(() => issue.code + ':' + issue.message);
-                return { message, path: issue.path };
+                const code = match(issue)
+                    .with({ code: 'invalid_type', received: 'undefined' }, () => ValidationIssueCode.Required)
+                    .with({ code: 'invalid_type', received: 'array' }, () => ValidationIssueCode.RequiredArray)
+                    .with({ code: 'too_small', type: P.union('array', 'string') }, () => ValidationIssueCode.Required)
+                    .otherwise(() => ValidationIssueCode.InvalidValue);
+                return { code, message: issue.message, path: issue.path };
             });
             return { success: false, issues };
         } else {

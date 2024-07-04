@@ -82,7 +82,7 @@ export const Form = defineConcept({
                             content: '标题',
                         }),
                         app.createConceptInstance(ImageElement, {
-                            image: { url: 'https://via.placeholder.com/150' },
+                            image: { $type: 'image', url: 'https://via.placeholder.com/150' },
                         }),
                         app.createConceptInstance(TextElement, {
                             content: '说明文字',
