@@ -39,6 +39,7 @@ model App {
   assets      Asset[]
   bundle      String
   htmlTagName String
+  ptCodeMode  String?  @db.Text()
 }
 
 /// @@allow('all', auth() == owner)

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "App" ADD COLUMN IF NOT EXISTS "ptCodeMode" TEXT;

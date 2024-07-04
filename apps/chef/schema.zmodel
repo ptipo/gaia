@@ -42,6 +42,8 @@ model App extends EntityWithOwner {
   assets      Asset[]
   bundle      String
   htmlTagName String
+  ptCodeMode  String? @db.Text
+
 
   @@allow('read', auth() != null)
 }

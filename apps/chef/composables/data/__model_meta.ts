@@ -98,6 +98,10 @@ const metadata = {
                 }, htmlTagName: {
                     name: "htmlTagName",
                     type: "String",
+                }, ptCodeMode: {
+                    name: "ptCodeMode",
+                    type: "String",
+                    isOptional: true,
                 },
             }
             , uniqueConstraints: {

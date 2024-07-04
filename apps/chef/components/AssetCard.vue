@@ -19,6 +19,23 @@ const onCopyPublishUrl = () => {
     navigator.clipboard.writeText(`${runtimeConfig.public.publishPageAccessPoint}/${props.asset.id}`);
     success('发布地址已复制到剪贴板');
 };
+
+const onCopyCode = () => {
+    const asset = props.asset;
+    const app = asset.app;
+    const codeModeTemplate = asset.app.ptCodeMode!;
+
+    const result = codeModeTemplate
+        .replaceAll('{{assetId}}', asset.id)
+        .replaceAll('{{assetBundle}}', app.bundle)
+        .replaceAll('{{assetHtmlTag}}', app.htmlTagName)
+        .replaceAll('{{assetVersion}}', asset.appVersion || 'latest');
+
+    console.log('copy code:\n' + result);
+
+    navigator.clipboard.writeText(result);
+    success('代码已复制到剪贴板');
+};
 </script>
 
 <template>
@@ -34,6 +51,9 @@ const onCopyPublishUrl = () => {
                         >
                         <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyPublishUrl"
                             >复制发布地址</el-dropdown-item
+                        >
+                        <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyCode"
+                            >复制CodeMode代码</el-dropdown-item
                         >
                     </el-dropdown-menu>
                 </template>
