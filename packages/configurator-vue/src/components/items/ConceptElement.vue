@@ -278,7 +278,8 @@ const closeMenu = () => {
             }"
         >
             <div class="flex-grow" @click="onClickNested">
-                {{ elementSummary }}
+                <span v-if="elementSummary">{{ elementSummary }}</span
+                ><span v-else class="italic text-gray-600">未命名</span>
             </div>
             <el-dropdown
                 trigger="click"
