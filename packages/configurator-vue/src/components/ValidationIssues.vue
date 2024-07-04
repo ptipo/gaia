@@ -38,7 +38,7 @@ const parseIssue = (issue: Issue) => {
             }
 
             if (currentModel) {
-                path.push(currentModel.name ?? `#${part + 1}`);
+                path.push(currentModel.name ? currentModel.name : `#${part + 1}`);
             }
         } else {
             currentModel = currentModel[part];
