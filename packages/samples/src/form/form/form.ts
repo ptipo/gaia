@@ -1,10 +1,4 @@
-import {
-    type BaseConceptModel,
-    defineConcept,
-    type inferPartialConcept,
-    type ValidationIssue,
-    ValidationIssueCode,
-} from '@hayadev/configurator';
+import { type BaseConceptModel, defineConcept } from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
@@ -108,37 +102,4 @@ export const Form = defineConcept({
          */
         dataCollection: DataCollectionSetting,
     },
-
-    validate: (model) => {
-        const issues: ValidationIssue[] = [];
-        issues.push(...validateDuplicatedQuestionNames(model as inferPartialConcept<typeof Form>));
-        return issues;
-    },
 });
-
-function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof Form>) {
-    const issues: ValidationIssue[] = [];
-
-    model.contentPages.forEach((page, pageIndex) => {
-        const knownQuestionNames = new Set<string>();
-        page.pageItems.forEach((item, itemIndex) => {
-            if (['ChoiceQuestion', 'QAQuestion', 'EmailQuestion'].includes(item.$concept)) {
-                if (!item.name || typeof item.name !== 'string') {
-                    return;
-                }
-                const name = item.name.trim();
-                if (knownQuestionNames.has(name)) {
-                    issues.push({
-                        code: ValidationIssueCode.InvalidValue,
-                        message: `问题名称"${name}"重复`,
-                        path: ['contentPages', pageIndex, 'pageItems', itemIndex, 'name'],
-                    });
-                } else {
-                    knownQuestionNames.add(name);
-                }
-            }
-        });
-    });
-
-    return issues;
-}
