@@ -119,8 +119,8 @@ export const Form = defineConcept({
 function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof Form>) {
     const issues: ValidationIssue[] = [];
 
-    const knownQuestionNames = new Set<string>();
     model.contentPages.forEach((page, pageIndex) => {
+        const knownQuestionNames = new Set<string>();
         page.pageItems.forEach((item, itemIndex) => {
             if (['ChoiceQuestion', 'QAQuestion', 'EmailQuestion'].includes(item.$concept)) {
                 if (!item.name || typeof item.name !== 'string') {
