@@ -50,6 +50,7 @@ model Asset extends EntityWithOwner {
   name       String  @length(1)
   app        App     @relation(fields: [appId], references: [id])
   appId      String
+  appVersion String?
   config     Json?
   publishUrl String?
 }

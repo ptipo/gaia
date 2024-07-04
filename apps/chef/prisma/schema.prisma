@@ -52,6 +52,7 @@ model Asset {
   name       String
   app        App      @relation(fields: [appId], references: [id])
   appId      String
+  appVersion String?
   config     Json?
   publishUrl String?
 }

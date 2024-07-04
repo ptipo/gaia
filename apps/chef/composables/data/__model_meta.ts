@@ -156,6 +156,10 @@ const metadata = {
                     type: "String",
                     isForeignKey: true,
                     relationField: 'app',
+                }, appVersion: {
+                    name: "appVersion",
+                    type: "String",
+                    isOptional: true,
                 }, config: {
                     name: "config",
                     type: "Json",

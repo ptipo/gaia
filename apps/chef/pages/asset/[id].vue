@@ -202,6 +202,7 @@ const doSaveAsset = (asset: Asset & { app: App }) => {
         where: { id: asset.id },
         data: {
             config: JSON.parse(serializedModel),
+            appVersion: appInstance.value.version,
         },
     });
 };
