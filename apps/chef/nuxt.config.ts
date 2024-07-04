@@ -45,8 +45,10 @@ export default defineNuxtConfig({
     runtimeConfig: {
         publishPageBucket: '',
         publishPagePath: '',
+        publishConfigPath: '',
         public: {
             publishPageAccessPoint: '',
+            publishConfigAccessPoint: '',
         },
     },
 
