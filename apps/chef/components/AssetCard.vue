@@ -29,7 +29,8 @@ const onCopyCode = () => {
         .replaceAll('{{assetId}}', asset.id)
         .replaceAll('{{assetBundle}}', app.bundle)
         .replaceAll('{{assetHtmlTag}}', app.htmlTagName)
-        .replaceAll('{{assetVersion}}', asset.appVersion || 'latest');
+        .replaceAll('{{assetVersion}}', asset.appVersion || 'latest')
+        .replaceAll('{{assetConfigAccessPoint}}', runtimeConfig.public.publishConfigAccessPoint);
 
     console.log('copy code:\n' + result);
 

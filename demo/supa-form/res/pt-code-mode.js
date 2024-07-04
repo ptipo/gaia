@@ -2,7 +2,7 @@ const assetBundle = '{{assetBundle}}';
 const assetHtmlTag = '{{assetHtmlTag}}';
 const assetId = '{{assetId}}';
 const assetVersion = '{{assetVersion}}';
-const assetConfig = `https://hayaapps.s3.amazonaws.com/pages/${assetId}/config.json`;
+const assetConfig = `{{assetConfigAccessPoint}}/${assetId}/${assetVersion}/config.json`;
 
 //engage id
 const engageId = _pt_popup_info.engage_id;

@@ -27,7 +27,7 @@ export default eventHandler(async (event) => {
     }
 
     const pageContent = makePageContent(asset);
-    const { publishPageBucket, publishPagePath, public: publicConfig } = useRuntimeConfig();
+    const { publishPageBucket, publishPagePath, publishConfigPath, public: publicConfig } = useRuntimeConfig();
     console.log('Publishing to:', publishPageBucket, publishPagePath, publicConfig.publishPageAccessPoint);
 
     const s3 = new S3Client();
@@ -44,7 +44,7 @@ export default eventHandler(async (event) => {
 
     const configParams = {
         Bucket: publishPageBucket,
-        Key: `${publishPagePath}/${asset.id}/config.json`,
+        Key: `${publishConfigPath}/${asset.id}/${asset.appVersion}/config.json`,
         Body: JSON.stringify(asset.config),
         ContentType: 'application/json',
     };
