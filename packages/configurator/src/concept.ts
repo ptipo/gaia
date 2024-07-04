@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
 import type { GetSchemaContext } from './items';
 import { NonPrimitiveTypes, ProviderContext } from './types';
+import type { BaseConceptModel } from './inference';
 
 /**
  * A configurable abstract concept containing a set of config items.
@@ -36,6 +37,11 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * If the concept can be selected as a preview target
      */
     selectable?: boolean;
+
+    /**
+     * Callback for handling model changes
+     */
+    onModelChange?: (model: BaseConceptModel, key: string, value: unknown) => void;
 };
 
 export type ConceptTemplate = {

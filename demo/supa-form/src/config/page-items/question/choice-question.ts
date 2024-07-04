@@ -167,6 +167,12 @@ export const ChoiceQuestion = defineConcept({
     },
 
     summary: ({ currentModel }) => {
-        return `${currentModel.name || '选择'} ${currentModel.required ? '*' : ''}`;
+        return `${currentModel?.name || '选择'} ${currentModel?.required ? '*' : ''}`;
+    },
+
+    onModelChange: (model, key, data) => {
+        if (model && key === 'choiceKind' && data === 'image') {
+            model.flatMode = true;
+        }
     },
 });
