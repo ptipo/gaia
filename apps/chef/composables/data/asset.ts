@@ -234,7 +234,7 @@ export function useCountAsset<TArgs extends Prisma.AssetCountArgs, TQueryFnData 
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/count`, args, options, fetch);
 }
 
-export function useCheckAsset<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; appId?: string; publishUrl?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCheckAsset<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; appId?: string; appVersion?: string; publishUrl?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<boolean, boolean, TError>('Asset', `${endpoint}/asset/check`, args, options, fetch);
 }

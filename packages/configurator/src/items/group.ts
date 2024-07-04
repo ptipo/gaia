@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { GetSchemaContext } from '.';
-import type { ConfigGroups } from '..';
+import { NonPrimitiveTypes, type ConfigGroups } from '..';
 import { makeConfigItemSchema, type ConfigItem } from '../config-item';
 import { wrap } from '../schema';
 import type { ConfigItemBase } from './common';
@@ -52,8 +52,9 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
     const myItem = item as GroupItem;
     return wrap(
         item,
-        z.object(
-            Object.entries(myItem.items).reduce(
+        z.object({
+            $type: z.literal(NonPrimitiveTypes.itemGroup),
+            ...Object.entries(myItem.items).reduce(
                 (acc, [key, item]) => ({
                     ...acc,
                     [key]: makeConfigItemSchema(item, {
@@ -63,7 +64,7 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
                     }),
                 }),
                 {}
-            )
-        )
+            ),
+        })
     );
 };

@@ -1,10 +1,11 @@
 import { P, match } from 'ts-pattern';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
-import { GroupItem } from './items';
+import { GetSchemaContext, GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
 import { NonPrimitiveTypes } from './types';
 
@@ -30,7 +31,7 @@ export class AppInstance<TConcept extends Concept> {
     private conceptInstances: Record<string, BaseConceptModel> = {};
     private _model: inferPartialConcept<TConcept>;
 
-    constructor(public readonly def: AppDef<TConcept>) {
+    constructor(public readonly def: AppDef<TConcept>, public readonly version: string) {
         this._model = this.createConceptInstance(def.concept);
     }
 
@@ -102,7 +103,7 @@ export class AppInstance<TConcept extends Concept> {
     }
 
     private createGroupModel(item: GroupItem): any {
-        const result: any = {};
+        const result: any = { $type: NonPrimitiveTypes.itemGroup };
         for (const [key, child] of Object.entries(item.items)) {
             const itemValue = this.createItemModel(child);
             if (itemValue !== undefined) {
@@ -112,13 +113,8 @@ export class AppInstance<TConcept extends Concept> {
         return result;
     }
 
-    private getModelSchema() {
-        return makeConceptSchema(this.concept, {
-            app: this,
-            rootModel: this.model,
-            currentModel: this.model,
-            parentModel: undefined,
-        });
+    private getModelSchema(context: GetSchemaContext) {
+        return makeConceptSchema(this.concept, context);
     }
 
     /**
@@ -127,6 +123,7 @@ export class AppInstance<TConcept extends Concept> {
     stringifyModel(model: BaseConceptModel) {
         return JSON.stringify({
             model,
+            appVersion: this.version,
         });
     }
 
@@ -135,13 +132,33 @@ export class AppInstance<TConcept extends Concept> {
      */
     loadModel(modelData: string) {
         const deserialized = JSON.parse(modelData);
+
         const schema = z.object({
-            model: z.any(),
+            model: z.unknown(),
+            appVersion: z.string().optional(),
         });
-        const { model } = schema.parse(deserialized);
-        this._model = model;
+        const { error, data } = schema.safeParse(deserialized);
+        if (error) {
+            this._model = this.createConceptInstance(this.concept);
+            return { model: this._model, appVersion: undefined, error: fromZodError(error) };
+        }
+
+        const modelSchema = this.getModelSchema({
+            app: this,
+            rootModel: data.model as BaseConceptModel,
+            currentModel: data.model as BaseConceptModel,
+            parentModel: undefined,
+        });
+        const parsedModel = modelSchema.safeParse(data.model);
+        if (parsedModel.error) {
+            this._model = this.createConceptInstance(this.concept);
+            return { model: this._model, appVersion: undefined, error: fromZodError(parsedModel.error) };
+        }
+
+        this._model = parsedModel.data as inferPartialConcept<TConcept>;
         this.reindexConceptInstances(this._model);
-        return model;
+
+        return { model: parsedModel.data, appVersion: data.appVersion };
     }
 
     /**
@@ -182,7 +199,12 @@ export class AppInstance<TConcept extends Concept> {
     ):
         | { success: true; data: inferConcept<TConcept>; issues?: never }
         | { success: false; issues: ValidationIssue[]; data?: never } {
-        const schema = this.getModelSchema();
+        const schema = this.getModelSchema({
+            app: this,
+            rootModel: this.model,
+            currentModel: this.model,
+            parentModel: undefined,
+        });
         const { error, data } = schema.safeParse(model);
         if (error) {
             const issues = error.issues.map((issue) => {
@@ -218,6 +240,6 @@ export function defineApp<TConcept extends Concept>(concept: TConcept): AppDef<T
 /**
  * Creates an app instance.
  */
-export function createAppInstance<TConcept extends Concept>(def: AppDef<TConcept>) {
-    return new AppInstance(def);
+export function createAppInstance<TConcept extends Concept>(def: AppDef<TConcept>, version: string) {
+    return new AppInstance(def, version);
 }
