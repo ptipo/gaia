@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SwitchItem } from '@hayadev/configurator/items';
-import { ref } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 
@@ -9,6 +9,16 @@ const props = defineProps<CommonProps<SwitchItem>>();
 const emit = defineEmits<CommonEvents<SwitchItem>>();
 
 const _model = ref(props.model);
+
+watch(
+    () => props.model,
+    async (value) => {
+        // element-plus's el-switch seems to have a racing issue when its model is watched,
+        // make changes in nextTick to workaround it
+        await nextTick();
+        _model.value = value;
+    }
+);
 </script>
 
 <template>
