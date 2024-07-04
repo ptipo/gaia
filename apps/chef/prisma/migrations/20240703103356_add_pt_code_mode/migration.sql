@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE "App" ADD COLUMN     "ptCodeMode" TEXT;
+ALTER TABLE "App" ADD COLUMN IF NOT EXISTS "ptCodeMode" TEXT;

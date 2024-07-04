@@ -25,13 +25,13 @@ const onCopyCode = () => {
     const app = asset.app;
     const codeModeTemplate = asset.app.ptCodeMode!;
 
-    console.log('copy code:\n' + codeModeTemplate);
-
     const result = codeModeTemplate
         .replaceAll('{{assetId}}', asset.id)
         .replaceAll('{{assetBundle}}', app.bundle)
         .replaceAll('{{assetHtmlTag}}', app.htmlTagName)
-        .replaceAll('{{assetVersion}}', 'latest');
+        .replaceAll('{{assetVersion}}', asset.appVersion || 'latest');
+
+    console.log('copy code:\n' + result);
 
     navigator.clipboard.writeText(result);
     success('代码已复制到剪贴板');
