@@ -1,4 +1,13 @@
-import { BaseConceptModel, Concept, ProviderContext, defineConcept, incrementName } from '@hayadev/configurator';
+import {
+    BaseConceptModel,
+    Concept,
+    ProviderContext,
+    ValidationIssue,
+    ValidationIssueCode,
+    defineConcept,
+    incrementName,
+    inferPartialConcept,
+} from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
@@ -40,6 +49,12 @@ export const ContentPage = defineConcept({
     },
 
     selectable: true,
+
+    validate: (model) => {
+        const issues: ValidationIssue[] = [];
+        issues.push(...validateDuplicatedQuestionNames(model as inferPartialConcept<typeof ContentPage>));
+        return issues;
+    },
 });
 
 // 根据不同的内容项类型，生成默认带自增序号的名称
@@ -79,4 +94,30 @@ function cloneItemProvider(concept: Concept, source: BaseConceptModel, context: 
     result.name = newName;
     result.question = newName;
     return result;
+}
+
+// 校验问题名称是否重复
+function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof ContentPage>) {
+    const issues: ValidationIssue[] = [];
+    const knownQuestionNames = new Set<string>();
+
+    model.pageItems.forEach((item, index) => {
+        if (['ChoiceQuestion', 'QAQuestion', 'EmailQuestion'].includes(item.$concept)) {
+            if (!item.name || typeof item.name !== 'string') {
+                return;
+            }
+            const name = item.name.trim();
+            if (knownQuestionNames.has(name)) {
+                issues.push({
+                    code: ValidationIssueCode.InvalidValue,
+                    message: `问题名称"${name}"重复`,
+                    path: ['pageItems', index, 'name'],
+                });
+            } else {
+                knownQuestionNames.add(name);
+            }
+        }
+    });
+
+    return issues;
 }

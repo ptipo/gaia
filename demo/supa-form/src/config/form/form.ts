@@ -1,4 +1,4 @@
-import { BaseConceptModel, defineConcept } from '@hayadev/configurator';
+import { type BaseConceptModel, defineConcept } from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';

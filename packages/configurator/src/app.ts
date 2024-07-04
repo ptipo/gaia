@@ -28,6 +28,11 @@ export type ValidationIssue = {
      * Issue message.
      */
     message: string;
+
+    /**
+     * Custom message.
+     */
+    customMessage?: string;
 };
 
 /**
@@ -214,13 +219,18 @@ export class AppInstance<TConcept extends Concept> {
         const { error, data } = schema.safeParse(model);
         if (error) {
             const issues = error.issues.map((issue) => {
-                // TODO: move code to message translation out of the "configurator" package
                 const code = match(issue)
+                    .with(
+                        { code: 'custom', params: { customCode: P.any } },
+                        ({ params }) => params.customCode as ValidationIssueCode
+                    )
                     .with({ code: 'invalid_type', received: 'undefined' }, () => ValidationIssueCode.Required)
                     .with({ code: 'invalid_type', received: 'array' }, () => ValidationIssueCode.RequiredArray)
                     .with({ code: 'too_small', type: P.union('array', 'string') }, () => ValidationIssueCode.Required)
                     .otherwise(() => ValidationIssueCode.InvalidValue);
-                return { code, message: issue.message, path: issue.path };
+
+                const customMessage = issue.code === 'custom' ? (issue.params?.customMessage as string) : undefined;
+                return { code, message: issue.message, customMessage, path: issue.path };
             });
             return { success: false, issues };
         } else {

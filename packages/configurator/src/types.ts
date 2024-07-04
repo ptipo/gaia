@@ -1,6 +1,7 @@
 import { AppInstance } from './app';
 import { Concept } from './concept';
 import { BaseConceptModel } from './inference';
+import { ValidationIssueCode } from './validation';
 
 /**
  * RGBA color.
@@ -49,6 +50,12 @@ export type ProviderContext = {
     currentModel: any;
 };
 
-export type ConceptValidationError = { message: string };
+/**
+ * Issues reported by custom validation.
+ */
+export type CustomValidationIssue = { code: ValidationIssueCode; message: string; path: (string | number)[] };
 
-export type ConceptValidator = (model: BaseConceptModel) => ConceptValidationError[] | undefined;
+/**
+ * Custom validator for a concept.
+ */
+export type ConceptCustomValidator = (model: BaseConceptModel) => CustomValidationIssue[] | undefined;
