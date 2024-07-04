@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept } from '@hayadev/configurator';
+import { BaseConceptModel, Concept, ValidationIssueCode } from '@hayadev/configurator';
+import { match } from 'ts-pattern';
 import { computed } from 'vue';
 import type { EditPathRecord } from './types';
 
@@ -15,6 +16,7 @@ const emit = defineEmits<{
 
 export type Issue = {
     path: (string | number)[];
+    code: ValidationIssueCode;
     message: string;
 };
 
@@ -36,7 +38,7 @@ const parseIssue = (issue: Issue) => {
             }
 
             if (currentModel) {
-                path.push(currentModel.name ?? `#${part + 1}`);
+                path.push(currentModel.name ? currentModel.name : `#${part + 1}`);
             }
         } else {
             currentModel = currentModel[part];
@@ -73,12 +75,19 @@ const unwrap = (item: any) => {
 
 type ParsedIssue = ReturnType<typeof parseIssue>;
 
+const getIssueCodeName = (code: ValidationIssueCode) => {
+    return match(code)
+        .with(ValidationIssueCode.Required, () => '未设置')
+        .with(ValidationIssueCode.RequiredArray, () => '未设置')
+        .with(ValidationIssueCode.InvalidValue, () => '设置错误')
+        .exhaustive();
+};
+
 const formatPath = ({ issue, path }: ParsedIssue) => {
-    return `${issue.message}: ${path.join(' > ')}`;
+    return `${getIssueCodeName(issue.code)}: ${path.join(' > ')}`;
 };
 
 const onIssueClick = ({ issue }: ParsedIssue) => {
-    console.log(issue.path);
     emit('navigate', issue.path);
 };
 
@@ -86,11 +95,11 @@ const issues = computed(() => props.issues.map(parseIssue));
 </script>
 
 <template>
-    <ul class="flex flex-col gap-1 p-2 text-red-600 text-sm">
-        <li v-for="issue in issues">
-            <div class="flex items-center gap-1 cursor-pointer" @click="() => onIssueClick(issue)">
-                <el-icon><i-ep-warning /></el-icon>
-                <span>{{ formatPath(issue) }}</span>
+    <ul class="flex flex-col">
+        <li v-for="(issue, i) in issues">
+            <el-divider v-if="i > 0" style="margin: 12px 0" />
+            <div class="cursor-pointer" @click="() => onIssueClick(issue)">
+                {{ formatPath(issue) }}
             </div>
         </li>
     </ul>

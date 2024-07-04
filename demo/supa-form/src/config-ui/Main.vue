@@ -12,10 +12,11 @@ import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
+import pkgJson from '../../package.json';
 import { FormApp } from '../config';
 
 // form app
-const app = createAppInstance(FormApp);
+const app = createAppInstance(FormApp, pkgJson.version);
 
 // form model
 const model = ref<BaseConceptModel>(app.model);
@@ -74,13 +75,22 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        model.value = app.loadModel(data);
-        ElNotification({
-            title: 'Configuration loaded',
-            type: 'success',
-            duration: 2000,
-        });
-        resetFormConfig();
+        const loaded = app.loadModel(data);
+        if (loaded.error) {
+            ElNotification({
+                title: 'Configuration loaded with validation issues',
+                type: 'error',
+                duration: 2000,
+            });
+        } else {
+            model.value = loaded.model;
+            ElNotification({
+                title: `Configuration loaded (v${loaded.appVersion})`,
+                type: 'success',
+                duration: 2000,
+            });
+            resetFormConfig();
+        }
     } else if (reportError) {
         ElNotification({
             title: 'No configuration found',
@@ -152,7 +162,7 @@ watch(selection, (value) => {
                         </div>
                     </el-tab-pane>
                     <el-tab-pane :label="`Issues (${issues.length})`">
-                        <div class="h-full border rounded">
+                        <div class="h-full border rounded text-red-600 text-sm p-4">
                             <ValidationIssues
                                 v-if="issues.length > 0"
                                 :issues="issues"

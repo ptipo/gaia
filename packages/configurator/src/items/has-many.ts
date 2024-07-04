@@ -88,7 +88,7 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
         // we may need to revisit and see if we should set it to the array instead
         return makeConceptSchema(candidate, {
             ...context,
-            currentModel: context.currentModel[index],
+            currentModel: context.currentModel?.[index],
         });
     });
 

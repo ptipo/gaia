@@ -1,9 +1,16 @@
 <script lang="ts" setup>
 import type { AppInstance, Concept } from '@hayadev/configurator';
 import { createAppInstance, type BaseConceptModel } from '@hayadev/configurator';
-import { AppConfigurator, type EditPathRecord, type Issue, type SelectionData } from '@hayadev/configurator-vue';
+import {
+    AppConfigurator,
+    ValidationIssues,
+    type EditPathRecord,
+    type Issue,
+    type SelectionData,
+} from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';
+import type { DropdownInstance } from 'element-plus';
 import { useDeleteAsset, useFindUniqueAsset, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
@@ -28,6 +35,9 @@ const editName = ref<string | undefined>();
 
 // validation issues
 const issues = ref<Issue[]>([]);
+
+// validation issues dropdown
+const issuesDropdown = ref<DropdownInstance>();
 
 const isPublishingAsset = ref(false);
 
@@ -229,6 +239,12 @@ const resetFormConfig = () => {
 const goBack = async () => {
     await navigateTo('/');
 };
+
+const onNavigateError = (path: EditPathRecord[]) => {
+    console.log('Navigate to:', JSON.stringify(path));
+    editPath.value = path;
+    issuesDropdown.value?.handleClose();
+};
 </script>
 
 <template>
@@ -254,7 +270,23 @@ const goBack = async () => {
                     </div>
                 </template>
             </el-page-header>
-            <div class="flex button-group">
+
+            <div class="flex items-center button-group gap-2">
+                <!-- validation issues dropdown -->
+                <el-dropdown trigger="click" ref="issuesDropdown" v-if="issues.length > 0 && appInstance && model">
+                    <el-icon class="w-4 h-4 cursor-pointer" color="#f09035"><ElIconWarnTriangleFilled /></el-icon>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <ValidationIssues
+                                class="p-4 text-sm max-w-96"
+                                :issues="issues"
+                                :concept="appInstance.concept"
+                                :model="model"
+                                @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
+                            />
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
                 <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
                 <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
@@ -313,6 +345,7 @@ const goBack = async () => {
 
 <style scoped>
 .button-group button {
-    width: 6rem;
+    @apply w-24;
+    @apply ml-0;
 }
 </style>

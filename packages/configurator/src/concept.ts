@@ -87,7 +87,7 @@ function mapConfigItems(items: Record<string, ConfigItem>, context: GetSchemaCon
             ...acc,
             [key]: makeConfigItemSchema(item, {
                 ...context,
-                currentModel: context.currentModel[key],
+                currentModel: context.currentModel?.[key],
                 parentModel: context.currentModel,
             }),
         }),

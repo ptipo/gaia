@@ -97,7 +97,7 @@ watch(selection, (value) => {
             </div>
             <div class="flex flex-col w-full h-1/5 flex-shrink-0">
                 <p class="text-gray-600 mb-2">Validation issues</p>
-                <div class="border rounded w-full flex-grow">
+                <div class="border rounded w-full flex-grow text-red-600 p-4 text-sm">
                     <ValidationIssues
                         v-if="issues.length > 0"
                         :issues="issues"
