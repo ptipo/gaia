@@ -71,6 +71,8 @@ const getGroupItems = (groupKey: string | undefined) => {
 const onChange = (key: string, data: unknown) => {
     // call model change callback
     props.concept.onModelChange?.(_model.value, key, data);
+
+    // emit change event
     _model.value = { ..._model.value, [key]: data };
     emit('change', _model.value);
 };

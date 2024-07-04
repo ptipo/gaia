@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { BaseConceptModel, Concept, ValidationIssueCode } from '@hayadev/configurator';
+import { type BaseConceptModel, type Concept, type ValidationIssue, ValidationIssueCode } from '@hayadev/configurator';
 import { match } from 'ts-pattern';
 import { computed } from 'vue';
 import type { EditPathRecord } from './types';
 
 const props = defineProps<{
-    issues: Issue[];
+    issues: ValidationIssue[];
     concept: Concept;
     model: BaseConceptModel;
 }>();
@@ -14,13 +14,7 @@ const emit = defineEmits<{
     (e: 'navigate', data: EditPathRecord[]): void;
 }>();
 
-export type Issue = {
-    path: (string | number)[];
-    code: ValidationIssueCode;
-    message: string;
-};
-
-const parseIssue = (issue: Issue) => {
+const parseIssue = (issue: ValidationIssue) => {
     const path: string[] = [];
 
     let currentModel: any = props.model;
@@ -84,7 +78,7 @@ const getIssueCodeName = (code: ValidationIssueCode) => {
 };
 
 const formatPath = ({ issue, path }: ParsedIssue) => {
-    return `${getIssueCodeName(issue.code)}: ${path.join(' > ')}`;
+    return `${issue.customMessage ? issue.customMessage : getIssueCodeName(issue.code)}: ${path.join(' > ')}`;
 };
 
 const onIssueClick = ({ issue }: ParsedIssue) => {

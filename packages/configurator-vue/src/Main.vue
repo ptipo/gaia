@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
+import { createAppInstance, type BaseConceptModel, type ValidationIssue } from '@hayadev/configurator';
 import { FormApp, FormAppVersion } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -7,12 +7,12 @@ import AppConfigurator from './components/AppConfigurator.vue';
 // @ts-expect-error
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
-import ValidationIssues, { Issue } from './components/ValidationIssues.vue';
+import ValidationIssues from './components/ValidationIssues.vue';
 import { SelectionData, type EditPathRecord } from './components/types';
 
 const app = createAppInstance(FormApp, FormAppVersion);
 const model = ref<BaseConceptModel>(app.model);
-const issues = ref<Issue[]>([]);
+const issues = ref<ValidationIssue[]>([]);
 const editPath = ref<EditPathRecord[]>([]);
 const selection = ref<SelectionData>();
 const renderJson = ref(true);

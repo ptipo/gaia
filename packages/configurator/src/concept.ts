@@ -1,8 +1,9 @@
-import { z } from 'zod';
+import { z, type ZodSchema } from 'zod';
+import type { ValidationIssue } from '.';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
-import type { GetSchemaContext } from './items';
-import { NonPrimitiveTypes, ProviderContext } from './types';
 import type { BaseConceptModel } from './inference';
+import type { GetSchemaContext } from './items';
+import { NonPrimitiveTypes, type ProviderContext } from './types';
 
 /**
  * A configurable abstract concept containing a set of config items.
@@ -42,6 +43,11 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * Callback for handling model changes
      */
     onModelChange?: (model: BaseConceptModel, key: string, value: unknown) => void;
+
+    /**
+     * Callback for validating the model
+     */
+    validate?: (model: BaseConceptModel) => ValidationIssue[] | undefined;
 };
 
 export type ConceptTemplate = {
@@ -79,12 +85,28 @@ export function defineConcept<TItems extends Concept['items']>(def: Concept<TIte
  * @returns
  */
 export function makeConceptSchema<TConcept extends Concept>(concept: TConcept, context: GetSchemaContext) {
-    return z.object({
+    let result: ZodSchema = z.object({
         $id: z.string(),
         $type: z.literal(NonPrimitiveTypes.concept),
         $concept: z.literal(concept.name),
         ...mapConfigItems(concept.items, context),
     });
+
+    if (concept.validate) {
+        result = result.superRefine((model, ctx) => {
+            const issues = concept.validate!(model);
+            issues?.forEach((issue) => {
+                ctx.addIssue({
+                    code: 'custom',
+                    params: { customCode: issue.code, customMessage: issue.message },
+                    path: issue.path,
+                    message: issue.message,
+                });
+            });
+        });
+    }
+
+    return result;
 }
 
 function mapConfigItems(items: Record<string, ConfigItem>, context: GetSchemaContext) {
