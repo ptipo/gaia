@@ -5,7 +5,6 @@ import { CompletePage } from './config/page/complete-page';
 import { ContentPage } from './config/page/content-page';
 
 const model = app.model;
-model.nextButtonText = 'Next';
 
 const contentPage1 = app.createConceptInstance(ContentPage, {
     name: 'Content Page1',

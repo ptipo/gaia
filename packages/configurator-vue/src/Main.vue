@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
-import { FormApp } from '@hayadev/samples/form';
+import { FormApp, FormAppVersion } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import AppConfigurator from './components/AppConfigurator.vue';
@@ -10,7 +10,7 @@ import 'vue3-json-viewer/dist/index.css';
 import ValidationIssues, { Issue } from './components/ValidationIssues.vue';
 import { SelectionData, type EditPathRecord } from './components/types';
 
-const app = createAppInstance(FormApp);
+const app = createAppInstance(FormApp, FormAppVersion);
 const model = ref<BaseConceptModel>(app.model);
 const issues = ref<Issue[]>([]);
 const editPath = ref<EditPathRecord[]>([]);
@@ -45,7 +45,10 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        model.value = app.loadModel(data);
+        const loaded = app.loadModel(data);
+        console.log('Loaded model:', loaded.model);
+        console.log('Model app version:', loaded.appVersion);
+        model.value = loaded.model;
         validate(model.value);
         ElNotification({
             title: 'Configuration loaded',

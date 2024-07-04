@@ -59,7 +59,7 @@ watch([rootModel], async () => {
             v-model="_model"
             placeholder="请选择"
             value-key="key"
-            @change="(option) => emit('change', option.value)"
+            @change="(option: any) => emit('change', option.value)"
         >
             <el-option v-for="option in options" :key="option.key" :label="option.label" :value="option" />
         </el-select>

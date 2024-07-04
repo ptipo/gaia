@@ -39,7 +39,6 @@ model User extends EntityBase {
 
 model App extends EntityWithOwner {
   name        String  @length(1) @unique
-  version     String  @default('1.0.0')
   assets      Asset[]
   bundle      String
   htmlTagName String
@@ -51,6 +50,7 @@ model Asset extends EntityWithOwner {
   name       String  @length(1)
   app        App     @relation(fields: [appId], references: [id])
   appId      String
+  appVersion String?
   config     Json?
   publishUrl String?
 }

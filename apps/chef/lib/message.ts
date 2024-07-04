@@ -54,6 +54,6 @@ export function error(message: string) {
     ElNotification({
         title: message,
         type: 'error',
-        duration: 1500,
+        duration: 2500,
     });
 }

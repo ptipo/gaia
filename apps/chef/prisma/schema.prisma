@@ -36,7 +36,6 @@ model App {
   ownerId     String
   /// @length(1)
   name        String   @unique()
-  version     String   @default("1.0.0")
   assets      Asset[]
   bundle      String
   htmlTagName String
@@ -53,6 +52,7 @@ model Asset {
   name       String
   app        App      @relation(fields: [appId], references: [id])
   appId      String
+  appVersion String?
   config     Json?
   publishUrl String?
 }

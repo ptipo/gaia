@@ -1,15 +1,17 @@
-import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
-import { FormApp } from '../config';
-import { ContentPage } from '../config/page/content-page';
-import { ChoiceQuestion, EmailQuestion, QAQuestion, TextElement } from '../config/page-items';
-import { TextChoice } from '../config/page-items/question/text-choice';
-import { ImageChoice } from '../config/page-items/question/image-choice';
+import { createAppInstance } from '@hayadev/configurator';
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
+import { version as appVersion } from '../../package.json';
+import { FormApp } from '../config';
+import { ChoiceQuestion, EmailQuestion, QAQuestion, TextElement } from '../config/page-items';
+import { ImageChoice } from '../config/page-items/question/image-choice';
+import { TextChoice } from '../config/page-items/question/text-choice';
 import { CompletePage } from '../config/page/complete-page';
+import { ContentPage } from '../config/page/content-page';
+
 // form app
-const app = createAppInstance(FormApp);
+const app = createAppInstance(FormApp, appVersion);
 
 interface ECFormPage {
     id: string;
