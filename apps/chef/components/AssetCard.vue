@@ -12,14 +12,12 @@ defineEmits<{
 const runtimeConfig = useRuntimeConfig();
 
 const onOpenPublishUrl = () => {
-    window.open(
-        `${runtimeConfig.public.publishPageAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
-    );
+    window.open(`${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`);
 };
 
 const onCopyPublishUrl = () => {
     navigator.clipboard.writeText(
-        `${runtimeConfig.public.publishPageAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
+        `${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
     );
     success('发布地址已复制到剪贴板');
 };
@@ -34,7 +32,7 @@ const onCopyCode = () => {
         .replaceAll('{{assetBundle}}', app.bundle)
         .replaceAll('{{assetHtmlTag}}', app.htmlTagName)
         .replaceAll('{{assetVersion}}', asset.appVersion || 'latest')
-        .replaceAll('{{assetConfigAccessPoint}}', runtimeConfig.public.publishPageAccessPoint);
+        .replaceAll('{{assetAccessPoint}}', runtimeConfig.public.publishAccessPoint);
 
     console.log('copy code:\n' + result);
 
