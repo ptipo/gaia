@@ -27,13 +27,17 @@ export default eventHandler(async (event) => {
     }
 
     const pageContent = makePageContent(asset);
-    const { publishPageBucket, publishPagePath, publishConfigPath, public: publicConfig } = useRuntimeConfig();
-    console.log('Publishing to:', publishPageBucket, publishPagePath, publicConfig.publishPageAccessPoint);
+    const { publishBucket, publishPagePath, publishConfigPath, public: publicConfig } = useRuntimeConfig();
+    console.log('Publishing to:', publishBucket, publishPagePath, publicConfig.publishAccessPoint);
+
+    const assetBasePath = `assets/${asset.id}/${asset.appVersion}`;
 
     const s3 = new S3Client();
+    const assetPagePath = `${assetBasePath}/index.html`;
+
     const htmlParams = {
-        Bucket: publishPageBucket,
-        Key: `${publishPagePath}/${asset.id}/index.html`,
+        Bucket: publishBucket,
+        Key: assetPagePath,
         Body: pageContent,
         ContentType: 'text/html',
     };
@@ -43,8 +47,8 @@ export default eventHandler(async (event) => {
     console.log('html uploaded:', result);
 
     const configParams = {
-        Bucket: publishPageBucket,
-        Key: `${publishConfigPath}/${asset.id}/${asset.appVersion}/config.json`,
+        Bucket: publishBucket,
+        Key: `${assetBasePath}/config.json`,
         Body: JSON.stringify(asset.config),
         ContentType: 'application/json',
     };
@@ -52,7 +56,7 @@ export default eventHandler(async (event) => {
     result = await s3.send(new PutObjectCommand(configParams));
     console.log('config uploaded:', result);
 
-    const publishUrl = `${publicConfig.publishPageAccessPoint}/${asset.id}`;
+    const publishUrl = `${publicConfig.publishAccessPoint}/${assetPagePath}`;
     await event.context.db.asset.update({ where: { id }, data: { publishUrl } });
 
     return { success: true, data: { url: publishUrl } };

@@ -2,7 +2,7 @@ const assetBundle = '{{assetBundle}}';
 const assetHtmlTag = '{{assetHtmlTag}}';
 const assetId = '{{assetId}}';
 const assetVersion = '{{assetVersion}}';
-const assetConfig = `{{assetConfigAccessPoint}}/${assetId}/${assetVersion}/config.json`;
+const assetConfig = `{{assetAccessPoint}}/${assetId}/${assetVersion}/config.json`;
 
 //engage id
 const engageId = _pt_popup_info.engage_id;
