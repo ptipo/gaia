@@ -30,10 +30,14 @@ export default eventHandler(async (event) => {
     const { publishPageBucket, publishPagePath, publishConfigPath, public: publicConfig } = useRuntimeConfig();
     console.log('Publishing to:', publishPageBucket, publishPagePath, publicConfig.publishPageAccessPoint);
 
+    const assetBasePath = `${asset.id}/${asset.appVersion}`;
+
     const s3 = new S3Client();
+    const assetPagePath = `${assetBasePath}/${publishPagePath}/index.html`;
+
     const htmlParams = {
         Bucket: publishPageBucket,
-        Key: `${publishPagePath}/${asset.id}/index.html`,
+        Key: assetPagePath,
         Body: pageContent,
         ContentType: 'text/html',
     };
@@ -44,7 +48,7 @@ export default eventHandler(async (event) => {
 
     const configParams = {
         Bucket: publishPageBucket,
-        Key: `${publishConfigPath}/${asset.id}/${asset.appVersion}/config.json`,
+        Key: `${assetBasePath}/${publishConfigPath}/config.json`,
         Body: JSON.stringify(asset.config),
         ContentType: 'application/json',
     };
@@ -52,7 +56,7 @@ export default eventHandler(async (event) => {
     result = await s3.send(new PutObjectCommand(configParams));
     console.log('config uploaded:', result);
 
-    const publishUrl = `${publicConfig.publishPageAccessPoint}/${asset.id}`;
+    const publishUrl = `${publicConfig.publishPageAccessPoint}/${assetPagePath}`;
     await event.context.db.asset.update({ where: { id }, data: { publishUrl } });
 
     return { success: true, data: { url: publishUrl } };

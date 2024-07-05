@@ -48,7 +48,6 @@ export default defineNuxtConfig({
         publishConfigPath: '',
         public: {
             publishPageAccessPoint: '',
-            publishConfigAccessPoint: '',
         },
     },
 
