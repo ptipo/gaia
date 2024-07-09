@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import type { App, Asset, User } from '@prisma/client';
+import { useDeleteAsset } from '~/composables/data';
 import { fromNow } from '~/lib/date';
-import { success } from '~/lib/message';
+import { confirmDelete, error, success } from '~/lib/message';
 
 const props = defineProps<{ asset: Asset & { owner: User; app: App } }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'click'): void;
+    (e: 'clone', asset: Asset): void;
+    (e: 'delete', asset: Asset): void;
 }>();
 
 const runtimeConfig = useRuntimeConfig();
+
+const { mutateAsync: deleteAsset } = useDeleteAsset();
 
 const onOpenPublishUrl = () => {
     window.open(`${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`);
@@ -39,6 +44,35 @@ const onCopyCode = () => {
     navigator.clipboard.writeText(result);
     success('代码已复制到剪贴板');
 };
+
+const onCopyAsset = async () => {
+    const fetchResult = await fetch(`/api/asset/${props.asset.id}/clone`, {
+        method: 'POST',
+    });
+
+    if (!fetchResult.ok) {
+        error(`暂时无法复制，请稍后再试`);
+        console.error('Failed to save asset:', fetchResult.statusText);
+        return;
+    }
+
+    const newAsset = await fetchResult.json();
+    success('复制成功');
+    emit('clone', newAsset);
+};
+
+const onDeleteAsset = async () => {
+    if (await confirmDelete(`确定要删除资产 "${props.asset.name}" 吗？`)) {
+        try {
+            await deleteAsset({ where: { id: props.asset.id } });
+            success('删除成功！');
+            emit('delete', props.asset);
+        } catch (err) {
+            error(`暂时无法删除，请稍后再试`);
+            console.error('Failed to save asset:', err);
+        }
+    }
+};
 </script>
 
 <template>
@@ -58,6 +92,8 @@ const onCopyCode = () => {
                         <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyCode"
                             >复制CodeMode代码</el-dropdown-item
                         >
+                        <el-dropdown-item @click="onCopyAsset" divided>复制</el-dropdown-item>
+                        <el-dropdown-item @click="onDeleteAsset">删除</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
