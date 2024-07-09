@@ -37,9 +37,32 @@ const isPublishingAsset = ref(false);
 
 const isMobile = ref(false);
 
-const { data: asset } = useFindUniqueAsset({
+const {
+    data: asset,
+    isLoading,
+    error: loadError,
+} = useFindUniqueAsset({
     where: { id: route.params.id as string },
     include: { app: true },
+});
+
+watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
+    if (!isLoadingValue && assetValue === null) {
+        console.error('Asset not found:', route.params.id);
+        throw createError({
+            statusCode: 404,
+            statusMessage: '指定的资产不存在',
+            fatal: true,
+        });
+    }
+});
+
+watch(loadError, (value) => {
+    if (value) {
+        console.error('Failed to load asset:', value);
+        error(`无法加载资产`);
+        navigateTo('/');
+    }
 });
 
 const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
