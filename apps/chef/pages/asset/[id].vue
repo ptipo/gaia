@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept, ValidationIssue } from '@hayadev/configurator';
-import { createAppInstance, type BaseConceptModel } from '@hayadev/configurator';
+import type { AppInstance, Concept } from '@hayadev/configurator';
+import { createAppInstance, type BaseConceptModel, type ValidationIssue } from '@hayadev/configurator';
 import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionData } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';

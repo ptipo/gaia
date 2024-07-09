@@ -4,7 +4,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "pnpm db:generate && nuxt build",
+        "build": "pnpm db:generate && pnpm typecheck && nuxt build",
+        "typecheck": "nuxi typecheck",
         "dev": "nuxt dev --port 5100",
         "db:generate": "zenstack generate",
         "db:push": "prisma db push",

@@ -33,10 +33,12 @@ export default defineEventHandler(async (event) => {
     event.context.db = enhance(prisma, { user: user ? { id: user.id } : undefined });
 });
 
+const dbProto = enhance(prisma);
+
 declare module 'h3' {
     interface H3EventContext {
         user: User | null;
         session: Session | null;
-        db: PrismaClient;
+        db: typeof dbProto;
     }
 }

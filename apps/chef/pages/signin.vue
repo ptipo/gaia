@@ -41,6 +41,9 @@ function validatePassword(_rule: any, value: any, callback: any) {
 }
 
 async function onSubmit() {
+    if (!formRef.value) {
+        return;
+    }
     formRef.value.validate(async (valid) => {
         if (valid) {
             try {
@@ -49,7 +52,7 @@ async function onSubmit() {
                     body: { email: formState.email, password: formState.password },
                 });
                 await navigateTo('/');
-            } catch (err) {
+            } catch (err: any) {
                 error(err.data?.message ?? err.message);
             }
         }

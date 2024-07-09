@@ -25,11 +25,6 @@ export default eventHandler(async (event) => {
                     id: asset.appId,
                 },
             },
-            owner: {
-                connect: {
-                    id: event.context.user.id,
-                },
-            },
         },
     });
 
