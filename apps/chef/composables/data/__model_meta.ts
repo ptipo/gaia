@@ -168,10 +168,56 @@ const metadata = {
                     name: "config",
                     type: "Json",
                     isOptional: true,
-                }, publishUrl: {
-                    name: "publishUrl",
+                }, publishings: {
+                    name: "publishings",
+                    type: "Publishing",
+                    isDataModel: true,
+                    isArray: true,
+                    backLink: 'asset',
+                },
+            }
+            , uniqueConstraints: {
+                id: {
+                    name: "id",
+                    fields: ["id"]
+                },
+            }
+            ,
+        }
+        ,
+        publishing: {
+            name: 'Publishing', fields: {
+                id: {
+                    name: "id",
                     type: "String",
-                    isOptional: true,
+                    isId: true,
+                    attributes: [{ "name": "@default", "args": [] }],
+                }, createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ "name": "@default", "args": [] }],
+                }, updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    attributes: [{ "name": "@updatedAt", "args": [] }],
+                }, assetId: {
+                    name: "assetId",
+                    type: "String",
+                    isForeignKey: true,
+                    relationField: 'asset',
+                }, asset: {
+                    name: "asset",
+                    type: "Asset",
+                    isDataModel: true,
+                    backLink: 'publishings',
+                    isRelationOwner: true,
+                    foreignKeyMapping: { "id": "assetId" },
+                }, appVersion: {
+                    name: "appVersion",
+                    type: "String",
+                }, config: {
+                    name: "config",
+                    type: "Json",
                 },
             }
             , uniqueConstraints: {

@@ -44,18 +44,29 @@ model App {
 
 /// @@allow('all', auth() == owner)
 model Asset {
+  id          String       @id() @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
+  owner       User         @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  /// @length(1)
+  name        String
+  app         App          @relation(fields: [appId], references: [id])
+  appId       String
+  appVersion  String?
+  config      Json?
+  publishings Publishing[]
+}
+
+/// @@allow('all', auth() == asset.owner)
+model Publishing {
   id         String   @id() @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt()
-  owner      User     @relation(fields: [ownerId], references: [id])
-  ownerId    String
-  /// @length(1)
-  name       String
-  app        App      @relation(fields: [appId], references: [id])
-  appId      String
-  appVersion String?
-  config     Json?
-  publishUrl String?
+  assetId    String
+  asset      Asset    @relation(fields: [assetId], references: [id])
+  appVersion String
+  config     Json
 }
 
 model Session {

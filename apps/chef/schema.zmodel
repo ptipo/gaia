@@ -49,12 +49,21 @@ model App extends EntityWithOwner {
 }
 
 model Asset extends EntityWithOwner {
-  name       String  @length(1)
-  app        App     @relation(fields: [appId], references: [id])
-  appId      String
-  appVersion String?
-  config     Json?
-  publishUrl String?
+  name        String       @length(1)
+  app         App          @relation(fields: [appId], references: [id])
+  appId       String
+  appVersion  String?
+  config      Json?
+  publishings Publishing[]
+}
+
+model Publishing extends EntityBase {
+  assetId    String
+  asset      Asset  @relation(fields: [assetId], references: [id])
+  appVersion String
+  config     Json
+
+  @@allow('all', auth() == asset.owner)
 }
 
 model Session {
