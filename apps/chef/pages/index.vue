@@ -5,7 +5,11 @@ import { prompt, success } from '~/lib/message';
 
 const { mutateAsync: createAsset } = useCreateAsset();
 
-const { data: assets, isLoading } = useFindManyAsset({
+const {
+    data: assets,
+    isLoading,
+    refetch,
+} = useFindManyAsset({
     include: { owner: true, app: true },
     orderBy: { createdAt: 'desc' },
 });
@@ -43,6 +47,9 @@ const onAssetClick = (asset: Asset) => {
                             :key="asset.id"
                             :asset="asset"
                             @click="() => onAssetClick(asset)"
+                            @clone="
+                                () => refetch() // clone is not done with hooks, so need to manually invalidate
+                            "
                         />
                     </div>
                 </div>
