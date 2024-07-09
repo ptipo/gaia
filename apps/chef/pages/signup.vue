@@ -35,6 +35,9 @@ function validateEmail(_rule: any, value: any, callback: any) {
 }
 
 function validatePassword(_rule: any, value: any, callback: any) {
+    if (!formRef.value) {
+        return;
+    }
     if (value === '') {
         callback(new Error('请输入密码'));
     } else {
@@ -56,6 +59,9 @@ function validateConfirmPassword(_rule: any, value: any, callback: any) {
 }
 
 async function onSubmit() {
+    if (!formRef.value) {
+        return;
+    }
     formRef.value.validate(async (valid) => {
         if (valid) {
             try {
@@ -64,7 +70,7 @@ async function onSubmit() {
                     body: { email: formState.email, password: formState.password },
                 });
                 await navigateTo('/');
-            } catch (err) {
+            } catch (err: any) {
                 error(err.data?.message ?? err.message);
             }
         }

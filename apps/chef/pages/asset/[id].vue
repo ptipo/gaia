@@ -1,13 +1,7 @@
 <script lang="ts" setup>
 import type { AppInstance, Concept } from '@hayadev/configurator';
-import { createAppInstance, type BaseConceptModel } from '@hayadev/configurator';
-import {
-    AppConfigurator,
-    ValidationIssues,
-    type EditPathRecord,
-    type Issue,
-    type SelectionData,
-} from '@hayadev/configurator-vue';
+import { createAppInstance, type BaseConceptModel, type ValidationIssue } from '@hayadev/configurator';
+import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionData } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';
 import type { DropdownInstance } from 'element-plus';
@@ -34,7 +28,7 @@ const editNameEl = ref<HTMLElement>();
 const editName = ref<string | undefined>();
 
 // validation issues
-const issues = ref<Issue[]>([]);
+const issues = ref<ValidationIssue[]>([]);
 
 // validation issues dropdown
 const issuesDropdown = ref<DropdownInstance>();
@@ -101,17 +95,19 @@ const createAppElement = async (app: App) => {
         }
     }
 
-    // trigger an initial validation
-    validate(model.value);
+    if (model.value) {
+        // trigger an initial validation
+        validate(model.value);
 
-    if (appContainerEl.value) {
-        appContainerEl.value.innerHTML = '';
-        console.log('Creating app element:', app.htmlTagName);
-        const el = document.createElement(app.htmlTagName);
-        el.setAttribute('config', appInstance.value.stringifyModel(model.value));
-        el.setAttribute('edit-selection', '{"id":""}');
-        appContainerEl.value.appendChild(el);
-        appEl.value = el;
+        if (appContainerEl.value) {
+            appContainerEl.value.innerHTML = '';
+            console.log('Creating app element:', app.htmlTagName);
+            const el = document.createElement(app.htmlTagName);
+            el.setAttribute('config', appInstance.value.stringifyModel(model.value));
+            el.setAttribute('edit-selection', '{"id":""}');
+            appContainerEl.value.appendChild(el);
+            appEl.value = el;
+        }
     }
 };
 
