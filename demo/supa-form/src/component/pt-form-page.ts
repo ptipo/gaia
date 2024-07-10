@@ -8,6 +8,7 @@ import { PtChoice } from './contentTypes/pt-choice';
 import { provide } from '@lit/context';
 import { formWidth } from '../state';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
+import { ERROR_MESSAGE_CLASS } from './constant';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -84,7 +85,10 @@ export class PtFormPage extends PtBase {
 
                 return html`<div>
                     ${el}
-                    ${when(errorMessage, () => html`<p class="text-red-500  font-normal mt-2">${errorMessage!}</p>`)}
+                    ${when(
+                        errorMessage,
+                        () => html`<p class="text-red-500 font-normal mt-2 ${ERROR_MESSAGE_CLASS}">${errorMessage!}</p>`
+                    )}
                 </div>`;
             })}
         </div> `;
