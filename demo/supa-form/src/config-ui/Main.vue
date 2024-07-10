@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { BaseConceptModel, createAppInstance } from '@hayadev/configurator';
-import {
-    AppConfigurator,
-    ValidationIssues,
-    type EditPathRecord,
-    type Issue,
-    type SelectionData,
-} from '@hayadev/configurator-vue';
+import { BaseConceptModel, createAppInstance, ValidationIssue } from '@hayadev/configurator';
+import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionData } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -28,7 +22,7 @@ const editPath = ref<EditPathRecord[]>([]);
 const selection = ref<SelectionData>();
 
 // validation issues
-const issues = ref<Issue[]>([]);
+const issues = ref<ValidationIssue[]>([]);
 
 // form element
 const formEl = ref<HTMLElement>();
@@ -175,7 +169,7 @@ watch(selection, (value) => {
                 </el-tabs>
             </div>
         </div>
-        <div class="w-[480px] border rounded h-full">
+        <div class="w-[400px] border rounded h-full shrink-0">
             <AppConfigurator
                 :app="app"
                 :model="model"

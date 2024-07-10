@@ -8,7 +8,7 @@
         "watch:vite": "vite build --watch",
         "watch:css": "tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify --watch",
         "watch:tsc": "vue-tsc --noEmit --watch",
-        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify",
+        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify && cat ./dist/style.css >> ./dist/index.css",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit",
         "test": "jest"
@@ -27,6 +27,9 @@
     "dependencies": {
         "@hayadev/configurator": "workspace:*",
         "capitalize": "^2.0.4",
+        "codemirror": "^5",
+        "codemirror-editor-vue3": "^2.7.0",
+        "debounce": "^2.1.0",
         "deepcopy": "^2.1.0",
         "ts-pattern": "^5.1.1",
         "uuid": "^10.0.0",
@@ -42,6 +45,7 @@
         "@hayadev/samples": "workspace:*",
         "@iconify-json/ep": "^1.1.15",
         "@types/capitalize": "^2.0.2",
+        "@types/codemirror": "^5.60.15",
         "@types/uuid": "^9.0.8",
         "@vitejs/plugin-vue": "^5.0.4",
         "autoprefixer": "^10.4.19",

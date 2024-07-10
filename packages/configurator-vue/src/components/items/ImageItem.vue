@@ -3,6 +3,7 @@ import { ImageItem } from '@hayadev/configurator/items';
 import { UploadFile, UploadRawFile } from 'element-plus';
 import { ref } from 'vue';
 import type { CommonEvents, CommonProps } from './common';
+import { NonPrimitiveTypes } from '@hayadev/configurator';
 
 const props = defineProps<CommonProps<ImageItem>>();
 
@@ -22,7 +23,7 @@ const onBeforeUpload = async (rawFile: UploadRawFile) => {
     const url = URL.createObjectURL(blob);
     imageUrl.value = url;
 
-    emit('change', { $type: 'image', url });
+    emit('change', { $type: NonPrimitiveTypes.image, url });
 
     return false;
 };

@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { NonPrimitiveTypes } from '..';
 import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
-import { NonPrimitiveTypes } from '..';
 
 /**
  * 图片资源配置项
@@ -24,4 +24,4 @@ export const getSchema = (item: ConfigItemBase) =>
 /**
  * 图片资源信息
  */
-export type ImageInfo = Omit<z.infer<ReturnType<typeof getSchema>>, '$type'>;
+export type ImageInfo = z.infer<ReturnType<typeof getSchema>>;

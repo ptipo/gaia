@@ -1,5 +1,6 @@
 import {
     Schemas,
+    type CodeItem,
     type ColorItem,
     type ConfigItemBase,
     type DynamicSelectItem,
@@ -31,7 +32,8 @@ export type ConfigItem =
     | HasItem
     | HasManyItem
     | IfItem
-    | LogicalGroupItem;
+    | LogicalGroupItem
+    | CodeItem;
 
 /**
  * Types of config items

@@ -86,7 +86,7 @@ watch(selection, (value) => {
 
 <template>
     <div class="flex w-full h-full p-4 gap-4">
-        <div class="flex flex-col gap-4 justify-center items-center flex-grow w-full h-full">
+        <div class="flex flex-col gap-4 justify-center items-center flex-grow h-full">
             <div class="text-2xl text-slate-500">Configuration Preview</div>
             <div class="flex self-start">
                 <el-button @click="onSave">Save</el-button>
@@ -108,7 +108,7 @@ watch(selection, (value) => {
                 </div>
             </div>
         </div>
-        <div class="w-[480px] border rounded h-full">
+        <div class="w-[400px] border rounded h-full flex-shrink-0">
             <AppConfigurator
                 :app="app"
                 :model="model"
