@@ -146,11 +146,14 @@ export class PtForm extends PtBaseShadow {
         }
 
         const completePages = this.config?.completePages ?? [];
+        const css = html`<style>
+            ${this.config?.customCSS?.source}
+        </style>`;
 
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
-            return html`
+            return html`${css}
                     <div>
                         <div class="sticky top-0 h-8 bg-white opacity-100">
                             <div class="flex flex-col h-full justify-center">
