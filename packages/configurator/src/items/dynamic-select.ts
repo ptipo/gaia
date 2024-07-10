@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { GetSchemaFunction } from '.';
 import { wrap } from '../schema';
 import type { ConfigItemBase } from './common';
+import { ValidationIssueCode } from '..';
 
 /**
  * A dynamic select option.
@@ -39,6 +40,16 @@ export interface DynamicSelectItem<TValue> extends ConfigItemBase {
      * Callback for computing options.
      */
     provider: (context: ProviderContext) => DynamicSelectOption<TValue>[] | Promise<DynamicSelectOption<TValue>[]>;
+
+    /**
+     * Whether to allow multiple selections.
+     */
+    multiple?: boolean;
+
+    /**
+     * Whether to allow creating new options.
+     */
+    allowCreate?: boolean;
 }
 
 // TODO: call items provider and build a stricter Zod schema
@@ -49,6 +60,6 @@ export const getSchema: GetSchemaFunction = (item: ConfigItemBase) =>
             (data) => {
                 return data !== undefined;
             },
-            { message: '未设置' }
+            { params: { customCode: ValidationIssueCode.Required } }
         )
     );

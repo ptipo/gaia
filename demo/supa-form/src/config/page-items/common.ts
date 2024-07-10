@@ -1,5 +1,5 @@
-import { ConfigGroups } from '@hayadev/configurator';
-import { ConfigItem } from '@hayadev/configurator';
+import { ConfigGroups, ConfigItem } from '@hayadev/configurator';
+import { DynamicSelectOption } from '@hayadev/configurator/items';
 
 /**
  * 问题通用配置项
@@ -37,27 +37,13 @@ export const QuestionCommonItems = {
         type: 'dynamic-select',
         guarded: true,
         name: '保存为用户标签',
+        multiple: true,
+        allowCreate: true,
         groupKey: 'data',
 
         provider: async () => {
             // TODO: 调用API获取用户标签列表
-            return [
-                {
-                    key: 'tag1',
-                    label: '标签1',
-                    value: '标签1',
-                },
-                {
-                    key: 'tag2',
-                    label: '标签2',
-                    value: '标签2',
-                },
-                {
-                    key: 'tag3',
-                    label: '标签3',
-                    value: '标签3',
-                },
-            ];
+            return [] as DynamicSelectOption<string>[];
         },
     },
 } satisfies Record<string, ConfigItem>;
