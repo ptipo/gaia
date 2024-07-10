@@ -1,5 +1,7 @@
 import { ZodSchema } from 'zod';
+import { ProviderContext } from '..';
 import { ConfigItemType } from '../config-item';
+import { getSchema as getCodeItemSchema } from './code';
 import { getSchema as getColorItemSchema } from './color';
 import { ConfigItemBase } from './common';
 import { getSchema as getDynamicSelectItemSchema } from './dynamic-select';
@@ -13,7 +15,6 @@ import { getSchema as getNumberItemSchema } from './number';
 import { getSchema as getSelectItemSchema } from './select';
 import { getSchema as getSwitchItemSchema } from './switch';
 import { getSchema as getTextItemSchema } from './text';
-import { ProviderContext } from '..';
 
 /**
  * Context for building a Zod schema for validating a config item.
@@ -40,12 +41,14 @@ export const Schemas: {
     select: getSelectItemSchema,
     switch: getSwitchItemSchema,
     text: getTextItemSchema,
+    code: getCodeItemSchema,
 };
 
+export { Code, CodeItem, CodeLanguage } from './code';
 export { ColorItem } from './color';
 export * from './common';
 export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
-export { GroupItem, defineGroupItem } from './group';
+export { defineGroupItem, GroupItem } from './group';
 export { HasItem } from './has';
 export { HasManyItem } from './has-many';
 export { IfItem } from './if';

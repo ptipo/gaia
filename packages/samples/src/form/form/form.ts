@@ -5,6 +5,7 @@ import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
+import { CodeLanguage } from '@hayadev/configurator/items';
 
 /**
  * 表单
@@ -18,6 +19,7 @@ export const Form = defineConcept({
         completePages: { name: '结束页', aspect: 'content' },
         language: { name: '语言', aspect: 'setting' },
         dataCollection: { name: '表单信息收集', aspect: 'setting' },
+        style: { name: '样式', aspect: 'design' },
     },
 
     items: {
@@ -101,5 +103,15 @@ export const Form = defineConcept({
          * 表单信息收集
          */
         dataCollection: DataCollectionSetting,
+
+        /**
+         * 自定义CSS
+         */
+        customCSS: {
+            type: 'code',
+            name: '自定义CSS',
+            language: CodeLanguage.CSS,
+            groupKey: 'style',
+        },
     },
 });

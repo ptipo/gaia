@@ -15,8 +15,10 @@ import {
     SwitchItem,
     TextItem,
 } from './items';
+import { Code, CodeItem } from './items/code';
+import { RGBA } from './items/color';
 import { GroupItem } from './items/group';
-import { NonPrimitiveTypes, RGBA } from './types';
+import { NonPrimitiveTypes } from './types';
 import { DeepPartial } from './utils';
 
 /**
@@ -29,24 +31,15 @@ export type inferConcept<
 > = TDepth extends -1
     ? unknown
     : BaseConceptModel & {
-          [Key in keyof TConcept['items']]: inferConfigItem<
-              TConcept['items'][Key],
-              TPartial,
-              TDepth
-          >;
+          [Key in keyof TConcept['items']]: inferConfigItem<TConcept['items'][Key], TPartial, TDepth>;
       };
 
 /**
  * Infers a partial runtime type of a `Concept`.
  */
-export type inferPartialConcept<TConcept extends Concept> = inferConcept<
-    TConcept,
-    true
->;
+export type inferPartialConcept<TConcept extends Concept> = inferConcept<TConcept, true>;
 
-export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<
-    inferConcept<TConcept>
->;
+export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<inferConcept<TConcept>>;
 
 /**
  * 基础`Concept`运行时类型
@@ -59,11 +52,7 @@ export type BaseConceptModel = {
 
 type Optional<T> = T | undefined;
 
-type CheckPartial<
-    TItem,
-    TPartial extends boolean,
-    TData
-> = TPartial extends true
+type CheckPartial<TItem, TPartial extends boolean, TData> = TPartial extends true
     ? Optional<TData>
     : // required
     TItem extends { required: true }
@@ -104,20 +93,15 @@ export type inferConfigItem<
     : TItem extends HasItem<infer TChild>
     ? inferConcept<TChild, TPartial, TDepthNext>
     : TItem extends HasManyItem<infer TCandidate>
-    ? Array<
-          inferConcept<TCandidate, TPartial, TDepthNext> &
-              Record<string, unknown>
-      >
+    ? Array<inferConcept<TCandidate, TPartial, TDepthNext> & Record<string, unknown>>
     : TItem extends IfItem
     ? Optional<inferConfigItem<TItem['child'], false, TDepthNext>>
     : TItem extends GroupItem<infer TChild>
     ? { $type: NonPrimitiveTypes.itemGroup } & {
-          [Key in keyof TChild]: inferConfigItem<
-              TChild[Key],
-              TPartial,
-              TDepthNext
-          >;
+          [Key in keyof TChild]: inferConfigItem<TChild[Key], TPartial, TDepthNext>;
       }
     : TItem extends LogicalGroupItem
     ? CheckPartial<TItem, TPartial, LogicalGroup>
+    : TItem extends CodeItem
+    ? CheckPartial<TItem, TPartial, Code>
     : never;

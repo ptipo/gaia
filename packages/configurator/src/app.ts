@@ -110,6 +110,7 @@ export class AppInstance<TConcept extends Concept> {
                 /* TODO: 初始项 */
             ])
             .with({ type: 'group' }, (item) => this.createGroupModel(item))
+            .with({ type: 'code' }, (item) => ({ $type: NonPrimitiveTypes.code, source: '', language: item.language }))
             .otherwise(() => undefined);
     }
 

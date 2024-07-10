@@ -4,22 +4,6 @@ import { BaseConceptModel } from './inference';
 import { ValidationIssueCode } from './validation';
 
 /**
- * RGBA color.
- */
-export type RGBA = `rgba(${number},${number},${number},${number})`;
-
-/**
- * Checks if the input is a valid RGBA color.
- */
-export function isRGBA(input: unknown): input is string {
-    if (typeof input !== 'string') {
-        return false;
-    } else {
-        return /^rgba\(\d{1,3},\s*\d{1,3},\s*\d{1,3},\s*\d(\.\d+)?\)$/.test(input);
-    }
-}
-
-/**
  * Non-primitive types.
  */
 export enum NonPrimitiveTypes {
@@ -28,6 +12,7 @@ export enum NonPrimitiveTypes {
     image = 'image',
     logicalGroup = 'logical-group',
     itemGroup = 'item-group',
+    code = 'code',
 }
 
 /**
