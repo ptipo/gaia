@@ -14,6 +14,7 @@ import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 import { msg } from '@lit/localize';
+import { ERROR_MESSAGE_CLASS } from './constant';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
@@ -253,6 +254,11 @@ export class PtForm extends PtBaseShadow {
 
         if (!isValid) {
             console.error('page is not valid');
+            const firstError = this.renderRoot.querySelector(`.${ERROR_MESSAGE_CLASS}`);
+
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
