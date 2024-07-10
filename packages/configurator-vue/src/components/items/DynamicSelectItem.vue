@@ -24,7 +24,10 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const options = ref<DynamicSelectOption<any>[]>([]);
 
 const { enabled } = useGuard(props.model !== undefined, {
-    onSetOff: () => emit('change', undefined),
+    onSetOff: () => {
+        emit('drop');
+        _model.value = undefined;
+    },
 });
 
 const fillOptions = async () => {
@@ -34,11 +37,27 @@ const fillOptions = async () => {
         rootModel: rootModel?.value,
         currentModel: props.parentModel,
     });
+
+    if (!Array.isArray(result)) {
+        return;
+    }
+
     options.value = result;
 
     // update model
-    if (_model.value === undefined) {
-        _model.value = result.find((option) => modelEquals(option.value, props.model));
+    if (_model.value === undefined || (Array.isArray(_model.value) && _model.value.length === 0)) {
+        if (props.item.multiple) {
+            if (props.item.allowCreate) {
+                // just use the model as is
+                _model.value = props.model;
+            } else if (Array.isArray(props.model)) {
+                // filter the model with options
+                _model.value = props.model.filter((item) => result.some((option) => modelEquals(item, option.value)));
+            }
+        } else {
+            // find the option that matches the model
+            _model.value = result.find((option) => modelEquals(option.value, props.model));
+        }
     }
 };
 
@@ -49,6 +68,25 @@ onMounted(async () => {
 watch([rootModel], async () => {
     await fillOptions();
 });
+
+const onChange = (data: any) => {
+    let emitData = data;
+
+    if (props.item.multiple) {
+        // expect array
+        if (Array.isArray(emitData)) {
+            // deal with user-created and provided options: user-created options are plain strings,
+            // while provided options are objects
+            emitData = emitData.map((e) => (typeof e === 'object' ? e.value : e));
+            emit('change', emitData);
+        }
+    } else {
+        if (typeof emitData === 'object') {
+            emitData = emitData.value;
+        }
+        emit('change', emitData);
+    }
+};
 </script>
 
 <template>
@@ -57,9 +95,14 @@ watch([rootModel], async () => {
         <el-select
             v-if="!item.guarded || enabled"
             v-model="_model"
+            :multiple="item.multiple"
+            :allow-create="item.allowCreate"
+            default-first-option
+            filterable
+            :reserve-keyword="false"
             placeholder="请选择"
             value-key="key"
-            @change="(option: any) => emit('change', option.value)"
+            @change="onChange"
         >
             <el-option v-for="option in options" :key="option.key" :label="option.label" :value="option" />
         </el-select>

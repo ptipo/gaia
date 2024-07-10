@@ -81,7 +81,7 @@ export type inferConfigItem<
     : TItem extends TextItem
     ? CheckPartial<TItem, TPartial, string>
     : TItem extends DynamicSelectItem<infer TValue>
-    ? CheckPartial<TItem, TPartial, TValue>
+    ? CheckPartial<TItem, TPartial, TItem extends { multiple: true } ? TValue[] : TValue>
     : TItem extends SelectItem<infer TKey>
     ? CheckPartial<TItem, TPartial, TKey>
     : TItem extends NumberItem
