@@ -12,17 +12,14 @@ export const ImageChoice = defineConcept({
             name: '选项',
             required: true,
         },
-        source: {
-            type: 'text',
-            name: '来源',
-            required: true,
-        },
+
         /**
          * 内容
          */
         value: {
             type: 'image',
             name: '图片',
+            default: 'https://comp.ptengine.com/res/placeholder.svg',
             required: true,
         },
 

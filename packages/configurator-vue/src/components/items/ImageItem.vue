@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { IMAGE_UPLOADER_KEY } from '@/lib/constants';
 import { ImageItem } from '@hayadev/configurator/items';
-import { UploadFile, UploadRawFile } from 'element-plus';
-import { ref } from 'vue';
+import { UploadRequestOptions } from 'element-plus';
+import { inject, ref } from 'vue';
 import type { CommonEvents, CommonProps } from './common';
 import { NonPrimitiveTypes } from '@hayadev/configurator';
 
@@ -9,43 +10,74 @@ const props = defineProps<CommonProps<ImageItem>>();
 
 const emit = defineEmits<CommonEvents<ImageItem>>();
 
-const imageUrl = ref(props.model?.url ?? '');
+const _model = ref(props.model?.url ?? '');
 
-const onUploadSuccess = (_resp: any, _file: UploadFile) => {
-    // TODO: real upload
+const method = ref('upload');
+
+const uploader = inject<(file: File) => Promise<string>>(IMAGE_UPLOADER_KEY);
+
+const onLimitExceeded = () => {
+    console.error('File size exceeded limit');
 };
 
-const onBeforeUpload = async (rawFile: UploadRawFile) => {
-    // TODO: real upload
-    const blob = new Blob([await rawFile.arrayBuffer()], {
-        type: rawFile.type,
-    });
-    const url = URL.createObjectURL(blob);
-    imageUrl.value = url;
+const uploadAction = async (options: UploadRequestOptions) => {
+    const url = await uploader!(options.file);
+    console.log('Uploaded to:', url);
+    _model.value = url;
+    emitChange();
+};
 
-    emit('change', { $type: NonPrimitiveTypes.image, url });
-
-    return false;
+const emitChange = () => {
+    emit('change', { $type: NonPrimitiveTypes.image, url: _model.value });
 };
 </script>
 
 <template>
-    <el-form-item class="m-0">
+    <el-form-item class="m-0 flex flex-col image-item-container w-full">
         <ItemLabel :item="item" :model="props.model" />
+        <el-radio-group v-model="method" class="w-full mb-1">
+            <el-radio value="upload">上传</el-radio>
+            <el-radio value="url">提供地址</el-radio>
+        </el-radio-group>
+
         <el-upload
+            v-if="method === 'upload'"
+            class="w-full"
             accept="image/*"
+            method="put"
+            :limit="10 * 1024 * 1024"
             :show-file-list="false"
-            :before-upload="onBeforeUpload"
-            :on-success="onUploadSuccess"
+            :on-exceed="onLimitExceeded"
+            :http-request="uploadAction"
         >
-            <div v-if="!imageUrl" class="w-32 h-32 flex items-center justify-center border border-dashed rounded">
+            <div v-if="!_model" class="w-32 h-32 flex items-center justify-center border border-dashed rounded">
                 <el-icon size="16"><i-ep-plus /> </el-icon>
             </div>
-            <el-image v-else :src="imageUrl" class="w-full"
+            <el-image v-else :src="_model" class="w-full"
                 ><template #placeholder>
                     <div>Loading...</div>
-                </template></el-image
-            >
+                </template>
+                <template #error>
+                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center"><p>加载失败</p></div>
+                </template>
+            </el-image>
         </el-upload>
+        <div v-else class="flex flex-col w-full gap-2">
+            <el-input v-model="_model" placeholder="图片URL" @change="emitChange" />
+            <el-image :src="_model" class="w-full"
+                ><template #placeholder>
+                    <div>Loading...</div>
+                </template>
+                <template #error>
+                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center"><p>加载失败</p></div>
+                </template>
+            </el-image>
+        </div>
     </el-form-item>
 </template>
+
+<style>
+.image-item-container .el-upload {
+    @apply w-full;
+}
+</style>

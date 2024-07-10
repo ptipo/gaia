@@ -12,9 +12,12 @@ export const ImageElement = defineConcept({
         /**
          * 图片
          */
-        image: { type: 'image' },
-
-        source: { type: 'text', name: '来源' },
+        image: {
+            type: 'image',
+            name: '图片',
+            default: 'https://comp.ptengine.com/res/placeholder.svg',
+            required: true,
+        },
 
         ...AlignmentItems,
     },

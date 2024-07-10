@@ -8,7 +8,7 @@ const props = defineProps<{ asset: Asset & { owner: User; app: App } }>();
 
 const emit = defineEmits<{
     (e: 'click'): void;
-    (e: 'clone', asset: Asset): void;
+    (e: 'clone', asset: { id: string }): void;
     (e: 'delete', asset: Asset): void;
 }>();
 
@@ -46,19 +46,17 @@ const onCopyCode = () => {
 };
 
 const onCopyAsset = async () => {
-    const fetchResult = await fetch(`/api/asset/${props.asset.id}/clone`, {
-        method: 'POST',
-    });
-
-    if (!fetchResult.ok) {
+    try {
+        const { data: newAsset } = await $fetch(`/api/asset/${props.asset.id}/clone`, {
+            method: 'POST',
+        });
+        success('复制成功');
+        emit('clone', newAsset);
+    } catch (err) {
         error(`暂时无法复制，请稍后再试`);
-        console.error('Failed to save asset:', fetchResult.statusText);
+        console.error('Failed to save asset:', err);
         return;
     }
-
-    const newAsset = await fetchResult.json();
-    success('复制成功');
-    emit('clone', newAsset);
 };
 
 const onDeleteAsset = async () => {

@@ -15,7 +15,7 @@ class PtImage extends PtBase {
             <div class="w-full flex" style="justify-content:${align}">
                 <img
                     class="h-auto object-contain"
-                    src="${this.data?.source || this.data?.image!.url!}"
+                    src="${this.data?.image!.url!}"
                     style="max-width:${maxWidth}%"
                     alt="image"
                 />

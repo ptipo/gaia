@@ -70,3 +70,17 @@ export const QuestionCommonGroups = {
     answer: { name: '回答', aspect: 'content' },
     data: { name: '数据', aspect: 'content' },
 } satisfies ConfigGroups;
+
+export const AlignmentItems = {
+    align: {
+        type: 'select',
+        name: '对齐方式',
+        default: 'center',
+        options: {
+            center: '居中',
+            left: '左对齐',
+            right: '右对齐',
+        },
+    },
+    maxWidth: { type: 'number', name: '最大宽度%', default: 100 },
+} satisfies Record<string, ConfigItem>;

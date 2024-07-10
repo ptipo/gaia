@@ -104,7 +104,7 @@ export class AppInstance<TConcept extends Concept> {
                 { type: P.union('text', 'number', 'switch', 'select'), default: P.not(undefined) },
                 (item) => item.default
             )
-            .with({ type: 'image', required: true }, () => ({ $type: NonPrimitiveTypes.image }))
+            .with({ type: 'image', required: true }, (item) => ({ $type: NonPrimitiveTypes.image, url: item.default }))
             .with({ type: 'has' }, (item) => this.createConceptInstance(item.concept))
             .with({ type: 'has-many' }, () => [
                 /* TODO: 初始项 */

@@ -1,23 +1,9 @@
-import type { Asset, App } from '@prisma/client';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { z } from 'zod';
-import pageTemplate from '../../res/page-template.html';
+import type { App, Asset } from '@prisma/client';
+import pageTemplate from '~/res/page-template.html';
 
 export default eventHandler(async (event) => {
-    const data = await readBody(event);
-    const schema = z.object({
-        id: z.string(),
-    });
-
-    const parsed = schema.safeParse(data);
-    if (!parsed.success) {
-        throw createError({
-            message: 'Invalid publish input',
-            statusCode: 400,
-        });
-    }
-
-    const { id } = parsed.data;
+    const id = getRouterParam(event, 'id');
     const asset = await event.context.db.asset.findUnique({ where: { id }, include: { app: true } });
     if (!asset) {
         throw createError({
@@ -27,7 +13,7 @@ export default eventHandler(async (event) => {
     }
 
     const pageContent = makePageContent(asset);
-    const { publishBucket, publishPagePath, publishConfigPath, public: publicConfig } = useRuntimeConfig();
+    const { publishBucket, publishPagePath, public: publicConfig } = useRuntimeConfig();
     console.log('Publishing to:', publishBucket, publishPagePath, publicConfig.publishAccessPoint);
 
     const assetBasePath = `assets/${asset.id}/${asset.appVersion}`;

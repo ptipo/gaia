@@ -123,6 +123,14 @@ watch(selection, (value) => {
 
     formEl.value?.setAttribute('edit-selection', JSON.stringify({ concept: value?.concept.name, id: value?.id }));
 });
+
+const uploadImage = async (file: File) => {
+    const blob = new Blob([await file.arrayBuffer()], {
+        type: file.type,
+    });
+    const url = URL.createObjectURL(blob);
+    return url;
+};
 </script>
 
 <template>
@@ -175,6 +183,7 @@ watch(selection, (value) => {
                 :model="model"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
+                :image-uploader="uploadImage"
                 @change="onAppChange"
             />
         </div>

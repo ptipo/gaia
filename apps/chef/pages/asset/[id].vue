@@ -209,9 +209,8 @@ const onPublish = async () => {
         await doSaveAsset(asset.value);
 
         try {
-            const { data } = await $fetch('/api/publish', {
+            const { data } = await $fetch(`/api/asset/${asset.value.id}/publish`, {
                 method: 'POST',
-                body: JSON.stringify({ id: asset.value.id }),
             });
             console.log('Publish response:', data);
             success('发布成功！');
@@ -263,6 +262,30 @@ const onNavigateError = (path: EditPathRecord[]) => {
     console.log('Navigate to:', JSON.stringify(path));
     editPath.value = path;
     issuesDropdown.value?.handleClose();
+};
+
+const uploadImage = async (file: File) => {
+    if (!asset.value) {
+        return '';
+    }
+
+    const { data } = await $fetch(`/api/asset/${asset.value.id}/getFileUploadUrl`, {
+        method: 'POST',
+        body: { contentType: file.type },
+    });
+
+    await fetch(data.uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+            'Content-Type': file.type,
+        },
+    });
+
+    // strip query string from the upload url
+    const url = new URL(data.uploadUrl);
+    url.search = '';
+    return url.toString();
 };
 </script>
 
@@ -349,12 +372,13 @@ const onNavigateError = (path: EditPathRecord[]) => {
                 ></div>
             </div>
             <!-- preview -->
-            <div class="w-80 border rounded" v-if="appInstance">
+            <div class="w-[400px] shrink-0 border rounded" v-if="appInstance">
                 <AppConfigurator
                     :app="appInstance"
                     :model="model"
                     v-model:editPath="editPath"
                     v-model:selection="selection"
+                    :image-uploader="uploadImage"
                     @change="onAppChange"
                 />
             </div>
