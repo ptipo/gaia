@@ -87,7 +87,10 @@ export class PtFormPage extends PtBase {
                     ${el}
                     ${when(
                         errorMessage,
-                        () => html`<p class="text-red-500 font-normal mt-2 ${ERROR_MESSAGE_CLASS}">${errorMessage!}</p>`
+                        () =>
+                            html`<p class="text-red-500 text-sm font-normal mt-2 ${ERROR_MESSAGE_CLASS}">
+                                ${errorMessage!}
+                            </p>`
                     )}
                 </div>`;
             })}
