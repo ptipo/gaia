@@ -51,8 +51,6 @@ export class PtForm extends PtBaseShadow {
 
                 if (language) {
                     setLocale(language);
-                    console.log('set locale', language);
-                    console.log('msg', msg('Back'));
                 }
                 return model;
             },
@@ -91,6 +89,14 @@ export class PtForm extends PtBaseShadow {
 
     connectedCallback() {
         super.connectedCallback();
+        // re-render the application every time a new locale successfully loads.
+        // needed for the first render in the editor
+        window.addEventListener('lit-localize-status', (event) => {
+            if (event.detail.status === 'ready') {
+                console.log(`Loaded new locale: ${event.detail.readyLocale}`);
+                this.requestUpdate();
+            }
+        });
 
         this.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
