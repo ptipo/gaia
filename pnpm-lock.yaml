@@ -45,6 +45,9 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.596.0
         version: 3.609.0
+      '@aws-sdk/s3-request-presigner':
+        specifier: ^3.613.0
+        version: 3.613.0
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.4.31)
@@ -66,6 +69,9 @@ importers:
       '@node-rs/argon2':
         specifier: ^1.8.3
         version: 1.8.3
+      '@paralleldrive/cuid2':
+        specifier: ^2.2.2
+        version: 2.2.2
       '@prisma/client':
         specifier: 5.15.0
         version: 5.15.0(prisma@5.15.0)
@@ -892,6 +898,20 @@ packages:
       tslib: 2.6.3
     dev: false
 
+  /@aws-sdk/s3-request-presigner@3.613.0:
+    resolution: {integrity: sha512-SViqwfpwrVfKGlpEscDIbz1DMK2C3fckDSwTr0/5GOlqyze2JaiqgeD3MZnzH14WrytuYMDG1SRyOLYQELYOGA==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@aws-sdk/signature-v4-multi-region': 3.609.0
+      '@aws-sdk/types': 3.609.0
+      '@aws-sdk/util-format-url': 3.609.0
+      '@smithy/middleware-endpoint': 3.0.4
+      '@smithy/protocol-http': 4.0.3
+      '@smithy/smithy-client': 3.1.5
+      '@smithy/types': 3.3.0
+      tslib: 2.6.3
+    dev: false
+
   /@aws-sdk/signature-v4-multi-region@3.609.0:
     resolution: {integrity: sha512-FJs0BxVMyYOKNu7nzFI1kehfgWoYmdto5B8BSS29geUACF7jlOoeCfNZWVrnMjvAxVlSQ5O7Mr575932BnsycA==}
     engines: {node: '>=16.0.0'}
@@ -940,6 +960,16 @@ packages:
       '@aws-sdk/types': 3.609.0
       '@smithy/types': 3.3.0
       '@smithy/util-endpoints': 2.0.4
+      tslib: 2.6.3
+    dev: false
+
+  /@aws-sdk/util-format-url@3.609.0:
+    resolution: {integrity: sha512-fuk29BI/oLQlJ7pfm6iJ4gkEpHdavffAALZwXh9eaY1vQ0ip0aKfRTiNudPoJjyyahnz5yJ1HkmlcDitlzsOrQ==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.609.0
+      '@smithy/querystring-builder': 3.0.3
+      '@smithy/types': 3.3.0
       tslib: 2.6.3
     dev: false
 
@@ -2840,7 +2870,6 @@ packages:
   /@noble/hashes@1.4.0:
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
     engines: {node: '>= 16'}
-    dev: true
 
   /@node-rs/argon2-android-arm-eabi@1.7.0:
     resolution: {integrity: sha512-udDqkr5P9E+wYX1SZwAVPdyfYvaF4ry9Tm+R9LkfSHbzWH0uhU6zjIwNRp7m+n4gx691rk+lqqDAIP8RLKwbhg==}
@@ -3802,7 +3831,6 @@ packages:
     resolution: {integrity: sha512-ZOBkgDwEdoYVlSeRbYYXs0S9MejQofiVYoTbKzy/6GQa39/q5tQU2IX46+shYnUkpEl3wc+J6wRlar7r2EK2xA==}
     dependencies:
       '@noble/hashes': 1.4.0
-    dev: true
 
   /@parcel/watcher-android-arm64@2.4.1:
     resolution: {integrity: sha512-LOi/WTbbh3aTn2RYddrO8pnapixAziFl6SMxHM69r3tvdSm94JtCenaKgk1GRg5FJ5wpMCpHeW+7yqPlvZv7kg==}

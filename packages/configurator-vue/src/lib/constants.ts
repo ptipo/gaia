@@ -16,9 +16,14 @@ export const CURRENT_ASPECT_KEY = 'currentAspect';
 /**
  * Currently selected concept instance.
  */
-export const CURRENT_SELECTION = 'currentSelection';
+export const CURRENT_SELECTION_KEY = 'currentSelection';
 
 /**
  * Default aspect for a group if not set.
  */
 export const DEFAULT_ASPECT = 'content';
+
+/**
+ * Injection key for image uploader.
+ */
+export const IMAGE_UPLOADER_KEY = 'imageUploader';

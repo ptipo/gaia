@@ -8,18 +8,25 @@ import { ConfigItemBase } from './common';
  */
 export interface ImageItem extends ConfigItemBase {
     type: 'image';
+
+    /**
+     * 默认图片地址
+     */
+    default?: string;
 }
 
-export const getSchema = (item: ConfigItemBase) =>
-    wrap(
+export const getSchema = (item: ConfigItemBase) => {
+    const myItem = item as ImageItem;
+    return wrap(
         item,
         z.object({
             $type: z.literal(NonPrimitiveTypes.image),
-            url: z.string(),
+            url: myItem.default ? z.string().default(myItem.default) : z.string(),
             width: z.number().positive().optional(),
             height: z.number().positive().optional(),
         })
     );
+};
 
 /**
  * 图片资源信息

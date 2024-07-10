@@ -129,7 +129,9 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                     <img
                                                         @load=${this.imageLoad}
                                                         class="pt-choice-image hidden max-w-full max-h-full h-auto"
-                                                        src="${choice.source || choice.value}"
+                                                        src="${typeof choice.value === 'string'
+                                                            ? choice.value
+                                                            : choice.value?.url}"
                                                     />
                                                 </div>
                                             </div>

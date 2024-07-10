@@ -8,7 +8,8 @@
         "watch:vite": "vite build --watch",
         "watch:css": "tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify --watch",
         "watch:tsc": "vue-tsc --noEmit --watch",
-        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify && cat ./dist/style.css >> ./dist/index.css",
+        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && pnpm build:tailwind",
+        "build:tailwind": "tailwindcss -i ./src/style.css -o ./dist/index.css --postcss --minify && cat ./dist/style.css >> ./dist/index.css",
         "preview": "vite preview -c vite-app.config.ts",
         "lint": "vue-tsc --noEmit",
         "test": "jest"

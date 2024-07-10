@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_ASPECT_KEY, CURRENT_SELECTION, DEFAULT_ASPECT, ROOT_MODEL_KEY } from '@/lib/constants';
+import {
+    APP_KEY,
+    CURRENT_ASPECT_KEY,
+    CURRENT_SELECTION_KEY,
+    DEFAULT_ASPECT,
+    IMAGE_UPLOADER_KEY,
+    ROOT_MODEL_KEY,
+} from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept } from '@hayadev/configurator';
 import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
@@ -10,6 +17,7 @@ const activeAspect = ref(DEFAULT_ASPECT);
 const props = defineProps<{
     app: AppInstance<Concept>;
     model: BaseConceptModel;
+    imageUploader: (file: File) => Promise<string>;
 }>();
 
 // v-model for currently selected concept instance
@@ -42,7 +50,9 @@ provide(CURRENT_ASPECT_KEY, activeAspect);
 provide(APP_KEY, props.app);
 
 // provide the current selected concept instance to descendants
-provide(CURRENT_SELECTION, selection);
+provide(CURRENT_SELECTION_KEY, selection);
+
+provide(IMAGE_UPLOADER_KEY, props.imageUploader);
 
 const aspects = [
     { label: '内容', aspect: 'content' },

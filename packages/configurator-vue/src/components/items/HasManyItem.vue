@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_SELECTION, ROOT_MODEL_KEY } from '@/lib/constants';
+import { APP_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
 import { type AppInstance, type Concept, type BaseConceptModel, incrementName } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
@@ -50,7 +50,7 @@ watch(
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
-const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION);
+const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION_KEY);
 
 // draggable state changed
 const onDragChanged = () => {

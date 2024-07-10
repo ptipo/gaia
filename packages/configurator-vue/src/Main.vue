@@ -82,6 +82,14 @@ const validate = (model: BaseConceptModel) => {
 watch(selection, (value) => {
     console.log('Selection changed:', value?.concept.name, value?.id);
 });
+
+const uploadImage = async (file: File) => {
+    const blob = new Blob([await file.arrayBuffer()], {
+        type: file.type,
+    });
+    const url = URL.createObjectURL(blob);
+    return url;
+};
 </script>
 
 <template>
@@ -114,6 +122,7 @@ watch(selection, (value) => {
                 :model="model"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
+                :image-uploader="uploadImage"
                 @change="onAppChange"
             />
         </div>
