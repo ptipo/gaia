@@ -35,6 +35,6 @@ export class StorageWrapper {
             return null;
         }
 
-        return parsed;
+        return parsed.value;
     }
 }
