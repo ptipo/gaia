@@ -13,6 +13,7 @@ import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
+import { msg } from '@lit/localize';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
@@ -45,6 +46,14 @@ export class PtForm extends PtBaseShadow {
                 }
                 console.log('Loaded model', model);
                 console.log('Model app version', appVersion);
+
+                const language = model.languageSettings.language;
+
+                if (language) {
+                    setLocale(language);
+                    console.log('set locale', language);
+                    console.log('msg', msg('Back'));
+                }
                 return model;
             },
         },
@@ -122,12 +131,6 @@ export class PtForm extends PtBaseShadow {
             }
         }
 
-        const language = this.config?.languageSettings.language;
-
-        if (language) {
-            setLocale(language);
-        }
-
         if (!contentPages?.length) {
             return html``;
         }
@@ -142,7 +145,6 @@ export class PtForm extends PtBaseShadow {
             const progress: number = this.getCurrentProgress() * 100;
 
             return html`
-            
                     <div>
                         <div class="sticky top-0 h-8 bg-white opacity-100">
                             <div class="flex flex-col h-full justify-center">
@@ -169,11 +171,13 @@ export class PtForm extends PtBaseShadow {
                     </div>
                     <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
                         <div class="flex h-full items-center justify-end gap-x-8">
-                        <button type="button" @click=${this.prePage} class="text-gray-500">Back</button>
+                        <button type="button" @click=${this.prePage} class="text-gray-500">${msg('Back')}</button>
                             <span class="w-44 max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
-                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >NEXT</button>
+                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >${msg(
+                'NEXT'
+            )}</button>
                         </span>
                         </div>
                     </div>
