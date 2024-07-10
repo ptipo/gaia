@@ -9,11 +9,14 @@ class PtText extends PtBase {
     data?: AllPageItemsTypesMap['TextElement'];
 
     render() {
-        const tagName = this.data?.kind || 'p';
+        const isBold = this.data?.kind != 'text';
+        const tagName = this.data?.kind == 'text' ? 'p' : this.data?.kind!;
         const align = this.data?.align || 'center';
         const maxWidth = this.data?.maxWidth || 100;
         return html`<div class="w-full flex" style="justify-content:${align}"> <${unsafeStatic(
             tagName
-        )} style="max-width:${maxWidth}%" class="break-words">${this.data?.content}</${unsafeStatic(tagName)}></div>`;
+        )} style="max-width:${maxWidth}%" class="break-words ${isBold ? 'font-bold' : ''}">${
+            this.data?.content
+        }</${unsafeStatic(tagName)}></div>`;
     }
 }
