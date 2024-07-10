@@ -284,7 +284,7 @@ function assetEventHandler(assetHtmlElement) {
 }
 
 Promise.all([onSdkLoad(), fetchConfig()]).then(([_, config]) => {
-    const el = document.querySelector(`#${engageElementId} [data-menu-action="insert.popup"]`);
+    const el = ptKit.querySelector(`#${engageElementId} [data-menu-action="insert.popup"]`);
 
     const div = document.createElement('div');
     div.className = 'ptx-engage-popup-form-wrapper';

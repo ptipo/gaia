@@ -13,6 +13,7 @@ import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
+import { msg } from '@lit/localize';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
@@ -45,6 +46,12 @@ export class PtForm extends PtBaseShadow {
                 }
                 console.log('Loaded model', model);
                 console.log('Model app version', appVersion);
+
+                const language = model.languageSettings.language;
+
+                if (language) {
+                    setLocale(language);
+                }
                 return model;
             },
         },
@@ -82,6 +89,14 @@ export class PtForm extends PtBaseShadow {
 
     connectedCallback() {
         super.connectedCallback();
+        // re-render the application every time a new locale successfully loads.
+        // needed for the first render in the editor
+        window.addEventListener('lit-localize-status', (event) => {
+            if (event.detail.status === 'ready') {
+                console.log(`Loaded new locale: ${event.detail.readyLocale}`);
+                this.requestUpdate();
+            }
+        });
 
         this.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
@@ -122,12 +137,6 @@ export class PtForm extends PtBaseShadow {
             }
         }
 
-        const language = this.config?.languageSettings.language;
-
-        if (language) {
-            setLocale(language);
-        }
-
         if (!contentPages?.length) {
             return html``;
         }
@@ -137,12 +146,14 @@ export class PtForm extends PtBaseShadow {
         }
 
         const completePages = this.config?.completePages ?? [];
+        const css = html`<style>
+            ${this.config?.customCSS?.source}
+        </style>`;
 
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
-            return html`
-            
+            return html`${css}
                     <div>
                         <div class="sticky top-0 h-8 bg-white opacity-100">
                             <div class="flex flex-col h-full justify-center">
@@ -169,11 +180,13 @@ export class PtForm extends PtBaseShadow {
                     </div>
                     <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
                         <div class="flex h-full items-center justify-end gap-x-8">
-                        <button type="button" @click=${this.prePage} class="text-gray-500">Back</button>
+                        <button type="button" @click=${this.prePage} class="text-gray-500">${msg('Back')}</button>
                             <span class="w-44 max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
-                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >NEXT</button>
+                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >${msg(
+                'NEXT'
+            )}</button>
                         </span>
                         </div>
                     </div>

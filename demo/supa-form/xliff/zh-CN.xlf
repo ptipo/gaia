@@ -14,6 +14,14 @@
   <source>Please enter a valid email</source>
   <target>请输入有效的邮件地址</target>
 </trans-unit>
+<trans-unit id="sc16e00a7a8b2fde2">
+  <source>Back</source>
+  <target>返回</target>
+</trans-unit>
+<trans-unit id="sfa236dc6043a5fe8">
+  <source>NEXT</source>
+  <target>下一步</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

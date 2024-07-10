@@ -10,6 +10,7 @@
         "db:generate": "zenstack generate",
         "db:push": "prisma db push",
         "db:seed": "tsx prisma/seed.ts",
+        "db:update": "tsx tools/db-update.ts",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
