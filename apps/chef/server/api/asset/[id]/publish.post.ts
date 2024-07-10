@@ -51,17 +51,17 @@ export default eventHandler(async (event) => {
 function makePageContent(asset: Asset & { app: App }) {
     const result = pageTemplate
         .replaceAll('{{title}}', asset.name)
-        .replaceAll('{{bundle}}', getAppBundle(asset.app.bundle))
+        .replaceAll('{{bundle}}', getAppBundle(asset.app.bundle, asset.appVersion || 'latest'))
         .replaceAll('{{tagName}}', asset.app.htmlTagName)
         .replaceAll('{{config}}', escapeHtml(JSON.stringify(asset.config)));
     return result;
 }
 
-function getAppBundle(bundle: string) {
+function getAppBundle(bundle: string, version: string) {
     if (URL.canParse(bundle)) {
         return bundle;
     } else {
-        return `https://unpkg.com/${bundle}@latest/dist/index.js`;
+        return `https://unpkg.com/${bundle}@${version}/dist/index.js`;
     }
 }
 

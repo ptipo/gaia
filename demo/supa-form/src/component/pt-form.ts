@@ -266,19 +266,22 @@ export class PtForm extends PtBaseShadow {
         const nextButton = this.currentContentPage?.nextButton!;
 
         const nextAction = nextButton.action;
+        let targetPage;
 
         if (nextAction == 'conditional') {
             const satisfiedCondition = nextButton.conditionalAction?.find((x) =>
                 validateLogic(this.config!, x.condition!, this.formState.answers)
             );
             if (satisfiedCondition) {
-                const targePage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
-                this.pageId = targePage;
+                targetPage = (satisfiedCondition.action![0].goToPage as ConceptRef).$id;
+                this.pageId = targetPage;
             }
         } else if (nextAction == 'goToPage') {
-            const targePage = (nextButton.targetPage as ConceptRef).$id;
-            this.pageId = targePage;
-        } else {
+            targetPage = (nextButton.targetPage as ConceptRef).$id;
+            this.pageId = targetPage;
+        }
+
+        if (!targetPage) {
             const currentPageIndex = contentPages.findIndex((x) => x.$id == this.pageId);
 
             if (currentPageIndex < contentPages.length - 1) {

@@ -33,13 +33,17 @@ export function validateLogic(model: typeof app.model, condition: LogicalGroup, 
                 if (!answerData) return false;
                 const choiceQuestion = findPageItemConfigById(model, fieldId) as AllPageItemsTypesMap['ChoiceQuestion'];
 
-                const dataValue = answerData.data as Map<string, string>;
+                const dataValue = answerData.data as Array<[string, string]>;
                 if (choiceQuestion.kind == 'single') {
                     const expectedData = (condition.right as ConceptRef).$id;
-                    return validateValue(operator, dataValue.keys().next().value, expectedData);
+                    return validateValue(operator, dataValue[0][0], expectedData);
                 } else {
                     const expectedData = (condition.right as ConceptRef[]).map((x) => x.$id);
-                    return validateArrayValue(operator, Array.from(dataValue.keys()), expectedData);
+                    return validateArrayValue(
+                        operator,
+                        dataValue.map((x) => x[0]),
+                        expectedData
+                    );
                 }
             }
         }
