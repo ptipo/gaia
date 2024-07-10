@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js';
 import './pt-question-base';
 import { consume } from '@lit/context';
 import { formWidth } from '../../state';
-import { localized, msg } from '@lit/localize';
+import { msg } from '@lit/localize';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
@@ -159,7 +159,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                 () =>
                                     html`
                                         <label
-                                            class="h-10 flex items-center border rounded-md p-4 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                            class="flex items-center border rounded-md p-4 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
                                         >
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
@@ -171,6 +171,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                         </label>
                                         ${choice.additionalInput && this.isChoiceChecked(choice.$id)
                                             ? html` <pt-question
+                                                  class="-mt-6 mb-2"
                                                   data-choice-id="${choice.$id}"
                                                   @input=${this.onInputChange}
                                                   .value=${this.getChoiceData(choice.$id)[1]}
