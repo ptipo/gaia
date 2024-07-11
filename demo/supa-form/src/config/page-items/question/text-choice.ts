@@ -31,6 +31,23 @@ export const TextChoice = defineConcept({
             type: 'switch',
             name: '选择后，需要用户输入补充回答',
         },
+
+        /**
+         * 补充输入的提示语
+         */
+        additionalInputPlaceholder: {
+            type: 'if',
+
+            // 仅在需要用户输入补充回答时显示
+            conditionProvider: ({ currentModel }) => !!currentModel.additionalInput,
+
+            name: '补充输入的提示语',
+            child: {
+                type: 'text',
+                name: '提示语（Placeholder）',
+                help: 'Placeholder，帮助用户简单理解操作要求或呼吁用户行动',
+            },
+        },
     },
 
     summary: ({ currentModel }) => currentModel.value as string,

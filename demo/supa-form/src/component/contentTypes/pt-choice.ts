@@ -174,6 +174,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                   class="-mt-6 mb-2"
                                                   data-choice-id="${choice.$id}"
                                                   @input=${this.onInputChange}
+                                                  .placeholder=${choice.additionalInputPlaceholder as string}
                                                   .value=${this.getChoiceData(choice.$id)[1]}
                                               ></pt-question>`
                                             : ''}
