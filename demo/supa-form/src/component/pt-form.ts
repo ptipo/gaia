@@ -15,6 +15,7 @@ import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 import { msg } from '@lit/localize';
 import { ERROR_MESSAGE_CLASS } from './constant';
+import { when } from 'lit/directives/when.js';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
@@ -181,8 +182,15 @@ export class PtForm extends PtBaseShadow {
                     </div>
                     <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
                         <div class="flex h-full items-center justify-end gap-x-8">
-                        <button type="button" @click=${this.prePage} class="text-gray-500">${msg('Back')}</button>
-                            <span class="w-44 max-w-[33%] mr-10">
+                        ${when(
+                            this.editSelection || this.pageIdStack.length > 0,
+                            () =>
+                                html` <button type="button" @click=${this.prePage} class="text-gray-500">
+                                    ${msg('Back')}
+                                </button>`
+                        )}
+
+                        <span class="w-44 max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
                         } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >${msg(

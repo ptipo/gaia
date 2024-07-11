@@ -106,7 +106,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         return html`
             <fieldset class="flex">
                 <legend class="mb-5">
-                    <span class="text-2xl font-bold">${this.data?.question}</span>
+                    <span class="text-xl font-bold">${this.data?.question}</span>
                     ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
                 </legend>
 
@@ -171,7 +171,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                         </label>
                                         ${choice.additionalInput && this.isChoiceChecked(choice.$id)
                                             ? html` <pt-question
-                                                  class="-mt-6 mb-2"
+                                                  class="-mt-4 mb-2"
                                                   data-choice-id="${choice.$id}"
                                                   @input=${this.onInputChange}
                                                   .placeholder=${choice.additionalInputPlaceholder as string}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Supa Form Preview</title>
+    </head>
+    <body style="margin: 0">
+        <script>
+            window.addEventListener('message', (event) => {
+                // Ensure the message is coming from a trusted origin
+                if (event.origin !== window.location.origin) return;
+
+                let script = document.createElement('script');
+
+                let { config, bundle, htmlTag } = event.data;
+
+                script.src = bundle;
+                script.type = 'module';
+
+                script.onload = () => {
+                    const container = document.getElementById('app');
+
+                    const asset = document.createElement(htmlTag);
+
+                    asset.setAttribute('config', config);
+
+                    asset.setAttribute('style', 'width: 100%;');
+
+                    container.appendChild(asset);
+                };
+
+                document.head.appendChild(script);
+            });
+        </script>
+        <div id="app" class="container"></div>
+    </body>
+
+    <style>
+        #app {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+        }
+    </style>
+</html>

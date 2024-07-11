@@ -114,7 +114,7 @@ function removeLoading(wrap, className = 'pt-popup-loading') {
 function onSdkLoad() {
     return new Promise((resolve) => {
         var script = document.createElement('script');
-        script.src = `https://unpkg.com/${assetBundle}@${assetVersion}/dist/index.js`;
+        script.src = `https://compnpmcache.ptengine.com/${assetBundle}@${assetVersion}/dist/index.js`;
         script.type = 'module';
         script.onload = () => {
             resolve();
@@ -299,7 +299,7 @@ Promise.all([onSdkLoad(), fetchConfig()]).then(([_, config]) => {
     const div = document.createElement('div');
     div.className = 'ptx-engage-popup-form-wrapper';
     el.appendChild(div);
-    div.style = 'max-height: 100%; overflow-y: auto;';
+    div.style = 'max-height: 100%; overflow-y: auto; border-radius: inherit;';
 
     const assetHtmlElement = document.createElement(assetHtmlTag);
     assetHtmlElement.setAttribute('config', JSON.stringify(config));

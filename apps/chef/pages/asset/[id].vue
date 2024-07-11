@@ -35,6 +35,8 @@ const issuesDropdown = ref<DropdownInstance>();
 
 const isPublishingAsset = ref(false);
 
+const isPreviewAsset = ref(false);
+
 const isMobile = ref(false);
 
 const {
@@ -221,6 +223,32 @@ const onPublish = async () => {
     }
 };
 
+function getAppBundle(bundle: string, version: string) {
+    if (URL.canParse(bundle)) {
+        return bundle;
+    } else {
+        return `https://compnpmcache.ptengine.com/${bundle}@${version}/dist/index.js`;
+    }
+}
+
+const onPreview = async () => {
+    if (!appInstance.value || !model.value || !asset.value) {
+        return;
+    }
+
+    const bundle = getAppBundle(asset.value.app.bundle, appInstance.value.version);
+    // open a new page
+    const newWindow = window.open('/preview.html', '_blank')!;
+
+    newWindow!.onload = () => {
+        newWindow.postMessage({
+            config: appInstance.value!.stringifyModel(model.value!),
+            bundle,
+            htmlTag: asset.value.app.htmlTagName,
+        });
+    };
+};
+
 const doSaveAsset = (asset: Asset & { app: App }) => {
     if (!appInstance.value || !model.value) {
         return;
@@ -331,6 +359,7 @@ const uploadImage = async (file: File) => {
                 </el-dropdown>
                 <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
+                <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">预览</el-button>
                 <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
                     >发布</el-button
                 >
