@@ -299,7 +299,7 @@ Promise.all([onSdkLoad(), fetchConfig()]).then(([_, config]) => {
     const div = document.createElement('div');
     div.className = 'ptx-engage-popup-form-wrapper';
     el.appendChild(div);
-    div.style = 'max-height: 100%; overflow-y: auto;';
+    div.style = 'max-height: 100%; overflow-y: auto; border-radius: inherit;';
 
     const assetHtmlElement = document.createElement(assetHtmlTag);
     assetHtmlElement.setAttribute('config', JSON.stringify(config));
