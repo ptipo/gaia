@@ -1,4 +1,10 @@
-import { NonPrimitiveTypes, createAppInstance, createRef } from '@hayadev/configurator';
+import {
+    NonPrimitiveTypes,
+    cloneConceptModel,
+    createAppInstance,
+    createRef,
+    inferConcept,
+} from '@hayadev/configurator';
 import { describe } from '@jest/globals';
 import { inspect } from 'util';
 import { FormApp as config } from './app-config/form';
@@ -107,5 +113,53 @@ describe('form sample app', () => {
 
         const resolvedPage = newApp.resolveConcept(createRef(completePage1));
         expect(resolvedPage).toEqual(completePage1);
+    });
+
+    it('can clone a concept model', () => {
+        const app = createAppInstance(config, '1.0.1');
+
+        const contentPage1 = app.createConceptInstance(ContentPage, {
+            name: 'Content Page1',
+            pageItems: [
+                app.createConceptInstance(ChoiceQuestion, {
+                    name: 'q1',
+                    question: 'Question1',
+                    kind: 'single',
+                    choiceKind: 'text',
+                    textChoices: [
+                        app.createConceptInstance(TextChoice, {
+                            value: 'Choice1',
+                            defaultSelected: true,
+                        }),
+                        app.createConceptInstance(TextChoice, {
+                            value: 'Choice2',
+                            additionalInput: true,
+                        }),
+                    ],
+                }),
+            ],
+        });
+
+        const cloned = cloneConceptModel(contentPage1);
+
+        expect(cloned.name).toBe(contentPage1.name);
+        expect(cloned.$id).not.toBe(contentPage1.$id);
+
+        expect(cloned.pageItems[0].name).toBe(contentPage1.pageItems[0].name);
+        expect(cloned.pageItems[0].$id).not.toBe(contentPage1.pageItems[0].$id);
+
+        expect((cloned.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![0].name).toBe(
+            (contentPage1.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![0].name
+        );
+        expect((cloned.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![0].$id).not.toBe(
+            (contentPage1.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![0].$id
+        );
+
+        expect((cloned.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].name).toBe(
+            (contentPage1.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].name
+        );
+        expect((cloned.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].$id).not.toBe(
+            (contentPage1.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].$id
+        );
     });
 });

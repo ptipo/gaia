@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { APP_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
 import { confirmDelete } from '@/lib/message';
-import { type AppInstance, type Concept, type BaseConceptModel, incrementName } from '@hayadev/configurator';
+import {
+    cloneConceptModel,
+    incrementName,
+    type AppInstance,
+    type BaseConceptModel,
+    type Concept,
+} from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
-import deepcopy from 'deepcopy';
 import { v4 as uuid } from 'uuid';
 import { computed, inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
@@ -126,7 +131,7 @@ const onCloneElement = (index: number) => {
             currentModel: props.model,
         });
     } else {
-        cloned = deepcopy(elementModel);
+        cloned = cloneConceptModel(elementModel);
         if (typeof cloned.name === 'string') {
             cloned.name = incrementName(
                 cloned.name,
