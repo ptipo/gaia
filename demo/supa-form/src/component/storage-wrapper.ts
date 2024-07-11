@@ -9,7 +9,7 @@ export class StorageWrapper {
         if (this.storageType === 'localstorage') {
             localStorage.setItem(key, JSON.stringify({ value, ttl: Date.now() + this.ttl! }));
         } else {
-            sessionStorage.setItem(key, JSON.stringify(value));
+            sessionStorage.setItem(key, JSON.stringify({ value }));
         }
     }
 
