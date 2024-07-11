@@ -18,11 +18,3 @@ export type ConceptModelPair = {
     concept: Concept;
     model: BaseConceptModel;
 };
-
-/**
- * Data for a selected concept instance.
- */
-export type SelectionData = {
-    concept: Concept;
-    id: string;
-};

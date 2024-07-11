@@ -44,3 +44,18 @@ export type CustomValidationIssue = { code: ValidationIssueCode; message: string
  * Custom validator for a concept.
  */
 export type ConceptCustomValidator = (model: BaseConceptModel) => CustomValidationIssue[] | undefined;
+
+/**
+ * Data for a selected concept instance.
+ */
+export type SelectionData = {
+    /**
+     * The selected concept
+     */
+    concept: Concept;
+
+    /**
+     * The selected concept instance id
+     */
+    id: string;
+};

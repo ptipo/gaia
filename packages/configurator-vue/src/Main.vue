@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { createAppInstance, type BaseConceptModel, type ValidationIssue } from '@hayadev/configurator';
+import {
+    createAppInstance,
+    type BaseConceptModel,
+    type SelectionData,
+    type ValidationIssue,
+} from '@hayadev/configurator';
 import { FormApp, FormAppVersion } from '@hayadev/samples/form';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -8,7 +13,7 @@ import AppConfigurator from './components/AppConfigurator.vue';
 import { JsonViewer } from 'vue3-json-viewer';
 import 'vue3-json-viewer/dist/index.css';
 import ValidationIssues from './components/ValidationIssues.vue';
-import { SelectionData, type EditPathRecord } from './components/types';
+import type { EditPathRecord } from './components/types';
 
 const app = createAppInstance(FormApp, FormAppVersion);
 const model = ref<BaseConceptModel>(app.model);

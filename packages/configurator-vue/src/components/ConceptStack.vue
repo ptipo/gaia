@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
+import type { BaseConceptModel, Concept, ConfigItem, SelectionData } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
 import { computed, ref, watch } from 'vue';
 import ConceptConfigurator from './ConceptConfigurator.vue';
-import type { EditPathRecord, EnterConceptData, SelectionData } from './types';
+import type { EditPathRecord, EnterConceptData } from './types';
 
 const props = defineProps<{
     rootConcept: Concept;
