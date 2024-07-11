@@ -132,6 +132,7 @@ async function fetchConfig() {
 function assetEventHandler(assetHtmlElement) {
     assetHtmlElement.addEventListener('form-answer', (e) => submitData(e.detail));
     assetHtmlElement.addEventListener('form-complete', (e) => submitData(e.detail));
+    assetHtmlElement.addEventListener('save-user-tag', (e) => saveUserTag(e.detail));
 
     function submitData(data) {
         console.log('submit form data:' + data);
@@ -140,9 +141,18 @@ function assetEventHandler(assetHtmlElement) {
         } catch (ex) {
             console.log(ex);
         }
+        submit2BI(data);
+    }
+
+    function saveUserTag(data) {
+        console.log('save user tag:' + data);
+        try {
+            submitForm(data);
+        } catch (ex) {
+            console.log(ex);
+        }
 
         submit2Identify(data);
-        submit2BI(data);
     }
 
     function submit2BI(data) {

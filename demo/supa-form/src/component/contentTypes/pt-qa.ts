@@ -45,6 +45,6 @@ export class PtQA extends PtBaseData<string> {
     }
 
     override getSubmitData() {
-        return { name: this.data?.name!, value: this.value.data! };
+        return { name: this.data?.name!, value: this.value.data!, saveUserTag: this.data?.saveAsUserTag };
     }
 }

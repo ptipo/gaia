@@ -202,16 +202,26 @@ export class PtForm extends PtBaseShadow {
     }
 
     private submitPage(isComplete: boolean = false) {
-        const submitData = this.getSubmitDataFromState();
-        console.log(`submit form data ${JSON.stringify(submitData)}`);
+        const formResult = this.getFormResultFromState();
+        console.log(`form result: ${JSON.stringify(formResult)}`);
 
-        const options = {
-            detail: submitData,
-            bubbles: true,
-            composed: true,
-        };
+        this.dispatchEvent(
+            new CustomEvent(isComplete ? 'form-answer' : 'form-complete', {
+                detail: formResult.submitData,
+                bubbles: true,
+                composed: true,
+            })
+        );
 
-        this.dispatchEvent(new CustomEvent(isComplete ? 'form-answer' : 'form-complete', options));
+        if (Object.keys(formResult.saveUserTag).length > 0) {
+            this.dispatchEvent(
+                new CustomEvent('save-user-tag', {
+                    detail: formResult.saveUserTag,
+                    bubbles: true,
+                    composed: true,
+                })
+            );
+        }
     }
 
     private prePage() {
@@ -246,6 +256,8 @@ export class PtForm extends PtBaseShadow {
                 currentPageIndex < contentPages.length - 1
                     ? contentPages[currentPageIndex + 1].$id
                     : completePages[0].$id!;
+
+            this.emitPageChangeEvent(currentPageId, this.pageId);
 
             return;
         }
@@ -301,10 +313,6 @@ export class PtForm extends PtBaseShadow {
         console.log('form state changed');
     }
 
-    private isCompletePage(pageId: string) {
-        return this.config?.completePages.find((x) => x.$id == pageId);
-    }
-
     private getCurrentProgress(): number {
         const contentPages = this.config?.contentPages;
         const currentPageIndex = contentPages?.findIndex((x) => x.$id == this.pageId);
@@ -322,17 +330,28 @@ export class PtForm extends PtBaseShadow {
         this.dispatchEvent(new CustomEvent('form-page-change', options));
     }
 
-    private getSubmitDataFromState() {
-        const result: { [key: string]: string } = {};
+    private getFormResultFromState(): FormResultData {
+        const submitData: { [key: string]: string } = {};
+        const saveUserTag: { [key: string]: string } = {};
 
         for (const key in this.formState.answers) {
-            const submitData = this.formState.answers[key].submitData;
-            if (submitData) {
-                result[submitData.name] = submitData.value;
+            const data = this.formState.answers[key].submitData;
+            if (data) {
+                submitData[data.name] = data.value;
+                if (data.saveUserTag) {
+                    for (const tag of data.saveUserTag) {
+                        saveUserTag[tag] = data.value;
+                    }
+                }
             }
         }
-        return result;
+        return { submitData, saveUserTag };
     }
+}
+
+interface FormResultData {
+    submitData: { [key: string]: string };
+    saveUserTag: { [key: string]: string };
 }
 
 declare global {
