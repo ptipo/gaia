@@ -3,7 +3,7 @@ import { FormAnswerData, answerData } from '../state';
 type StorageType = 'localstorage' | 'sessionstorage';
 
 export class StorageWrapper {
-    constructor(private storageType?: StorageType, readonly ttl?: number) {}
+    constructor(private storageType?: StorageType, private ttl?: number) {}
 
     set(key: string, value: FormAnswerData) {
         if (this.storageType === 'localstorage') {
@@ -34,6 +34,8 @@ export class StorageWrapper {
             localStorage.removeItem(key);
             return null;
         }
+
+        this.ttl = parsed.ttl;
 
         return parsed.value;
     }

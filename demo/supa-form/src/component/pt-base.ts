@@ -75,6 +75,7 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 export interface FormSubmitData {
     name: string;
     value: string;
+    saveUserTag?: Array<string>;
 }
 
 export class QuestionState<T> {

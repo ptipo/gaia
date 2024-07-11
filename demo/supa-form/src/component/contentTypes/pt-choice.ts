@@ -68,7 +68,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
             id="${choice.$id}"
             type="${isSingleChoice ? 'radio' : 'checkbox'}"
             name="${this.data?.$id!}"
-            value="${choice.value}"
+            value="${choice.value!}"
             ?checked=${this.value ? isChecked : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
             class="mr-2 w-4 h-4 cursor-pointer text-black border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -131,7 +131,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                         class="pt-choice-image hidden max-w-full max-h-full h-auto"
                                                         src="${typeof choice.value === 'string'
                                                             ? choice.value
-                                                            : choice.value?.url}"
+                                                            : choice.value!.url}"
                                                     />
                                                 </div>
                                             </div>
@@ -174,6 +174,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                   class="-mt-6 mb-2"
                                                   data-choice-id="${choice.$id}"
                                                   @input=${this.onInputChange}
+                                                  .placeholder=${choice.additionalInputPlaceholder as string}
                                                   .value=${this.getChoiceData(choice.$id)[1]}
                                               ></pt-question>`
                                             : ''}
@@ -245,7 +246,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                 }
             })
             .join(',');
-        return { name: this.data?.name!, value: submitValue };
+        return { name: this.data?.name!, value: submitValue, saveUserTag: this.data?.saveAsUserTag };
     }
 
     private isChoiceChecked(choiceId: string) {
