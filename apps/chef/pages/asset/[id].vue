@@ -227,7 +227,7 @@ function getAppBundle(bundle: string, version: string) {
     if (URL.canParse(bundle)) {
         return bundle;
     } else {
-        return `https://unpkg.com/${bundle}@${version}/dist/index.js`;
+        return `https://compnpmcache.ptengine.com/${bundle}@${version}/dist/index.js`;
     }
 }
 

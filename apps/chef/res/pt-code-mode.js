@@ -114,7 +114,7 @@ function removeLoading(wrap, className = 'pt-popup-loading') {
 function onSdkLoad() {
     return new Promise((resolve) => {
         var script = document.createElement('script');
-        script.src = `https://unpkg.com/${assetBundle}@${assetVersion}/dist/index.js`;
+        script.src = `https://compnpmcache.ptengine.com/${assetBundle}@${assetVersion}/dist/index.js`;
         script.type = 'module';
         script.onload = () => {
             resolve();
