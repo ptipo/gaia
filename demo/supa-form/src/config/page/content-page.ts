@@ -4,11 +4,11 @@ import {
     ProviderContext,
     ValidationIssue,
     ValidationIssueCode,
+    cloneConceptModel,
     defineConcept,
     incrementName,
     inferPartialConcept,
 } from '@hayadev/configurator';
-import deepcopy from 'deepcopy';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
 import { NextButton } from './next-button';
@@ -84,8 +84,8 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
     });
 }
 
-function cloneItemProvider(concept: Concept, source: BaseConceptModel, context: ProviderContext) {
-    const result = deepcopy(source);
+function cloneItemProvider(_concept: Concept, source: BaseConceptModel, context: ProviderContext) {
+    const result = cloneConceptModel(source);
     const newName = incrementName(
         result.name as string,
         context.currentModel.map((question: any) => question.name),
