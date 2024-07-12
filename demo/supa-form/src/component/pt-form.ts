@@ -318,6 +318,14 @@ export class PtForm extends PtBaseShadow {
         // save form state to storage
         this.formState.currentPageId = this.pageId;
         this.storageWrapper?.set(this.storageKey, this.formState);
+
+        // if need to go to the complete page
+        const limitPagesPerDrip = this.config?.dataCollection.drip.limitPagesPerDrip;
+
+        if (limitPagesPerDrip?.maxPagesPerDrip && this.pageIdStack.length >= limitPagesPerDrip.maxPagesPerDrip) {
+            targetPage = (limitPagesPerDrip.dripCompletePage as ConceptRef).$id;
+            this.pageId = targetPage;
+        }
     }
 
     private onFormStateChange() {
