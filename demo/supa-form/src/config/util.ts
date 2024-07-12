@@ -10,10 +10,14 @@ export function getAllPages(rootModel: any) {
             label: page.name,
             value: createRef(page),
         })),
-        ...rootModel.completePages.map((page: any) => ({
-            key: page.$id,
-            label: page.name,
-            value: createRef(page),
-        })),
+        ...getCompletePages(rootModel),
     ];
+}
+
+export function getCompletePages(rootModel: any) {
+    return rootModel.completePages.map((page: any) => ({
+        key: page.$id,
+        label: page.name,
+        value: createRef(page),
+    }));
 }

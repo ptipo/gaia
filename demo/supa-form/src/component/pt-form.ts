@@ -212,7 +212,7 @@ export class PtForm extends PtBaseShadow {
         } else {
             this.submitPage(true);
             const completePage = completePages.find((x) => x.$id == this.pageId);
-            return html`<pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
+            return html`${css} <pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
         }
     }
 
