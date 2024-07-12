@@ -146,11 +146,6 @@ function assetEventHandler(assetHtmlElement) {
 
     function saveUserTag(data) {
         console.log('save user tag:' + data);
-        try {
-            submitForm(data);
-        } catch (ex) {
-            console.log(ex);
-        }
 
         submit2Identify(data);
     }
