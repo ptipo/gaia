@@ -8,6 +8,9 @@ export type answerData = {
 export class FormAnswerData {
     answers: answerData = {};
     currentPageId?: string;
+    landingPageUrl?: string;
+    pageUrl?: string;
+    utmParameters?: { [key: string]: string };
 }
 
 export const formState = createContext<FormAnswerData>(Symbol('form-state'));
