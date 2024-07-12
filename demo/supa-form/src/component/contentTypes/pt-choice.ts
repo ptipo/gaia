@@ -94,7 +94,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
 
         const choices = this.data?.randomOrder
             ? this.targetChoices
-                  ?.map((x, i) => ({ value: x, sort: this.randomSeed![i] }))
+                  ?.map((x, i) => ({ value: x, sort: x.additionalInput ? i : this.randomSeed![i] }))
                   .sort((a, b) => a.sort - b.sort)
                   .map((x) => x.value)
             : this.targetChoices;

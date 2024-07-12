@@ -12,45 +12,21 @@ export const AutoCollectSetting = defineGroupItem({
     },
 
     items: {
-        /** UTM Campaign */
-        utmCampaign: {
+        /** UTM */
+        utmParameters: {
             type: 'switch',
-            name: 'UTM Campaign',
+            name: 'UTM Parameters',
             groupKey: 'source',
         },
 
         /**
-         * UTM Source
-         */
-        utmSource: { type: 'switch', name: 'UTM Source', groupKey: 'source' },
-
-        /**
-         * UTM Medium
-         */
-        utmMedium: { type: 'switch', name: 'UTM Medium', groupKey: 'source' },
-
-        /**
-         * UTM Term
-         */
-        utmTerm: { type: 'switch', name: 'UTM Term', groupKey: 'source' },
-
-        /**
-         * UTM Content
-         */
-        utmContent: { type: 'switch', name: 'UTM Content', groupKey: 'source' },
-
-        /**
          * 页面URL
          */
-        pageUrl: { type: 'switch', name: '页面URL', groupKey: 'page' },
+        page_url: { type: 'switch', name: '页面URL', groupKey: 'page' },
 
         /**
-         * 带参数的页面URL
+         * 进入页面URL
          */
-        pageUrlWithParams: {
-            type: 'switch',
-            name: '页面URL（包含参数）',
-            groupKey: 'page',
-        },
+        landing_page_url: { type: 'switch', name: '进入页面URL', groupKey: 'page' },
     },
 });

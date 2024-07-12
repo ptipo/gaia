@@ -20,6 +20,7 @@ import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
+type autoCollect = NonNullable<typeof app.model.dataCollection.autoCollect>;
 
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
@@ -111,11 +112,11 @@ export class PtForm extends PtBaseShadow {
     }
 
     render() {
-        console.log(this.config);
-
         const contentPages = this.config?.contentPages;
 
-        const dataRetention = this.config?.dataCollection.drip.retention;
+        const dataCollection = this.config?.dataCollection;
+
+        const dataRetention = dataCollection?.drip.retention;
 
         if (dataRetention && !this.storageWrapper) {
             const loadStorageWrapper = new StorageWrapper();
@@ -140,6 +141,8 @@ export class PtForm extends PtBaseShadow {
                 }
             }
         }
+
+        this.saveUrlInFormState();
 
         if (!contentPages?.length) {
             return html``;
@@ -319,6 +322,14 @@ export class PtForm extends PtBaseShadow {
         // save form state to storage
         this.formState.currentPageId = this.pageId;
         this.storageWrapper?.set(this.storageKey, this.formState);
+
+        // if need to go to the complete page
+        const limitPagesPerDrip = this.config?.dataCollection.drip.limitPagesPerDrip;
+
+        if (limitPagesPerDrip?.maxPagesPerDrip && this.pageIdStack.length >= limitPagesPerDrip.maxPagesPerDrip) {
+            targetPage = (limitPagesPerDrip.dripCompletePage as ConceptRef).$id;
+            this.pageId = targetPage;
+        }
     }
 
     private onFormStateChange() {
@@ -343,10 +354,11 @@ export class PtForm extends PtBaseShadow {
     }
 
     private getFormResultFromState(): FormResultData {
-        const submitData: { [key: string]: string } = {};
+        let submitData: { [key: string]: string } = {};
         const saveUserTag: { [key: string]: string } = {};
 
-        for (const key in this.formState.answers) {
+        const answers = this.formState.answers;
+        for (const key in answers) {
             const data = this.formState.answers[key].submitData;
             if (data) {
                 submitData[data.name] = data.value;
@@ -357,7 +369,44 @@ export class PtForm extends PtBaseShadow {
                 }
             }
         }
+
+        const autoCollect = this.config?.dataCollection?.autoCollect;
+
+        if (autoCollect?.landing_page_url && this.formState.landingPageUrl) {
+            submitData['landing_page_url'] = this.formState.landingPageUrl;
+        }
+
+        if (autoCollect?.page_url && this.formState.pageUrl) {
+            submitData['page_url'] = this.formState.pageUrl;
+        }
+
+        if (autoCollect?.utmParameters && this.formState.utmParameters) {
+            submitData = { ...submitData, ...this.formState.utmParameters };
+        }
+
         return { submitData, saveUserTag };
+    }
+
+    private saveUrlInFormState() {
+        const currentUrl = window.location.href;
+        // if entryPageUrl is not set, set it to the current location
+        if (!this.formState.landingPageUrl) {
+            this.formState.landingPageUrl = currentUrl;
+        }
+
+        this.formState.pageUrl = currentUrl;
+
+        const utmParameters = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+        const urlParams = new URLSearchParams(window.location.search);
+
+        utmParameters.forEach((param) => {
+            if (urlParams.has(param)) {
+                if (!this.formState.utmParameters) {
+                    this.formState.utmParameters = {};
+                }
+                this.formState.utmParameters[param] = urlParams.get(param)!;
+            }
+        });
     }
 }
 
