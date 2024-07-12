@@ -1,5 +1,5 @@
 import { defineGroupItem } from '@hayadev/configurator/items';
-import { getAllPages } from '../util';
+import { getAllPages, getCompletePages } from '../util';
 
 /**
  * 多次填写设置
@@ -38,18 +38,7 @@ export const DripSetting = defineGroupItem({
                         name: '每次提交后展示页面',
 
                         // 从root model获取所有页面
-                        provider: ({ rootModel }) => getAllPages(rootModel),
-                    },
-
-                    /**
-                     * 最终提交后展示页面
-                     */
-                    formCompletePage: {
-                        type: 'dynamic-select',
-                        name: '最终提交后展示页面',
-
-                        // 从root model获取所有页面
-                        provider: ({ rootModel }) => getAllPages(rootModel),
+                        provider: ({ rootModel }) => getCompletePages(rootModel),
                     },
                 },
             },
