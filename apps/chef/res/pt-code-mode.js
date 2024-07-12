@@ -169,6 +169,22 @@ function assetEventHandler(assetHtmlElement) {
             uid,
             data,
         };
+
+        const ptSid = window.ptengine?.__sid;
+
+        if (ptSid) {
+            const ptCookie = document.cookie.split(';').find((cookie) => cookie.trim().startsWith(`pt_${ptSid}`));
+
+            if (ptCookie) {
+                const decodeURI = decodeURIComponent(ptCookie);
+                const params = new URLSearchParams(decodeURI);
+                const sessionId = params.get('sessionId');
+                if (sessionId) {
+                    body.data['pt_session_id'] = sessionId;
+                }
+            }
+        }
+
         //You can use Fetch API to send the data to your server, eg.:
         fetch(url, {
             method: 'POST',
