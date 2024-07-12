@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
 import { CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
-import type { BaseConceptModel, Concept } from '@hayadev/configurator';
+import type { BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
 import { computed, defineAsyncComponent, inject, ref, watch, type Ref } from 'vue';
-import type { EnterConceptData, SelectionData } from './types';
+import type { EnterConceptData } from './types';
 
 const props = defineProps<{
     concept: Concept;

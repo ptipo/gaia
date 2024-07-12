@@ -4,6 +4,7 @@ import { confirmDelete } from '@/lib/message';
 import {
     cloneConceptModel,
     incrementName,
+    type SelectionData,
     type AppInstance,
     type BaseConceptModel,
     type Concept,
@@ -12,7 +13,7 @@ import type { HasManyItem } from '@hayadev/configurator/items';
 import { v4 as uuid } from 'uuid';
 import { computed, inject, ref, watch, type Ref } from 'vue';
 import draggable from 'vuedraggable';
-import type { ConceptModelPair, EnterConceptData, SelectionData } from '../types';
+import type { ConceptModelPair, EnterConceptData } from '../types';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 
@@ -44,6 +45,9 @@ const emit = defineEmits<
 
 // mutable model
 const _model = ref<BaseConceptModel[]>([...(props.model ?? [])]);
+
+// for identifying the concept element inside the draggable component
+const thisInstanceId = uuid();
 
 // track props changes
 watch(
@@ -181,6 +185,20 @@ const isSelected = (element: BaseConceptModel) => {
     return currentSelection?.value?.concept.name === element.$concept && currentSelection?.value?.id === element.$id;
 };
 
+const selectedElement = computed(() => {
+    return _model.value.find((element) => isSelected(element));
+});
+
+watch(selectedElement, (value) => {
+    if (value) {
+        // scroll the selected element into view
+        const el = document.querySelector(`.concept-element-${thisInstanceId}-${_model.value.indexOf(value)}`);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+});
+
 const reachedMaxItems = computed(() => {
     return props.item.maxItems !== undefined && _model.value.length >= props.item.maxItems;
 });
@@ -204,7 +222,7 @@ const reachedMaxItems = computed(() => {
                     :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
                     class="flex items-center w-full"
                 >
-                    <div class="flex-grow">
+                    <div class="flex-grow" :class="`concept-element-${thisInstanceId}-${index}`">
                         <ConceptElement
                             v-if="findConcept(element.$concept)"
                             :concept="findConcept(element.$concept)"

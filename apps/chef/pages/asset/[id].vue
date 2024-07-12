@@ -1,7 +1,13 @@
 <script lang="ts" setup>
 import type { AppInstance, Concept } from '@hayadev/configurator';
-import { createAppInstance, type BaseConceptModel, type ValidationIssue } from '@hayadev/configurator';
-import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionData } from '@hayadev/configurator-vue';
+import {
+    createAppInstance,
+    SELECTION_CHANGE_EVENT,
+    type BaseConceptModel,
+    type SelectionData,
+    type ValidationIssue,
+} from '@hayadev/configurator';
+import { AppConfigurator, ValidationIssues, type EditPathRecord } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';
 import type { DropdownInstance } from 'element-plus';
@@ -130,6 +136,10 @@ const createAppElement = async (app: App) => {
             const el = document.createElement(app.htmlTagName);
             el.setAttribute('config', appInstance.value.stringifyModel(model.value));
             el.setAttribute('edit-selection', '{"id":""}');
+            el.addEventListener(SELECTION_CHANGE_EVENT, ((evt: CustomEvent<SelectionData>) => {
+                // sync app's selection change to the configurator's selection
+                selection.value = evt.detail;
+            }) as EventListener);
             appContainerEl.value.appendChild(el);
             appEl.value = el;
         }

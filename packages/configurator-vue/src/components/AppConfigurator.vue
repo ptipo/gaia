@@ -7,10 +7,10 @@ import {
     IMAGE_UPLOADER_KEY,
     ROOT_MODEL_KEY,
 } from '@/lib/constants';
-import type { AppInstance, BaseConceptModel, Concept } from '@hayadev/configurator';
+import type { AppInstance, BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
 import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
-import type { EditPathRecord, SelectionData } from './types';
+import type { EditPathRecord } from './types';
 
 const activeAspect = ref(DEFAULT_ASPECT);
 

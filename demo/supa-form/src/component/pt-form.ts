@@ -1,21 +1,23 @@
-import { ConceptRef } from '@hayadev/configurator';
+import { ConceptRef, createSelectionChangeEvent } from '@hayadev/configurator';
 import { provide } from '@lit/context';
+import { msg } from '@lit/localize';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
+import { when } from 'lit/directives/when.js';
 import { app } from '../app';
+import { CompletePage } from '../config/page/complete-page';
+import { ContentPage } from '../config/page/content-page';
 import { FormAnswerData, formState } from '../state';
 import { validateLogic } from '../util/logic-resolver';
+import { ERROR_MESSAGE_CLASS } from './constant';
 import { setLocale } from './localization';
 import { PtBaseShadow } from './pt-base';
 import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
-import { msg } from '@lit/localize';
-import { ERROR_MESSAGE_CLASS } from './constant';
-import { when } from 'lit/directives/when.js';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 
@@ -145,6 +147,8 @@ export class PtForm extends PtBaseShadow {
 
         if (!this.pageId) {
             this.pageId = contentPages[0].$id;
+            // send an initial page change event
+            this.emitPageChangeEvent('content', this.pageId);
         }
 
         const completePages = this.config?.completePages ?? [];
@@ -241,6 +245,8 @@ export class PtForm extends PtBaseShadow {
             if (currentPageIndex != 0) {
                 this.pageId = contentPages[currentPageIndex - 1].$id;
             }
+
+            this.emitPageChangeEvent('content', this.pageId);
         } else {
             if (this.pageIdStack.length) {
                 this.pageId = this.pageIdStack.pop()!;
@@ -252,21 +258,19 @@ export class PtForm extends PtBaseShadow {
         const contentPages = this.config?.contentPages!;
         const completePages = this.config?.completePages!;
 
-        const currentPageId = this.pageId;
-
         if (this.editSelection) {
             const currentPageIndex = contentPages
                 .map((x) => x.$id)
                 .concat(completePages.map((x) => x.$id)!)
                 .indexOf(this.pageId);
 
-            this.pageId =
-                currentPageIndex < contentPages.length - 1
-                    ? contentPages[currentPageIndex + 1].$id
-                    : completePages[0].$id!;
-
-            this.emitPageChangeEvent(currentPageId, this.pageId);
-
+            if (currentPageIndex < contentPages.length - 1) {
+                this.pageId = contentPages[currentPageIndex + 1].$id;
+                this.emitPageChangeEvent('content', this.pageId);
+            } else {
+                this.pageId = completePages[0].$id!;
+                this.emitPageChangeEvent('complete', this.pageId);
+            }
             return;
         }
 
@@ -328,14 +332,14 @@ export class PtForm extends PtBaseShadow {
         return currentPageIndex != undefined ? (currentPageIndex + 1) / (contentPages!.length + 1) : 1;
     }
 
-    private emitPageChangeEvent(currentPageId: string, nextPageId: string) {
-        const options = {
-            detail: { currentPageId, nextPageId },
-            bubbles: true,
-            composed: true,
-        };
-
-        this.dispatchEvent(new CustomEvent('form-page-change', options));
+    private emitPageChangeEvent(pageType: 'content' | 'complete', newPageId: string) {
+        // dispatch selection change event to the configurator at design time
+        this.dispatchEvent(
+            createSelectionChangeEvent({
+                concept: pageType === 'content' ? ContentPage : CompletePage,
+                id: newPageId,
+            })
+        );
     }
 
     private getFormResultFromState(): FormResultData {

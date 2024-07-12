@@ -1,6 +1,5 @@
-import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
+import type { BaseConceptModel, inferConfigItem, SelectionData } from '@hayadev/configurator';
 import type { ConfigItemBase } from '@hayadev/configurator/items';
-import type { SelectionData } from '../types';
 
 /**
  * Props for all config items.
