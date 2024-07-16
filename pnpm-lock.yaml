@@ -87,6 +87,9 @@ importers:
       '@zenstackhq/tanstack-query':
         specifier: ^2.2.4
         version: 2.2.4(@prisma/client@5.15.0)
+      byte-size:
+        specifier: ^8.1.1
+        version: 8.1.1
       dayjs:
         specifier: ^1.11.11
         version: 1.11.11
@@ -115,6 +118,9 @@ importers:
       '@element-plus/nuxt':
         specifier: ^1.0.9
         version: 1.0.9(@element-plus/icons-vue@2.3.1)(element-plus@2.7.6)
+      '@types/byte-size':
+        specifier: ^8.1.2
+        version: 8.1.2
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.39)
@@ -5010,6 +5016,10 @@ packages:
       '@babel/types': 7.24.7
     dev: true
 
+  /@types/byte-size@8.1.2:
+    resolution: {integrity: sha512-jGyVzYu6avI8yuqQCNTZd65tzI8HZrLjKX9sdMqZrGWVlNChu0rf6p368oVEDCYJe5BMx2Ov04tD1wqtgTwGSA==}
+    dev: true
+
   /@types/capitalize@2.0.2:
     resolution: {integrity: sha512-J3I2HyJL4ui26Nwg6fQHx+1pg4Mn0i25T2Q1DIE1fyfySERXlT7j0F06gI52COlt8J26YETAWUCzrWNH/F/PeA==}
     dev: true
@@ -5990,6 +6000,11 @@ packages:
       esbuild: 0.21.5
       load-tsconfig: 0.2.5
     dev: true
+
+  /byte-size@8.1.1:
+    resolution: {integrity: sha512-tUkzZWK0M/qdoLEqikxBWe4kumyuwjl3HO6zHTr4yEI23EojPtLYXdG1+AQY7MN0cGyNDvEaJ8wiYQm6P2bPxg==}
+    engines: {node: '>=12.17'}
+    dev: false
 
   /c12@1.11.1(magicast@0.3.4):
     resolution: {integrity: sha512-KDU0TvSvVdaYcQKQ6iPHATGz/7p/KiVjPg4vQrB6Jg/wX9R0yl5RZxWm9IoZqaIHD2+6PZd81+KMGwRr/lRIUg==}
