@@ -3,7 +3,7 @@ import { IMAGE_UPLOADER_KEY } from '@/lib/constants';
 import { NonPrimitiveTypes } from '@hayadev/configurator';
 import { ImageItem } from '@hayadev/configurator/items';
 import { UploadRequestOptions } from 'element-plus';
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { ImageUploader } from '../types';
 import type { CommonEvents, CommonProps } from './common';
 
@@ -12,6 +12,13 @@ const props = defineProps<CommonProps<ImageItem>>();
 const emit = defineEmits<CommonEvents<ImageItem>>();
 
 const _model = ref(props.model?.url ?? '');
+
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = value?.url ?? '';
+    }
+);
 
 const method = ref('upload');
 
