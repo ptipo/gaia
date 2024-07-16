@@ -9,6 +9,9 @@ export type EnterConceptData = {
     path: Array<string | number>;
 };
 
+/**
+ * A segment of model edit path.
+ */
 export type EditPathRecord = string | number;
 
 /**
@@ -18,3 +21,8 @@ export type ConceptModelPair = {
     concept: Concept;
     model: BaseConceptModel;
 };
+
+/**
+ * Image uploader function.
+ */
+export type ImageUploader = (file: File) => Promise<string | undefined>;

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { IMAGE_UPLOADER_KEY } from '@/lib/constants';
+import { NonPrimitiveTypes } from '@hayadev/configurator';
 import { ImageItem } from '@hayadev/configurator/items';
 import { UploadRequestOptions } from 'element-plus';
 import { inject, ref } from 'vue';
+import { ImageUploader } from '../types';
 import type { CommonEvents, CommonProps } from './common';
-import { NonPrimitiveTypes } from '@hayadev/configurator';
 
 const props = defineProps<CommonProps<ImageItem>>();
 
@@ -14,14 +15,13 @@ const _model = ref(props.model?.url ?? '');
 
 const method = ref('upload');
 
-const uploader = inject<(file: File) => Promise<string>>(IMAGE_UPLOADER_KEY);
-
-const onLimitExceeded = () => {
-    console.error('File size exceeded limit');
-};
+const uploader = inject<ImageUploader>(IMAGE_UPLOADER_KEY);
 
 const uploadAction = async (options: UploadRequestOptions) => {
     const url = await uploader!(options.file);
+    if (!url) {
+        return;
+    }
     console.log('Uploaded to:', url);
     _model.value = url;
     emitChange();
@@ -45,9 +45,7 @@ const emitChange = () => {
             class="w-full"
             accept="image/*"
             method="put"
-            :limit="10 * 1024 * 1024"
             :show-file-list="false"
-            :on-exceed="onLimitExceeded"
             :http-request="uploadAction"
         >
             <div v-if="!_model" class="w-32 h-32 flex items-center justify-center border border-dashed rounded">
