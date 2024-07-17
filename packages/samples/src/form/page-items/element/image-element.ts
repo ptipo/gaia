@@ -15,7 +15,7 @@ export const ImageElement = defineConcept({
         image: {
             type: 'image',
             name: '图片',
-            default: 'https://comp.ptengine.com/res/placeholder.svg',
+            default: 'https://comp.ptengine.com/res/placeholder-lg.svg',
             required: true,
         },
 
