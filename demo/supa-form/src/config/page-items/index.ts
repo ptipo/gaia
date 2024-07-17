@@ -3,6 +3,7 @@ import { CopyToClipboard } from './element/copy-to-clipboard-element';
 import { ImageElement } from './element/image-element';
 import { TextElement } from './element/text-element';
 import { ChoiceQuestion } from './question/choice-question';
+import { DateQuestion } from './question/date-question';
 import { EmailQuestion } from './question/email-question';
 import { QAQuestion } from './question/qa-question';
 
@@ -14,6 +15,7 @@ const allPageItemMap = {
     QAQuestion,
     ChoiceQuestion,
     EmailQuestion,
+    DateQuestion,
     ImageElement,
     TextElement,
     CopyToClipboard,
