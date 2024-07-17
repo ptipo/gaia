@@ -36,6 +36,16 @@ export type ProviderContext = {
 };
 
 /**
+ * Context for calling initializer of a concept.
+ */
+export type InitializeContext = {
+    /**
+     * The app instance
+     */
+    app: AppInstance<Concept>;
+};
+
+/**
  * Issues reported by custom validation.
  */
 export type CustomValidationIssue = { code: ValidationIssueCode; message: string; path: (string | number)[] };

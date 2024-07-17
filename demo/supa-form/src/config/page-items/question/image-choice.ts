@@ -7,7 +7,7 @@ export const ImageChoice = defineConcept({
     displayName: '图片选项',
 
     items: {
-        name: {
+        value: {
             type: 'text',
             name: '选项',
             required: true,
@@ -16,7 +16,7 @@ export const ImageChoice = defineConcept({
         /**
          * 内容
          */
-        value: {
+        image: {
             type: 'image',
             name: '图片',
             default: 'https://comp.ptengine.com/res/placeholder.svg',
@@ -31,4 +31,6 @@ export const ImageChoice = defineConcept({
             name: '默认选中',
         },
     },
+
+    summary: ({ currentModel }) => currentModel.value as string,
 });

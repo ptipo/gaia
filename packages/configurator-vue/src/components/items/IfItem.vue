@@ -25,11 +25,13 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const childComponent = getItemComponent(props.item.child);
 
 const condition = computed(() => {
-    return props.item.conditionProvider({
-        app: app!,
-        rootModel: rootModel?.value,
-        currentModel: props.parentModel,
-    });
+    return props.item.conditionProvider(makeContext());
+});
+
+const makeContext = () => ({
+    app: app!,
+    rootModel: rootModel?.value,
+    currentModel: props.parentModel,
 });
 
 onMounted(() => {
@@ -39,6 +41,13 @@ onMounted(() => {
 });
 
 watch(condition, (value) => {
+    const newModel = props.item.onConditionChange?.(makeContext(), value);
+    if (newModel !== undefined) {
+        emit('change', newModel);
+        return;
+    }
+
+    // default handling
     if (value) {
         // recreate model
         emit('change', app!.createItemModel(props.item.child));

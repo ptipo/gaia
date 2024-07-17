@@ -1,12 +1,13 @@
+import { ImageInfo } from '@hayadev/configurator/items';
+import { consume } from '@lit/context';
+import { msg } from '@lit/localize';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
-import { AllPageItemsTypesMap } from '../../config/page-items';
 import { when } from 'lit/directives/when.js';
-import './pt-question-base';
-import { consume } from '@lit/context';
+import { AllPageItemsTypesMap } from '../../config/page-items';
 import { formWidth } from '../../state';
-import { msg } from '@lit/localize';
+import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
+import './pt-question-base';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
 
@@ -129,9 +130,9 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                     <img
                                                         @load=${this.imageLoad}
                                                         class="pt-choice-image hidden max-w-full max-h-full h-auto"
-                                                        src="${typeof choice.value === 'string'
-                                                            ? choice.value
-                                                            : choice.value!.url}"
+                                                        src="${typeof choice.image === 'string'
+                                                            ? choice.image
+                                                            : (choice.image as ImageInfo)!.url}"
                                                     />
                                                 </div>
                                             </div>
@@ -150,7 +151,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                         html`<label
                                                             for="${choice.$id}"
                                                             class="cursor-pointer leading-none"
-                                                            >${choice.name}</label
+                                                            >${choice.value}</label
                                                         >`
                                                 )}
                                             </div>

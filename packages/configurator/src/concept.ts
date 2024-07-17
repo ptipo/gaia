@@ -1,5 +1,5 @@
 import { z, type ZodSchema } from 'zod';
-import type { ValidationIssue } from '.';
+import type { InitializeContext, ValidationIssue } from '.';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
 import type { BaseConceptModel } from './inference';
 import type { GetSchemaContext } from './items';
@@ -38,6 +38,11 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * If the concept can be selected as a preview target
      */
     selectable?: boolean;
+
+    /**
+     * Callback for initializing a new model
+     */
+    initialize?: (context: InitializeContext) => Partial<BaseConceptModel>;
 
     /**
      * Callback for handling model changes

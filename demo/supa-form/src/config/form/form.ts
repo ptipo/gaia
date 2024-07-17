@@ -1,7 +1,6 @@
 import { type BaseConceptModel, defineConcept } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
-import { TextChoice } from '../page-items/question/text-choice';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
@@ -42,23 +41,6 @@ export const Form = defineConcept({
                         app.createConceptInstance(ChoiceQuestion, {
                             name: '选择1',
                             question: '选择1',
-                            kind: 'single',
-                            choiceKind: 'text',
-                            textChoices: [
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'A',
-                                    defaultSelected: true,
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'B',
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'C',
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'D',
-                                }),
-                            ],
                         }),
                     ],
                 });
