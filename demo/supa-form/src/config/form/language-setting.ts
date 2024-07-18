@@ -15,6 +15,8 @@ export const LanguageSetting = defineGroupItem({
                 'zh-CN': '简体中文',
                 'en-US': 'English',
                 'ja-JP': '日本語',
+                'fr-FR': 'Français',
+                'de-DE': 'Deutsch',
             },
             help: '系统提示语言将按照系统提示语言展示',
         },
