@@ -26,13 +26,6 @@ export class PtEmail extends PtBaseData<string> {
         ></pt-question> `;
     }
 
-    isValidated() {
-        if (this.value.data) {
-            return this.isValidEmail(this.value.data);
-        } else {
-            return !this.data?.required;
-        }
-    }
 
     isValidEmail(email: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

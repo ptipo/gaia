@@ -61,7 +61,6 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
             id="${choice.$id}"
             type="${isSingleChoice ? 'radio' : 'checkbox'}"
             name="${this.data?.$id!}"
-            value="${choice.value!}"
             ?checked=${this.value ? isChecked : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
             class="mr-2 w-4 h-4 cursor-pointer text-black border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -218,10 +217,6 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         const choiceId = (e.currentTarget as HTMLElement).dataset.choiceId!;
 
         this.getChoiceData(choiceId)[1] = value;
-    }
-
-    isValidated() {
-        return this.data?.required ? this.value.data!.length > 0 : true;
     }
 
     override isEmptyData() {

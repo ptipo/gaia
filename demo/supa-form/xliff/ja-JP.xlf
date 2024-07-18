@@ -22,6 +22,10 @@
   <source>NEXT</source>
   <target>次へ</target>
 </trans-unit>
+<trans-unit id="sa2e67553ecfa8d54">
+  <source>Please agree to the terms &amp; conditions</source>
+  <target>契約条件に同意する必要があります</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

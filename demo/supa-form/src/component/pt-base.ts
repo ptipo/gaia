@@ -25,7 +25,7 @@ const BaseMixin = <T extends Constructor<LitElement>>(superClass: T, isShadowDom
 
 abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     @property({ type: Object })
-    data?: { $id: string; required: boolean };
+    data?: { $id: string; required?: boolean };
 
     @property({ type: Object })
     value: QuestionState<T> = new QuestionState<T>();
@@ -40,11 +40,9 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
         }
     }
 
-    abstract isValidated(): boolean;
-
     abstract mandatoryErrorMessage: string;
 
-    abstract getSubmitData(): FormSubmitData;
+    abstract getSubmitData(): FormSubmitData | null;
 
     getValidateError() {
         if (this.data?.required && this.isEmptyData()) {
@@ -58,7 +56,13 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
 
     updated() {
         const questionData = (this.formState.answers[this.data!.$id] = this.value);
-        questionData.submitData = this.getSubmitData();
+        const submitData = this.getSubmitData();
+
+        // it might not have any data need to be submitted
+        if (submitData) {
+            questionData.submitData = submitData;
+        }
+
         this.dispatchUpdate();
     }
 
