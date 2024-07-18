@@ -6,6 +6,7 @@ import { ChoiceQuestion } from './question/choice-question';
 import { DateQuestion } from './question/date-question';
 import { EmailQuestion } from './question/email-question';
 import { QAQuestion } from './question/qa-question';
+import { TextCheckElement } from './element/text-check-element';
 
 /**
  * 所有页面内容项，包含问题和元素
@@ -19,11 +20,12 @@ const allPageItemMap = {
     ImageElement,
     TextElement,
     CopyToClipboard,
+    TextCheckElement,
 };
 
 export const AllPageItems = Object.values(allPageItemMap);
 
-export { ChoiceQuestion, CopyToClipboard, EmailQuestion, ImageElement, QAQuestion, TextElement };
+export { ChoiceQuestion, CopyToClipboard, EmailQuestion, ImageElement, QAQuestion, TextElement, TextCheckElement };
 
 export type AllPageItemsTypesMap = {
     [K in keyof typeof allPageItemMap]: inferConcept<(typeof allPageItemMap)[K]>;

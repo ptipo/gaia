@@ -22,6 +22,10 @@
   <source>NEXT</source>
   <target>WEITER</target>
 </trans-unit>
+<trans-unit id="sa2e67553ecfa8d54">
+  <source>Please agree to the terms &amp; conditions</source>
+  <target>Sie müssen den Geschäftsbedingungen zustimmen.</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

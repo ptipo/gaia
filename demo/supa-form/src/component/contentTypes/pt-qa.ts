@@ -35,10 +35,6 @@ export class PtQA extends PtBaseData<string> {
         ></pt-question> `;
     }
 
-    isValidated() {
-        return this.data?.required ? !!this.value.data : true;
-    }
-
     onChange(value: string) {
         this.value!.data = value;
         this.requestUpdate();

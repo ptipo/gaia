@@ -11,6 +11,7 @@
     export const templates = {
       's618f82f6f2816e6c': `Diese E-Mail-Adresse ist ungültig.`,
 's6fc73ba7929aa5d6': `Ups! Bitte treffen Sie eine Auswahl.`,
+'sa2e67553ecfa8d54': `Sie müssen den Geschäftsbedingungen zustimmen.`,
 'sc16e00a7a8b2fde2': `ZURÜCK`,
 'se8cd0d023e89f577': `Bitte ausfüllen`,
 'sfa236dc6043a5fe8': `WEITER`,
