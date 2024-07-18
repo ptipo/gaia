@@ -24,9 +24,9 @@ export interface TextItem extends ConfigItemBase {
     default?: string;
 
     /**
-     * 是否多行
+     * 是否为富文本
      */
-    multiline?: boolean;
+    richText?: boolean;
 }
 
 export const getSchema = (item: ConfigItemBase) => {
