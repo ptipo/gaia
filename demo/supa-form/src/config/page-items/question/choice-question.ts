@@ -200,9 +200,9 @@ function makeDefaultTextChoices(app: AppInstance<Concept>) {
 
 function makeDefaultImageChoices(app: AppInstance<Concept>) {
     return [
-        app.createConceptInstance(ImageChoice, { value: 'A', defaultSelected: true }),
-        app.createConceptInstance(ImageChoice, { value: 'B' }),
-        app.createConceptInstance(ImageChoice, { value: 'C' }),
-        app.createConceptInstance(ImageChoice, { value: 'D' }),
+        app.createConceptInstance(ImageChoice, { name: 'A', defaultSelected: true }),
+        app.createConceptInstance(ImageChoice, { name: 'B' }),
+        app.createConceptInstance(ImageChoice, { name: 'C' }),
+        app.createConceptInstance(ImageChoice, { name: 'D' }),
     ];
 }
