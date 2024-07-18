@@ -15,11 +15,15 @@ export class PtCopyToClipboard extends PtBase {
     render() {
         const content = this.data?.content;
 
-        return html` <pt-copy-component @copy=${this.onCopy.bind(this)}>
-            <div class="inline-flex items-center gap-x-3">
+        const align = this.data?.align || 'center';
+        const maxWidth = this.data?.maxWidth || 100;
+
+        return html` <pt-copy-component class="flex" style="justify-content:${align}" @copy=${this.onCopy.bind(this)}>
+            <div class="inline-flex items-center gap-x-3 ">
                 <div
                     id="hs-clipboard-basic"
                     class=" bg-white border break-words border-black  rounded-md px-4 py-2 text-sm font-medium  dark:text-white"
+                    style="max-width:${maxWidth}%"
                 >
                     ${content}
                 </div>

@@ -191,7 +191,7 @@ export const ChoiceQuestion = defineConcept({
 
 function makeDefaultTextChoices(app: AppInstance<Concept>) {
     return [
-        app.createConceptInstance(TextChoice, { value: 'A', defaultSelected: true }),
+        app.createConceptInstance(TextChoice, { value: 'A' }),
         app.createConceptInstance(TextChoice, { value: 'B' }),
         app.createConceptInstance(TextChoice, { value: 'C' }),
         app.createConceptInstance(TextChoice, { value: 'D' }),
@@ -200,7 +200,7 @@ function makeDefaultTextChoices(app: AppInstance<Concept>) {
 
 function makeDefaultImageChoices(app: AppInstance<Concept>) {
     return [
-        app.createConceptInstance(ImageChoice, { name: 'A', defaultSelected: true }),
+        app.createConceptInstance(ImageChoice, { name: 'A' }),
         app.createConceptInstance(ImageChoice, { name: 'B' }),
         app.createConceptInstance(ImageChoice, { name: 'C' }),
         app.createConceptInstance(ImageChoice, { name: 'D' }),
