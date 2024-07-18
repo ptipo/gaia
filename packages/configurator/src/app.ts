@@ -7,7 +7,7 @@ import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GetSchemaContext, GroupItem } from './items';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
-import { NonPrimitiveTypes } from './types';
+import { NonPrimitiveTypes, ProviderContext } from './types';
 import { ValidationIssueCode } from './validation';
 
 /**
@@ -73,13 +73,19 @@ export class AppInstance<TConcept extends Concept> {
         concept: TConcept,
         data?: Omit<DeepPartialConcept<TConcept>, '$type' | '$concept'> & Record<string, unknown>
     ): inferPartialConcept<TConcept> {
-        const result: any = {
-            $id: uuid(),
-            $type: NonPrimitiveTypes.concept,
-            $concept: concept.name,
-        };
+        // start with calling initializer
+        const result: any = concept.initialize ? concept.initialize({ app: this }) : {};
+
+        // force overriding builtin fields
+        result.$id = uuid();
+        result.$type = NonPrimitiveTypes.concept;
+        result.$concept = concept.name;
 
         for (const [key, value] of Object.entries(concept.items)) {
+            if (result[key] !== undefined) {
+                // don't override existing keys
+                continue;
+            }
             if (data?.[key] !== undefined) {
                 result[key] = data[key];
             } else {

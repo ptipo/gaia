@@ -1,6 +1,7 @@
+import { ImageInfo } from '@hayadev/configurator/items';
 import { consume } from '@lit/context';
 import { msg } from '@lit/localize';
-import { html, css } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { when } from 'lit/directives/when.js';

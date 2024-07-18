@@ -31,4 +31,6 @@ export const ImageChoice = defineConcept({
             name: '默认选中',
         },
     },
+
+    summary: ({ currentModel }) => currentModel.name as string,
 });

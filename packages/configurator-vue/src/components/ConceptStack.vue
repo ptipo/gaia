@@ -10,6 +10,16 @@ const props = defineProps<{
     rootModel: BaseConceptModel;
 }>();
 
+const _model = ref<BaseConceptModel>(deepcopy(props.rootModel));
+
+watch(
+    () => props.rootModel,
+    (value) => {
+        _model.value = deepcopy(value);
+        refreshStack(editPath.value);
+    }
+);
+
 const editPath = defineModel<EditPathRecord[]>('editPath', { default: [] });
 
 const emit = defineEmits<{
@@ -33,7 +43,7 @@ const refreshStack = (newPath: EditPathRecord[]) => {
     conceptStack.value = [
         {
             concept: props.rootConcept,
-            model: props.rootModel,
+            model: _model.value,
             path: [],
         },
     ];
@@ -80,13 +90,6 @@ watch(
     { immediate: true }
 );
 
-watch(
-    () => props.rootModel,
-    () => {
-        refreshStack(editPath.value);
-    }
-);
-
 const unwrapIf = (item: ConfigItem | undefined): ConfigItem | undefined => {
     if (item?.type !== 'if') {
         return item;
@@ -112,14 +115,13 @@ const onChange = (data: BaseConceptModel) => {
     const path = conceptStack.value[conceptStack.value.length - 1].path;
 
     if (path.length === 0) {
-        emit('change', data);
+        _model.value = data;
+        emit('change', _model.value);
         return;
     }
 
-    const nextModel = deepcopy(props.rootModel);
-
     // find the parent object
-    let curr: any = nextModel;
+    let curr: any = _model.value;
     for (let i = 0; i < path.length - 1; i++) {
         const key = path[i];
         curr = curr[key];
@@ -141,7 +143,7 @@ const onChange = (data: BaseConceptModel) => {
         }
     }
 
-    emit('change', nextModel);
+    emit('change', _model.value);
 };
 
 const onEnter = (data: EnterConceptData) => {
