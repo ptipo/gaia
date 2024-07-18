@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { AppInstance, Concept, defineConcept } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 import { ImageChoice } from './image-choice';
 import { TextChoice } from './text-choice';
@@ -67,6 +67,9 @@ export const ChoiceQuestion = defineConcept({
             // 仅在文字选项时显示
             conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'text',
 
+            // 条件变化回调，创建默认文字选项
+            onConditionChange: ({ app }, value) => (value ? makeDefaultTextChoices(app) : undefined),
+
             child: {
                 type: 'has-many',
                 name: '文字选项',
@@ -97,6 +100,9 @@ export const ChoiceQuestion = defineConcept({
 
             // 仅在图片选项时显示
             conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'image',
+
+            // 条件变化回调，创建默认图片选项
+            onConditionChange: ({ app }, value) => (value ? makeDefaultImageChoices(app) : undefined),
 
             child: {
                 type: 'has-many',
@@ -166,6 +172,12 @@ export const ChoiceQuestion = defineConcept({
         },
     },
 
+    initialize: ({ app }) => ({
+        kind: 'single',
+        choiceKind: 'text',
+        textChoices: makeDefaultTextChoices(app),
+    }),
+
     summary: ({ currentModel }) => {
         return `${currentModel?.name || '选择'} ${currentModel?.required ? '*' : ''}`;
     },
@@ -176,3 +188,21 @@ export const ChoiceQuestion = defineConcept({
         }
     },
 });
+
+function makeDefaultTextChoices(app: AppInstance<Concept>) {
+    return [
+        app.createConceptInstance(TextChoice, { value: 'A', defaultSelected: true }),
+        app.createConceptInstance(TextChoice, { value: 'B' }),
+        app.createConceptInstance(TextChoice, { value: 'C' }),
+        app.createConceptInstance(TextChoice, { value: 'D' }),
+    ];
+}
+
+function makeDefaultImageChoices(app: AppInstance<Concept>) {
+    return [
+        app.createConceptInstance(ImageChoice, { name: 'A', defaultSelected: true }),
+        app.createConceptInstance(ImageChoice, { name: 'B' }),
+        app.createConceptInstance(ImageChoice, { name: 'C' }),
+        app.createConceptInstance(ImageChoice, { name: 'D' }),
+    ];
+}

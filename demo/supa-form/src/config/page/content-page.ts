@@ -65,6 +65,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
         .with('QAQuestion', () => '问答')
         .with('ChoiceQuestion', () => '选择')
         .with('EmailQuestion', () => '邮件')
+        .with('DateQuestion', () => '日期')
         .otherwise(() => undefined);
 
     if (!mappedName) {
@@ -102,7 +103,7 @@ function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof Conte
     const knownQuestionNames = new Set<string>();
 
     model.pageItems.forEach((item, index) => {
-        if (['ChoiceQuestion', 'QAQuestion', 'EmailQuestion'].includes(item.$concept)) {
+        if (['ChoiceQuestion', 'QAQuestion', 'EmailQuestion', 'DateQuestion'].includes(item.$concept)) {
             if (!item.name || typeof item.name !== 'string') {
                 return;
             }

@@ -10,6 +10,7 @@ import {
 import { AppConfigurator, ValidationIssues, type EditPathRecord } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';
+import byteSize from 'byte-size';
 import type { DropdownInstance } from 'element-plus';
 import { useDeleteAsset, useFindUniqueAsset, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
@@ -302,9 +303,16 @@ const onNavigateError = (path: EditPathRecord[]) => {
     issuesDropdown.value?.handleClose();
 };
 
+const MAX_IMAGE_SIZE_BYTES = 10_000_000; // 10MB
+
 const uploadImage = async (file: File) => {
     if (!asset.value) {
-        return '';
+        return undefined;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        error(`图片大小不能超过${byteSize(MAX_IMAGE_SIZE_BYTES, { precision: 0 })}`);
+        return undefined;
     }
 
     const { data } = await $fetch(`/api/asset/${asset.value.id}/getFileUploadUrl`, {

@@ -32,6 +32,7 @@
         "@zenstackhq/runtime": "^2.2.4",
         "@zenstackhq/server": "^2.2.4",
         "@zenstackhq/tanstack-query": "^2.2.4",
+        "byte-size": "^8.1.1",
         "dayjs": "^1.11.11",
         "element-plus": "^2.7.3",
         "lucia": "^3.2.0",
@@ -43,6 +44,7 @@
     },
     "devDependencies": {
         "@element-plus/nuxt": "^1.0.9",
+        "@types/byte-size": "^8.1.2",
         "autoprefixer": "^10.4.19",
         "nuxi": "^3.12.0",
         "postcss": "^8.4.38",

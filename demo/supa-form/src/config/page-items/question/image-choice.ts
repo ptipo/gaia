@@ -19,7 +19,7 @@ export const ImageChoice = defineConcept({
         value: {
             type: 'image',
             name: '图片',
-            default: 'https://comp.ptengine.com/res/placeholder.svg',
+            default: 'https://comp.ptengine.com/res/placeholder-md.svg',
             required: true,
         },
 
@@ -31,4 +31,6 @@ export const ImageChoice = defineConcept({
             name: '默认选中',
         },
     },
+
+    summary: ({ currentModel }) => currentModel.name as string,
 });

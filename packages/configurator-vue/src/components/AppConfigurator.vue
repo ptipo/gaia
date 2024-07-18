@@ -10,14 +10,14 @@ import {
 import type { AppInstance, BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
 import { provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
-import type { EditPathRecord } from './types';
+import type { EditPathRecord, ImageUploader } from './types';
 
 const activeAspect = ref(DEFAULT_ASPECT);
 
 const props = defineProps<{
     app: AppInstance<Concept>;
     model: BaseConceptModel;
-    imageUploader: (file: File) => Promise<string>;
+    imageUploader: ImageUploader;
 }>();
 
 // v-model for currently selected concept instance

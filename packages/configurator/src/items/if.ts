@@ -1,3 +1,4 @@
+import { BaseConceptModel, inferConfigItem } from '@/inference';
 import type { ProviderContext } from '@/types';
 import { z } from 'zod';
 import { GetSchemaContext } from '.';
@@ -14,6 +15,12 @@ export interface IfItem extends ConfigItemBase {
      * Callback for computing the condition
      */
     conditionProvider: (context: ProviderContext) => boolean;
+
+    /**
+     * Callback for handling condition changes
+     * @returns A new model. If undefined, uses default behavior.
+     */
+    onConditionChange?: (context: ProviderContext, value: boolean) => inferConfigItem<ConfigItem> | undefined;
 
     /**
      * Child item that'll be rendered if the condition is met

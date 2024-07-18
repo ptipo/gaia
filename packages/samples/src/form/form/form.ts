@@ -42,23 +42,6 @@ export const Form = defineConcept({
                         app.createConceptInstance(ChoiceQuestion, {
                             name: '选择1',
                             question: '选择1',
-                            kind: 'single',
-                            choiceKind: 'text',
-                            textChoices: [
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'A',
-                                    defaultSelected: true,
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'B',
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'C',
-                                }),
-                                app.createConceptInstance(TextChoice, {
-                                    value: 'D',
-                                }),
-                            ],
                         }),
                     ],
                 });

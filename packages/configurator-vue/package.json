@@ -32,6 +32,7 @@
         "codemirror-editor-vue3": "^2.7.0",
         "debounce": "^2.1.0",
         "deepcopy": "^2.1.0",
+        "element-tiptap": "^2.2.1",
         "ts-pattern": "^5.1.1",
         "uuid": "^10.0.0",
         "vuedraggable": "^4.1.0",

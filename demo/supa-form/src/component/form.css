@@ -34,3 +34,7 @@ legend {
     @apply break-words;
     color: var(--ptform-main-text-color, black);
 }
+
+.pt-text a {
+    color: #409eff;
+}

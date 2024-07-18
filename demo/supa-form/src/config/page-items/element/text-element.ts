@@ -27,7 +27,7 @@ export const TextElement = defineConcept({
         /**
          * 内容
          */
-        content: { type: 'text', name: '内容', multiline: true },
+        content: { type: 'text', name: '内容', richText: true },
 
         ...AlignmentItems,
     },
