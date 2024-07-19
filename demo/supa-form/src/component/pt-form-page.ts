@@ -62,6 +62,11 @@ export class PtFormPage extends PtBase {
 
     render() {
         this.isValid = true;
+
+        const pageAnswerItemIds = this.page.pageItems
+            ?.filter((x) => x.$concept != 'TextCheckElement')
+            ?.map((x) => x.$id);
+
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item) => {
                 let el = this.pageItems?.get(item.$id)!;
@@ -73,6 +78,7 @@ export class PtFormPage extends PtBase {
                 }
 
                 el.setAttribute('data', JSON.stringify(item));
+                el.setAttribute('pageAnswerItemIds', JSON.stringify(pageAnswerItemIds));
 
                 let errorMessage;
                 if (this.showValidationError && el instanceof PtBaseData) {
