@@ -37,7 +37,11 @@ class PtTextCheck extends PtBaseData<boolean> {
 
     render() {
         const id = this.data?.$id!;
-        const isChecked = this.value.data != undefined ? this.value.data : this.data?.defaultSelected;
+
+        if (this.value.data == undefined) {
+            this.value.data = this.data?.defaultSelected;
+        }
+        const isChecked = this.value.data;
         return html` <div class="w-full flex pt-text cursor-pointer transition ">
             <input
                 id=${id}
