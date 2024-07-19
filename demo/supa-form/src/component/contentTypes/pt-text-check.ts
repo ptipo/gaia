@@ -2,13 +2,18 @@ import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { html } from 'lit/static-html.js';
 import { AllPageItemsTypesMap } from '../../config/page-items';
-import { FormSubmitData, PtBaseData } from '../pt-base';
+import { PtBaseData } from '../pt-base';
 import { msg } from '@lit/localize';
+import { isNullOrEmpty } from '../../util/model-util';
 
 @customElement('pt-text-check')
 class PtTextCheck extends PtBaseData<boolean> {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['TextCheckElement'];
+
+    //TODO: set from configurator
+    @property({ type: Array })
+    pageAnswerItemIds: string[] = [];
 
     override getValidateError() {
         let baseError = super.getValidateError();
@@ -17,7 +22,9 @@ class PtTextCheck extends PtBaseData<boolean> {
             return baseError;
         }
 
-        if (this.value.data != true) {
+        const isAnyDataFilled = this.pageAnswerItemIds.some((id) => !isNullOrEmpty(this.formState.answers[id].data));
+
+        if (isAnyDataFilled && this.value.data != true) {
             return this.mandatoryErrorMessage;
         }
     }

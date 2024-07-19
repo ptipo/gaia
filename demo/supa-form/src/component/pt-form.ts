@@ -20,8 +20,6 @@ import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
-type autoCollect = NonNullable<typeof app.model.dataCollection.autoCollect>;
-
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
