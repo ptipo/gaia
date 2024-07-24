@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import type { TextItem } from '@hayadev/configurator/items';
-import { Bold, Color, Document, ElementTiptap, Italic, Link, Paragraph, Strike, Text, Underline } from 'element-tiptap';
-import zh from 'element-tiptap/lib/locales/zh';
-import 'element-tiptap/lib/style.css';
-
 import { ref } from 'vue';
-import ItemLabel from './ItemLabel.vue';
+import RichTextEditor from '../RichTextEditor.vue';
 import type { CommonEvents, CommonProps } from './common';
 import { useGuard } from './guard';
+import ItemLabel from './ItemLabel.vue';
 
 const props = defineProps<CommonProps<TextItem>>();
 
@@ -25,8 +22,6 @@ const { enabled } = useGuard(props.model !== undefined, {
 });
 
 const _model = ref<string | undefined>(props.model);
-
-const extensions = [Document, Text, Paragraph, Bold, Underline, Italic, Strike, Link, Color];
 </script>
 
 <template>
@@ -35,25 +30,7 @@ const extensions = [Document, Text, Paragraph, Bold, Underline, Italic, Strike, 
 
         <template v-if="!item.guarded || enabled">
             <el-input v-if="!item.richText" v-model="_model" @change="$emit('change', _model)" />
-            <ElementTiptap
-                v-else
-                v-model:content="_model"
-                :extensions="extensions"
-                :enable-char-count="false"
-                :locale="zh"
-                :tooltip="false"
-                @onBlur="$emit('change', _model)"
-            />
+            <RichTextEditor v-else v-model="_model" @change="$emit('change', _model)" />
         </template>
     </el-form-item>
 </template>
-
-<style>
-.haya-text-item .el-tiptap-editor__content {
-    @apply p-4;
-}
-
-.haya-text-item .el-tiptap-editor div[data-tippy-root] {
-    @apply hidden;
-}
-</style>
