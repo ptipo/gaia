@@ -38,8 +38,7 @@ const onAppChange = async (data: BaseConceptModel) => {
 
     const jsonEditor = jsonEditorVueRef.value.jsonEditor;
 
-    jsonEditor.update();
-    await nextTick();
+    await jsonEditor.update(model.value);
 };
 
 onMounted(async () => {
