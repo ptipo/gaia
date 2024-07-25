@@ -4,8 +4,7 @@ import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionD
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
-import { JsonViewer } from 'vue3-json-viewer';
-import 'vue3-json-viewer/dist/index.css';
+import JsonEditorVue from 'json-editor-vue';
 import pkgJson from '../../package.json';
 import { FormApp } from '../config';
 
@@ -27,8 +26,7 @@ const issues = ref<ValidationIssue[]>([]);
 // form element
 const formEl = ref<HTMLElement>();
 
-// flag for triggering JsonViewer rerender
-const renderJson = ref(true);
+const jsonEditorVueRef = ref();
 
 const isMobile = ref(false);
 
@@ -38,10 +36,9 @@ const onAppChange = async (data: BaseConceptModel) => {
     validate(model.value);
     resetFormConfig();
 
-    // make sure JsonViewer is rerendered
-    renderJson.value = false;
-    await nextTick();
-    renderJson.value = true;
+    const jsonEditor = jsonEditorVueRef.value.jsonEditor;
+
+    await jsonEditor.update(model.value);
 };
 
 onMounted(async () => {
@@ -160,7 +157,27 @@ const uploadImage = async (file: File) => {
                 <el-tabs class="h-full">
                     <el-tab-pane label="Json">
                         <div class="overflow-auto border rounded h-full">
-                            <JsonViewer v-if="renderJson" :value="model" :expandDepth="0" copyable class="h-full" />
+                            <JsonEditorVue
+                                ref="jsonEditorVueRef"
+                                :modelValue="model"
+                                mode="text"
+                                :stringified="false"
+                                :onChange="
+                                    (updatedContent) => {
+                                        let jsonModel;
+                                        try {
+                                            jsonModel = JSON.parse(updatedContent.text);
+                                        } catch {}
+
+                                        if (jsonModel) {
+                                            const appModel = { model: jsonModel, appVersion: app.version };
+                                            const loaded = app.loadModel(JSON.stringify(appModel));
+                                            model = loaded.model;
+                                            resetFormConfig();
+                                        }
+                                    }
+                                "
+                            />
                         </div>
                     </el-tab-pane>
                     <el-tab-pane :label="`Issues (${issues.length})`">
