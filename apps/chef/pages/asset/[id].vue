@@ -16,6 +16,7 @@ import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset }
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
 import JsonEditorVue from 'json-editor-vue';
+import { Mode } from 'vanilla-jsoneditor';
 
 const route = useRoute();
 
@@ -67,7 +68,7 @@ const {
 });
 
 const { data: userData } = useFindUniqueUser({
-    where: { id: user?.value.id },
+    where: { id: user?.value?.id },
 });
 
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
@@ -171,7 +172,7 @@ watch(
 
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
-            isJSONEditorPermission.value = permission?.jsonEditor;
+            isJSONEditorPermission.value = !!permission?.jsonEditor;
         }
     },
     { immediate: true }
@@ -447,23 +448,12 @@ const uploadImage = async (file: File) => {
                     <JsonEditorVue
                         ref="jsonEditorVueRef"
                         :modelValue="model"
-                        mode="text"
+                        :mode="Mode.text"
                         :stringified="false"
-                        :onChange="
-                        (updatedContent:any) => {
-                            let jsonModel;
-                            try {
-                                jsonModel = JSON.parse(updatedContent.text);
-                            } catch {}
-
-                            if (jsonModel) {
-                                const appModel = { model: jsonModel, appVersion: appInstance!.version };
-                                const loaded = appInstance!.loadModel(JSON.stringify(appModel));
-                                model = loaded.model;
-                                resetFormConfig();
-                            }
-                        }
-                    "
+                        :onChange=" (updatedContent:any) => { let jsonModel; try { jsonModel =
+                    JSON.parse(updatedContent.text); } catch {} if (jsonModel) { const appModel = { model: jsonModel,
+                    appVersion: appInstance!.version }; const loaded = appInstance!.loadModel(JSON.stringify(appModel));
+                    model = loaded.model; resetFormConfig(); } } "
                     />
                 </div>
             </div>
