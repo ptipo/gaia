@@ -5,7 +5,6 @@ import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import JsonEditorVue from 'json-editor-vue';
-import 'vue3-json-viewer/dist/index.css';
 import pkgJson from '../../package.json';
 import { FormApp } from '../config';
 
