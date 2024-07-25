@@ -35,6 +35,7 @@
         "byte-size": "^8.1.1",
         "dayjs": "^1.11.11",
         "element-plus": "^2.7.3",
+        "json-editor-vue": "^0.15.1",
         "lucia": "^3.2.0",
         "nuxt": "^3.11.2",
         "oslo": "^1.2.0",
