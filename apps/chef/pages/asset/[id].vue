@@ -9,14 +9,18 @@ import {
 } from '@hayadev/configurator';
 import { AppConfigurator, ValidationIssues, type EditPathRecord } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset } from '@prisma/client';
+import type { App, Asset, User } from '@prisma/client';
 import byteSize from 'byte-size';
 import type { DropdownInstance } from 'element-plus';
-import { useDeleteAsset, useFindUniqueAsset, useUpdateAsset } from '~/composables/data';
+import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
+import JsonEditorVue from 'json-editor-vue';
+import { Mode } from 'vanilla-jsoneditor';
 
 const route = useRoute();
+
+const user = useUser();
 
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
@@ -46,6 +50,14 @@ const isPreviewAsset = ref(false);
 
 const isMobile = ref(false);
 
+const isShowJSON = ref(false);
+
+const isJSONEditorPermission = ref(false);
+
+interface UserPermission {
+    jsonEditor?: boolean;
+}
+
 const {
     data: asset,
     isLoading,
@@ -53,6 +65,10 @@ const {
 } = useFindUniqueAsset({
     where: { id: route.params.id as string },
     include: { app: true },
+});
+
+const { data: userData } = useFindUniqueUser({
+    where: { id: user?.value?.id },
 });
 
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
@@ -148,10 +164,15 @@ const createAppElement = async (app: App) => {
 };
 
 watch(
-    asset,
-    (value) => {
-        if (value) {
-            createAppElement(value.app);
+    [asset, userData],
+    ([assetValue, userDataValue]) => {
+        if (assetValue) {
+            createAppElement(assetValue.app);
+        }
+
+        if (userDataValue) {
+            const permission = userDataValue.permission as UserPermission;
+            isJSONEditorPermission.value = !!permission?.jsonEditor;
         }
     },
     { immediate: true }
@@ -388,35 +409,53 @@ const uploadImage = async (file: File) => {
         <div v-loading="!appInstance && !hasError" class="flex flex-grow overflow-hidden gap-4 w-full">
             <!-- configurator panel -->
             <div class="flex-grow rounded">
-                <div class="rounded-md shadow-sm mt-1 mb-4" role="group">
-                    <button
-                        @click="
-                            () => {
-                                isMobile = true;
-                            }
-                        "
-                        class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
-                    >
-                        Mobile
-                    </button>
-                    <button
-                        autofocus
-                        @click="
-                            () => {
-                                isMobile = false;
-                            }
-                        "
-                        class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
-                    >
-                        Desktop
-                    </button>
+                <div class="flex rounded-md shadow-sm mt-1 mb-4 justify-between" role="group">
+                    <div>
+                        <button
+                            @click="
+                                () => {
+                                    isMobile = true;
+                                }
+                            "
+                            class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                        >
+                            Mobile
+                        </button>
+                        <button
+                            autofocus
+                            @click="
+                                () => {
+                                    isMobile = false;
+                                }
+                            "
+                            class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                        >
+                            Desktop
+                        </button>
+                    </div>
+                    <div v-if="isJSONEditorPermission" class="self-end">
+                        <span>JSON</span>
+                        <el-switch v-model="isShowJSON"> </el-switch>
+                    </div>
                 </div>
 
                 <div
                     ref="appContainerEl"
-                    class="h-3/4 overflow-auto ml-auto mr-auto"
-                    :class="isMobile ? 'w-[375px]' : 'w-full'"
+                    class="overflow-auto ml-auto mr-auto"
+                    :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
                 ></div>
+                <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
+                    <JsonEditorVue
+                        ref="jsonEditorVueRef"
+                        :modelValue="model"
+                        :mode="Mode.text"
+                        :stringified="false"
+                        :onChange=" (updatedContent:any) => { let jsonModel; try { jsonModel =
+                    JSON.parse(updatedContent.text); } catch {} if (jsonModel) { const appModel = { model: jsonModel,
+                    appVersion: appInstance!.version }; const loaded = appInstance!.loadModel(JSON.stringify(appModel));
+                    model = loaded.model; resetFormConfig(); } } "
+                    />
+                </div>
             </div>
             <!-- preview -->
             <div class="w-[400px] shrink-0 border rounded" v-if="appInstance">
