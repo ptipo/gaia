@@ -48,6 +48,17 @@ export const TextChoice = defineConcept({
                 help: 'Placeholder，帮助用户简单理解操作要求或呼吁用户行动',
             },
         },
+
+        additionalInputRequired: {
+            type: 'if',
+            // 仅在需要用户输入补充回答时显示
+            conditionProvider: ({ currentModel }) => !!currentModel.additionalInput,
+            name: '补充输入是否必填',
+            child: {
+                type: 'switch',
+                name: '补充选项是否必填',
+            },
+        },
     },
 
     summary: ({ currentModel }) => currentModel.value as string,
