@@ -59,6 +59,8 @@ const isShowJSON = ref(false);
 
 const isJSONEditorPermission = ref(false);
 
+const jsonEditorVueRef = ref();
+
 interface UserPermission {
     jsonEditor?: boolean;
 }
@@ -201,6 +203,9 @@ const onAppChange = (data: BaseConceptModel) => {
 
     if (validate(model.value)) {
         resetFormConfig();
+
+        const jsonEditor = jsonEditorVueRef.value.jsonEditor;
+        jsonEditor.set({ json: model.value });
     }
 };
 

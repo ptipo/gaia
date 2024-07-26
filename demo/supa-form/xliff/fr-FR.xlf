@@ -26,6 +26,10 @@
   <source>Please agree to the terms &amp; conditions</source>
   <target>Vous devez accepter les termes et conditions</target>
 </trans-unit>
+<trans-unit id="s0bb7ca461c368945">
+  <source>Please provide more information</source>
+  <target>Veuillez fournir plus d'informations</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

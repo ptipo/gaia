@@ -43,8 +43,7 @@ const onAppChange = async (data: BaseConceptModel) => {
     resetFormConfig();
 
     const jsonEditor = jsonEditorVueRef.value.jsonEditor;
-
-    await jsonEditor.update(model.value);
+    jsonEditor.set({ json: model.value });
 };
 
 onMounted(async () => {

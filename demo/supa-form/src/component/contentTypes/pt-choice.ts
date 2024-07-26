@@ -25,6 +25,8 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
 
     override mandatoryErrorMessage = msg('Please make the selection');
 
+    private mandatoryInputErrorMessage = msg('Please provide more information');
+
     randomSeed?: number[];
 
     get isImageChoice() {
@@ -216,9 +218,12 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
             this.value.data = [...this.value.data!, [choice!.$id, '']];
 
             if (isSingleChoice) {
-                this.dispatchEvent(
-                    new CustomEvent(PtFormSingleChoiceSelectedEventName, { bubbles: true, composed: false })
-                );
+                const selectedChoice = this.targetChoices!.find((x) => x.$id == choice!.$id);
+                if (!selectedChoice?.additionalInput) {
+                    this.dispatchEvent(
+                        new CustomEvent(PtFormSingleChoiceSelectedEventName, { bubbles: true, composed: false })
+                    );
+                }
             }
         } else {
             this.value.data = this.value.data?.filter((x) => x[0] != choice!.$id);
@@ -251,6 +256,23 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
             })
             .join(',');
         return { name: this.data?.name!, value: submitValue, saveUserTag: this.data?.saveAsUserTag };
+    }
+
+    override getValidateError() {
+        let baseError = super.getValidateError();
+
+        if (baseError) {
+            return baseError;
+        }
+
+        const isAnyMandatoryInputMiss = this.value.data
+            ?.map((x) => x[0])
+            .some((id) => {
+                const choice = this.targetChoices?.find((x) => x.$id == id);
+                return choice?.additionalInputRequired && !this.getChoiceData(id)[1];
+            });
+
+        if (isAnyMandatoryInputMiss) return this.mandatoryInputErrorMessage;
     }
 
     private isChoiceChecked(choiceId: string) {

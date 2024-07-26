@@ -214,7 +214,10 @@ export class PtForm extends PtBaseShadow {
         } else {
             this.submitPage(true);
             const completePage = completePages.find((x) => x.$id == this.pageId);
-            return html`${css} <pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
+
+            if (completePage) {
+                return html`${css} <pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
+            }
         }
     }
 
@@ -316,7 +319,9 @@ export class PtForm extends PtBaseShadow {
             if (currentPageIndex < contentPages.length - 1) {
                 this.pageId = contentPages[currentPageIndex + 1].$id;
             } else {
-                this.pageId = completePages[0].$id!;
+                if (completePages.length) {
+                    this.pageId = completePages[0].$id!;
+                }
             }
         }
 
