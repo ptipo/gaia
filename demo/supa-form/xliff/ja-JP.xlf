@@ -26,6 +26,10 @@
   <source>Please agree to the terms &amp; conditions</source>
   <target>契約条件に同意する必要があります</target>
 </trans-unit>
+<trans-unit id="s0bb7ca461c368945">
+  <source>Please provide more information</source>
+  <target>詳しい情報をお願いします</target>
+</trans-unit>
 </body>
 </file>
 </xliff>
