@@ -15,15 +15,16 @@ generator client {
 /// @@allow('read', true)
 /// @@allow('all', auth() == this)
 model User {
-  id        String    @id() @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt()
-  email     String    @unique()
+  id         String    @id() @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt()
+  email      String    @unique()
   /// @omit
-  password  String
-  sessions  Session[]
-  apps      App[]
-  assets    Asset[]
+  password   String
+  sessions   Session[]
+  apps       App[]
+  assets     Asset[]
+  permission Json?
 }
 
 /// @@allow('all', auth() == owner)

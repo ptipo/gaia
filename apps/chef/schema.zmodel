@@ -27,11 +27,12 @@ abstract model EntityWithOwner extends EntityBase {
 }
 
 model User extends EntityBase {
-  email    String    @unique
-  password String    @omit
-  sessions Session[]
-  apps     App[]
-  assets   Asset[]
+  email      String    @unique
+  password   String    @omit
+  sessions   Session[]
+  apps       App[]
+  assets     Asset[]
+  permission Json?
 
   @@allow('read', true)
   @@allow('all', auth() == this)

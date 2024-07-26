@@ -40,6 +40,10 @@ const metadata = {
                     isDataModel: true,
                     isArray: true,
                     backLink: 'owner',
+                }, permission: {
+                    name: "permission",
+                    type: "Json",
+                    isOptional: true,
                 },
             }
             , uniqueConstraints: {
