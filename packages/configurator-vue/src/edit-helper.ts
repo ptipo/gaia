@@ -22,11 +22,7 @@ function findEditableElement(event: Event) {
 }
 
 function exitEdit(el: HTMLElement, model: BaseConceptModel, updateModel: (model: BaseConceptModel) => void) {
-    if (el.contentEditable === 'true') {
-        el.contentEditable = 'false';
-    } else {
-        return;
-    }
+    el.contentEditable = 'false';
 
     const configPath = el.getAttribute('data-haya-config-path');
     if (!configPath) {
@@ -96,18 +92,25 @@ export function addInlineEditEventHandlers(
 
     appEl.addEventListener('blur', (event: FocusEvent) => {
         const el = findEditableElement(event);
-        if (el) {
+        if (el?.contentEditable === 'true') {
             exitEdit(el, getModel(), updateModel);
         }
     });
 
-    appEl.addEventListener('keyup', (event: KeyboardEvent) => {
-        if (event.key !== 'Enter') {
-            return;
-        }
-        const el = findEditableElement(event);
-        if (el) {
-            exitEdit(el, getModel(), updateModel);
-        }
-    });
+    appEl.addEventListener(
+        'keydown',
+        (event: KeyboardEvent) => {
+            if (event.key !== 'Enter' && event.key !== 'Escape') {
+                return;
+            }
+
+            const el = findEditableElement(event);
+            if (el?.contentEditable === 'true') {
+                event.stopPropagation();
+                event.preventDefault();
+                exitEdit(el, getModel(), updateModel);
+            }
+        },
+        { capture: true }
+    );
 }

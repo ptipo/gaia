@@ -8,6 +8,7 @@ import PlaceholderImage from '../../../assets/placeholder-md.svg?raw';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { formWidth } from '../../state';
 import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
+import './pt-editable-label';
 import './pt-question-base';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
@@ -97,12 +98,13 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         return html`
             <fieldset class="flex">
                 <legend class="mb-5">
-                    <span
-                        class="text-xl font-bold"
-                        data-haya-config-path="${this.configPath + '.question'}"
-                        data-haya-editable
-                        >${this.data?.question}</span
-                    >
+                    <span class="text-xl font-bold">
+                        <pt-editable-label
+                            config-path="${this.configPath + '.question'}"
+                            label="${this.data?.question}"
+                        >
+                        </pt-editable-label>
+                    </span>
                     ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
                 </legend>
 
@@ -146,13 +148,14 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                         html`<label
                                                             for="${choice.$id}"
                                                             class="cursor-pointer leading-none"
-                                                            data-haya-config-path="${this.configPath +
-                                                            '.imageChoices[' +
-                                                            i +
-                                                            '].name'}"
-                                                            data-haya-editable
-                                                            >${choice.name}</label
-                                                        >`
+                                                            ><pt-editable-label
+                                                                config-path="${this.configPath +
+                                                                '.imageChoices[' +
+                                                                i +
+                                                                '].name'}"
+                                                                label="${choice.name}"
+                                                            ></pt-editable-label
+                                                        ></label>`
                                                 )}
                                             </div>
                                         </label>
@@ -166,13 +169,11 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             <label
                                                 for="${choice.$id}"
                                                 class="cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
-                                                data-haya-config-path="${this.configPath +
-                                                '.textChoices[' +
-                                                i +
-                                                '].value'}"
-                                                data-haya-editable
                                             >
-                                                ${choice.value}
+                                                <pt-editable-label
+                                                    config-path="${this.configPath + '.textChoices[' + i + '].value'}"
+                                                    label="${choice.value}"
+                                                />
                                             </label>
                                         </label>
                                         ${choice.additionalInput && this.isChoiceChecked(choice.$id)
@@ -182,7 +183,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                   @input=${this.onInputChange}
                                                   .placeholder=${choice.additionalInputPlaceholder as string}
                                                   .value=${this.getChoiceData(choice.$id)[1]}
-                                                  .configPath=${this.configPath}
+                                                  config-path=${this.configPath}
                                               ></pt-question>`
                                             : ''}
                                     `

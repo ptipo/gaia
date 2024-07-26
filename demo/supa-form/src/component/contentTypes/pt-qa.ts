@@ -31,7 +31,7 @@ export class PtQA extends PtBaseData<string> {
             question=${question!}
             description=${description!}
             placeholder=${placeholder!}
-            .configPath=${this.configPath}
+            config-path=${this.configPath}
             value=${ifDefined(this.value.data)}
         ></pt-question> `;
     }

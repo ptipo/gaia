@@ -22,7 +22,7 @@ export class PtFormPage extends PtBase {
     @state()
     private widthLevel = 1;
 
-    @property({ type: String, attribute: 'data-haya-config-path' })
+    @property({ type: String, attribute: 'config-path' })
     configPath = '';
 
     screenWidthLevel = [375, 768, 820, 1024, Infinity];
@@ -81,7 +81,7 @@ export class PtFormPage extends PtBase {
                 }
 
                 el.setAttribute('data', JSON.stringify(item));
-                el.setAttribute('data-haya-config-path', `${this.configPath}.pageItems[${i}]`);
+                el.setAttribute('config-path', `${this.configPath}.pageItems[${i}]`);
                 el.setAttribute('pageAnswerItemIds', JSON.stringify(pageAnswerItemIds));
 
                 let errorMessage;

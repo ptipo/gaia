@@ -1,16 +1,17 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { PtBase } from '../pt-base';
 import { html } from 'lit/static-html.js';
 import { AllPageItemsTypesMap } from '../../config/page-items';
+import { PtBase } from '../pt-base';
 import './pt-copy-component';
+import './pt-editable-label';
 
 @customElement('pt-copy-to-clipboard')
 export class PtCopyToClipboard extends PtBase {
     @property({ type: Object })
     data?: AllPageItemsTypesMap['CopyToClipboard'];
 
-    @property({ type: String, attribute: 'data-haya-config-path' })
-    configPath: string = '';
+    @property({ type: String, attribute: 'config-path' })
+    configPath = '';
 
     @state()
     isCopied = false;
@@ -27,10 +28,11 @@ export class PtCopyToClipboard extends PtBase {
                     id="hs-clipboard-basic"
                     class=" bg-white border break-words border-black  rounded-md px-4 py-2 text-sm font-medium  dark:text-white"
                     style="max-width:${maxWidth}%"
-                    data-haya-config-path="${this.configPath + '.content'}"
-                    data-haya-editable
                 >
-                    ${content}
+                    <pt-editable-label
+                        config-path="${this.configPath + '.content'}"
+                        label="${content}"
+                    ></pt-editable-label>
                 </div>
                 <button
                     slot="button"

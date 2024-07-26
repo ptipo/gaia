@@ -1,7 +1,8 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { PtBase } from '../pt-base';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { PtBase } from '../pt-base';
+import './pt-editable-label';
 
 @customElement('pt-question')
 export class PtQuestionBase extends PtBase {
@@ -20,21 +21,21 @@ export class PtQuestionBase extends PtBase {
     @property()
     inputType: 'email' | 'text' = 'text';
 
-    @property({ type: String, attribute: 'data-haya-config-path' })
-    configPath: string = '';
+    @property({ type: String, attribute: 'config-path' })
+    configPath = '';
 
     render() {
         return html`
-            <span class="text-xl font-bold" data-haya-config-path="${this.configPath + '.question'}" data-haya-editable
-                >${this.question}</span
-            >
+            <span class="text-xl font-bold"
+                ><pt-editable-label
+                    config-path="${this.configPath + '.question'}"
+                    label="${this.question}"
+                ></pt-editable-label
+            ></span>
             ${this.description
-                ? html`<p
-                      class="mt-1 text-sm font-normal"
-                      data-haya-config-path="${this.configPath + '.description'}"
-                      data-haya-editable
-                  >
-                      ${this.description}
+                ? html`<p class="mt-1 text-sm font-normal">
+                      <pt-editable-label config-path="${this.configPath + '.description'}" label="${this.description}">
+                      </pt-editable-label>
                   </p>`
                 : ''}
             <div class="mt-4">
