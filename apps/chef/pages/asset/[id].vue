@@ -7,7 +7,12 @@ import {
     type SelectionData,
     type ValidationIssue,
 } from '@hayadev/configurator';
-import { AppConfigurator, ValidationIssues, type EditPathRecord } from '@hayadev/configurator-vue';
+import {
+    addInlineEditEventHandlers,
+    AppConfigurator,
+    ValidationIssues,
+    type EditPathRecord,
+} from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset } from '@prisma/client';
 import byteSize from 'byte-size';
@@ -141,6 +146,10 @@ const createAppElement = async (app: App) => {
                 // sync app's selection change to the configurator's selection
                 selection.value = evt.detail;
             }) as EventListener);
+
+            // install preview-pane inline editing event handlers
+            addInlineEditEventHandlers(el, () => model.value!, onAppChange);
+
             appContainerEl.value.appendChild(el);
             appEl.value = el;
         }

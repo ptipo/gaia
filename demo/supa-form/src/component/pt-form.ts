@@ -182,6 +182,7 @@ export class PtForm extends PtBaseShadow {
                                 @pt-form-state-changed=${this.onFormStateChange}
                                 @pt-form-next-page=${this.nextPage}
                                 .page=${this.currentContentPage}
+                                .configPath="contentPages[${contentPages.indexOf(this.currentContentPage)}]"
                             ></pt-form-page>`
                         )}
                     </div>
@@ -268,7 +269,7 @@ export class PtForm extends PtBaseShadow {
             if (currentPageIndex < contentPages.length - 1) {
                 this.pageId = contentPages[currentPageIndex + 1].$id;
                 this.emitPageChangeEvent('content', this.pageId);
-            } else {
+            } else if (completePages.length > 0) {
                 this.pageId = completePages[0].$id!;
                 this.emitPageChangeEvent('complete', this.pageId);
             }

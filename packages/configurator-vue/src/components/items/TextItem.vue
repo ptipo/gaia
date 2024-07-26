@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TextItem } from '@hayadev/configurator/items';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import RichTextEditor from '../RichTextEditor.vue';
 import type { CommonEvents, CommonProps } from './common';
 import { useGuard } from './guard';
@@ -22,6 +22,13 @@ const { enabled } = useGuard(props.model !== undefined, {
 });
 
 const _model = ref<string | undefined>(props.model);
+
+watch(
+    () => props.model,
+    (value) => {
+        _model.value = value;
+    }
+);
 </script>
 
 <template>

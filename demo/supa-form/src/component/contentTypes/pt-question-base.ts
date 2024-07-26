@@ -20,10 +20,23 @@ export class PtQuestionBase extends PtBase {
     @property()
     inputType: 'email' | 'text' = 'text';
 
+    @property({ type: String, attribute: 'data-haya-config-path' })
+    configPath: string = '';
+
     render() {
         return html`
-            <span class="text-xl font-bold">${this.question}</span>
-            ${this.description ? html`<p class="mt-1 text-sm font-normal">${this.description}</p>` : ''}
+            <span class="text-xl font-bold" data-haya-config-path="${this.configPath + '.question'}" data-haya-editable
+                >${this.question}</span
+            >
+            ${this.description
+                ? html`<p
+                      class="mt-1 text-sm font-normal"
+                      data-haya-config-path="${this.configPath + '.description'}"
+                      data-haya-editable
+                  >
+                      ${this.description}
+                  </p>`
+                : ''}
             <div class="mt-4">
                 <span>
                     <input

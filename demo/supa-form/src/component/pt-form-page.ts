@@ -22,6 +22,9 @@ export class PtFormPage extends PtBase {
     @state()
     private widthLevel = 1;
 
+    @property({ type: String, attribute: 'data-haya-config-path' })
+    configPath = '';
+
     screenWidthLevel = [375, 768, 820, 1024, Infinity];
 
     private _observer = new ResizeController(this, {
@@ -68,7 +71,7 @@ export class PtFormPage extends PtBase {
             ?.map((x) => x.$id);
 
         return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
-            ${this.page.pageItems?.map((item) => {
+            ${this.page.pageItems?.map((item, i) => {
                 let el = this.pageItems?.get(item.$id)!;
 
                 if (!el) {
@@ -78,6 +81,7 @@ export class PtFormPage extends PtBase {
                 }
 
                 el.setAttribute('data', JSON.stringify(item));
+                el.setAttribute('data-haya-config-path', `${this.configPath}.pageItems[${i}]`);
                 el.setAttribute('pageAnswerItemIds', JSON.stringify(pageAnswerItemIds));
 
                 let errorMessage;

@@ -38,3 +38,7 @@ legend {
 .pt-text a {
     color: #409eff;
 }
+
+[contenteditable] {
+    outline-color: transparent;
+}
