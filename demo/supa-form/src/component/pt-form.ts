@@ -101,12 +101,15 @@ export class PtForm extends PtBaseShadow {
             }
         });
 
-        this.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default form submission
-                this.nextPage();
-            }
-        });
+        if (!this.editSelection) {
+            // auto next page only when not in design mode
+            this.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent default form submission
+                    this.nextPage();
+                }
+            });
+        }
     }
 
     render() {
@@ -182,6 +185,7 @@ export class PtForm extends PtBaseShadow {
                                 @pt-form-state-changed=${this.onFormStateChange}
                                 @pt-form-next-page=${this.nextPage}
                                 .page=${this.currentContentPage}
+                                config-path="contentPages[${contentPages.indexOf(this.currentContentPage)}]"
                             ></pt-form-page>`
                         )}
                     </div>
@@ -271,7 +275,7 @@ export class PtForm extends PtBaseShadow {
             if (currentPageIndex < contentPages.length - 1) {
                 this.pageId = contentPages[currentPageIndex + 1].$id;
                 this.emitPageChangeEvent('content', this.pageId);
-            } else {
+            } else if (completePages.length > 0) {
                 this.pageId = completePages[0].$id!;
                 this.emitPageChangeEvent('complete', this.pageId);
             }

@@ -27,6 +27,9 @@ abstract class DataBase<T> extends BaseMixin(LitElement, false) {
     @property({ type: Object })
     data?: { $id: string; required?: boolean };
 
+    @property({ type: String, attribute: 'config-path' })
+    configPath = '';
+
     @property({ type: Object })
     value: QuestionState<T> = new QuestionState<T>();
 

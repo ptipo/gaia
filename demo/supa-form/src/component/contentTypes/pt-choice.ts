@@ -1,4 +1,3 @@
-import { ImageInfo } from '@hayadev/configurator/items';
 import { consume } from '@lit/context';
 import { msg } from '@lit/localize';
 import { html } from 'lit';
@@ -9,6 +8,7 @@ import PlaceholderImage from '../../../assets/placeholder-md.svg?raw';
 import { AllPageItemsTypesMap } from '../../config/page-items';
 import { formWidth } from '../../state';
 import { PtBaseData, PtFormSingleChoiceSelectedEventName } from '../pt-base';
+import './pt-editable-label';
 import './pt-question-base';
 
 type ChoiceQuestionType = AllPageItemsTypesMap['ChoiceQuestion'];
@@ -100,13 +100,19 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         return html`
             <fieldset class="flex">
                 <legend class="mb-5">
-                    <span class="text-xl font-bold">${this.data?.question}</span>
+                    <span class="text-xl font-bold">
+                        <pt-editable-label
+                            config-path="${this.configPath + '.question'}"
+                            label="${this.data?.question}"
+                        >
+                        </pt-editable-label>
+                    </span>
                     ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
                 </legend>
 
                 <div class="flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
-                        (choice) => html`
+                        (choice, i) => html`
                             ${when(
                                 this.isImageChoice,
                                 () =>
@@ -115,7 +121,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             style="${isFlat
                                                 ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
                                                 : ''}"
-                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100  has-[:checked]:border-black  transition"
+                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100 has-[:checked]:border-black transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
@@ -144,8 +150,14 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                         html`<label
                                                             for="${choice.$id}"
                                                             class="cursor-pointer leading-none"
-                                                            >${choice.name}</label
-                                                        >`
+                                                            ><pt-editable-label
+                                                                config-path="${this.configPath +
+                                                                '.imageChoices[' +
+                                                                i +
+                                                                '].name'}"
+                                                                label="${choice.name}"
+                                                            ></pt-editable-label
+                                                        ></label>`
                                                 )}
                                             </div>
                                         </label>
@@ -160,7 +172,10 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                 for="${choice.$id}"
                                                 class="cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
                                             >
-                                                ${choice.value}
+                                                <pt-editable-label
+                                                    config-path="${this.configPath + '.textChoices[' + i + '].value'}"
+                                                    label="${choice.value}"
+                                                />
                                             </label>
                                         </label>
                                         ${choice.additionalInput && this.isChoiceChecked(choice.$id)
@@ -170,6 +185,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                   @input=${this.onInputChange}
                                                   .placeholder=${choice.additionalInputPlaceholder as string}
                                                   .value=${this.getChoiceData(choice.$id)[1]}
+                                                  config-path=${this.configPath}
                                               ></pt-question>`
                                             : ''}
                                     `

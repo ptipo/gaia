@@ -21,11 +21,11 @@ export class PtEmail extends PtBaseData<string> {
             @input=${(e: any) => this.onChange(e.target.value)}
             question=${question!}
             description=${description!}
+            .configPath=${this.configPath}
             value=${ifDefined(this.value.data)}
             inputType="email"
         ></pt-question> `;
     }
-
 
     isValidEmail(email: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { BaseConceptModel, createAppInstance, ValidationIssue } from '@hayadev/configurator';
-import { AppConfigurator, ValidationIssues, type EditPathRecord, type SelectionData } from '@hayadev/configurator-vue';
+import {
+    addInlineEditEventHandlers,
+    AppConfigurator,
+    ValidationIssues,
+    type EditPathRecord,
+    type SelectionData,
+} from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -47,6 +53,10 @@ onMounted(async () => {
     });
     resetFormConfig();
     onLoad(false);
+
+    if (formEl.value) {
+        addInlineEditEventHandlers(formEl.value, () => model.value, onAppChange);
+    }
 });
 
 const resetFormConfig = () => {
