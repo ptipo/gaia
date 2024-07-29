@@ -131,7 +131,6 @@ async function fetchConfig() {
 // This function should be rewritten for different app
 function assetEventHandler(assetHtmlElement) {
     assetHtmlElement.addEventListener('form-answer', (e) => submitData(e.detail));
-    assetHtmlElement.addEventListener('form-complete', (e) => submitData(e.detail));
     assetHtmlElement.addEventListener('save-user-tag', (e) => saveUserTag(e.detail));
 
     function submitData(data) {

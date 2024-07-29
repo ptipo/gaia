@@ -212,7 +212,6 @@ export class PtForm extends PtBaseShadow {
                 </div>
             `;
         } else {
-            this.submitPage(true);
             const completePage = completePages.find((x) => x.$id == this.pageId);
 
             if (completePage) {
@@ -221,13 +220,13 @@ export class PtForm extends PtBaseShadow {
         }
     }
 
-    private submitPage(isComplete: boolean = false) {
+    private submitPage(formState: FormSubmitState) {
         const formResult = this.getFormResultFromState();
-        console.log(`form result: ${JSON.stringify(formResult)}`);
+        console.log(`form result[${formState}]: ${JSON.stringify(formResult)}`);
 
         this.dispatchEvent(
-            new CustomEvent(isComplete ? 'form-answer' : 'form-complete', {
-                detail: formResult.submitData,
+            new CustomEvent('form-answer', {
+                detail: { ...formResult.submitData, form_answer_state: formState },
                 bubbles: true,
                 composed: true,
             })
@@ -325,18 +324,26 @@ export class PtForm extends PtBaseShadow {
             }
         }
 
-        this.submitPage();
         // save form state to storage
         this.formState.currentPageId = this.pageId;
         this.storageWrapper?.set(this.storageKey, this.formState);
 
+        let isNextPageComplete = this.config?.completePages?.find((x) => x.$id == this.pageId);
+        let answerState = isNextPageComplete ? FormSubmitState.COMPLETE : FormSubmitState.STEP;
+
         // if need to go to the complete page
         const limitPagesPerDrip = this.config?.dataCollection.drip.limitPagesPerDrip;
-
-        if (limitPagesPerDrip?.maxPagesPerDrip && this.pageIdStack.length >= limitPagesPerDrip.maxPagesPerDrip) {
+        if (
+            !isNextPageComplete &&
+            limitPagesPerDrip?.maxPagesPerDrip &&
+            this.pageIdStack.length >= limitPagesPerDrip.maxPagesPerDrip
+        ) {
             targetPage = (limitPagesPerDrip.dripCompletePage as ConceptRef).$id;
             this.pageId = targetPage;
+            answerState = FormSubmitState.PARTIAL_COMPLETE;
         }
+
+        this.submitPage(answerState);
     }
 
     private onFormStateChange() {
@@ -415,6 +422,12 @@ export class PtForm extends PtBaseShadow {
             }
         });
     }
+}
+
+export enum FormSubmitState {
+    STEP = 'step',
+    PARTIAL_COMPLETE = 'partial-complete',
+    COMPLETE = 'complete',
 }
 
 interface FormResultData {
