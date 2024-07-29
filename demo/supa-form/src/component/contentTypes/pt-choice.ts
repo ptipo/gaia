@@ -248,12 +248,20 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         const submitValue = this.value
             .data!.map(([option, additionalInput]) => {
                 const choice = this.targetChoices?.find((x) => x.$id == option);
+                if (!choice) {
+                    console.warn('Choice not found:', option);
+                    return undefined;
+                }
+                // `ImageChoice` and `TextChoice` values are stored in different fields by accident,
+                // we have to adapt it here for backward compatibility
+                const value = choice.$concept === 'ImageChoice' ? choice.name : choice.value;
                 if (additionalInput) {
-                    return `${choice?.value} -- ${additionalInput}`;
+                    return `${value} -- ${additionalInput}`;
                 } else {
-                    return choice?.value;
+                    return value;
                 }
             })
+            .filter((value) => !!value)
             .join(',');
         return { name: this.data?.name!, value: submitValue, saveUserTag: this.data?.saveAsUserTag };
     }
