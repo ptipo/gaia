@@ -204,8 +204,10 @@ const onAppChange = (data: BaseConceptModel) => {
     if (validate(model.value)) {
         resetFormConfig();
 
-        const jsonEditor = jsonEditorVueRef.value.jsonEditor;
-        jsonEditor.set({ json: model.value });
+        if (jsonEditorVueRef.value) {
+            const jsonEditor = jsonEditorVueRef.value.jsonEditor;
+            jsonEditor.set({ json: model.value });
+        }
     }
 };
 
