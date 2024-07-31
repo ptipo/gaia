@@ -21,7 +21,8 @@
         "watch:vite": "vite build --watch",
         "watch": "run-p watch:*",
         "preview": "vite preview -c vite-app.config.ts",
-        "convert": "vite-node src/tools/ec-form-converter.ts"
+        "convert": "vite-node src/tools/ec-form-converter.ts",
+        "test": "vitest"
     },
     "dependencies": {
         "@hayadev/configurator": "workspace:*",
@@ -39,15 +40,20 @@
         "@lit/localize-tools": "^0.7.2",
         "@tailwindcss/forms": "^0.5.7",
         "@vitejs/plugin-vue": "^5.0.4",
+        "@vitest/browser": "^2.0.4",
+        "@vitest/ui": "^2.0.4",
         "autoprefixer": "^10.4.19",
         "commander": "^12.1.0",
         "element-plus": "^2.7.3",
+        "jsdom": "^24.1.1",
         "postcss": "^8.4.38",
         "postcss-lit": "^1.1.1",
         "vite": "^5.2.0",
         "vite-node": "^1.6.0",
+        "vitest": "^2.0.4",
         "vue": "^3.4.21",
-        "vue-tsc": "^2.0.6"
+        "vue-tsc": "^2.0.6",
+        "webdriverio": "^8.39.1"
     },
     "keywords": [],
     "author": "",
