@@ -1,5 +1,19 @@
 import { BaseConceptModel } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
+// import RichTextEditor from './components/RichTextEditor.vue';
+// import { createVNode } from 'vue';
+import { Editor } from '@tiptap/core';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import Underline from '@/lib/tiptap/underline';
+import Bold from '@tiptap/extension-bold';
+import Color from '@tiptap/extension-color';
+import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
+import Strike from '@tiptap/extension-strike';
+import TextStyle from '@tiptap/extension-text-style';
+import BubbleMenu from '@tiptap/extension-bubble-menu';
 
 function findEditableElement(event: Event) {
     if (!event.target) {
@@ -13,7 +27,10 @@ function findEditableElement(event: Event) {
             continue;
         }
 
-        if (el.getAttribute('data-haya-config-path') && el.hasAttribute('data-haya-editable')) {
+        if (
+            el.getAttribute('data-haya-config-path') &&
+            (el.hasAttribute('data-haya-editable') || el.hasAttribute('data-haya-rte'))
+        ) {
             return el;
         }
     }
@@ -21,11 +38,16 @@ function findEditableElement(event: Event) {
     return undefined;
 }
 
-function exitEdit(el: HTMLElement, model: BaseConceptModel, updateModel: (model: BaseConceptModel) => void) {
-    el.contentEditable = 'false';
-
+function exitEdit(
+    el: HTMLElement,
+    model: BaseConceptModel,
+    updateModel: (model: BaseConceptModel) => void,
+    rte: Editor | undefined
+) {
     const configPath = el.getAttribute('data-haya-config-path');
     if (!configPath) {
+        console.warn('No config path found for the editable element');
+        rte?.destroy();
         return;
     }
 
@@ -47,7 +69,7 @@ function exitEdit(el: HTMLElement, model: BaseConceptModel, updateModel: (model:
             if (Array.isArray(current)) {
                 current[parseInt(part)] = el.innerText;
             } else {
-                current[part] = el.innerText;
+                current[part] = rte?.getHTML() ?? el.innerText;
             }
         } else {
             if (Array.isArray(current)) {
@@ -60,6 +82,14 @@ function exitEdit(el: HTMLElement, model: BaseConceptModel, updateModel: (model:
 
     // call back
     updateModel(newModel);
+
+    // quit edit mode
+    if (rte) {
+        rte.destroy();
+        showChildren(el);
+    } else {
+        el.contentEditable = 'false';
+    }
 }
 
 /**
@@ -73,17 +103,51 @@ export function addInlineEditEventHandlers(
     getModel: () => BaseConceptModel,
     updateModel: (model: BaseConceptModel) => void
 ) {
+    // let rteHost: HTMLElement | null = null;
+    let rte: Editor | undefined;
+
     appEl.addEventListener(
         'click',
         (event: MouseEvent) => {
+            if (rte) {
+                return;
+            }
+
             const el = findEditableElement(event);
             if (!el) {
                 return;
             }
 
             // enter edit
-            el.contentEditable = 'true';
-            el.focus();
+            if (isRTE(el)) {
+                const html = el.innerHTML;
+                hideChildren(el);
+
+                const { menuEl } = createBubbleMenu();
+
+                rte = new Editor({
+                    element: el,
+                    extensions: [
+                        Document,
+                        Paragraph,
+                        Text,
+                        TextStyle,
+                        Underline,
+                        Strike,
+                        Bold,
+                        Italic,
+                        Color,
+                        Link.configure({ openOnClick: false }),
+                        BubbleMenu.configure({ element: menuEl }),
+                    ],
+                    autofocus: true,
+                    injectCSS: false,
+                    content: html,
+                });
+            } else {
+                el.contentEditable = 'true';
+                el.focus();
+            }
             event.stopPropagation();
             event.preventDefault();
         },
@@ -92,8 +156,13 @@ export function addInlineEditEventHandlers(
 
     appEl.addEventListener('blur', (event: FocusEvent) => {
         const el = findEditableElement(event);
-        if (el?.contentEditable === 'true') {
-            exitEdit(el, getModel(), updateModel);
+        if (
+            el &&
+            // make sure we're in edit mode
+            (rte || el.contentEditable === 'true')
+        ) {
+            exitEdit(el, getModel(), updateModel, rte);
+            rte = undefined;
         }
     });
 
@@ -104,13 +173,54 @@ export function addInlineEditEventHandlers(
                 return;
             }
 
+            if (event.key === 'Enter' && rte) {
+                // let the editor handle the enter key
+                return;
+            }
+
             const el = findEditableElement(event);
-            if (el?.contentEditable === 'true') {
+            if (
+                el &&
+                // make sure we're in edit mode
+                (rte || el.contentEditable === 'true')
+            ) {
                 event.stopPropagation();
                 event.preventDefault();
-                exitEdit(el, getModel(), updateModel);
+                exitEdit(el, getModel(), updateModel, rte);
+                rte = undefined;
             }
         },
         { capture: true }
     );
+}
+
+function isRTE(el: HTMLElement) {
+    return el.hasAttribute('data-haya-rte');
+}
+
+function hideChildren(el: HTMLElement) {
+    Array.from(el.children).forEach((child) => {
+        (child as HTMLElement).style.display = 'none';
+    });
+}
+
+function showChildren(el: HTMLElement) {
+    Array.from(el.children).forEach((child) => {
+        (child as HTMLElement).style.display = '';
+    });
+}
+
+function createBubbleMenu() {
+    const menuEl = document.createElement('div');
+    menuEl.classList.add('border-b p-1 rich-text-buttons');
+    // menuEl.style.border = '1px solid #ccc';
+    // menuEl.style.fontSize = '0.8em';
+    // menuEl.style.padding = '8px 16px';
+
+    const boldBtn = document.createElement('button');
+    boldBtn.innerHTML = '<span style="font-weight: bold;">B</span>';
+
+    menuEl.appendChild(boldBtn);
+
+    return { menuEl, boldBtn };
 }

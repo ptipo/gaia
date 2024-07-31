@@ -258,6 +258,9 @@ importers:
       '@tiptap/extension-bold':
         specifier: ^2.5.5
         version: 2.5.5(@tiptap/core@2.5.5)
+      '@tiptap/extension-bubble-menu':
+        specifier: ^2.5.8
+        version: 2.5.8(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4)
       '@tiptap/extension-color':
         specifier: ^2.5.4
         version: 2.5.4(@tiptap/core@2.5.5)(@tiptap/extension-text-style@2.5.4)
@@ -5140,11 +5143,11 @@ packages:
       '@tiptap/core': 2.5.5(@tiptap/pm@2.5.4)
     dev: false
 
-  /@tiptap/extension-bubble-menu@2.5.4(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4):
-    resolution: {integrity: sha512-GHwef912K1yd75pp9JGDnKSp1DvdOHH8BcHQv0no+a3q2ePFPYcgaSwVRR59jHRX9WzdVfoLcqDSAeoNGOrISw==}
+  /@tiptap/extension-bubble-menu@2.5.8(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4):
+    resolution: {integrity: sha512-COmd1Azudu7i281emZFIESECe7FnvWiRoBoQBVjjWSyq5PVzwJaA3PAlnU7GyNZKtVXMZ4xbrckdyNQfDeVQDA==}
     peerDependencies:
-      '@tiptap/core': ^2.5.4
-      '@tiptap/pm': ^2.5.4
+      '@tiptap/core': ^2.5.8
+      '@tiptap/pm': ^2.5.8
     dependencies:
       '@tiptap/core': 2.5.5(@tiptap/pm@2.5.4)
       '@tiptap/pm': 2.5.4
@@ -5262,7 +5265,7 @@ packages:
       vue: ^3.0.0
     dependencies:
       '@tiptap/core': 2.5.5(@tiptap/pm@2.5.4)
-      '@tiptap/extension-bubble-menu': 2.5.4(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4)
+      '@tiptap/extension-bubble-menu': 2.5.8(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4)
       '@tiptap/extension-floating-menu': 2.5.4(@tiptap/core@2.5.5)(@tiptap/pm@2.5.4)
       '@tiptap/pm': 2.5.4
       vue: 3.4.31(typescript@5.5.3)
