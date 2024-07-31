@@ -9,6 +9,13 @@ const config: UserConfig = {
             fileName: 'index',
         },
     },
+    test: {
+        browser: {
+            enabled: true,
+            name: 'chrome',
+            provider: 'webdriverio',
+        },
+    },
 };
 
 export default config;
