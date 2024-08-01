@@ -8,9 +8,9 @@ import {
     type SelectionData,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import { ElNotification } from 'element-plus';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { ColorPickerInstance, ElNotification } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
+import { onMounted, ref, watch } from 'vue';
 import pkgJson from '../../package.json';
 import { FormApp } from '../config';
 
@@ -55,7 +55,7 @@ onMounted(async () => {
     onLoad(false);
 
     if (formEl.value) {
-        addInlineEditEventHandlers(formEl.value, () => model.value, onAppChange);
+        addInlineEditEventHandlers(formEl.value, () => model.value, onAppChange, onOpenColorPicker);
     }
 });
 
@@ -137,6 +137,14 @@ const uploadImage = async (file: File) => {
     const url = URL.createObjectURL(blob);
     return url;
 };
+
+const pickedColor = ref('');
+const colorPicker = ref<ColorPickerInstance>();
+
+const onOpenColorPicker = () => {
+    console.log('Open color picker');
+    colorPicker.value?.show();
+};
 </script>
 
 <template>
@@ -157,9 +165,15 @@ const uploadImage = async (file: File) => {
                 >
             </div>
             <div
-                class="border rounded bg-white h-full flex-grow overflow-auto"
+                class="border rounded bg-white h-full flex-grow overflow-auto flex flex-col"
                 :class="isMobile ? 'w-[375px]' : 'w-full'"
             >
+                <el-color-picker
+                    v-model="pickedColor"
+                    show-alpha
+                    ref="colorPicker"
+                    class="m-auto invisible"
+                ></el-color-picker>
                 <pt-form id="pt-form" edit-selection='{"id":""}' ref="formEl"></pt-form>
             </div>
             <div class="bottom-tabs w-full h-1/2">

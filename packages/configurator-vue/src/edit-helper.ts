@@ -101,7 +101,8 @@ function exitEdit(
 export function addInlineEditEventHandlers(
     appEl: HTMLElement,
     getModel: () => BaseConceptModel,
-    updateModel: (model: BaseConceptModel) => void
+    updateModel: (model: BaseConceptModel) => void,
+    onOpenColorPicker: () => void
 ) {
     // let rteHost: HTMLElement | null = null;
     let rte: Editor | undefined;
@@ -123,7 +124,7 @@ export function addInlineEditEventHandlers(
                 const html = el.innerHTML;
                 hideChildren(el);
 
-                const { menuEl } = createBubbleMenu();
+                const { menuEl, boldBtn, underlineBtn, colorBtn } = createBubbleMenu();
 
                 rte = new Editor({
                     element: el,
@@ -144,6 +145,10 @@ export function addInlineEditEventHandlers(
                     injectCSS: false,
                     content: html,
                 });
+
+                boldBtn.addEventListener('click', () => rte?.chain().focus().toggleBold().run());
+                underlineBtn.addEventListener('click', () => rte?.chain().focus().toggleUnderline().run());
+                colorBtn.addEventListener('click', () => onOpenColorPicker());
             } else {
                 el.contentEditable = 'true';
                 el.focus();
@@ -212,15 +217,30 @@ function showChildren(el: HTMLElement) {
 
 function createBubbleMenu() {
     const menuEl = document.createElement('div');
-    menuEl.classList.add('border-b p-1 rich-text-buttons');
-    // menuEl.style.border = '1px solid #ccc';
-    // menuEl.style.fontSize = '0.8em';
-    // menuEl.style.padding = '8px 16px';
+    // menuEl.classList.add('flex', 'gap-1', 'border', 'px-2', 'py-1', 'text-xs', 'bg-white', 'rounded');
+
+    menuEl.style.display = 'flex';
+    menuEl.style.gap = '0.5em';
+    menuEl.style.backgroundColor = 'white';
+    menuEl.style.border = '1px solid #ccc';
+    menuEl.style.borderRadius = '0.25em';
+    menuEl.style.fontSize = '0.75em';
+    menuEl.style.padding = '6px 12px';
+    menuEl.style.fontFamily = 'sans-serif';
+    menuEl.style.fontWeight = 'normal';
+    menuEl.style.lineHeight = '1';
 
     const boldBtn = document.createElement('button');
     boldBtn.innerHTML = '<span style="font-weight: bold;">B</span>';
-
     menuEl.appendChild(boldBtn);
 
-    return { menuEl, boldBtn };
+    const underlineBtn = document.createElement('button');
+    underlineBtn.innerHTML = '<span style="text-decoration: underline;">U</span>';
+    menuEl.appendChild(underlineBtn);
+
+    const colorBtn = document.createElement('button');
+    colorBtn.innerHTML = '<span style="">C</span>';
+    menuEl.appendChild(colorBtn);
+
+    return { menuEl, boldBtn, underlineBtn, colorBtn };
 }

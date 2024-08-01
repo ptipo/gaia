@@ -100,6 +100,10 @@ watch(loadError, (value) => {
 const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
 
+const onOpenColorPicker = () => {
+    console.log('Open color picker');
+};
+
 const createAppElement = async (app: App) => {
     if (appEl.value) {
         // already created
@@ -166,7 +170,7 @@ const createAppElement = async (app: App) => {
             }) as EventListener);
 
             // install preview-pane inline editing event handlers
-            addInlineEditEventHandlers(el, () => model.value!, onAppChange);
+            addInlineEditEventHandlers(el, () => model.value!, onAppChange, onOpenColorPicker);
 
             appContainerEl.value.appendChild(el);
             appEl.value = el;
