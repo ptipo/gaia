@@ -1,5 +1,5 @@
 import { defineGroupItem } from '@hayadev/configurator/items';
-import { getAllPages, getCompletePages } from '../util';
+import { getCompletePages } from '../util';
 
 /**
  * 多次填写设置
@@ -18,7 +18,8 @@ export const DripSetting = defineGroupItem({
          */
         limitPagesPerDrip: {
             type: 'if',
-            conditionProvider: ({ currentModel }) => currentModel.enable,
+            description: 'Control the number of pages submitted each time. Only valid when the "enable" field is true.',
+            conditionProvider: ({ currentModel }) => !!currentModel?.enable,
             child: {
                 type: 'group',
                 items: {

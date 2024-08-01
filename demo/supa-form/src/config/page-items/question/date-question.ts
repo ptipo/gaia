@@ -29,6 +29,6 @@ export const DateQuestion = defineConcept({
     },
 
     summary: ({ currentModel }) => {
-        return `${currentModel.name || '日期'} ${currentModel.required ? '*' : ''}`;
+        return `${currentModel?.name || '日期'} ${currentModel?.required ? '*' : ''}`;
     },
 });

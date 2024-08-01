@@ -33,13 +33,15 @@ export const NextButton = defineConcept({
          */
         targetPage: {
             type: 'if',
+            description: 'Page to go when the button is clicked. Only valid when the "action" field is "goToPage".',
 
             // 仅在动作为“前往指定页面”时显示
-            conditionProvider: ({ currentModel }) => currentModel.action === 'goToPage',
+            conditionProvider: ({ currentModel }) => currentModel?.action === 'goToPage',
 
             child: {
                 type: 'dynamic-select',
                 name: '前往页面',
+                description: 'Page to go when the button is clicked. Value must be a reference to an existing page.',
                 required: true,
 
                 // 从root model获取所有页面
@@ -54,8 +56,10 @@ export const NextButton = defineConcept({
         conditionalAction: {
             type: 'if',
 
+            description: 'Conditions and actions to execute. Only valid when the "action" field is "conditional".',
+
             // 仅在动作为“根据回答，执行不同动作”时显示
-            conditionProvider: ({ currentModel }) => currentModel.action === 'conditional',
+            conditionProvider: ({ currentModel }) => currentModel?.action === 'conditional',
 
             child: {
                 type: 'has-many',
