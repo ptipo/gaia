@@ -39,6 +39,6 @@ export const QAQuestion = defineConcept({
     },
 
     summary: ({ currentModel }) => {
-        return `${currentModel.name || '问答'} ${currentModel.required ? '*' : ''}`;
+        return `${currentModel?.name || '问答'} ${currentModel?.required ? '*' : ''}`;
     },
 });

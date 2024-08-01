@@ -44,9 +44,10 @@ export const ChoiceQuestion = defineConcept({
          */
         showTextWithImage: {
             type: 'if',
+            description: 'Show text with image choices. Only valid when the "choiceKind" field is "image".',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'image',
+            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'image',
 
             child: {
                 type: 'switch',
@@ -63,9 +64,10 @@ export const ChoiceQuestion = defineConcept({
          */
         textChoices: {
             type: 'if',
+            description: 'Choices for question of "text" kind. Only valid when the "choiceKind" field is "text".',
 
             // 仅在文字选项时显示
-            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'text',
+            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'text',
 
             // 条件变化回调，创建默认文字选项
             onConditionChange: ({ app }, value) => (value ? makeDefaultTextChoices(app) : undefined),
@@ -80,7 +82,7 @@ export const ChoiceQuestion = defineConcept({
                 onChildChange: (changedItem, currentModel) => {
                     if (changedItem.defaultSelected) {
                         // 清除其他选项的默认选中状态
-                        currentModel.forEach((item) => {
+                        currentModel?.forEach((item) => {
                             if (item !== changedItem) {
                                 item.defaultSelected = false;
                             }
@@ -97,9 +99,10 @@ export const ChoiceQuestion = defineConcept({
          */
         imageChoices: {
             type: 'if',
+            description: 'Choices for question of "image" kind. Only valid when the "choiceKind" field is "image".',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) => currentModel.choiceKind === 'image',
+            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'image',
 
             // 条件变化回调，创建默认图片选项
             onConditionChange: ({ app }, value) => (value ? makeDefaultImageChoices(app) : undefined),
@@ -114,7 +117,7 @@ export const ChoiceQuestion = defineConcept({
                 onChildChange: (changedItem, currentModel) => {
                     if (changedItem.defaultSelected) {
                         // 清除其他选项的默认选中状态
-                        currentModel.forEach((item) => {
+                        currentModel?.forEach((item) => {
                             if (item !== changedItem) {
                                 item.defaultSelected = false;
                             }
@@ -130,9 +133,10 @@ export const ChoiceQuestion = defineConcept({
          */
         limitSelectedItems: {
             type: 'if',
+            description: 'Limit the number of selected items. Only valid when the "kind" field is "multiple".',
 
             // 仅在多选时显示
-            conditionProvider: ({ currentModel }) => currentModel.kind === 'multiple',
+            conditionProvider: ({ currentModel }) => currentModel?.kind === 'multiple',
 
             child: {
                 type: 'dynamic-select',
@@ -141,8 +145,9 @@ export const ChoiceQuestion = defineConcept({
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
                     const choices =
-                        (currentModel.choiceKind === 'text' ? currentModel.textChoices : currentModel.imageChoices) ??
-                        [];
+                        (currentModel?.choiceKind === 'text'
+                            ? currentModel?.textChoices
+                            : currentModel?.imageChoices) ?? [];
                     return Array.from(new Array(choices.length), (_, i) => ({
                         key: i + 1,
                         label: (i + 1).toString(),

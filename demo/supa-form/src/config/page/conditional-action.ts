@@ -35,7 +35,7 @@ export const ConditionalAction = defineConcept({
          */
         action: {
             type: 'if',
-            conditionProvider: ({ currentModel }) => !!currentModel.condition,
+            conditionProvider: ({ currentModel }) => !!currentModel?.condition,
             child: {
                 type: 'has-many',
                 name: '动作',

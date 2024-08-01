@@ -12,6 +12,7 @@ import { LanguageSetting } from './language-setting';
 export const Form = defineConcept({
     name: 'Form',
     displayName: '表单',
+    description: 'Survey form',
 
     groups: {
         contentPages: { name: '表单页', aspect: 'content' },
@@ -28,13 +29,14 @@ export const Form = defineConcept({
         contentPages: {
             type: 'has-many',
             name: '表单页',
+            description: 'Pages for collecting user input',
             required: true,
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
             newItemProvider: (concept, context) => {
                 const { app, currentModel } = context;
-                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
+                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(ContentPage, {
                     name: `表单页${existing.length + 1}`,
                     pageItems: [
@@ -53,12 +55,13 @@ export const Form = defineConcept({
         completePages: {
             type: 'has-many',
             name: '结束页',
+            description: 'Pages for confirming form submission and thanking the user',
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',
             newItemProvider: (concept, context) => {
                 const { app, currentModel } = context;
-                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
+                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(CompletePage, {
                     name: `结束页${existing.length + 1}`,
                     pageItems: [

@@ -8,6 +8,7 @@ const config: UserConfig = {
             name: 'PtForm',
             fileName: 'index',
         },
+        emptyOutDir: false,
     },
     test: {
         browser: {

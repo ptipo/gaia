@@ -20,6 +20,11 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
     displayName: string;
 
     /**
+     * Description
+     */
+    description?: string;
+
+    /**
      * Grouping information
      */
     groups?: ConfigGroups;

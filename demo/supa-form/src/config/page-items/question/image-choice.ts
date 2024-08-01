@@ -32,5 +32,5 @@ export const ImageChoice = defineConcept({
         },
     },
 
-    summary: ({ currentModel }) => currentModel.name as string,
+    summary: ({ currentModel }) => (currentModel?.name as string) ?? '',
 });

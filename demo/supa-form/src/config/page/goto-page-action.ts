@@ -1,4 +1,4 @@
-import { ConceptRef, defineConcept } from '@hayadev/configurator';
+import { defineConcept } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 
 /**
@@ -26,7 +26,7 @@ export const GoToPageAction = defineConcept({
     summary: ({ app, currentModel }) => {
         let pageName = '未设置';
         if (currentModel) {
-            const page = currentModel.goToPage && app.resolveConcept(currentModel.goToPage);
+            const page = currentModel?.goToPage && app.resolveConcept(currentModel.goToPage);
             if (page) {
                 pageName = page.name;
             }

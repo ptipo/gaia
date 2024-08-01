@@ -19,6 +19,7 @@ import { NextButton } from './next-button';
 export const ContentPage = defineConcept({
     name: 'ContentPage',
     displayName: '表单页',
+    description: 'Page for collecting user input',
 
     items: {
         /**
@@ -77,7 +78,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
 
     // 生成带自增序号的问题名称
     const nameWithSuffix = `${mappedName}${
-        currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name).length + 1
+        (currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? []).length + 1
     }`;
     return app.createConceptInstance(concept, {
         name: nameWithSuffix,
@@ -89,7 +90,7 @@ function cloneItemProvider(_concept: Concept, source: BaseConceptModel, context:
     const result = cloneConceptModel(source);
     const newName = incrementName(
         result.name as string,
-        context.currentModel.map((question: any) => question.name),
+        context.currentModel?.map((question: any) => question.name) ?? [],
         { suffix: '副本' }
     );
     result.name = newName;

@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue';
-import fs from 'node:fs';
 import type { UserConfig } from 'vite';
 
 const config: UserConfig = {

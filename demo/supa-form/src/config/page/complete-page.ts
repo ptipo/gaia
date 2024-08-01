@@ -7,6 +7,7 @@ import { CopyToClipboard, ImageElement, TextElement } from '../page-items';
 export const CompletePage = defineConcept({
     name: 'CompletePage',
     displayName: '结束页',
+    description: 'Page for confirming form submission and thanking the user',
 
     items: {
         /**

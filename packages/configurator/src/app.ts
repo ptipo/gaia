@@ -6,8 +6,9 @@ import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GetSchemaContext, GroupItem } from './items';
+import { JSONSchemaBuilder } from './json-schema';
 import { ConceptRef, isConceptInstance, isConceptRef } from './model';
-import { NonPrimitiveTypes, ProviderContext } from './types';
+import { NonPrimitiveTypes } from './types';
 import { ValidationIssueCode } from './validation';
 
 /**
@@ -243,6 +244,13 @@ export class AppInstance<TConcept extends Concept> {
         } else {
             return { success: true, data: data as inferConcept<TConcept> };
         }
+    }
+
+    /**
+     * Gets JSON schema for the app.
+     */
+    get jsonSchema() {
+        return new JSONSchemaBuilder().build(this.concept);
     }
 }
 
