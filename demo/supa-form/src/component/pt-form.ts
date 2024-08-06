@@ -18,6 +18,7 @@ import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
+import { getCSSVariableValues } from './global-style';
 
 type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
 @customElement('pt-form')
@@ -156,7 +157,13 @@ export class PtForm extends PtBaseShadow {
         }
 
         const completePages = this.config?.completePages ?? [];
+
+        const cssVariableValues = getCSSVariableValues(this.config!);
+
         const css = html`<style>
+            :host{
+                ${cssVariableValues};
+            }
             ${this.config?.customCSS?.source}
         </style>`;
 

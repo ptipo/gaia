@@ -98,19 +98,19 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         const isShowTextWithImage = this.data?.showTextWithImage;
 
         return html`
-            <fieldset class="flex">
-                <legend class="mb-5">
-                    <span class="text-xl font-bold">
+            <fieldset class="block">
+                <legend class="pt-question">
+                    <span class="font-bold block">
                         <pt-editable-label
                             config-path="${this.configPath + '.question'}"
                             label="${this.data?.question}"
                         >
                         </pt-editable-label>
                     </span>
-                    ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
                 </legend>
+                ${description ? html`<p class="mt-1 font-normal pt-question-description">${description}</p>` : ''}
 
-                <div class="flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
+                <div class="mt-5 flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice, i) => html`
                             ${when(
@@ -170,7 +170,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
                                                 for="${choice.$id}"
-                                                class="cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
+                                                class="cursor-pointer block ms-2  text-sm text-[length:--pt-font]  font-medium dark:text-gray-300"
                                             >
                                                 <pt-editable-label
                                                     config-path="${this.configPath + '.textChoices[' + i + '].value'}"

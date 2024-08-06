@@ -26,14 +26,14 @@ export class PtQuestionBase extends PtBase {
 
     render() {
         return html`
-            <span class="text-xl font-bold"
+            <span class="font-bold pt-question block"
                 ><pt-editable-label
                     config-path="${this.configPath + '.question'}"
                     label="${this.question}"
                 ></pt-editable-label
             ></span>
             ${this.description
-                ? html`<p class="mt-1 text-sm font-normal">
+                ? html`<p class="mt-1 font-normal pt-question-description">
                       <pt-editable-label config-path="${this.configPath + '.description'}" label="${this.description}">
                       </pt-editable-label>
                   </p>`

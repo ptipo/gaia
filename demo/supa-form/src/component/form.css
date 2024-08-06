@@ -14,6 +14,18 @@
     }
 }
 
+@layer components {
+    .pt-question {
+        font-size: calc(var(--pt-form-question-font-size) * 1.25rem);
+        text-align: var(--pt-form-question-text-align, left);
+    }
+
+    .pt-question-description {
+        font-size: calc(var(--pt-form-question-description-font-size) * 0.875rem);
+        text-align: var(--pt-form-question-description-text-align, left);
+    }
+}
+
 :host {
     font-family: var(--ptform-font-family, 'Noto Sans JP,sans-serif');
 }
@@ -32,7 +44,7 @@ label,
 span,
 legend {
     @apply break-words;
-    color: var(--ptform-main-text-color, black);
+    /* color: var(--ptform-main-text-color, black); */
 }
 
 .pt-text a {
