@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppConfigurator: typeof import('./src/components/AppConfigurator.vue')['default']
     CodeItem: typeof import('./src/components/items/CodeItem.vue')['default']
+    ColorItem: typeof import('./src/components/items/ColorItem.vue')['default']
     ConceptConfigurator: typeof import('./src/components/ConceptConfigurator.vue')['default']
     ConceptElement: typeof import('./src/components/items/ConceptElement.vue')['default']
     ConceptStack: typeof import('./src/components/ConceptStack.vue')['default']

@@ -45,7 +45,7 @@ export const Schemas: {
 };
 
 export { Code, CodeItem, CodeLanguage } from './code';
-export { ColorItem } from './color';
+export { RGBA, ColorItem } from './color';
 export * from './common';
 export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
 export { defineGroupItem, GroupItem } from './group';
