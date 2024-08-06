@@ -70,3 +70,25 @@ export const AlignmentItems = {
     },
     maxWidth: { type: 'number', name: '最大宽度%', default: 100 },
 } satisfies Record<string, ConfigItem>;
+
+export const Font = {
+    type: 'select',
+    name: '字体',
+    default: 'system',
+    options: {
+        system: 'system-ui',
+        sans: 'Noto Sans JP',
+        sans_serif: 'sans-serif',
+    },
+} satisfies ConfigItem;
+
+export const FontSize = {
+    type: 'select',
+    name: '字体大小',
+    default: 'base',
+    options: { xs: '小', sm: '较小', base: '中等', lg: '较大', xl: '大' },
+} satisfies ConfigItem;
+
+export const TextCommonItems = {
+    fontSize: FontSize,
+} satisfies Record<string, ConfigItem>;
