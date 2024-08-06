@@ -8,12 +8,23 @@ export const QuestionCommonItems = {
     /**
      * 表单项名称
      */
-    name: { type: 'text', name: '表单项名称', required: true, groupKey: 'basic' },
+    name: {
+        type: 'text',
+        name: '表单项名称',
+        description: 'Unique key of the question that can be used to analyze form submission results',
+        required: true,
+        groupKey: 'basic',
+    },
 
     /**
      * 问题
      */
-    question: { type: 'text', name: '问题', groupKey: 'basic' },
+    question: {
+        type: 'text',
+        name: '问题',
+        description: 'The question title displayed to the user in the form',
+        groupKey: 'basic',
+    },
 
     /**
      * 描述信息
