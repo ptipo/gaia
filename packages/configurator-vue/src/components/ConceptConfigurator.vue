@@ -5,10 +5,16 @@ import type { BaseConceptModel, Concept, SelectionData } from '@hayadev/configur
 import { computed, defineAsyncComponent, inject, ref, watch, type Ref } from 'vue';
 import type { EnterConceptData } from './types';
 
-const props = defineProps<{
-    concept: Concept;
-    model: BaseConceptModel;
-}>();
+const props = withDefaults(
+    defineProps<{
+        concept: Concept;
+        model: BaseConceptModel;
+        defaultAspect: string;
+    }>(),
+    {
+        defaultAspect: DEFAULT_ASPECT,
+    }
+);
 
 const _model = ref<BaseConceptModel>({ ...props.model });
 
@@ -40,7 +46,7 @@ const groups = computed(() => {
     }> = Object.entries(props.concept.groups)
         .filter(
             ([_, value]) =>
-                value.aspect === currentAspect?.value || (!value.aspect && currentAspect?.value === DEFAULT_ASPECT)
+                value.aspect === currentAspect?.value || (!value.aspect && currentAspect?.value === props.defaultAspect)
         )
         .map(([key, value]) => ({
             key,
@@ -57,7 +63,7 @@ const groups = computed(() => {
 const getGroupItems = (groupKey: string | undefined) => {
     return Object.entries(props.concept.items).filter(([_, item]) => {
         // ungrouped items are thrown into "content" aspect
-        let itemAspect = DEFAULT_ASPECT;
+        let itemAspect = props.defaultAspect;
         if (item.groupKey) {
             const group = props.concept.groups?.[item.groupKey];
             if (group?.aspect) {
