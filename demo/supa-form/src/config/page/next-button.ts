@@ -36,7 +36,7 @@ export const NextButton = defineConcept({
             description: 'Page to go when the button is clicked. Only valid when the "action" field is "goToPage".',
 
             // 仅在动作为“前往指定页面”时显示
-            conditionProvider: ({ currentModel }) => currentModel?.action === 'goToPage',
+            condition: { field: 'action', value: 'goToPage' },
 
             child: {
                 type: 'dynamic-select',
@@ -59,7 +59,7 @@ export const NextButton = defineConcept({
             description: 'Conditions and actions to execute. Only valid when the "action" field is "conditional".',
 
             // 仅在动作为“根据回答，执行不同动作”时显示
-            conditionProvider: ({ currentModel }) => currentModel?.action === 'conditional',
+            condition: { field: 'action', value: 'conditional' },
 
             child: {
                 type: 'has-many',

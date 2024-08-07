@@ -58,6 +58,12 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * Callback for validating the model
      */
     validate?: (model: BaseConceptModel) => ValidationIssue[] | undefined;
+
+    /**
+     * Items to be excluded from the generated JSON schema
+     * @private
+     */
+    excludeFromSchema?: string[];
 };
 
 export type ConceptTemplate = {

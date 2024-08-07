@@ -40,7 +40,7 @@ export const TextChoice = defineConcept({
             description: 'Placeholder for additional input. Only valid when the "additionalInput" field is true.',
 
             // 仅在需要用户输入补充回答时显示
-            conditionProvider: ({ currentModel }) => !!currentModel?.additionalInput,
+            condition: { field: 'additionalInput', value: true },
 
             name: '补充输入的提示语',
             child: {
@@ -55,7 +55,8 @@ export const TextChoice = defineConcept({
             description: 'Whether additional input is required. Only valid when the "additionalInput" field is true.',
 
             // 仅在需要用户输入补充回答时显示
-            conditionProvider: ({ currentModel }) => !!currentModel?.additionalInput,
+            condition: { field: 'additionalInput', value: true },
+
             name: '补充输入是否必填',
             child: {
                 type: 'switch',
