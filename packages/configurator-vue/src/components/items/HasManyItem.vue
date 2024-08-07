@@ -194,7 +194,7 @@ watch(selectedElement, (value) => {
         // scroll the selected element into view
         const el = document.querySelector(`.concept-element-${thisInstanceId}-${_model.value.indexOf(value)}`);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.scrollIntoView({ behavior: 'smooth', block: "nearest", inline: "nearest" });
         }
     }
 });
@@ -209,48 +209,28 @@ const reachedMaxItems = computed(() => {
         <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
-        <draggable
-            class="flex flex-col gap-2"
-            handle=".handle"
-            v-model="_model"
-            :group="draggableGroup"
-            item-key="$id"
-            @change="onDragChanged"
-        >
+        <draggable class="flex flex-col gap-2" handle=".handle" v-model="_model" :group="draggableGroup" item-key="$id"
+            @change="onDragChanged">
             <template #item="{ element, index }">
-                <div
-                    :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
-                    class="flex items-center w-full"
-                >
+                <div :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
+                    class="flex items-center w-full">
                     <div class="flex-grow" :class="`concept-element-${thisInstanceId}-${index}`">
-                        <ConceptElement
-                            v-if="findConcept(element.$concept)"
-                            :concept="findConcept(element.$concept)"
-                            :key="element.$id"
-                            :model="element"
-                            :parent="props.item"
-                            :inlineEditing="item.inline"
-                            :allowDelete="_model.length > 1"
-                            :allowClone="!reachedMaxItems"
+                        <ConceptElement v-if="findConcept(element.$concept)" :concept="findConcept(element.$concept)"
+                            :key="element.$id" :model="element" :parent="props.item" :inlineEditing="item.inline"
+                            :allowDelete="_model.length > 1" :allowClone="!reachedMaxItems"
                             :allowAddSibling="!reachedMaxItems"
                             @add-sibling="(data: ConceptModelPair) => onAddSibling(index, data)"
-                            @clone="() => onCloneElement(index)"
-                            @delete="() => onDeleteElement(index)"
+                            @clone="() => onCloneElement(index)" @delete="() => onDeleteElement(index)"
                             @enter="(data: EnterConceptData) => onEnterConcept(data, index)"
                             @change="(data: BaseConceptModel) => onChangeElement(data, index)"
-                            @selected="(data: ConceptModelPair) => onElementSelected(data)"
-                        />
+                            @selected="(data: ConceptModelPair) => onElementSelected(data)" />
                     </div>
                 </div>
             </template>
         </draggable>
 
         <!-- footer button -->
-        <CreateCandidateButton
-            v-if="showCreateButton && !reachedMaxItems"
-            :name="item.name"
-            :candidates="item.candidates"
-            @create="onCreate"
-        />
+        <CreateCandidateButton v-if="showCreateButton && !reachedMaxItems" :name="item.name"
+            :candidates="item.candidates" @create="onCreate" />
     </div>
 </template>

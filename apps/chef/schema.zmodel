@@ -44,6 +44,7 @@ model App extends EntityWithOwner {
   bundle      String
   htmlTagName String
   ptCodeMode  String? @db.Text
+  aiApiKey    String? @omit
 
 
   @@allow('read', auth() != null)
