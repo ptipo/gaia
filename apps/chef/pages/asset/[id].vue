@@ -61,11 +61,13 @@ const isJSONEditorPermission = ref(false);
 
 const jsonEditorVueRef = ref();
 
+const isAIPermission = ref(false);
 const aiDialogVisible = ref(false);
 const aiInput = ref('');
 
 interface UserPermission {
     jsonEditor?: boolean;
+    ai?:boolean;
 }
 
 const {
@@ -187,6 +189,7 @@ watch(
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
             isJSONEditorPermission.value = !!permission?.jsonEditor;
+            isAIPermission.value = !!permission.ai;
         }
     },
     { immediate: true }
@@ -524,7 +527,7 @@ const aiDialogClose = (done: () => void) => {
             </div>
             <!-- preview -->
             <div class="w-[400px] shrink-0 border rounded block overflow-hidden" v-if="appInstance">
-                <div class="w-full mt-1 flex justify-center p-4">
+                <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
                     <el-button class="w-full pt-4" @click="aiDialogVisible = true">AI 生成表单</el-button>
                 </div>
                 <AppConfigurator :app="appInstance" :model="model" v-model:editPath="editPath"
