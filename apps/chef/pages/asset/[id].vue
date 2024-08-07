@@ -14,14 +14,14 @@ import {
     type EditPathRecord,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset, User } from '@prisma/client';
+import type { App, Asset } from '@prisma/client';
 import byteSize from 'byte-size';
 import type { DropdownInstance } from 'element-plus';
+import JsonEditorVue from 'json-editor-vue';
+import { Mode } from 'vanilla-jsoneditor';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
-import JsonEditorVue from 'json-editor-vue';
-import { Mode } from 'vanilla-jsoneditor';
 
 const route = useRoute();
 
@@ -55,11 +55,11 @@ const isPreviewAsset = ref(false);
 
 const isMobile = ref(false);
 
+// JSON editor states
 const isShowJSON = ref(false);
-
 const isJSONEditorPermission = ref(false);
-
 const jsonEditorVueRef = ref();
+const jsonEditorModel = ref();
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -213,7 +213,7 @@ const onAppChange = (data: BaseConceptModel) => {
 
 const validate = (model: BaseConceptModel) => {
     if (!appInstance.value) {
-        return;
+        return false;
     }
 
     const validationResult = appInstance.value.validateModel(model);
@@ -370,6 +370,31 @@ const uploadImage = async (file: File) => {
     url.search = '';
     return url.toString();
 };
+
+const onJsonEditorUpdate = (updatedContent: any) => {
+    if (!appInstance.value) {
+        return;
+    }
+
+    const defaultModel = appInstance.value.createConceptInstance(appInstance.value.concept);
+
+    let parsed;
+    try {
+        parsed = JSON.parse(updatedContent.text);
+    } catch (err) {
+        appInstance.value.model = model.value = defaultModel;
+        resetFormConfig();
+        return;
+    }
+
+    if (parsed) {
+        if (!validate(parsed)) {
+            return;
+        }
+        appInstance.value.model = model.value = parsed;
+        resetFormConfig();
+    }
+};
 </script>
 
 <template>
@@ -463,13 +488,10 @@ const uploadImage = async (file: File) => {
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
                     <JsonEditorVue
                         ref="jsonEditorVueRef"
-                        :modelValue="model"
+                        :modelValue="jsonEditorModel"
                         :mode="Mode.text"
                         :stringified="false"
-                        :onChange=" (updatedContent:any) => { let jsonModel; try { jsonModel =
-                    JSON.parse(updatedContent.text); } catch {} if (jsonModel) { const appModel = { model: jsonModel,
-                    appVersion: appInstance!.version }; const loaded = appInstance!.loadModel(JSON.stringify(appModel));
-                    model = loaded.model; resetFormConfig(); } } "
+                        :onChange="onJsonEditorUpdate"
                     />
                 </div>
             </div>

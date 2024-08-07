@@ -220,8 +220,8 @@ export class AppInstance<TConcept extends Concept> {
         | { success: false; issues: ValidationIssue[]; data?: never } {
         const schema = this.getModelSchema({
             app: this,
-            rootModel: this.model,
-            currentModel: this.model,
+            rootModel: model as BaseConceptModel,
+            currentModel: model,
             parentModel: undefined,
         });
         const { error, data } = schema.safeParse(model);

@@ -25,7 +25,13 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const childComponent = getItemComponent(props.item.child);
 
 const condition = computed(() => {
-    return props.item.conditionProvider(makeContext());
+    if (props.item.condition) {
+        return props.parentModel?.[props.item.condition.field] === props.item.condition.value;
+    } else if (props.item.conditionProvider) {
+        return props.item.conditionProvider(makeContext());
+    } else {
+        throw new Error('Condition or conditionProvider must be provided');
+    }
 });
 
 const makeContext = () => ({
