@@ -58,7 +58,6 @@ const isMobile = ref(false);
 // JSON editor states
 const isShowJSON = ref(false);
 const isJSONEditorPermission = ref(false);
-const jsonEditorVueRef = ref();
 const jsonEditorModel = ref();
 
 interface UserPermission {
@@ -203,11 +202,7 @@ const onAppChange = (data: BaseConceptModel) => {
 
     if (validate(model.value)) {
         resetFormConfig();
-
-        if (jsonEditorVueRef.value) {
-            const jsonEditor = jsonEditorVueRef.value.jsonEditor;
-            jsonEditor.set({ json: model.value });
-        }
+        jsonEditorModel.value = model.value;
     }
 };
 
@@ -371,6 +366,12 @@ const uploadImage = async (file: File) => {
     return url.toString();
 };
 
+watch(isShowJSON, (value) => {
+    if (value) {
+        jsonEditorModel.value = model.value;
+    }
+});
+
 const onJsonEditorUpdate = (updatedContent: any) => {
     if (!appInstance.value) {
         return;
@@ -392,6 +393,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             return;
         }
         appInstance.value.model = model.value = parsed;
+        editPath.value = [];
         resetFormConfig();
     }
 };
@@ -474,7 +476,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                             Desktop
                         </button>
                     </div>
-                    <div v-if="isJSONEditorPermission" class="self-end">
+                    <div v-if="isJSONEditorPermission" class="flex items-center gap-1 self-end">
                         <span>JSON</span>
                         <el-switch v-model="isShowJSON"> </el-switch>
                     </div>
@@ -487,7 +489,6 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 ></div>
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
                     <JsonEditorVue
-                        ref="jsonEditorVueRef"
                         :modelValue="jsonEditorModel"
                         :mode="Mode.text"
                         :stringified="false"
