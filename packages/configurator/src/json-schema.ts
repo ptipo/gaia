@@ -102,7 +102,7 @@ export class JSONSchemaBuilder {
                     '$type',
                     '$id',
                     '$concept',
-                    items.filter(([_, item]) => this.isRequired(item)).map(([key, _]) => key),
+                    ...items.filter(([_, item]) => this.isRequired(item)).map(([key, _]) => key),
                 ],
                 properties: {
                     $type: { const: 'concept' },
@@ -155,7 +155,10 @@ export class JSONSchemaBuilder {
         if (item.condition) {
             return {
                 if: { properties: { [item.condition.field]: { const: item.condition.value } } },
-                then: { properties: { [key]: this.buildItem({ description: item.description, ...item.child }) } },
+                then: {
+                    properties: { [key]: this.buildItem({ description: item.description, ...item.child }) },
+                    ...(item.child.required ? { required: [key] } : {}),
+                },
             };
         } else {
             throw new Error("Shouldn't get here!");

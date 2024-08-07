@@ -228,8 +228,8 @@ export class PtForm extends PtBaseShadow {
 
         if (
             !this.pageId ||
-            (!this.config?.contentPages.find((x) => x.$id == this.pageId) &&
-                !this.config?.completePages.find((x) => x.$id == this.pageId))
+            (!this.config?.contentPages?.find((x) => x.$id == this.pageId) &&
+                !this.config?.completePages?.find((x) => x.$id == this.pageId))
         ) {
             // current page id not valid, select the content page
             if (this.config?.contentPages && this.config.contentPages.length > 0) {
