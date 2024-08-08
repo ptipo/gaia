@@ -106,7 +106,7 @@ export class JSONSchemaBuilder {
                 ],
                 properties: {
                     $type: { const: 'concept' },
-                    $id: { type: 'string', format: 'uuid' },
+                    $id: { type: 'string' },
                     $concept: { const: concept.name },
                     ...items
                         .filter(([_, item]) => !this.isIfWithSimpleCondition(item))
