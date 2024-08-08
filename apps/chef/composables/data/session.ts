@@ -2,7 +2,7 @@
 import type { Prisma, Session } from "@zenstackhq/runtime/models";
 import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/vue-query';
 import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/vue';
-import type { MaybeRefOrGetter, ComputedRef } from 'vue';
+import type { MaybeRefOrGetter, ComputedRef, UnwrapRef } from 'vue';
 import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/vue';
 import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
 import type { PolicyCrudKind } from '@zenstackhq/runtime'
@@ -49,7 +49,7 @@ export function useCreateManySession(options?: Omit<(MaybeRefOrGetter<UseMutatio
     return mutation;
 }
 
-export function useFindManySession<TArgs extends Prisma.SessionFindManyArgs, TQueryFnData = Array<Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindManyArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindManyArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindManySession<TArgs extends Prisma.SessionFindManyArgs, TQueryFnData = Array<Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindManyArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindManyArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/findMany`, args, options, fetch);
 }
@@ -59,12 +59,12 @@ export function useInfiniteFindManySession<TArgs extends Prisma.SessionFindManyA
     return useInfiniteModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueSession<TArgs extends Prisma.SessionFindUniqueArgs, TQueryFnData = Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindUniqueArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindUniqueArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindUniqueSession<TArgs extends Prisma.SessionFindUniqueArgs, TQueryFnData = Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindUniqueArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindUniqueArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstSession<TArgs extends Prisma.SessionFindFirstArgs, TQueryFnData = Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindFirstArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindFirstArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindFirstSession<TArgs extends Prisma.SessionFindFirstArgs, TQueryFnData = Prisma.SessionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionFindFirstArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionFindFirstArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/findFirst`, args, options, fetch);
 }
@@ -169,7 +169,7 @@ export function useDeleteManySession(options?: Omit<(MaybeRefOrGetter<UseMutatio
     return mutation;
 }
 
-export function useAggregateSession<TArgs extends Prisma.SessionAggregateArgs, TQueryFnData = Prisma.GetSessionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionAggregateArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionAggregateArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useAggregateSession<TArgs extends Prisma.SessionAggregateArgs, TQueryFnData = Prisma.GetSessionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionAggregateArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionAggregateArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/aggregate`, args, options, fetch);
 }
@@ -224,17 +224,17 @@ export function useGroupBySession<TArgs extends Prisma.SessionGroupByArgs, HasSe
             : Prisma.GetScalarType<TArgs[P], Prisma.SessionGroupByOutputType[P]>
             : Prisma.GetScalarType<TArgs[P], Prisma.SessionGroupByOutputType[P]>
         }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SessionGroupByArgs, OrderByArg> & InputErrors>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SessionGroupByArgs, OrderByArg> & InputErrors>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SessionGroupByArgs, OrderByArg> & InputErrors>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SessionGroupByArgs, OrderByArg> & InputErrors>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/groupBy`, args, options, fetch);
 }
 
-export function useCountSession<TArgs extends Prisma.SessionCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.SessionCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionCountArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionCountArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCountSession<TArgs extends Prisma.SessionCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.SessionCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SessionCountArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SessionCountArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Session', `${endpoint}/session/count`, args, options, fetch);
 }
 
-export function useCheckSession<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; userId?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCheckSession<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; userId?: string }; }, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<boolean, TError, boolean>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<boolean, TError, boolean>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<boolean, boolean, TError>('Session', `${endpoint}/session/check`, args, options, fetch);
 }

@@ -2,7 +2,7 @@
 import type { Prisma, Asset } from "@zenstackhq/runtime/models";
 import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/vue-query';
 import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/vue';
-import type { MaybeRefOrGetter, ComputedRef } from 'vue';
+import type { MaybeRefOrGetter, ComputedRef, UnwrapRef } from 'vue';
 import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/vue';
 import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
 import type { PolicyCrudKind } from '@zenstackhq/runtime'
@@ -49,7 +49,7 @@ export function useCreateManyAsset(options?: Omit<(MaybeRefOrGetter<UseMutationO
     return mutation;
 }
 
-export function useFindManyAsset<TArgs extends Prisma.AssetFindManyArgs, TQueryFnData = Array<Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindManyArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindManyArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindManyAsset<TArgs extends Prisma.AssetFindManyArgs, TQueryFnData = Array<Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindManyArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindManyArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/findMany`, args, options, fetch);
 }
@@ -59,12 +59,12 @@ export function useInfiniteFindManyAsset<TArgs extends Prisma.AssetFindManyArgs,
     return useInfiniteModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueAsset<TArgs extends Prisma.AssetFindUniqueArgs, TQueryFnData = Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindUniqueArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindUniqueArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindUniqueAsset<TArgs extends Prisma.AssetFindUniqueArgs, TQueryFnData = Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindUniqueArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindUniqueArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstAsset<TArgs extends Prisma.AssetFindFirstArgs, TQueryFnData = Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindFirstArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindFirstArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useFindFirstAsset<TArgs extends Prisma.AssetFindFirstArgs, TQueryFnData = Prisma.AssetGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetFindFirstArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetFindFirstArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/findFirst`, args, options, fetch);
 }
@@ -169,7 +169,7 @@ export function useDeleteManyAsset(options?: Omit<(MaybeRefOrGetter<UseMutationO
     return mutation;
 }
 
-export function useAggregateAsset<TArgs extends Prisma.AssetAggregateArgs, TQueryFnData = Prisma.GetAssetAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetAggregateArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetAggregateArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useAggregateAsset<TArgs extends Prisma.AssetAggregateArgs, TQueryFnData = Prisma.GetAssetAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetAggregateArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetAggregateArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/aggregate`, args, options, fetch);
 }
@@ -224,17 +224,17 @@ export function useGroupByAsset<TArgs extends Prisma.AssetGroupByArgs, HasSelect
             : Prisma.GetScalarType<TArgs[P], Prisma.AssetGroupByOutputType[P]>
             : Prisma.GetScalarType<TArgs[P], Prisma.AssetGroupByOutputType[P]>
         }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssetGroupByArgs, OrderByArg> & InputErrors>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssetGroupByArgs, OrderByArg> & InputErrors>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssetGroupByArgs, OrderByArg> & InputErrors>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssetGroupByArgs, OrderByArg> & InputErrors>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/groupBy`, args, options, fetch);
 }
 
-export function useCountAsset<TArgs extends Prisma.AssetCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssetCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetCountArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetCountArgs>>, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCountAsset<TArgs extends Prisma.AssetCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssetCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: MaybeRefOrGetter<Prisma.SelectSubset<TArgs, Prisma.AssetCountArgs>> | ComputedRef<Prisma.SelectSubset<TArgs, Prisma.AssetCountArgs>>, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<TQueryFnData, TError, TData>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<TQueryFnData, TData, TError>('Asset', `${endpoint}/asset/count`, args, options, fetch);
 }
 
-export function useCheckAsset<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; appId?: string; appVersion?: string; publishUrl?: string }; }, options?: (MaybeRefOrGetter<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> | ComputedRef<Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'>> & ExtraQueryOptions)) {
+export function useCheckAsset<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; ownerId?: string; name?: string; appId?: string; appVersion?: string; publishUrl?: string }; }, options?: (MaybeRefOrGetter<Omit<UnwrapRef<UseQueryOptions<boolean, TError, boolean>>, 'queryKey'>> | ComputedRef<Omit<UnwrapRef<UseQueryOptions<boolean, TError, boolean>>, 'queryKey'>> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<boolean, boolean, TError>('Asset', `${endpoint}/asset/check`, args, options, fetch);
 }
