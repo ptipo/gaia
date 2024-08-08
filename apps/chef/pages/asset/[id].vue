@@ -391,22 +391,21 @@ const onGenerate = async () => {
 
     const appModel = {
         model: data.json,
-        appVersion: app.version
+        appVersion: app.version,
     };
     const loaded = app.loadModel(JSON.stringify(appModel));
 
     if (loaded.error) {
         error(`生成有误，请重新生成`);
         console.error(loaded.error);
-    }
-    else {
+    } else {
         success('生成成功');
         aiDialogVisible.value = false;
         model.value = loaded.model;
         resetFormConfig();
         appEl?.value?.setAttribute('edit-selection', '{}');
+        validate(model.value!);
     }
-
 };
 
 const aiDialogClose = (done: () => void) => {
@@ -418,14 +417,12 @@ const aiDialogClose = (done: () => void) => {
             })
             .catch(() => {
                 // catch error
-            })
-    }
-    else {
+            });
+    } else {
         isAiGenerating.value = false;
         done();
     }
-
-}
+};
 watch(isShowJSON, (value) => {
     if (value) {
         jsonEditorModel.value = model.value;
@@ -473,8 +470,13 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         </el-icon>
                     </div>
                     <div v-else>
-                        <el-input ref="editNameEl" v-model="editName" placeholder="请输入资产名称" @blur="onEditNameComplete"
-                            @keyup.enter="onEditNameComplete" />
+                        <el-input
+                            ref="editNameEl"
+                            v-model="editName"
+                            placeholder="请输入资产名称"
+                            @blur="onEditNameComplete"
+                            @keyup.enter="onEditNameComplete"
+                        />
                     </div>
                 </template>
             </el-page-header>
@@ -487,17 +489,22 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     </el-icon>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <ValidationIssues class="p-4 text-sm max-w-96" :issues="issues"
-                                :concept="appInstance.concept" :model="model"
-                                @navigate="(path: EditPathRecord[]) => onNavigateError(path)" />
+                            <ValidationIssues
+                                class="p-4 text-sm max-w-96"
+                                :issues="issues"
+                                :concept="appInstance.concept"
+                                :model="model"
+                                @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
+                            />
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
                 <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
                 <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">预览</el-button>
-                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0"
-                    v-loading="isPublishingAsset">发布</el-button>
+                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
+                    >发布</el-button
+                >
             </div>
         </div>
 
@@ -507,18 +514,25 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             <div class="flex-grow rounded">
                 <div class="flex rounded-md shadow-sm mt-1 mb-4 justify-between" role="group">
                     <div>
-                        <button @click="() => {
-                            isMobile = true;
-                        }
+                        <button
+                            @click="
+                                () => {
+                                    isMobile = true;
+                                }
                             "
-                            class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white">
+                            class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                        >
                             Mobile
                         </button>
-                        <button autofocus @click="() => {
-                            isMobile = false;
-                        }
+                        <button
+                            autofocus
+                            @click="
+                                () => {
+                                    isMobile = false;
+                                }
                             "
-                            class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white">
+                            class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
+                        >
                             Desktop
                         </button>
                     </div>
@@ -528,11 +542,18 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     </div>
                 </div>
 
-                <div ref="appContainerEl" class="overflow-auto ml-auto mr-auto"
-                    :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"></div>
+                <div
+                    ref="appContainerEl"
+                    class="overflow-auto ml-auto mr-auto"
+                    :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
+                ></div>
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
-                    <JsonEditorVue :modelValue="jsonEditorModel" :mode="Mode.text" :stringified="false"
-                        :onChange="onJsonEditorUpdate" />
+                    <JsonEditorVue
+                        :modelValue="jsonEditorModel"
+                        :mode="Mode.text"
+                        :stringified="false"
+                        :onChange="onJsonEditorUpdate"
+                    />
                 </div>
             </div>
             <!-- preview -->
@@ -540,33 +561,44 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
                     <el-button class="w-full pt-4" @click="aiDialogVisible = true">AI 生成表单</el-button>
                 </div>
-                <AppConfigurator :app="appInstance" :model="model" v-model:editPath="editPath"
-                    v-model:selection="selection" :image-uploader="uploadImage" @change="onAppChange" />
+                <AppConfigurator
+                    :app="appInstance"
+                    :model="model"
+                    v-model:editPath="editPath"
+                    v-model:selection="selection"
+                    :image-uploader="uploadImage"
+                    @change="onAppChange"
+                />
             </div>
         </div>
     </el-container>
 
     <el-dialog title="AI生成表单" v-model="aiDialogVisible" :before-close="aiDialogClose" style="border-radius: 0.5rem">
-        <div class="flex items-start mb-6">
-            <p class="text-gray-700">我可以根据您的描述帮助您生成表单</p>
-        </div>
+        <div class="flex bg-gray-100 px-4 pt-4 rounded-lg justify-between mb-2">
+            <div>
+                <p class="text-gray-700 mb-2">我可以帮您快速生成表单或问卷，您可以</p>
 
-        <div class="bg-gray-100 p-4 rounded-lg mb-6">
-            <p class="text-gray-700 mb-2">您希望设计什么风格？您可以：</p>
-            <ol class="list-decimal list-inside text-gray-600">
-                <li>向我说明风格，例如"白色简约风格"</li>
-                <li>直接发给我参考使用的URL或上传参考图</li>
-                <li>基于当前版本调整，例如"把按钮改成绿色"</li>
-            </ol>
-            ""
+                <ol class="list-decimal list-inside text-gray-600 mb-2">
+                    <li>告诉我您的调研目的和对象</li>
+                    <li>或直接给我问题和选项</li>
+                </ol>
+                <p class="text-gray-700 mb-2">我将立即为您生成表单</p>
+            </div>
+            <div className="w-[100px] h-[100px] self-end">
+                <img src="/img/ai_assistant.png" alt="ai" className="object-contain w-full h-full" />
+            </div>
         </div>
 
         <el-input type="textarea" v-model="aiInput" :rows="10" placeholder="请输入您的需求..." class="mb-4"></el-input>
 
-        <el-button type="primary" class="w-full bg-teal-800 hover:bg-teal-900" v-loading="isAiGenerating"
-            @click="onGenerate">
+        <el-button
+            type="primary"
+            class="w-full bg-teal-800 hover:bg-teal-900"
+            v-loading="isAiGenerating"
+            @click="onGenerate"
+        >
             <i class="el-icon-plus mr-2"></i>
-            生成设计
+            生成表单
         </el-button>
     </el-dialog>
 </template>
