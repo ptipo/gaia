@@ -220,6 +220,24 @@ export class PtForm extends PtBaseShadow {
         }
     }
 
+    protected willUpdate() {
+        if (!this.editSelection) {
+            // skip if not at design time
+            return;
+        }
+
+        if (
+            !this.pageId ||
+            (!this.config?.contentPages?.find((x) => x.$id == this.pageId) &&
+                !this.config?.completePages?.find((x) => x.$id == this.pageId))
+        ) {
+            // current page id not valid, select the content page
+            if (this.config?.contentPages && this.config.contentPages.length > 0) {
+                this.emitPageChangeEvent('content', this.config.contentPages[0].$id);
+            }
+        }
+    }
+
     private submitPage(formState: FormSubmitState) {
         const formResult = this.getFormResultFromState();
         console.log(`form result[${formState}]: ${JSON.stringify(formResult)}`);
