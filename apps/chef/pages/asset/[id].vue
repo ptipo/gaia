@@ -455,6 +455,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         appInstance.value.model = model.value = parsed;
         editPath.value = [];
         resetFormConfig();
+        appEl?.value?.setAttribute('edit-selection', '{}');
     }
 };
 </script>
@@ -530,29 +531,8 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 <div ref="appContainerEl" class="overflow-auto ml-auto mr-auto"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"></div>
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
-                    <<<<<<< HEAD <JsonEditorVue ref="jsonEditorVueRef" :modelValue="model" :mode="Mode.text"
-                        :stringified="false" :onChange="(updatedContent: any) => {
-                            let jsonModel;
-                            try {
-                                jsonModel =
-                                    JSON.parse(updatedContent.text);
-                            } catch { }
-
-                            if (jsonModel) {
-                                const appModel = {
-                                    model: jsonModel,
-                                    appVersion: appInstance!.version
-                                };
-                                const loaded = appInstance!.loadModel(JSON.stringify(appModel));
-                                model = loaded.model;
-                                resetFormConfig();
-                                appEl?.setAttribute('edit-selection', '{}');
-                            }
-                        }" />
-                    =======
                     <JsonEditorVue :modelValue="jsonEditorModel" :mode="Mode.text" :stringified="false"
                         :onChange="onJsonEditorUpdate" />
-                    >>>>>>> origin/main
                 </div>
             </div>
             <!-- preview -->
