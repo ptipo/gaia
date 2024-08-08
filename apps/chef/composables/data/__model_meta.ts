@@ -106,6 +106,10 @@ const metadata = {
                     name: "ptCodeMode",
                     type: "String",
                     isOptional: true,
+                }, aiApiKey: {
+                    name: "aiApiKey",
+                    type: "String",
+                    isOptional: true,
                 },
             }
             , uniqueConstraints: {

@@ -60,8 +60,13 @@ const isShowJSON = ref(false);
 const isJSONEditorPermission = ref(false);
 const jsonEditorModel = ref();
 
+const isAIPermission = ref(false);
+const aiDialogVisible = ref(false);
+const aiInput = ref('');
+
 interface UserPermission {
     jsonEditor?: boolean;
+    ai?: boolean;
 }
 
 const {
@@ -183,6 +188,7 @@ watch(
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
             isJSONEditorPermission.value = !!permission?.jsonEditor;
+            isAIPermission.value = !!permission.ai;
         }
     },
     { immediate: true }
@@ -366,6 +372,60 @@ const uploadImage = async (file: File) => {
     return url.toString();
 };
 
+const isAiGenerating = ref(false);
+
+const onGenerate = async () => {
+    if (!asset.value) {
+        return undefined;
+    }
+
+    isAiGenerating.value = true;
+    const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
+        method: 'POST',
+        body: { prompt: aiInput.value },
+    });
+    isAiGenerating.value = false;
+    console.log(data);
+
+    const app = appInstance.value!;
+
+    const appModel = {
+        model: data.json,
+        appVersion: app.version
+    };
+    const loaded = app.loadModel(JSON.stringify(appModel));
+
+    if (loaded.error) {
+        error(`生成有误，请重新生成`);
+        console.error(loaded.error);
+    }
+    else {
+        success('生成成功');
+        aiDialogVisible.value = false;
+        model.value = loaded.model;
+        resetFormConfig();
+        appEl?.value?.setAttribute('edit-selection', '{}');
+    }
+
+};
+
+const aiDialogClose = (done: () => void) => {
+    if (isAiGenerating.value) {
+        ElMessageBox.confirm('还在生成中，确定要关闭吗？')
+            .then(() => {
+                isAiGenerating.value = false;
+                done();
+            })
+            .catch(() => {
+                // catch error
+            })
+    }
+    else {
+        isAiGenerating.value = false;
+        done();
+    }
+
+}
 watch(isShowJSON, (value) => {
     if (value) {
         jsonEditorModel.value = model.value;
@@ -395,6 +455,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         appInstance.value.model = model.value = parsed;
         editPath.value = [];
         resetFormConfig();
+        appEl?.value?.setAttribute('edit-selection', '{}');
     }
 };
 </script>
@@ -407,18 +468,13 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 <template #content>
                     <div v-if="editName === undefined" class="flex items-center group">
                         <span class="text-large font-600 mr-3"> {{ asset?.name }} </span>
-                        <el-icon class="invisible group-hover:visible cursor-pointer" @click="editName = asset?.name"
-                            ><ElIconEditPen
-                        /></el-icon>
+                        <el-icon class="invisible group-hover:visible cursor-pointer" @click="editName = asset?.name">
+                            <ElIconEditPen />
+                        </el-icon>
                     </div>
                     <div v-else>
-                        <el-input
-                            ref="editNameEl"
-                            v-model="editName"
-                            placeholder="请输入资产名称"
-                            @blur="onEditNameComplete"
-                            @keyup.enter="onEditNameComplete"
-                        />
+                        <el-input ref="editNameEl" v-model="editName" placeholder="请输入资产名称" @blur="onEditNameComplete"
+                            @keyup.enter="onEditNameComplete" />
                     </div>
                 </template>
             </el-page-header>
@@ -426,25 +482,22 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             <div class="flex items-center button-group gap-2">
                 <!-- validation issues dropdown -->
                 <el-dropdown trigger="click" ref="issuesDropdown" v-if="issues.length > 0 && appInstance && model">
-                    <el-icon class="w-4 h-4 cursor-pointer" color="#f09035"><ElIconWarnTriangleFilled /></el-icon>
+                    <el-icon class="w-4 h-4 cursor-pointer" color="#f09035">
+                        <ElIconWarnTriangleFilled />
+                    </el-icon>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <ValidationIssues
-                                class="p-4 text-sm max-w-96"
-                                :issues="issues"
-                                :concept="appInstance.concept"
-                                :model="model"
-                                @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
-                            />
+                            <ValidationIssues class="p-4 text-sm max-w-96" :issues="issues"
+                                :concept="appInstance.concept" :model="model"
+                                @navigate="(path: EditPathRecord[]) => onNavigateError(path)" />
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
                 <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
                 <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
                 <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">预览</el-button>
-                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
-                    >发布</el-button
-                >
+                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0"
+                    v-loading="isPublishingAsset">发布</el-button>
             </div>
         </div>
 
@@ -454,25 +507,18 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             <div class="flex-grow rounded">
                 <div class="flex rounded-md shadow-sm mt-1 mb-4 justify-between" role="group">
                     <div>
-                        <button
-                            @click="
-                                () => {
-                                    isMobile = true;
-                                }
+                        <button @click="() => {
+                            isMobile = true;
+                        }
                             "
-                            class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
-                        >
+                            class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white">
                             Mobile
                         </button>
-                        <button
-                            autofocus
-                            @click="
-                                () => {
-                                    isMobile = false;
-                                }
+                        <button autofocus @click="() => {
+                            isMobile = false;
+                        }
                             "
-                            class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
-                        >
+                            class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white">
                             Desktop
                         </button>
                     </div>
@@ -482,33 +528,47 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     </div>
                 </div>
 
-                <div
-                    ref="appContainerEl"
-                    class="overflow-auto ml-auto mr-auto"
-                    :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
-                ></div>
+                <div ref="appContainerEl" class="overflow-auto ml-auto mr-auto"
+                    :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"></div>
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
-                    <JsonEditorVue
-                        :modelValue="jsonEditorModel"
-                        :mode="Mode.text"
-                        :stringified="false"
-                        :onChange="onJsonEditorUpdate"
-                    />
+                    <JsonEditorVue :modelValue="jsonEditorModel" :mode="Mode.text" :stringified="false"
+                        :onChange="onJsonEditorUpdate" />
                 </div>
             </div>
             <!-- preview -->
-            <div class="w-[400px] shrink-0 border rounded" v-if="appInstance">
-                <AppConfigurator
-                    :app="appInstance"
-                    :model="model"
-                    v-model:editPath="editPath"
-                    v-model:selection="selection"
-                    :image-uploader="uploadImage"
-                    @change="onAppChange"
-                />
+            <div class="w-[400px] shrink-0 border rounded block overflow-hidden" v-if="appInstance">
+                <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
+                    <el-button class="w-full pt-4" @click="aiDialogVisible = true">AI 生成表单</el-button>
+                </div>
+                <AppConfigurator :app="appInstance" :model="model" v-model:editPath="editPath"
+                    v-model:selection="selection" :image-uploader="uploadImage" @change="onAppChange" />
             </div>
         </div>
     </el-container>
+
+    <el-dialog title="AI生成表单" v-model="aiDialogVisible" :before-close="aiDialogClose" style="border-radius: 0.5rem">
+        <div class="flex items-start mb-6">
+            <p class="text-gray-700">我可以根据您的描述帮助您生成表单</p>
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg mb-6">
+            <p class="text-gray-700 mb-2">您希望设计什么风格？您可以：</p>
+            <ol class="list-decimal list-inside text-gray-600">
+                <li>向我说明风格，例如"白色简约风格"</li>
+                <li>直接发给我参考使用的URL或上传参考图</li>
+                <li>基于当前版本调整，例如"把按钮改成绿色"</li>
+            </ol>
+            ""
+        </div>
+
+        <el-input type="textarea" v-model="aiInput" :rows="10" placeholder="请输入您的需求..." class="mb-4"></el-input>
+
+        <el-button type="primary" class="w-full bg-teal-800 hover:bg-teal-900" v-loading="isAiGenerating"
+            @click="onGenerate">
+            <i class="el-icon-plus mr-2"></i>
+            生成设计
+        </el-button>
+    </el-dialog>
 </template>
 
 <style scoped>
