@@ -36,7 +36,7 @@ export default eventHandler(async (event) => {
         user: email,
     };
 
-    const response = await fetch('https://ptminder.ptengine.com/v1/workflows/run', {
+    const response = await fetch(process.env.AI_API_ENDPOINT!, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
