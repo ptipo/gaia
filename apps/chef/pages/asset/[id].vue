@@ -14,14 +14,14 @@ import {
     type EditPathRecord,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset, User } from '@prisma/client';
+import type { App, Asset } from '@prisma/client';
 import byteSize from 'byte-size';
 import type { DropdownInstance } from 'element-plus';
+import JsonEditorVue from 'json-editor-vue';
+import { Mode } from 'vanilla-jsoneditor';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
-import JsonEditorVue from 'json-editor-vue';
-import { Mode } from 'vanilla-jsoneditor';
 
 const route = useRoute();
 
@@ -55,11 +55,10 @@ const isPreviewAsset = ref(false);
 
 const isMobile = ref(false);
 
+// JSON editor states
 const isShowJSON = ref(false);
-
 const isJSONEditorPermission = ref(false);
-
-const jsonEditorVueRef = ref();
+const jsonEditorModel = ref();
 
 const isAIPermission = ref(false);
 const aiDialogVisible = ref(false);
@@ -67,7 +66,7 @@ const aiInput = ref('');
 
 interface UserPermission {
     jsonEditor?: boolean;
-    ai?:boolean;
+    ai?: boolean;
 }
 
 const {
@@ -209,17 +208,13 @@ const onAppChange = (data: BaseConceptModel) => {
 
     if (validate(model.value)) {
         resetFormConfig();
-
-        if (jsonEditorVueRef.value) {
-            const jsonEditor = jsonEditorVueRef.value.jsonEditor;
-            jsonEditor.set({ json: model.value });
-        }
+        jsonEditorModel.value = model.value;
     }
 };
 
 const validate = (model: BaseConceptModel) => {
     if (!appInstance.value) {
-        return;
+        return false;
     }
 
     const validationResult = appInstance.value.validateModel(model);
@@ -431,6 +426,37 @@ const aiDialogClose = (done: () => void) => {
     }
 
 }
+watch(isShowJSON, (value) => {
+    if (value) {
+        jsonEditorModel.value = model.value;
+    }
+});
+
+const onJsonEditorUpdate = (updatedContent: any) => {
+    if (!appInstance.value) {
+        return;
+    }
+
+    const defaultModel = appInstance.value.createConceptInstance(appInstance.value.concept);
+
+    let parsed;
+    try {
+        parsed = JSON.parse(updatedContent.text);
+    } catch (err) {
+        appInstance.value.model = model.value = defaultModel;
+        resetFormConfig();
+        return;
+    }
+
+    if (parsed) {
+        if (!validate(parsed)) {
+            return;
+        }
+        appInstance.value.model = model.value = parsed;
+        editPath.value = [];
+        resetFormConfig();
+    }
+};
 </script>
 
 <template>
@@ -495,7 +521,7 @@ const aiDialogClose = (done: () => void) => {
                             Desktop
                         </button>
                     </div>
-                    <div v-if="isJSONEditorPermission" class="self-end">
+                    <div v-if="isJSONEditorPermission" class="flex items-center gap-1 self-end">
                         <span>JSON</span>
                         <el-switch v-model="isShowJSON"> </el-switch>
                     </div>
@@ -504,8 +530,8 @@ const aiDialogClose = (done: () => void) => {
                 <div ref="appContainerEl" class="overflow-auto ml-auto mr-auto"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"></div>
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
-                    <JsonEditorVue ref="jsonEditorVueRef" :modelValue="model" :mode="Mode.text" :stringified="false"
-                        :onChange="(updatedContent: any) => {
+                    <<<<<<< HEAD <JsonEditorVue ref="jsonEditorVueRef" :modelValue="model" :mode="Mode.text"
+                        :stringified="false" :onChange="(updatedContent: any) => {
                             let jsonModel;
                             try {
                                 jsonModel =
@@ -523,6 +549,10 @@ const aiDialogClose = (done: () => void) => {
                                 appEl?.setAttribute('edit-selection', '{}');
                             }
                         }" />
+                    =======
+                    <JsonEditorVue :modelValue="jsonEditorModel" :mode="Mode.text" :stringified="false"
+                        :onChange="onJsonEditorUpdate" />
+                    >>>>>>> origin/main
                 </div>
             </div>
             <!-- preview -->
