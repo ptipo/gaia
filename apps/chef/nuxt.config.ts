@@ -40,6 +40,11 @@ export default defineNuxtConfig({
                 target: 'esnext',
             },
         },
+        vercel: {
+            functions: {
+                maxDuration: 300,
+            },
+        },
     },
 
     runtimeConfig: {
