@@ -51,7 +51,17 @@ export default eventHandler(async (event) => {
 
     const responseData = responseBody.data.outputs.text;
 
-    const cleanedJsonString = responseData.replace(/^\s*`+json\n/, '').replace(/\n`+\s*$/, '');
+    const regex = /``+json([\s\S]*)``+/;
+    const match = responseData.match(regex);
+
+    if (!match) {
+        throw createError({
+            message: 'Invalid response from AI API',
+            statusCode: 500,
+        });
+    }
+
+    const cleanedJsonString = match[1];
 
     const responseJson: Object = JSON.parse(cleanedJsonString);
 
