@@ -1,8 +1,8 @@
 import { customElement, property } from 'lit/decorators.js';
-import { PtBase } from './pt-base';
-import { app } from '../app';
+import { html, unsafeStatic } from 'lit/static-html.js';
 import { getContentTypeComponent } from './contentTypes';
-import { unsafeStatic, html } from 'lit/static-html.js';
+import { PtBase } from './pt-base';
+import { model } from './pt-form';
 
 @customElement('pt-form-complete-page')
 class PtFormCompletePage extends PtBase {
@@ -10,7 +10,7 @@ class PtFormCompletePage extends PtBase {
     name?: string;
 
     @property({ type: Object })
-    page: (typeof app.model.completePages)[number] = {} as any;
+    page: (typeof model.completePages)[number] = {} as any;
 
     render() {
         const pageItems = this.page!.pageItems ?? [];

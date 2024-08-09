@@ -23,10 +23,10 @@ export const GoToPageAction = defineConcept({
         },
     },
 
-    summary: ({ app, currentModel }) => {
+    summary: ({ app, rootModel, currentModel }) => {
         let pageName = '未设置';
         if (currentModel) {
-            const page = currentModel?.goToPage && app.resolveConcept(currentModel.goToPage);
+            const page = currentModel?.goToPage && app.resolveConcept(rootModel, currentModel.goToPage);
             if (page) {
                 pageName = page.name;
             }

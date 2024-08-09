@@ -78,9 +78,9 @@ function provideLeftOperand({ rootModel }: ProviderContext): LogicalLeftOperandC
 /**
  * 计算运算符
  */
-function provideOperator(context: ProviderContext, leftOperandValue: any) {
+function provideOperator({ app, rootModel }: ProviderContext, leftOperandValue: any) {
     const questionRef = leftOperandValue;
-    const question = context.app.resolveConcept(questionRef);
+    const question = app.resolveConcept(rootModel, questionRef);
 
     return (
         match(question)
@@ -113,7 +113,7 @@ function provideOperator(context: ProviderContext, leftOperandValue: any) {
 
 // 计算右端运算数
 function provideRightOperand(
-    context: ProviderContext,
+    { app, rootModel }: ProviderContext,
     leftOperandValue: ConceptRef,
     operator: string
 ): LogicalRightOperandCandidates {
@@ -124,7 +124,7 @@ function provideRightOperand(
     const questionRef = leftOperandValue;
     let choices: BaseConceptModel[] = [];
     if (questionRef.$concept === 'ChoiceQuestion') {
-        const choiceQuestion = context.app.resolveConcept<typeof ChoiceQuestion>(questionRef);
+        const choiceQuestion = app.resolveConcept<typeof ChoiceQuestion>(rootModel, questionRef);
         if (choiceQuestion) {
             choices = choiceQuestion?.textChoices ?? choiceQuestion?.imageChoices ?? [];
         }
