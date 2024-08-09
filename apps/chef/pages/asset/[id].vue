@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept } from '@hayadev/configurator';
+import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
 import {
     createAppInstance,
     SELECTION_CHANGE_EVENT,
@@ -130,7 +130,7 @@ const createAppElement = async (app: App) => {
         }
 
         appInstance.value = createAppInstance(module.config, version);
-        model.value = appInstance.value.model;
+        model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
     } catch (err) {
         error(`Failed to load app bundle: ${err}`);
         hasError.value = true;
@@ -204,9 +204,9 @@ const onAppChange = (data: BaseConceptModel) => {
         return;
     }
     console.log('App change:', data);
-    appInstance.value.model = model.value = data as typeof appInstance.value.model;
+    model.value = data as inferConcept<typeof appInstance.value.concept>;
 
-    if (validate(model.value)) {
+    if (model.value && validate(model.value)) {
         resetFormConfig();
         jsonEditorModel.value = model.value;
     }
@@ -440,7 +440,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     try {
         parsed = JSON.parse(updatedContent.text);
     } catch (err) {
-        appInstance.value.model = model.value = defaultModel;
+        model.value = defaultModel;
         resetFormConfig();
         return;
     }
@@ -449,7 +449,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         if (!validate(parsed)) {
             return;
         }
-        appInstance.value.model = model.value = parsed;
+        model.value = parsed;
         editPath.value = [];
         resetFormConfig();
         appEl?.value?.setAttribute('edit-selection', '{}');

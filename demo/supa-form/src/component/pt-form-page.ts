@@ -1,14 +1,14 @@
-import { customElement, property, state } from 'lit/decorators.js';
-import { PtBase, PtBaseData, PtFormSingleChoiceSelectedEventName, PtFormNextPageEventName } from './pt-base';
-import { app } from '../app';
-import { getContentTypeComponent } from './contentTypes';
-import { LitElement, html } from 'lit';
-import { when } from 'lit/directives/when.js';
-import { PtChoice } from './contentTypes/pt-choice';
-import { provide } from '@lit/context';
-import { formWidth } from '../state';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
+import { provide } from '@lit/context';
+import { LitElement, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
+import { formWidth } from '../state';
 import { ERROR_MESSAGE_CLASS } from './constant';
+import { getContentTypeComponent } from './contentTypes';
+import { PtChoice } from './contentTypes/pt-choice';
+import { PtBase, PtBaseData, PtFormNextPageEventName, PtFormSingleChoiceSelectedEventName } from './pt-base';
+import { model } from './pt-form';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -16,7 +16,7 @@ export class PtFormPage extends PtBase {
     name?: string;
 
     @property({ type: Object })
-    page: (typeof app.model.contentPages)[number] = {} as any;
+    page: (typeof model.contentPages)[number] = {} as any;
 
     @provide({ context: formWidth })
     @state()

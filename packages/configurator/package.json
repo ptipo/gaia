@@ -32,7 +32,9 @@
         "tsup": "^8.0.2"
     },
     "dependencies": {
+        "@types/traverse": "^0.6.37",
         "deepcopy": "^2.1.0",
+        "traverse": "^0.6.9",
         "ts-pattern": "^5.1.1",
         "typescript": "^5.4.5",
         "uuid": "^10.0.0",

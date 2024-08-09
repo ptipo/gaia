@@ -16,7 +16,7 @@ import ValidationIssues from './components/ValidationIssues.vue';
 import type { EditPathRecord } from './components/types';
 
 const app = createAppInstance(FormApp, FormAppVersion);
-const model = ref<BaseConceptModel>(app.model);
+const model = ref<BaseConceptModel>(app.createConceptInstance(app.concept));
 const issues = ref<ValidationIssue[]>([]);
 const editPath = ref<EditPathRecord[]>([]);
 const selection = ref<SelectionData>();
@@ -28,7 +28,6 @@ onMounted(() => {
 });
 
 const onAppChange = async (data: BaseConceptModel) => {
-    app.model = data as typeof app.model;
     model.value = data;
     validate(data);
 

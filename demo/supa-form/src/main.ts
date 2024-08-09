@@ -4,7 +4,7 @@ import { TextChoice } from './config/page-items/question/text-choice';
 import { CompletePage } from './config/page/complete-page';
 import { ContentPage } from './config/page/content-page';
 
-const model = app.model;
+const model = app.createConceptInstance(app.concept);
 
 const contentPage1 = app.createConceptInstance(ContentPage, {
     name: 'Content Page1',

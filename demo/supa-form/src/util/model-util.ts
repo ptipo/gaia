@@ -1,6 +1,6 @@
-import { app } from '../app';
+import { FormModel } from '../app';
 
-export function findPageItemConfigById(model: typeof app.model, id: string) {
+export function findPageItemConfigById(model: FormModel, id: string) {
     return model.contentPages.flatMap((page) => page.pageItems).find((item) => item.$id == id);
 }
 

@@ -1,11 +1,11 @@
-import { LogicalGroup } from '@hayadev/configurator/items';
-import { answerData } from '../state';
 import { ConceptRef } from '@hayadev/configurator';
+import { LogicalGroup } from '@hayadev/configurator/items';
+import { FormModel } from '../app';
 import { AllPageItemsTypesMap, ChoiceQuestion, EmailQuestion, QAQuestion } from '../config/page-items';
-import { app } from '../app';
+import { answerData } from '../state';
 import { findPageItemConfigById } from './model-util';
 
-export function validateLogic(model: typeof app.model, condition: LogicalGroup, data: answerData): boolean {
+export function validateLogic(model: FormModel, condition: LogicalGroup, data: answerData): boolean {
     if ('groupOperator' in condition) {
         const { groupOperator, first, second } = condition;
 

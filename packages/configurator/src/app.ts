@@ -1,3 +1,4 @@
+import traverse from 'traverse';
 import { P, match } from 'ts-pattern';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
@@ -7,7 +8,7 @@ import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
 import { GetSchemaContext, GroupItem } from './items';
 import { JSONSchemaBuilder } from './json-schema';
-import { ConceptRef, isConceptInstance, isConceptRef } from './model';
+import { ConceptRef, isConceptInstance } from './model';
 import { NonPrimitiveTypes } from './types';
 import { ValidationIssueCode } from './validation';
 
@@ -40,31 +41,13 @@ export type ValidationIssue = {
  * Instance of an app.
  */
 export class AppInstance<TConcept extends Concept> {
-    private conceptInstances: Record<string, BaseConceptModel> = {};
-    private _model: inferPartialConcept<TConcept>;
-
-    constructor(public readonly def: AppDef<TConcept>, public readonly version: string) {
-        this._model = this.createConceptInstance(def.concept);
-    }
+    constructor(public readonly def: AppDef<TConcept>, public readonly version: string) {}
 
     /**
      * The root `Concept` of the app.
      */
     get concept(): TConcept {
         return this.def.concept;
-    }
-
-    /**
-     * App instance's current model.
-     */
-    get model() {
-        return this._model;
-    }
-
-    set model(_model: inferPartialConcept<TConcept>) {
-        this._model = _model;
-        this.conceptInstances = {};
-        this.reindexConceptInstances(this._model);
     }
 
     /**
@@ -96,9 +79,6 @@ export class AppInstance<TConcept extends Concept> {
                 }
             }
         }
-
-        this.conceptInstances[result.$id] = result;
-
         return result;
     }
 
@@ -158,8 +138,12 @@ export class AppInstance<TConcept extends Concept> {
         });
         const { error, data } = schema.safeParse(deserialized);
         if (error) {
-            this._model = this.createConceptInstance(this.concept);
-            return { model: this._model, appVersion: undefined, error: fromZodError(error) };
+            // return a default model with error
+            return {
+                model: this.createConceptInstance(this.concept),
+                appVersion: undefined,
+                error: fromZodError(error),
+            };
         }
 
         const modelSchema = this.getModelSchema({
@@ -170,12 +154,13 @@ export class AppInstance<TConcept extends Concept> {
         });
         const parsedModel = modelSchema.safeParse(data.model);
         if (parsedModel.error) {
-            this._model = this.createConceptInstance(this.concept);
-            return { model: this._model, appVersion: undefined, error: fromZodError(parsedModel.error) };
+            // return a default model with error
+            return {
+                model: this.createConceptInstance(this.concept),
+                appVersion: undefined,
+                error: fromZodError(parsedModel.error),
+            };
         }
-
-        this._model = parsedModel.data as inferPartialConcept<TConcept>;
-        this.reindexConceptInstances(this._model);
 
         return { model: parsedModel.data, appVersion: data.appVersion };
     }
@@ -183,31 +168,18 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Resolves a `ConceptRef` to a `ConceptInstance`.
      */
-    resolveConcept<TConcept extends Concept>(ref: ConceptRef): inferConcept<TConcept> | undefined {
-        return this.conceptInstances[ref.$id] as inferConcept<TConcept>;
-    }
-
-    private reindexConceptInstances(data: unknown) {
-        if (isConceptRef(data)) {
-            return;
-        }
-
-        if (isConceptInstance(data)) {
-            this.conceptInstances[data.$id] = data;
-        }
-
-        if (Array.isArray(data)) {
-            for (const item of data) {
-                this.reindexConceptInstances(item);
+    resolveConcept<TResolveConcept extends Concept>(
+        model: inferConcept<TConcept>,
+        ref: ConceptRef
+    ): inferConcept<TResolveConcept> | undefined {
+        let found: inferConcept<TResolveConcept> | undefined;
+        traverse(model).forEach(function (node) {
+            if (isConceptInstance(node) && node.$concept === ref.$concept && node.$id === ref.$id) {
+                found = node as inferConcept<TResolveConcept>;
+                this.stop();
             }
-        } else if (typeof data === 'object' && !!data) {
-            for (const [key, item] of Object.entries(data)) {
-                if (key.startsWith('$')) {
-                    continue;
-                }
-                this.reindexConceptInstances(item);
-            }
-        }
+        });
+        return found;
     }
 
     /**
