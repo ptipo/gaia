@@ -18,7 +18,7 @@ import { FormApp } from '../config';
 const app = createAppInstance(FormApp, pkgJson.version);
 
 // form model
-const model = ref<BaseConceptModel>(app.model);
+const model = ref<BaseConceptModel>(app.createConceptInstance(app.concept));
 
 // current edit path in the configurator
 const editPath = ref<EditPathRecord[]>([]);
@@ -37,7 +37,6 @@ const jsonEditorVueRef = ref();
 const isMobile = ref(false);
 
 const onAppChange = async (data: BaseConceptModel) => {
-    app.model = data as typeof app.model;
     model.value = data;
     validate(model.value);
     resetFormConfig();

@@ -6,7 +6,6 @@ import {
     inferConcept,
 } from '@hayadev/configurator';
 import { describe } from '@jest/globals';
-import { inspect } from 'util';
 import { FormApp as config } from './app-config/form';
 import { ChoiceQuestion, QAQuestion, TextElement } from './app-config/form/page-items';
 import { TextChoice } from './app-config/form/page-items/question/text-choice';
@@ -16,7 +15,7 @@ import { ContentPage } from './app-config/form/page/content-page';
 describe('form sample app', () => {
     it('can create an empty model', () => {
         const app = createAppInstance(config, '1.0.1');
-        const model = app.model;
+        const model = app.createConceptInstance(app.concept);
 
         // common fields
         expect(model.$concept).toBe('Form');
@@ -34,7 +33,7 @@ describe('form sample app', () => {
 
     it('can serialize and deserialize model', () => {
         const app = createAppInstance(config, '1.0.1');
-        const model = app.model;
+        const model = app.createConceptInstance(app.concept);
 
         const contentPage1 = app.createConceptInstance(ContentPage, {
             name: 'Content Page1',
@@ -108,10 +107,9 @@ describe('form sample app', () => {
         expect(loaded.model).toBeTruthy();
         expect(loaded.appVersion).toBe('1.0.1');
 
-        console.log(inspect(newApp.model, false, 10));
-        expect(newApp.model).toEqual(model);
+        expect(loaded.model).toEqual(model);
 
-        const resolvedPage = newApp.resolveConcept(createRef(completePage1));
+        const resolvedPage = newApp.resolveConcept(loaded.model, createRef(completePage1));
         expect(resolvedPage).toEqual(completePage1);
     });
 

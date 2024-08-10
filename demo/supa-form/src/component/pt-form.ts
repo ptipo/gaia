@@ -6,7 +6,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { when } from 'lit/directives/when.js';
-import { app } from '../app';
+import { app, FormModel } from '../app';
 import { CompletePage } from '../config/page/complete-page';
 import { ContentPage } from '../config/page/content-page';
 import { FormAnswerData, formState } from '../state';
@@ -19,7 +19,9 @@ import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
-type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
+export let model = app.createConceptInstance(app.concept);
+
+type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
@@ -42,11 +44,12 @@ export class PtForm extends PtBaseShadow {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                const { error, model, appVersion } = app.loadModel(value);
+                const { error, model: _model, appVersion } = app.loadModel(value);
                 if (error) {
                     console.warn('Error loading model', error.message);
                     return;
                 }
+                model = _model;
                 console.log('Loaded model', model);
                 console.log('Model app version', appVersion);
 
@@ -59,7 +62,7 @@ export class PtForm extends PtBaseShadow {
             },
         },
     })
-    config?: typeof app.model;
+    config?: FormModel;
 
     @state()
     private pageId: string = '';

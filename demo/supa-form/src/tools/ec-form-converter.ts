@@ -92,15 +92,16 @@ function convertCompletePage(ecPage: ECFormPage) {
 }
 
 export function convertECForm(ecForm: ECFormPage[]) {
+    const model = app.createConceptInstance(app.concept);
     const contentPages = ecForm.filter((page) => page.type).map(convertContentPage);
 
-    app.model.contentPages.push(...contentPages);
+    model.contentPages.push(...contentPages);
 
     const completePages = ecForm.filter((page) => !page.type).map(convertCompletePage);
 
-    app.model.completePages.push(...completePages);
+    model.completePages.push(...completePages);
 
-    return app;
+    return model;
 }
 
 const program = new Command();
@@ -114,9 +115,9 @@ program
         const ecConfigFile = fs.readFileSync(options.input, 'utf8');
         const ecConfig = JSON.parse(ecConfigFile);
 
-        convertECForm(ecConfig);
+        const model = convertECForm(ecConfig);
 
-        const ptConfig = app.stringifyModel(app.model);
+        const ptConfig = app.stringifyModel(model);
 
         fs.writeFileSync(options.output, ptConfig);
 
