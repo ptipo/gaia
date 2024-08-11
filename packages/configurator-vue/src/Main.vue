@@ -49,10 +49,10 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        const loaded = app.loadModel(data);
-        console.log('Loaded model:', loaded.model);
-        console.log('Model app version:', loaded.appVersion);
-        model.value = loaded.model;
+        const { appVersion, model: loadedModel } = JSON.parse(data);
+        console.log('Loaded model:', loadedModel);
+        console.log('Model app version:', appVersion);
+        model.value = loadedModel;
         validate(model.value);
         ElNotification({
             title: 'Configuration loaded',

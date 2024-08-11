@@ -74,17 +74,19 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        const loaded = app.loadModel(data);
-        if (loaded.error) {
+        const { appVersion, model: loadedModel } = JSON.parse(data);
+        model.value = loadedModel;
+        const validationResult = validate(loadedModel);
+
+        if (!validationResult.success) {
             ElNotification({
                 title: 'Configuration loaded with validation issues',
                 type: 'error',
                 duration: 2000,
             });
         } else {
-            model.value = loaded.model;
             ElNotification({
-                title: `Configuration loaded (v${loaded.appVersion})`,
+                title: `Configuration loaded (v${appVersion})`,
                 type: 'success',
                 duration: 2000,
             });
@@ -121,6 +123,7 @@ const validate = (model: BaseConceptModel) => {
     } else {
         issues.value = [];
     }
+    return validationResult;
 };
 
 watch(selection, (value) => {
@@ -178,9 +181,8 @@ const uploadImage = async (file: File) => {
                                         } catch {}
 
                                         if (jsonModel) {
-                                            const appModel = { model: jsonModel, appVersion: app.version };
-                                            const loaded = app.loadModel(JSON.stringify(appModel));
-                                            model = loaded.model;
+                                            model = jsonModel;
+                                            validate(model);
                                             resetFormConfig();
                                         }
                                     }
