@@ -19,7 +19,7 @@ import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
-export let model = app.createConceptInstance(app.concept);
+export let model: FormModel = app.createConceptInstance(app.concept);
 
 type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')

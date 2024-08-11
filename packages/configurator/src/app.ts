@@ -145,7 +145,7 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Validates app's model.
      */
-    validateModel(model: unknown, autoFix = false): ValidationResult<Concept> {
+    validateModel(model: unknown, autoFix = false): ValidationResult<TConcept> {
         const schema = this.getModelSchema({
             app: this,
             rootModel: model as BaseConceptModel,
