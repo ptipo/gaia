@@ -38,7 +38,7 @@ const onAppChange = async (data: BaseConceptModel) => {
 };
 
 const onSave = () => {
-    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', JSON.stringify({ appVersion: app.version, model: model.value }));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',

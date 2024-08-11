@@ -14,11 +14,12 @@ import {
     type EditPathRecord,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset } from '@prisma/client';
+import type { App, Asset, Prisma } from '@prisma/client';
 import byteSize from 'byte-size';
 import type { DropdownInstance } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { Mode } from 'vanilla-jsoneditor';
+import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
@@ -63,6 +64,7 @@ const jsonEditorModel = ref();
 const isAIPermission = ref(false);
 const aiDialogVisible = ref(false);
 const aiInput = ref('');
+const aiInputEl = ref<HTMLElement>();
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -104,7 +106,9 @@ watch(loadError, (value) => {
 const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
 
-const createAppElement = async (app: App) => {
+const serializeConfig = () => JSON.stringify({ appVersion: appInstance.value?.version, model: model.value });
+
+const initializeApp = async (app: App) => {
     if (appEl.value) {
         // already created
         return;
@@ -115,8 +119,15 @@ const createAppElement = async (app: App) => {
         return;
     }
 
+    if (!asset.value.config) {
+        console.error('No config found in the asset.');
+        error('资产配置不存在');
+        return;
+    }
+
     if (!app.bundle) {
         console.error('No bundle found in the app instance.');
+        error('无法加载资产应用');
         return;
     }
 
@@ -129,52 +140,50 @@ const createAppElement = async (app: App) => {
             return;
         }
 
+        // create app instance
         appInstance.value = createAppInstance(module.config, version);
-        model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
     } catch (err) {
         error(`Failed to load app bundle: ${err}`);
         hasError.value = true;
         return;
     }
 
-    if (asset.value?.config) {
-        const {
-            model: loadedModel,
-            appVersion,
-            error: loadError,
-        } = appInstance.value.loadModel(JSON.stringify(asset.value.config));
+    const parseResult = z
+        .object({
+            appVersion: z.string(),
+            model: z.unknown(),
+        })
+        .safeParse(asset.value.config);
 
-        if (loadError) {
-            console.warn('Error loading app model:', loadError.message);
-            error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
-        } else {
-            model.value = loadedModel;
-            console.log('Loaded app model:', model.value);
-            console.log('Model app version:', appVersion);
-        }
+    if (!parseResult.success) {
+        model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+        console.warn('Invalid asset config:', parseResult.error);
+        error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
+    } else {
+        model.value = parseResult.data.model as inferConcept<typeof appInstance.value.concept>;
+        console.log('Loaded app model:', model.value);
+        console.log('Model app version:', parseResult.data.appVersion);
     }
 
-    if (model.value) {
-        // trigger an initial validation
-        validate(model.value);
+    // TODO: model version migration
+    validate(model.value);
 
-        if (appContainerEl.value) {
-            appContainerEl.value.innerHTML = '';
-            console.log('Creating app element:', app.htmlTagName);
-            const el = document.createElement(app.htmlTagName);
-            el.setAttribute('config', appInstance.value.stringifyModel(model.value));
-            el.setAttribute('edit-selection', '{"id":""}');
-            el.addEventListener(SELECTION_CHANGE_EVENT, ((evt: CustomEvent<SelectionData>) => {
-                // sync app's selection change to the configurator's selection
-                selection.value = evt.detail;
-            }) as EventListener);
+    if (appContainerEl.value) {
+        appContainerEl.value.innerHTML = '';
+        console.log('Creating app element:', app.htmlTagName);
+        const el = document.createElement(app.htmlTagName);
+        el.setAttribute('config', serializeConfig());
+        el.setAttribute('edit-selection', '{"id":""}');
+        el.addEventListener(SELECTION_CHANGE_EVENT, ((evt: CustomEvent<SelectionData>) => {
+            // sync app's selection change to the configurator's selection
+            selection.value = evt.detail;
+        }) as EventListener);
 
-            // install preview-pane inline editing event handlers
-            addInlineEditEventHandlers(el, () => model.value!, onAppChange);
+        // install preview-pane inline editing event handlers
+        addInlineEditEventHandlers(el, () => model.value!, onAppChange);
 
-            appContainerEl.value.appendChild(el);
-            appEl.value = el;
-        }
+        appContainerEl.value.appendChild(el);
+        appEl.value = el;
     }
 };
 
@@ -182,7 +191,7 @@ watch(
     [asset, userData],
     ([assetValue, userDataValue]) => {
         if (assetValue) {
-            createAppElement(assetValue.app);
+            initializeApp(assetValue.app);
         }
 
         if (userDataValue) {
@@ -206,26 +215,21 @@ const onAppChange = (data: BaseConceptModel) => {
     console.log('App change:', data);
     model.value = data as inferConcept<typeof appInstance.value.concept>;
 
-    if (model.value && validate(model.value)) {
+    if (model.value && validate(model.value).success) {
         resetFormConfig();
         jsonEditorModel.value = model.value;
     }
 };
 
 const validate = (model: BaseConceptModel) => {
-    if (!appInstance.value) {
-        return false;
-    }
-
-    const validationResult = appInstance.value.validateModel(model);
+    const validationResult = appInstance.value!.validateModel(model);
     if (!validationResult.success) {
         issues.value = validationResult.issues;
         console.log('Validation issues:', validationResult.issues);
-        return false;
     } else {
         issues.value = [];
-        return true;
     }
+    return validationResult;
 };
 
 const onSave = async () => {
@@ -291,7 +295,7 @@ const onPreview = async () => {
 
     newWindow!.onload = () => {
         newWindow.postMessage({
-            config: appInstance.value!.stringifyModel(model.value!),
+            config: serializeConfig(),
             bundle,
             htmlTag: asset.value.app.htmlTagName,
         });
@@ -302,11 +306,10 @@ const doSaveAsset = (asset: Asset & { app: App }) => {
     if (!appInstance.value || !model.value) {
         return;
     }
-    const serializedModel = appInstance.value.stringifyModel(model.value);
     return saveAsset({
         where: { id: asset.id },
         data: {
-            config: JSON.parse(serializedModel),
+            config: { appVersion: appInstance.value.version, model: model.value } as Prisma.InputJsonObject,
             appVersion: appInstance.value.version,
         },
     });
@@ -327,7 +330,7 @@ const onEditNameComplete = async () => {
 
 const resetFormConfig = () => {
     if (appEl.value && appInstance.value && model.value) {
-        appEl.value.setAttribute('config', appInstance.value.stringifyModel(model.value));
+        appEl.value.setAttribute('config', serializeConfig());
     }
 };
 
@@ -374,8 +377,12 @@ const uploadImage = async (file: File) => {
 
 const isAiGenerating = ref(false);
 
+const onAiDialogOpen = () => {
+    aiInputEl.value?.focus();
+};
+
 const onGenerate = async () => {
-    if (!asset.value) {
+    if (!asset.value || !appInstance.value) {
         return undefined;
     }
 
@@ -385,26 +392,18 @@ const onGenerate = async () => {
         body: { prompt: aiInput.value },
     });
     isAiGenerating.value = false;
-    console.log(data);
+    console.log('AI generation response:', data);
 
-    const app = appInstance.value!;
-
-    const appModel = {
-        model: data.json,
-        appVersion: app.version,
-    };
-    const loaded = app.loadModel(JSON.stringify(appModel));
-
-    if (loaded.error) {
+    const importResult = appInstance.value?.importModel(data.json);
+    if (!importResult.success) {
         error(`生成有误，请重新生成`);
-        console.error(loaded.error);
+        console.error(importResult);
     } else {
         success('生成成功');
         aiDialogVisible.value = false;
-        model.value = loaded.model;
+        model.value = importResult.model;
         resetFormConfig();
         appEl?.value?.setAttribute('edit-selection', '{}');
-        validate(model.value!);
     }
 };
 
@@ -441,19 +440,20 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         parsed = JSON.parse(updatedContent.text);
     } catch (err) {
         model.value = defaultModel;
-        resetFormConfig();
-        return;
     }
 
     if (parsed) {
-        if (!validate(parsed)) {
-            return;
+        const validationResult = validate(parsed);
+        if (validationResult.success) {
+            model.value = validationResult.model;
+        } else {
+            model.value = defaultModel;
         }
-        model.value = parsed;
-        editPath.value = [];
-        resetFormConfig();
-        appEl?.value?.setAttribute('edit-selection', '{}');
     }
+
+    editPath.value = [];
+    appEl?.value?.setAttribute('edit-selection', '{}');
+    resetFormConfig();
 };
 </script>
 
@@ -573,7 +573,13 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         </div>
     </el-container>
 
-    <el-dialog title="AI生成表单" v-model="aiDialogVisible" :before-close="aiDialogClose" style="border-radius: 0.5rem">
+    <el-dialog
+        title="AI生成表单"
+        v-model="aiDialogVisible"
+        @opened="onAiDialogOpen"
+        :before-close="aiDialogClose"
+        style="border-radius: 0.5rem"
+    >
         <div class="flex bg-gray-100 px-4 pt-4 rounded-lg justify-between mb-2">
             <div>
                 <p class="text-gray-700 mb-2">我可以帮您快速生成表单或问卷，您可以</p>
@@ -589,7 +595,14 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             </div>
         </div>
 
-        <el-input type="textarea" v-model="aiInput" :rows="10" placeholder="请输入您的需求..." class="mb-4"></el-input>
+        <el-input
+            type="textarea"
+            v-model="aiInput"
+            :rows="10"
+            placeholder="请输入您的需求..."
+            class="mb-4"
+            ref="aiInputEl"
+        ></el-input>
 
         <el-button
             type="primary"

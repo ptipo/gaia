@@ -53,7 +53,7 @@ const completePage1 = app.createConceptInstance(CompletePage, {
 
 model.completePages.push(completePage1);
 
-const configString = app.stringifyModel(model);
+const configString = JSON.stringify({ appVersion: app.version, model });
 
 const ptForm = document.querySelector('#app');
 

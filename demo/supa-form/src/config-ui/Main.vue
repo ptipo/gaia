@@ -59,11 +59,11 @@ onMounted(async () => {
 });
 
 const resetFormConfig = () => {
-    formEl?.value?.setAttribute('config', app.stringifyModel(model.value));
+    formEl?.value?.setAttribute('config', JSON.stringify({ appVersion: app.version, model: model.value }));
 };
 
 const onSave = () => {
-    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', JSON.stringify({ appVersion: app.version, model: model.value }));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -104,7 +104,7 @@ const onPreview = () => {
     const newWindow = window.open('./preview.html', '_blank')!;
 
     newWindow.onload = () => {
-        newWindow.postMessage({ ptForm: app.stringifyModel(model.value) });
+        newWindow.postMessage({ ptForm: JSON.stringify({ appVersion: app.version, model: model.value }) });
     };
 };
 
