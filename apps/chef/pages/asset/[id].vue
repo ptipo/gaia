@@ -401,6 +401,7 @@ const onGenerate = async () => {
         success('生成成功');
         aiDialogVisible.value = false;
         model.value = importResult.model;
+        validate(model.value);
         resetFormConfig();
         appEl?.value?.setAttribute('edit-selection', '{}');
     }
