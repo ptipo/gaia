@@ -50,10 +50,14 @@ export default eventHandler(async (event) => {
     console.log(`AI response:${JSON.stringify(responseBody)}`);
 
     const responseData = responseBody.data.outputs.text;
-
-    const cleanedJsonString = responseData.replace(/^\s*`+json\n/, '').replace(/\n`+\s*$/, '');
-
-    const responseJson: Object = JSON.parse(cleanedJsonString);
-
-    return { success: true, data: { json: responseJson } };
+    try {
+        const responseJson: Object = JSON.parse(responseData);
+        return { success: true, data: { json: responseJson } };
+    } catch (e) {
+        console.error('Error parsing AI response:', e);
+        throw createError({
+            message: 'AI Response is not a valid JSON',
+            statusCode: 500,
+        });
+    }
 });
