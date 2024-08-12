@@ -19,7 +19,7 @@ import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 
-export let model = app.createConceptInstance(app.concept);
+export let model: FormModel = app.createConceptInstance(app.concept);
 
 type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
@@ -44,14 +44,34 @@ export class PtForm extends PtBaseShadow {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                const { error, model: _model, appVersion } = app.loadModel(value);
-                if (error) {
-                    console.warn('Error loading model', error.message);
-                    return;
+
+                let parsedValue: any;
+                try {
+                    parsedValue = JSON.parse(value);
+                } catch {
+                    console.error('Error parsing JSON', value);
+                    return undefined;
                 }
-                model = _model;
+
+                if (typeof parsedValue.appVersion !== 'string') {
+                    console.error('App version not found in config');
+                    return undefined;
+                }
+
+                if (!parsedValue.model || typeof parsedValue.model !== 'object') {
+                    console.error('Model not found in config');
+                    return undefined;
+                }
+
+                const validationResult = app.validateModel(parsedValue.model);
+                if (!validationResult.success) {
+                    console.error('Error validating model', validationResult.issues);
+                    return undefined;
+                }
+
+                model = validationResult.model;
                 console.log('Loaded model', model);
-                console.log('Model app version', appVersion);
+                console.log('Model app version', parsedValue.appVersion);
 
                 const language = model.languageSettings.language;
 

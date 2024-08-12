@@ -1,8 +1,7 @@
+import deepcopy from 'deepcopy';
 import traverse from 'traverse';
 import { P, match } from 'ts-pattern';
 import { v4 as uuid } from 'uuid';
-import { z } from 'zod';
-import { fromZodError } from 'zod-validation-error';
 import { makeConceptSchema, type Concept } from './concept';
 import { ConfigItem } from './config-item';
 import type { BaseConceptModel, DeepPartialConcept, inferConcept, inferPartialConcept } from './inference';
@@ -36,6 +35,16 @@ export type ValidationIssue = {
      */
     customMessage?: string;
 };
+
+/**
+ * Validation result.
+ */
+export type ValidationResult<TConcept extends Concept> =
+    | {
+          success: true;
+          model: inferConcept<TConcept>;
+      }
+    | { success: false; issues: ValidationIssue[] };
 
 /**
  * Instance of an app.
@@ -117,55 +126,6 @@ export class AppInstance<TConcept extends Concept> {
     }
 
     /**
-     * Serializes the model to a string.
-     */
-    stringifyModel(model: BaseConceptModel) {
-        return JSON.stringify({
-            model,
-            appVersion: this.version,
-        });
-    }
-
-    /**
-     * Loads a model from a string.
-     */
-    loadModel(modelData: string) {
-        const deserialized = JSON.parse(modelData);
-
-        const schema = z.object({
-            model: z.unknown(),
-            appVersion: z.string().optional(),
-        });
-        const { error, data } = schema.safeParse(deserialized);
-        if (error) {
-            // return a default model with error
-            return {
-                model: this.createConceptInstance(this.concept),
-                appVersion: undefined,
-                error: fromZodError(error),
-            };
-        }
-
-        const modelSchema = this.getModelSchema({
-            app: this,
-            rootModel: data.model as BaseConceptModel,
-            currentModel: data.model as BaseConceptModel,
-            parentModel: undefined,
-        });
-        const parsedModel = modelSchema.safeParse(data.model);
-        if (parsedModel.error) {
-            // return a default model with error
-            return {
-                model: this.createConceptInstance(this.concept),
-                appVersion: undefined,
-                error: fromZodError(parsedModel.error),
-            };
-        }
-
-        return { model: parsedModel.data, appVersion: data.appVersion };
-    }
-
-    /**
      * Resolves a `ConceptRef` to a `ConceptInstance`.
      */
     resolveConcept<TResolveConcept extends Concept>(
@@ -185,16 +145,13 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Validates app's model.
      */
-    validateModel(
-        model: unknown
-    ):
-        | { success: true; data: inferConcept<TConcept>; issues?: never }
-        | { success: false; issues: ValidationIssue[]; data?: never } {
+    validateModel(model: unknown, autoFix = false): ValidationResult<TConcept> {
         const schema = this.getModelSchema({
             app: this,
             rootModel: model as BaseConceptModel,
             currentModel: model,
             parentModel: undefined,
+            autoFix,
         });
         const { error, data } = schema.safeParse(model);
         if (error) {
@@ -214,7 +171,7 @@ export class AppInstance<TConcept extends Concept> {
             });
             return { success: false, issues };
         } else {
-            return { success: true, data: data as inferConcept<TConcept> };
+            return { success: true, model: data as inferConcept<TConcept> };
         }
     }
 
@@ -223,6 +180,33 @@ export class AppInstance<TConcept extends Concept> {
      */
     get jsonSchema() {
         return new JSONSchemaBuilder().build(this.concept);
+    }
+
+    /**
+     * Imports a model potentially generated from a different version or an external source.
+     */
+    importModel(data: object): ValidationResult<Concept> {
+        let model = deepcopy(data);
+
+        // call user provided import function if available
+        if (this.concept.import) {
+            const conceptImportResult = this.concept.import(data, { version: this.version });
+            if (conceptImportResult.success === false) {
+                return {
+                    issues: conceptImportResult.errors.map((e) => ({
+                        code: ValidationIssueCode.InvalidValue,
+                        message: e,
+                        path: [],
+                    })),
+                    success: false,
+                };
+            } else {
+                model = conceptImportResult.model;
+            }
+        }
+
+        // validate the result model
+        return this.validateModel(model, true);
     }
 }
 

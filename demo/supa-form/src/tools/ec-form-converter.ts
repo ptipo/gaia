@@ -117,7 +117,7 @@ program
 
         const model = convertECForm(ecConfig);
 
-        const ptConfig = app.stringifyModel(model);
+        const ptConfig = JSON.stringify({ appVersion: app.version, model });
 
         fs.writeFileSync(options.output, ptConfig);
 

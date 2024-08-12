@@ -59,11 +59,11 @@ onMounted(async () => {
 });
 
 const resetFormConfig = () => {
-    formEl?.value?.setAttribute('config', app.stringifyModel(model.value));
+    formEl?.value?.setAttribute('config', JSON.stringify({ appVersion: app.version, model: model.value }));
 };
 
 const onSave = () => {
-    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', JSON.stringify({ appVersion: app.version, model: model.value }));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -74,17 +74,19 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        const loaded = app.loadModel(data);
-        if (loaded.error) {
+        const { appVersion, model: loadedModel } = JSON.parse(data);
+        model.value = loadedModel;
+        const validationResult = validate(loadedModel);
+
+        if (!validationResult.success) {
             ElNotification({
                 title: 'Configuration loaded with validation issues',
                 type: 'error',
                 duration: 2000,
             });
         } else {
-            model.value = loaded.model;
             ElNotification({
-                title: `Configuration loaded (v${loaded.appVersion})`,
+                title: `Configuration loaded (v${appVersion})`,
                 type: 'success',
                 duration: 2000,
             });
@@ -104,7 +106,7 @@ const onPreview = () => {
     const newWindow = window.open('./preview.html', '_blank')!;
 
     newWindow.onload = () => {
-        newWindow.postMessage({ ptForm: app.stringifyModel(model.value) });
+        newWindow.postMessage({ ptForm: JSON.stringify({ appVersion: app.version, model: model.value }) });
     };
 };
 
@@ -121,6 +123,7 @@ const validate = (model: BaseConceptModel) => {
     } else {
         issues.value = [];
     }
+    return validationResult;
 };
 
 watch(selection, (value) => {
@@ -178,9 +181,8 @@ const uploadImage = async (file: File) => {
                                         } catch {}
 
                                         if (jsonModel) {
-                                            const appModel = { model: jsonModel, appVersion: app.version };
-                                            const loaded = app.loadModel(JSON.stringify(appModel));
-                                            model = loaded.model;
+                                            model = jsonModel;
+                                            validate(model);
                                             resetFormConfig();
                                         }
                                     }

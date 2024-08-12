@@ -19,7 +19,17 @@ import { getSchema as getTextItemSchema } from './text';
 /**
  * Context for building a Zod schema for validating a config item.
  */
-export type GetSchemaContext = ProviderContext & { parentModel: any };
+export type GetSchemaContext = ProviderContext & {
+    /**
+     * Parent model of the config item.
+     */
+    parentModel: any;
+
+    /**
+     * If obvious errors should be fixed automatically.
+     */
+    autoFix?: boolean;
+};
 
 /**
  * Function that gets a Zod schema for validating the model of a config item.

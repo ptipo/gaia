@@ -31,7 +31,7 @@ describe('form sample app', () => {
         expect(model.languageSettings?.language).toBeUndefined();
     });
 
-    it('can serialize and deserialize model', () => {
+    it('can resolve concept', () => {
         const app = createAppInstance(config, '1.0.1');
         const model = app.createConceptInstance(app.concept);
 
@@ -98,18 +98,7 @@ describe('form sample app', () => {
             maxPagesPerDrip: 3,
         };
 
-        const serialized = app.stringifyModel(model);
-        console.log(serialized);
-
-        const newApp = createAppInstance(config, '1.0.1');
-
-        const loaded = newApp.loadModel(serialized);
-        expect(loaded.model).toBeTruthy();
-        expect(loaded.appVersion).toBe('1.0.1');
-
-        expect(loaded.model).toEqual(model);
-
-        const resolvedPage = newApp.resolveConcept(loaded.model, createRef(completePage1));
+        const resolvedPage = app.resolveConcept(model, createRef(completePage1));
         expect(resolvedPage).toEqual(completePage1);
     });
 
@@ -159,5 +148,61 @@ describe('form sample app', () => {
         expect((cloned.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].$id).not.toBe(
             (contentPage1.pageItems[0] as inferConcept<typeof ChoiceQuestion>).textChoices![1].$id
         );
+    });
+
+    it('can auto fix has-many candidate issues', () => {
+        const app = createAppInstance(config, '1.0.1');
+
+        const contentPage1 = app.createConceptInstance(ContentPage, {
+            name: 'Content Page1',
+            pageItems: [
+                app.createConceptInstance(ChoiceQuestion, {
+                    name: 'q1',
+                    question: 'Question1',
+                    kind: 'single',
+                    choiceKind: 'text',
+                    textChoices: [
+                        app.createConceptInstance(TextChoice, {
+                            value: 'Choice1',
+                            defaultSelected: true,
+                        }),
+                        app.createConceptInstance(TextChoice, {
+                            value: 'Choice2',
+                            additionalInput: true,
+                        }),
+                    ],
+                }),
+            ],
+        });
+
+        const completePage1 = app.createConceptInstance(CompletePage, {
+            name: 'Complete Page1',
+            pageItems: [
+                app.createConceptInstance(TextElement, {
+                    kind: 'h1',
+                    content: 'Thank You!',
+                }),
+            ],
+        });
+
+        const model = app.createConceptInstance(app.concept);
+        model.contentPages.push(contentPage1);
+        model.contentPages.push(completePage1 as any);
+
+        const validateResult = app.validateModel(model);
+        expect(validateResult.success).toBe(false);
+        if (!validateResult.success) {
+            expect(validateResult.issues[0].message).toContain(
+                `Concept "CompletePage" is not a candidate of this has-many item`
+            );
+        }
+
+        const importResult = app.importModel(model);
+        console.log(importResult);
+        expect(importResult.success).toBeTruthy();
+        if (importResult.success) {
+            expect(importResult.model.contentPages).toHaveLength(1);
+            expect(importResult.model.completePages).toHaveLength(0);
+        }
     });
 });
