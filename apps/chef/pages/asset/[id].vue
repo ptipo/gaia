@@ -547,7 +547,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     class="overflow-auto ml-auto mr-auto"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
                 ></div>
-                <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
+                <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-2/5">
                     <JsonEditorVue
                         :modelValue="jsonEditorModel"
                         :mode="Mode.text"
