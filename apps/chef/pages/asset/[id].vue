@@ -119,12 +119,6 @@ const initializeApp = async (app: App) => {
         return;
     }
 
-    if (!asset.value.config) {
-        console.error('No config found in the asset.');
-        error('资产配置不存在');
-        return;
-    }
-
     if (!app.bundle) {
         console.error('No bundle found in the app instance.');
         error('无法加载资产应用');
@@ -148,24 +142,29 @@ const initializeApp = async (app: App) => {
         return;
     }
 
-    const parseResult = z
-        .object({
-            appVersion: z.string(),
-            model: z.unknown(),
-        })
-        .safeParse(asset.value.config);
-
-    if (!parseResult.success) {
+    if (!asset.value.config) {
+        // create default model
         model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
-        console.warn('Invalid asset config:', parseResult.error);
-        error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
     } else {
-        model.value = parseResult.data.model as inferConcept<typeof appInstance.value.concept>;
-        console.log('Loaded app model:', model.value);
-        console.log('Model app version:', parseResult.data.appVersion);
+        const parseResult = z
+            .object({
+                appVersion: z.string(),
+                model: z.unknown(),
+            })
+            .safeParse(asset.value.config);
+
+        if (!parseResult.success) {
+            model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+            console.warn('Invalid asset config:', parseResult.error);
+            error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
+        } else {
+            model.value = parseResult.data.model as inferConcept<typeof appInstance.value.concept>;
+            console.log('Loaded app model:', model.value);
+            console.log('Model app version:', parseResult.data.appVersion);
+        }
+        // TODO: model version migration
     }
 
-    // TODO: model version migration
     validate(model.value);
 
     if (appContainerEl.value) {
