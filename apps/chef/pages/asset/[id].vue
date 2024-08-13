@@ -28,6 +28,8 @@ const route = useRoute();
 
 const user = useUser();
 
+const runtimeConfig = useRuntimeConfig();
+
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
 const hasError = ref(false);
@@ -65,6 +67,9 @@ const isAIPermission = ref(false);
 const aiDialogVisible = ref(false);
 const aiInput = ref('');
 const aiInputEl = ref<HTMLElement>();
+
+const aiGeneratingProgress = ref(0);
+let aiTimer: NodeJS.Timeout | null;
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -385,13 +390,28 @@ const onGenerate = async () => {
         return undefined;
     }
 
+    const duration = runtimeConfig.public.aiGeneratingExpectedTime;
+    const step = 200;
+
     isAiGenerating.value = true;
+
+    aiTimer = setInterval(() => {
+        aiGeneratingProgress.value = Math.round(Math.random() + aiGeneratingProgress.value);
+
+        if (aiGeneratingProgress.value >= 95) {
+            if (aiTimer) {
+                clearInterval(aiTimer);
+            }
+        }
+    }, duration / step);
+
     const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
         method: 'POST',
         body: { prompt: aiInput.value },
     });
-    isAiGenerating.value = false;
-    console.log('AI generation response:', data);
+
+    aiGeneratingProgress.value = 100;
+    stopAIGenerating();
 
     const importResult = appInstance.value?.importModel(data.json);
     if (!importResult.success) {
@@ -407,18 +427,30 @@ const onGenerate = async () => {
     }
 };
 
+const stopAIGenerating = () => {
+    isAiGenerating.value = false;
+
+    if (aiTimer) {
+        clearInterval(aiTimer);
+        aiTimer = null;
+    }
+    setTimeout(() => {
+        aiGeneratingProgress.value = 0;
+    }, 1000);
+};
+
 const aiDialogClose = (done: () => void) => {
     if (isAiGenerating.value) {
         ElMessageBox.confirm('还在生成中，确定要关闭吗？')
             .then(() => {
-                isAiGenerating.value = false;
+                stopAIGenerating();
                 done();
             })
             .catch(() => {
                 // catch error
             });
     } else {
-        isAiGenerating.value = false;
+        stopAIGenerating();
         done();
     }
 };
@@ -557,7 +589,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 </div>
             </div>
             <!-- preview -->
-            <div class="w-[400px] shrink-0 border rounded block overflow-hidden" v-if="appInstance">
+            <div class="w-[400px] shrink-0 border rounded block overflow-clip" v-if="appInstance">
                 <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
                     <el-button class="w-full pt-4" @click="aiDialogVisible = true">AI 生成表单</el-button>
                 </div>
@@ -604,15 +636,17 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             ref="aiInputEl"
         ></el-input>
 
-        <el-button
-            type="primary"
-            class="w-full bg-teal-800 hover:bg-teal-900"
-            v-loading="isAiGenerating"
-            @click="onGenerate"
-        >
-            <i class="el-icon-plus mr-2"></i>
-            生成表单
-        </el-button>
+        <div class="inline-block w-full relative">
+            <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
+                ><span class="z-10">生成表单</span></el-button
+            >
+            <span class="inline">
+                <span
+                    class="bg-blue-500 rounded absolute h-full left-0"
+                    :style="{ width: aiGeneratingProgress + '%' }"
+                ></span>
+            </span>
+        </div>
     </el-dialog>
 </template>
 
