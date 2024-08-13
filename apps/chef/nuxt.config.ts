@@ -24,6 +24,11 @@ export default defineNuxtConfig({
         optimizeDeps: {
             include: ['dayjs', 'dayjs/plugin/*'],
         },
+        define: {
+            // By default, Vite doesn't include shims for NodeJS necessary for segment analytics lib to work
+            // https://github.com/vitejs/vite/discussions/5912
+            global: {},
+        },
     },
 
     imports: {
@@ -38,6 +43,11 @@ export default defineNuxtConfig({
             options: {
                 // https://github.com/nuxt/nuxt/issues/14348
                 target: 'esnext',
+            },
+        },
+        vercel: {
+            functions: {
+                maxDuration: 300,
             },
         },
     },

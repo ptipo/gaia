@@ -6,7 +6,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { when } from 'lit/directives/when.js';
-import { app } from '../app';
+import { app, FormModel } from '../app';
 import { CompletePage } from '../config/page/complete-page';
 import { ContentPage } from '../config/page/content-page';
 import { FormAnswerData, formState } from '../state';
@@ -20,7 +20,9 @@ import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 import { getCSSVariableValues } from './global-style';
 
-type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
+export let model: FormModel = app.createConceptInstance(app.concept);
+
+type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
@@ -43,13 +45,34 @@ export class PtForm extends PtBaseShadow {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                const { error, model, appVersion } = app.loadModel(value);
-                if (error) {
-                    console.warn('Error loading model', error.message);
-                    return;
+
+                let parsedValue: any;
+                try {
+                    parsedValue = JSON.parse(value);
+                } catch {
+                    console.error('Error parsing JSON', value);
+                    return undefined;
                 }
+
+                if (typeof parsedValue.appVersion !== 'string') {
+                    console.error('App version not found in config');
+                    return undefined;
+                }
+
+                if (!parsedValue.model || typeof parsedValue.model !== 'object') {
+                    console.error('Model not found in config');
+                    return undefined;
+                }
+
+                const validationResult = app.validateModel(parsedValue.model);
+                if (!validationResult.success) {
+                    console.error('Error validating model', validationResult.issues);
+                    return undefined;
+                }
+
+                model = validationResult.model;
                 console.log('Loaded model', model);
-                console.log('Model app version', appVersion);
+                console.log('Model app version', parsedValue.appVersion);
 
                 const language = model.languageSettings.language;
 
@@ -60,7 +83,7 @@ export class PtForm extends PtBaseShadow {
             },
         },
     })
-    config?: typeof app.model;
+    config?: FormModel;
 
     @state()
     private pageId: string = '';
@@ -223,6 +246,24 @@ export class PtForm extends PtBaseShadow {
 
             if (completePage) {
                 return html`${css} <pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
+            }
+        }
+    }
+
+    protected willUpdate() {
+        if (!this.editSelection) {
+            // skip if not at design time
+            return;
+        }
+
+        if (
+            !this.pageId ||
+            (!this.config?.contentPages?.find((x) => x.$id == this.pageId) &&
+                !this.config?.completePages?.find((x) => x.$id == this.pageId))
+        ) {
+            // current page id not valid, select the content page
+            if (this.config?.contentPages && this.config.contentPages.length > 0) {
+                this.emitPageChangeEvent('content', this.config.contentPages[0].$id);
             }
         }
     }

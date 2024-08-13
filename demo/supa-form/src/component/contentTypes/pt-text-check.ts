@@ -22,7 +22,9 @@ class PtTextCheck extends PtBaseData<boolean> {
             return baseError;
         }
 
-        const isAnyDataFilled = this.pageAnswerItemIds.some((id) => !isNullOrEmpty(this.formState.answers[id].data));
+        const isAnyDataFilled = this.pageAnswerItemIds.some(
+            (id) => this.formState.answers[id] && !isNullOrEmpty(this.formState.answers[id]?.data)
+        );
 
         if (isAnyDataFilled && this.value.data != true) {
             return this.mandatoryErrorMessage;

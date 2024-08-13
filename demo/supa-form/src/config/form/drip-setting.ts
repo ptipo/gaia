@@ -19,7 +19,7 @@ export const DripSetting = defineGroupItem({
         limitPagesPerDrip: {
             type: 'if',
             description: 'Control the number of pages submitted each time. Only valid when the "enable" field is true.',
-            conditionProvider: ({ currentModel }) => !!currentModel?.enable,
+            condition: { field: 'enable', value: true },
             child: {
                 type: 'group',
                 items: {

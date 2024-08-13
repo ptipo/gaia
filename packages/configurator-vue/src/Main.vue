@@ -16,7 +16,7 @@ import ValidationIssues from './components/ValidationIssues.vue';
 import type { EditPathRecord } from './components/types';
 
 const app = createAppInstance(FormApp, FormAppVersion);
-const model = ref<BaseConceptModel>(app.model);
+const model = ref<BaseConceptModel>(app.createConceptInstance(app.concept));
 const issues = ref<ValidationIssue[]>([]);
 const editPath = ref<EditPathRecord[]>([]);
 const selection = ref<SelectionData>();
@@ -28,7 +28,6 @@ onMounted(() => {
 });
 
 const onAppChange = async (data: BaseConceptModel) => {
-    app.model = data as typeof app.model;
     model.value = data;
     validate(data);
 
@@ -39,7 +38,7 @@ const onAppChange = async (data: BaseConceptModel) => {
 };
 
 const onSave = () => {
-    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', JSON.stringify({ appVersion: app.version, model: model.value }));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -50,10 +49,10 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        const loaded = app.loadModel(data);
-        console.log('Loaded model:', loaded.model);
-        console.log('Model app version:', loaded.appVersion);
-        model.value = loaded.model;
+        const { appVersion, model: loadedModel } = JSON.parse(data);
+        console.log('Loaded model:', loadedModel);
+        console.log('Model app version:', appVersion);
+        model.value = loadedModel;
         validate(model.value);
         ElNotification({
             title: 'Configuration loaded',

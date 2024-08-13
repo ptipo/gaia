@@ -47,7 +47,7 @@ export const ChoiceQuestion = defineConcept({
             description: 'Show text with image choices. Only valid when the "choiceKind" field is "image".',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'image',
+            condition: { field: 'choiceKind', value: 'image' },
 
             child: {
                 type: 'switch',
@@ -67,7 +67,7 @@ export const ChoiceQuestion = defineConcept({
             description: 'Choices for question of "text" kind. Only valid when the "choiceKind" field is "text".',
 
             // 仅在文字选项时显示
-            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'text',
+            condition: { field: 'choiceKind', value: 'text' },
 
             // 条件变化回调，创建默认文字选项
             onConditionChange: ({ app }, value) => (value ? makeDefaultTextChoices(app) : undefined),
@@ -102,7 +102,7 @@ export const ChoiceQuestion = defineConcept({
             description: 'Choices for question of "image" kind. Only valid when the "choiceKind" field is "image".',
 
             // 仅在图片选项时显示
-            conditionProvider: ({ currentModel }) => currentModel?.choiceKind === 'image',
+            condition: { field: 'choiceKind', value: 'image' },
 
             // 条件变化回调，创建默认图片选项
             onConditionChange: ({ app }, value) => (value ? makeDefaultImageChoices(app) : undefined),
@@ -136,7 +136,7 @@ export const ChoiceQuestion = defineConcept({
             description: 'Limit the number of selected items. Only valid when the "kind" field is "multiple".',
 
             // 仅在多选时显示
-            conditionProvider: ({ currentModel }) => currentModel?.kind === 'multiple',
+            condition: { field: 'kind', value: 'multiple' },
 
             child: {
                 type: 'dynamic-select',

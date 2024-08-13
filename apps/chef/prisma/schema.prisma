@@ -41,6 +41,8 @@ model App {
   bundle      String
   htmlTagName String
   ptCodeMode  String?  @db.Text()
+  /// @omit
+  aiApiKey    String?
 }
 
 /// @@allow('all', auth() == owner)

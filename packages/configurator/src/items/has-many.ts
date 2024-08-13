@@ -77,11 +77,18 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
         return z.never({ message: `最多只能有${maxItems}项` });
     }
 
+    const indicesToRemove: number[] = [];
+
     // build a tuple schema that validates each item according to its concept and model
     const itemSchemas = context.currentModel.map((el, index) => {
         const candidate = myItem.candidates.find((c) => c.name === el.$concept);
         if (!candidate) {
-            throw new Error(`Concept "${el.$concept}" is not a candidate of this has-many item`);
+            if (context.autoFix) {
+                indicesToRemove.push(index);
+                return z.any();
+            } else {
+                return z.never({ message: `Concept "${el.$concept}" is not a candidate of this has-many item` });
+            }
         }
 
         // Note that we keep the parent model to the parent of this has-many item,
@@ -92,5 +99,13 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
         });
     });
 
-    return z.tuple(itemSchemas as any);
+    const result = z.tuple(itemSchemas as any);
+
+    if (indicesToRemove.length > 0) {
+        console.warn(`Removing items that don't match the candidates:`);
+        indicesToRemove.forEach((index) => console.warn(`\t${JSON.stringify(context.currentModel?.[index])})`));
+        return result.transform((data) => data.filter((_, index) => !indicesToRemove.includes(index)));
+    } else {
+        return result;
+    }
 };

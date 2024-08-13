@@ -19,7 +19,17 @@ import { getSchema as getTextItemSchema } from './text';
 /**
  * Context for building a Zod schema for validating a config item.
  */
-export type GetSchemaContext = ProviderContext & { parentModel: any };
+export type GetSchemaContext = ProviderContext & {
+    /**
+     * Parent model of the config item.
+     */
+    parentModel: any;
+
+    /**
+     * If obvious errors should be fixed automatically.
+     */
+    autoFix?: boolean;
+};
 
 /**
  * Function that gets a Zod schema for validating the model of a config item.
@@ -45,7 +55,7 @@ export const Schemas: {
 };
 
 export { Code, CodeItem, CodeLanguage } from './code';
-export { ColorItem } from './color';
+export { RGBA, ColorItem } from './color';
 export * from './common';
 export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
 export { defineGroupItem, GroupItem } from './group';
