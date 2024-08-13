@@ -1,5 +1,5 @@
-import { app } from '../app';
 import { FontSize } from '../config/page-items/common';
+import { model } from './pt-form';
 
 type FontSize = keyof typeof FontSize.options;
 type CSSVariableList = Record<string, string | number>;
@@ -12,7 +12,7 @@ const fontSizeRatio: Record<FontSize, number> = {
     xl: 1.5,
 };
 
-function getQuestionStyle(question: typeof app.model.questionStyle) {
+function getQuestionStyle(question: typeof model.questionStyle) {
     const result: CSSVariableList = {};
 
     result[CSS_VARIABLES.question_font_size] = fontSizeRatio[question.question.fontSize!];
@@ -30,7 +30,7 @@ const CSS_VARIABLES = {
     question_description_text_align: '--pt-form-question-description-text-align',
 };
 
-export function getCSSVariableValues(config: typeof app.model) {
+export function getCSSVariableValues(config: typeof model) {
     let result: CSSVariableList = {};
 
     result = { ...getQuestionStyle(config.questionStyle) };
