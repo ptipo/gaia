@@ -14,8 +14,78 @@
     }
 }
 
-:host {
-    font-family: var(--ptform-font-family, 'Noto Sans JP,sans-serif');
+@layer components {
+    .pt-form {
+        background-color: var(--pt-form-background-color);
+        color: var(--pt-form-main-text-color);
+        font-family: var(--pt-form-font-family, 'Noto Sans JP,sans-serif');
+    }
+
+    .pt-question {
+        background-color: var(--pt-form-question-background-color);
+        color: var(--pt-form-question-color);
+    }
+
+    .pt-question-description {
+        background-color: var(--pt-form-question-description-background-color);
+        color: var(--pt-form-question-description-color);
+    }
+    .pt-question-answer {
+        background-color: var(--pt-form-question-answer-background-color);
+        color: var(--pt-form-question-answer-color);
+        /* bg-gray-400; */
+        border-color: var(--pt-form-question-answer-border-color, #9ca3af);
+        &:focus {
+            /* bg-gray-400; */
+            border-color: var(--pt-form-question-answer-border-color, #9ca3af);
+        }
+    }
+
+    .pt-choice {
+        color: var(--pt-form-choice-color);
+        border-color: var(--pt-form-choice-border-color);
+
+        /* bg-gray-50 */
+        background-color: var(--pt-form-choice-background-color, #f9fafb);
+
+        &:hover {
+            /* bg-gray-100 */
+            background-color: var(--pt-form-choice-hover-background-color, #f3f4f6);
+        }
+    }
+
+    .pt-top-bar {
+        /* bg-white */
+        background-color: var(--pt-form-top-bar-background-color, #ffffff);
+    }
+
+    .pt-progress {
+        /* bg-black */
+        background-color: var(--pt-form-progress-background-color, #000000);
+    }
+
+    .pt-progress-remain {
+        /* bg-gray-200 */
+        background-color: var(--pt-form-progress-remain-background-color, #e5e7eb);
+    }
+
+    .pt-bottom-bar {
+        background-color: var(--pt-form-bottom-bar-background-color, #ffffff);
+    }
+
+    .pt-next-button {
+        background-color: var(--pt-form-next-button-background-color, #000000);
+        color: var(--pt-form-next-button-color, #ffffff);
+        border-color: var(--pt-form-next-button-border-color);
+        &:hover {
+            /* bg-gray-800 */
+            background-color: var(--pt-form-next-button-hover-background-color, #1f2937);
+        }
+    }
+
+    .pt-back-button {
+        color: var(--pt-form-back-button-color, #6b7280);
+    }
 }
 
 input,
@@ -32,7 +102,6 @@ label,
 span,
 legend {
     @apply break-words;
-    color: var(--ptform-main-text-color, black);
 }
 
 .pt-text a {

@@ -98,19 +98,20 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         const isShowTextWithImage = this.data?.showTextWithImage;
 
         return html`
-            <fieldset class="flex">
-                <legend class="mb-5">
-                    <span class="text-xl font-bold">
+            <fieldset class="block">
+                <legend class="pt-question">
+                    <span class="text-xl font-bold block">
                         <pt-editable-label
                             config-path="${this.configPath + '.question'}"
-                            label="${this.data?.question}"
+                            label="${this.data?.question || ''}"
                         >
                         </pt-editable-label>
                     </span>
-                    ${description ? html`<p class="mt-1 text-sm font-normal">${description}</p>` : ''}
                 </legend>
-
-                <div class="flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
+                ${description
+                    ? html`<p class="mt-1 text-sm font-normal pt-question-description">${description}</p>`
+                    : ''}
+                <div class="mt-5 flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice, i) => html`
                             ${when(
@@ -121,7 +122,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             style="${isFlat
                                                 ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
                                                 : ''}"
-                                            class="flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 bg-gray-50 hover:bg-gray-100 has-[:checked]:border-black transition"
+                                            class="pt-choice flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 has-[:checked]:border-black transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
@@ -165,7 +166,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                 () =>
                                     html`
                                         <label
-                                            class="flex items-center border rounded-md p-4 bg-gray-50 has-[:checked]:border-black hover:bg-gray-100 cursor-pointer transition"
+                                            class="pt-choice flex items-center border rounded-md p-4  has-[:checked]:border-black cursor-pointer transition"
                                         >
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label

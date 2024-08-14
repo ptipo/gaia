@@ -187,14 +187,14 @@ export class PtForm extends PtBaseShadow {
             const progress: number = this.getCurrentProgress() * 100;
 
             return html`${css}
-                    <div>
-                        <div class="sticky top-0 h-8 bg-white opacity-100">
+                    <div class="pt-form">
+                        <div class="pt-top-bar sticky top-0 h-8 opacity-100">
                             <div class="flex flex-col h-full justify-center">
                                 <div
-                                    class="flex h-1 bg-gray-200  rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                                    class="pt-progress-remain flex h-1 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                                     role="progressbar">
                                     <div
-                                        class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                        class="pt-progress flex flex-col justify-center rounded-full overflow-hidden text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
                                         style="width: ${progress}%">
                                     </div>
                               </div>
@@ -212,12 +212,12 @@ export class PtForm extends PtBaseShadow {
                             ></pt-form-page>`
                         )}
                     </div>
-                    <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
+                    <div class="pt-bottom-bar sticky opacity-90 w-full h-20  bottom-0 ">
                         <div class="flex h-full items-center justify-end gap-x-8">
                         ${when(
                             this.editSelection || this.pageIdStack.length > 0,
                             () =>
-                                html` <button type="button" @click=${this.prePage} class="text-gray-500">
+                                html` <button type="button" @click=${this.prePage} class="pt-back-button">
                                     ${msg('Back')}
                                 </button>`
                         )}
@@ -225,9 +225,7 @@ export class PtForm extends PtBaseShadow {
                         <span class="w-44 max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
-                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >${msg(
-                'NEXT'
-            )}</button>
+                        } class="pt-next-button border w-full py-2 px-4 rounded mr-10 ml-auto" >${msg('NEXT')}</button>
                         </span>
                         </div>
                     </div>
