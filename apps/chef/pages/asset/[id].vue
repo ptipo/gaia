@@ -23,6 +23,7 @@ import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
+import confetti from 'canvas-confetti';
 
 const route = useRoute();
 
@@ -408,6 +409,12 @@ const onGenerate = async () => {
     const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
         method: 'POST',
         body: { prompt: aiInput.value },
+    });
+
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
     });
 
     aiGeneratingProgress.value = 100;
