@@ -223,7 +223,7 @@ describe('Basic test', async () => {
         const choiceCofPage2 = shadowRoot.querySelector('fieldSet>div>label:nth-child(2)') as HTMLLabelElement;
         choiceCofPage2.click();
 
-        let nextButton = shadowRoot.querySelector('button.bg-black') as HTMLButtonElement;
+        let nextButton = shadowRoot.querySelector('button.pt-next-button') as HTMLButtonElement;
         nextButton.click();
         await sleep();
 
