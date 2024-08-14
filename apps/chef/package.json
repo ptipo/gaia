@@ -33,6 +33,7 @@
         "@zenstackhq/server": "^2.4.1",
         "@zenstackhq/tanstack-query": "^2.4.1",
         "byte-size": "^8.1.1",
+        "canvas-confetti": "^1.9.3",
         "dayjs": "^1.11.11",
         "element-plus": "^2.7.3",
         "json-editor-vue": "^0.15.1",
