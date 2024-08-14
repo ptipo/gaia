@@ -48,6 +48,7 @@
     "devDependencies": {
         "@element-plus/nuxt": "^1.0.9",
         "@types/byte-size": "^8.1.2",
+        "@types/canvas-confetti": "^1.6.4",
         "autoprefixer": "^10.4.19",
         "nuxi": "^3.12.0",
         "postcss": "^8.4.38",
