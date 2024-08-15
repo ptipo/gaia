@@ -26,6 +26,7 @@
         "@hebilicious/vue-query-nuxt": "^0.3.0",
         "@lucia-auth/adapter-prisma": "^4.0.1",
         "@node-rs/argon2": "^1.8.3",
+        "@nuxtjs/i18n": "^8.3.3",
         "@paralleldrive/cuid2": "^2.2.2",
         "@prisma/client": "5.18.0",
         "@tanstack/vue-query": "^5.44.0",

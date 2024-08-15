@@ -14,8 +14,10 @@ const {
     orderBy: { createdAt: 'desc' },
 });
 
+const { t } = useI18n();
+
 const onCreate = async ({ app }: { app: App }) => {
-    const name = await prompt('创建资产', '请输入资产名称');
+    const name = await prompt(t('createAsset'), t('inputAssetName'));
     if (!name) {
         return;
     }
@@ -24,7 +26,7 @@ const onCreate = async ({ app }: { app: App }) => {
     });
 
     if (created) {
-        success('资产创建成功');
+        success(t('createAssetSuccess'));
         navigateTo(`/asset/${created.id}`);
     }
 };
@@ -40,7 +42,7 @@ const onAssetClick = (asset: Asset) => {
             <el-header><NavBar @create="onCreate" /></el-header>
             <el-main>
                 <div class="flex flex-col items-center w-full h-full">
-                    <h1 class="text-3xl mt-8 mb-12">我的资产</h1>
+                    <h1 class="text-3xl mt-8 mb-12">{{ $t('myAssets') }}</h1>
                     <div v-if="assets" class="flex flex-wrap container mx-auto gap-8">
                         <AssetCard
                             v-for="asset in assets"
