@@ -190,7 +190,7 @@ export class AppInstance<TConcept extends Concept> {
 
         // call user provided import function if available
         if (this.concept.import) {
-            const conceptImportResult = this.concept.import(data, { version: this.version });
+            const conceptImportResult = this.concept.import(data, { app: this, version: this.version });
             if (conceptImportResult.success === false) {
                 return {
                     issues: conceptImportResult.errors.map((e) => ({

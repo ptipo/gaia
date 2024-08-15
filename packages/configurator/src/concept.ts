@@ -1,5 +1,5 @@
 import { z, type ZodSchema } from 'zod';
-import type { InitializeContext, ValidationIssue } from '.';
+import type { AppInstance, InitializeContext, ValidationIssue } from '.';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
 import type { BaseConceptModel, inferConcept } from './inference';
 import type { GetSchemaContext } from './items';
@@ -9,6 +9,14 @@ import { NonPrimitiveTypes, type ProviderContext } from './types';
  * Metadata for importing a concept model.
  */
 export type ImportMetadata = {
+    /**
+     * The app instance
+     */
+    app: AppInstance<Concept>;
+
+    /**
+     * The app version of the model being imported
+     */
     version: string;
 };
 

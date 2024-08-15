@@ -109,6 +109,7 @@ async function runTests({ requirements, count, debug }: { requirements: string; 
                 ).toFixed(2)}s`
             )
         );
+        process.exit(1);
     } else {
         console.log(
             colors.green(

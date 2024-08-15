@@ -23,7 +23,8 @@
         "watch": "run-p watch:*",
         "preview": "vite preview -c vite-app.config.ts",
         "convert": "vite-node src/tools/ec-form-converter.ts",
-        "test": "vitest"
+        "test": "vitest",
+        "ai-test": "vite-node src/tools/ai-gen-test.ts"
     },
     "dependencies": {
         "@hayadev/configurator": "workspace:*",

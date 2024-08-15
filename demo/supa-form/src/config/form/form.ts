@@ -1,4 +1,4 @@
-import { type BaseConceptModel, defineConcept } from '@hayadev/configurator';
+import { type BaseConceptModel, Concept, ConfigItem, defineConcept, NonPrimitiveTypes } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
@@ -99,4 +99,81 @@ export const Form = defineConcept({
             groupKey: 'style',
         },
     },
+
+    import: (data, { app }) => {
+        // add $type to data (recursively) if missing
+        fixMissingValueTypeForConcept(app.concept, data);
+
+        return { success: true, model: data as any };
+    },
 });
+
+function fixMissingValueTypeForConcept(concept: Concept, data: any) {
+    if (!data || typeof data !== 'object') {
+        return;
+    }
+    Object.entries(concept.items).forEach(([key, item]) => {
+        fixMissingValueTypeForItem(item, data[key]);
+    });
+}
+
+function fixMissingValueTypeForItem(item: ConfigItem, data: any) {
+    if (!data) {
+        return;
+    }
+
+    switch (item.type) {
+        case 'code': {
+            fixDataType(data, NonPrimitiveTypes.code);
+            break;
+        }
+
+        case 'image': {
+            fixDataType(data, NonPrimitiveTypes.image);
+            break;
+        }
+
+        case 'group': {
+            fixDataType(data, NonPrimitiveTypes.itemGroup);
+            // recurse
+            Object.entries(item.items).forEach(([key, subItem]) => fixMissingValueTypeForItem(subItem, data[key]));
+            break;
+        }
+
+        case 'if': {
+            // recurse
+            fixMissingValueTypeForItem(item.child, data);
+            break;
+        }
+
+        case 'has': {
+            fixDataType(data, NonPrimitiveTypes.concept);
+            // recurse
+            fixMissingValueTypeForConcept(item.concept, data);
+            break;
+        }
+
+        case 'has-many': {
+            if (Array.isArray(data)) {
+                data.forEach((subData) => {
+                    fixDataType(subData, NonPrimitiveTypes.concept);
+                    if (typeof subData.$concept === 'string') {
+                        // find the concept of the element
+                        const subConcept = item.candidates.find((c) => c.name === subData.$concept);
+                        if (subConcept) {
+                            // recurse
+                            fixMissingValueTypeForConcept(subConcept, subData);
+                        }
+                    }
+                });
+            }
+        }
+    }
+}
+
+function fixDataType(data: any, type: NonPrimitiveTypes) {
+    if (typeof data === 'object' && !data.$type) {
+        console.log(`Fixing missing $type to "${type}" in ${JSON.stringify(data)}`);
+        data.$type = type;
+    }
+}
