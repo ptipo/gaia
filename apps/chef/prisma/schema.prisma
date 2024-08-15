@@ -25,6 +25,7 @@ model User {
   apps       App[]
   assets     Asset[]
   permission Json?
+  locale     String    @default("zh")
 }
 
 /// @@allow('all', auth() == owner)

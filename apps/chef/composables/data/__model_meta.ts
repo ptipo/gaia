@@ -44,6 +44,10 @@ const metadata = {
                     name: "permission",
                     type: "Json",
                     isOptional: true,
+                }, locale: {
+                    name: "locale",
+                    type: "String",
+                    attributes: [{ "name": "@default", "args": [{ "value": "zh" }] }],
                 },
             }
             , uniqueConstraints: {

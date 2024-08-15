@@ -33,6 +33,7 @@ model User extends EntityBase {
   apps       App[]
   assets     Asset[]
   permission Json?
+  locale     String    @default('zh')
 
   @@allow('read', true)
   @@allow('all', auth() == this)

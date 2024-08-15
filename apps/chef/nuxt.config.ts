@@ -14,7 +14,7 @@ export default defineNuxtConfig({
 
     plugins: [{ src: '~/plugins/element-plus', mode: 'client' }],
 
-    modules: ['@element-plus/nuxt', '@hebilicious/vue-query-nuxt'],
+    modules: ['@element-plus/nuxt', '@hebilicious/vue-query-nuxt', '@nuxtjs/i18n'],
 
     elementPlus: {
         icon: 'ElIcon',
@@ -70,5 +70,23 @@ export default defineNuxtConfig({
                 },
             };
         },
+    },
+
+    i18n: {
+        strategy: 'no_prefix',
+        locales: [
+            {
+                code: 'en',
+                name: 'English',
+            },
+            {
+                code: 'zh',
+                name: '中文',
+            },
+            {
+                code: 'ja',
+                name: '日本語',
+            },
+        ],
     },
 });

@@ -16,6 +16,7 @@ import {
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset, Prisma } from '@prisma/client';
 import byteSize from 'byte-size';
+import confetti from 'canvas-confetti';
 import type { DropdownInstance } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { Mode } from 'vanilla-jsoneditor';
@@ -23,7 +24,6 @@ import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success } from '~/lib/message';
-import confetti from 'canvas-confetti';
 
 const route = useRoute();
 
@@ -90,12 +90,14 @@ const { data: userData } = useFindUniqueUser({
     where: { id: user?.value?.id },
 });
 
+const { t } = useI18n();
+
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
         console.error('Asset not found:', route.params.id);
         throw createError({
             statusCode: 404,
-            statusMessage: '指定的资产不存在',
+            statusMessage: t('assetNotFound'),
             fatal: true,
         });
     }
@@ -104,7 +106,7 @@ watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
 watch(loadError, (value) => {
     if (value) {
         console.error('Failed to load asset:', value);
-        error(`无法加载资产`);
+        error(t('unableToLoadAsset'));
         navigateTo('/');
     }
 });
@@ -127,7 +129,7 @@ const initializeApp = async (app: App) => {
 
     if (!app.bundle) {
         console.error('No bundle found in the app instance.');
-        error('无法加载资产应用');
+        error(t('unableToLoadAssetApp'));
         return;
     }
 
@@ -143,7 +145,7 @@ const initializeApp = async (app: App) => {
         // create app instance
         appInstance.value = createAppInstance(module.config, version);
     } catch (err) {
-        error(`Failed to load app bundle: ${err}`);
+        error(t('unableToLoadAppBundle', { error: err }));
         hasError.value = true;
         return;
     }
@@ -162,7 +164,7 @@ const initializeApp = async (app: App) => {
         if (!parseResult.success) {
             model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
             console.warn('Invalid asset config:', parseResult.error);
-            error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
+            error(t('assetConfigReset'));
         } else {
             model.value = parseResult.data.model as inferConcept<typeof appInstance.value.concept>;
             console.log('Loaded app model:', model.value);
@@ -241,9 +243,9 @@ const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
             await doSaveAsset(asset.value);
-            success('保存成功！');
+            success(t('saveSuccess'));
         } catch (err) {
-            error(`暂时无法保存，请稍后再试`);
+            error(t('unableToSave'));
             console.error('Failed to save asset:', err);
         }
     }
@@ -251,13 +253,13 @@ const onSave = async () => {
 
 const onDelete = async () => {
     if (asset.value) {
-        if (await confirmDelete(`确定要删除资产 "${asset.value.name}" 吗？`)) {
+        if (await confirmDelete(t('sureToDelete', { name: asset.value.name }))) {
             try {
                 await deleteAsset({ where: { id: asset.value.id } });
-                success('删除成功！');
+                success(t('deleteSuccess'));
                 navigateTo('/');
             } catch (err) {
-                error(`暂时无法删除，请稍后再试`);
+                error(t('unableToDelete'));
                 console.error('Failed to save asset:', err);
             }
         }
@@ -273,9 +275,9 @@ const onPublish = async () => {
                 method: 'POST',
             });
             console.log('Publish response:', data);
-            success('发布成功！');
+            success(t('publishSuccess'));
         } catch (err) {
-            error(`暂时无法发布，请稍后再试`);
+            error(t('unableToPublish'));
             console.error('Failed to publish asset:', err);
         }
     }
@@ -357,7 +359,7 @@ const uploadImage = async (file: File) => {
     }
 
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        error(`图片大小不能超过${byteSize(MAX_IMAGE_SIZE_BYTES, { precision: 0 })}`);
+        error(t('imageSizeCannotExceed', { size: byteSize(MAX_IMAGE_SIZE_BYTES, { precision: 0 }) }));
         return undefined;
     }
 
@@ -422,10 +424,10 @@ const onGenerate = async () => {
 
     const importResult = appInstance.value?.importModel(data.json);
     if (!importResult.success) {
-        error(`生成有误，请重新生成`);
+        error(t('aiGenerateFailed'));
         console.error(importResult);
     } else {
-        success('生成成功');
+        success(t('aiGenerateSuccess'));
         aiDialogVisible.value = false;
         model.value = importResult.model;
         validate(model.value);
@@ -448,7 +450,7 @@ const stopAIGenerating = () => {
 
 const aiDialogClose = (done: () => void) => {
     if (isAiGenerating.value) {
-        ElMessageBox.confirm('还在生成中，确定要关闭吗？')
+        ElMessageBox.confirm(t('sureToStopAiGeneration'))
             .then(() => {
                 stopAIGenerating();
                 done();
@@ -512,7 +514,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         <el-input
                             ref="editNameEl"
                             v-model="editName"
-                            placeholder="请输入资产名称"
+                            :placeholder="$t('inputAssetName')"
                             @blur="onEditNameComplete"
                             @keyup.enter="onEditNameComplete"
                         />
@@ -538,11 +540,19 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-                <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
-                <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
-                <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">预览</el-button>
-                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
-                    >发布</el-button
+                <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">{{
+                    $t('save')
+                }}</el-button>
+                <el-button @click="onDelete" v-loading="isDeletingAsset">{{ $t('delete') }}</el-button>
+                <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">{{
+                    $t('preview')
+                }}</el-button>
+                <el-button
+                    type="primary"
+                    @click="onPublish"
+                    :disabled="issues.length > 0"
+                    v-loading="isPublishingAsset"
+                    >{{ $t('publish') }}</el-button
                 >
             </div>
         </div>
@@ -561,7 +571,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                             "
                             class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
                         >
-                            Mobile
+                            {{ t('mobile') }}
                         </button>
                         <button
                             autofocus
@@ -572,7 +582,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                             "
                             class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
                         >
-                            Desktop
+                            {{ t('desktop') }}
                         </button>
                     </div>
                     <div v-if="isJSONEditorPermission" class="flex items-center gap-1 self-end">
@@ -598,7 +608,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             <!-- preview -->
             <div class="w-[400px] shrink-0 border rounded block overflow-clip" v-if="appInstance">
                 <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
-                    <el-button class="w-full pt-4" @click="aiDialogVisible = true">AI 生成表单</el-button>
+                    <el-button class="w-full pt-4" @click="aiDialogVisible = true">{{ $t('aiGenerate') }}</el-button>
                 </div>
                 <AppConfigurator
                     :app="appInstance"
@@ -613,7 +623,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     </el-container>
 
     <el-dialog
-        title="AI生成表单"
+        :title="$t('aiGenerate')"
         v-model="aiDialogVisible"
         @opened="onAiDialogOpen"
         :before-close="aiDialogClose"
@@ -621,13 +631,13 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     >
         <div class="flex bg-gray-100 px-4 pt-4 rounded-lg justify-between mb-2">
             <div>
-                <p class="text-gray-700 mb-2">我可以帮您快速生成表单或问卷，您可以</p>
+                <p class="text-gray-700 mb-2">{{ $t('iCanGenerateFormForYou') }}</p>
 
                 <ol class="list-decimal list-inside text-gray-600 mb-2">
-                    <li>告诉我您的调研目的和对象</li>
-                    <li>或直接给我问题和选项</li>
+                    <li>{{ t('tellMePurpose') }}</li>
+                    <li>{{ t('orGiveMeQuestions') }}</li>
                 </ol>
-                <p class="text-gray-700 mb-2">我将立即为您生成表单</p>
+                <p class="text-gray-700 mb-2">{{ t('willStartGeneration') }}</p>
             </div>
             <div className="w-[100px] h-[100px] self-end">
                 <img src="/img/ai_assistant.png" alt="ai" className="object-contain w-full h-full" />
@@ -638,14 +648,14 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             type="textarea"
             v-model="aiInput"
             :rows="10"
-            placeholder="请输入您的需求..."
+            :placeholder="$t('inputRequirements')"
             class="mb-4"
             ref="aiInputEl"
         ></el-input>
 
         <div class="inline-block w-full relative">
             <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
-                ><span class="z-10">生成表单</span></el-button
+                ><span class="z-10">{{ $t('generateForm') }}</span></el-button
             >
             <span class="inline">
                 <span

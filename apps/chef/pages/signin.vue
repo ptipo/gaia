@@ -19,13 +19,15 @@ const rules = reactive<FormRules<typeof formState>>({
     password: [{ validator: validatePassword, trigger: 'blur' }],
 });
 
+const { t } = useI18n();
+
 function validateEmail(_rule: any, value: any, callback: any) {
     if (value === '') {
-        callback(new Error('请输入邮箱'));
+        callback(new Error(t('inputEmail')));
     } else {
         const { success } = z.string().email().safeParse(value);
         if (!success) {
-            callback(new Error('请输入正确的邮箱'));
+            callback(new Error(t('inputValidEmail')));
         } else {
             callback();
         }
@@ -34,7 +36,7 @@ function validateEmail(_rule: any, value: any, callback: any) {
 
 function validatePassword(_rule: any, value: any, callback: any) {
     if (value === '') {
-        callback(new Error('请输入密码'));
+        callback(new Error(t('inputPassword')));
     } else {
         callback();
     }
@@ -63,10 +65,10 @@ async function onSubmit() {
 <template>
     <section class="w-full">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="#" class="flex items-center mb-6 text-2xl font-semibold">欢迎访问HAYA</a>
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold">{{ $t('welcomeToHaya') }}</a>
             <div class="w-full rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">登录</h1>
+                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">{{ $t('login') }}</h1>
                     <el-form
                         class="space-y-4 md:space-y-6"
                         ref="formRef"
@@ -74,21 +76,25 @@ async function onSubmit() {
                         :model="formState"
                         label-position="top"
                     >
-                        <el-form-item label="邮箱" prop="email">
+                        <el-form-item :label="$t('email')" prop="email">
                             <el-input v-model="formState.email" type="email" />
                         </el-form-item>
 
-                        <el-form-item label="密码" prop="password">
+                        <el-form-item :label="$t('password')" prop="password">
                             <el-input v-model="formState.password" type="password" />
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button type="primary" size="large" class="w-full" @click="onSubmit"> 登录 </el-button>
+                            <el-button type="primary" size="large" class="w-full" @click="onSubmit">
+                                {{ $t('login') }}
+                            </el-button>
                         </el-form-item>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            还没有账号？
-                            <a href="/signup" class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                                >注册</a
+                            {{ $t('noAccountYet') }}
+                            <a
+                                href="/signup"
+                                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                                >{{ $t('signup') }}</a
                             >
                         </p>
                     </el-form>
