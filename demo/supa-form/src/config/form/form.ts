@@ -1,6 +1,5 @@
 import { type BaseConceptModel, Concept, ConfigItem, defineConcept, NonPrimitiveTypes } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
-import { inspect } from 'util';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
@@ -174,7 +173,7 @@ function fixMissingValueTypeForItem(item: ConfigItem, data: any) {
 
 function fixDataType(data: any, type: NonPrimitiveTypes) {
     if (typeof data === 'object' && !data.$type) {
-        console.log(`Fixing missing $type to "${type}" in ${inspect(data)}`);
+        console.log(`Fixing missing $type to "${type}" in ${JSON.stringify(data)}`);
         data.$type = type;
     }
 }
