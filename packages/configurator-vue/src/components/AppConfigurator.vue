@@ -6,11 +6,14 @@ import {
     DEFAULT_ASPECT,
     IMAGE_UPLOADER_KEY,
     ROOT_MODEL_KEY,
+    CONFIG_TRANSLATOR_KEY,
 } from '@/lib/constants';
 import type { AppInstance, BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
-import { provide, ref, watch } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 import ConceptStack from './ConceptStack.vue';
 import type { EditPathRecord, ImageUploader } from './types';
+import { useI18n, createI18n } from 'vue-i18n';
+import { getTranslator } from '@/lib/i18n';
 
 const activeAspect = ref(DEFAULT_ASPECT);
 
@@ -18,6 +21,8 @@ const props = defineProps<{
     app: AppInstance<Concept>;
     model: BaseConceptModel;
     imageUploader: ImageUploader;
+    localeMessages: Record<string, Record<string, string>>;
+    locale: string;
 }>();
 
 // v-model for currently selected concept instance
@@ -54,10 +59,24 @@ provide(CURRENT_SELECTION_KEY, selection);
 
 provide(IMAGE_UPLOADER_KEY, props.imageUploader);
 
+const configI18n = createI18n({ legacy: false, messages: props.localeMessages, locale: props.locale });
+
+const configTranslate = computed(() => getTranslator(configI18n as any));
+watch(
+    () => props.locale,
+    (value) => {
+        configI18n.global.locale.value = value;
+    }
+);
+
+provide(CONFIG_TRANSLATOR_KEY, configTranslate);
+
+const { t } = useI18n();
+
 const aspects = [
-    { label: '内容', aspect: 'content' },
-    { label: '设计', aspect: 'design' },
-    { label: '设置', aspect: 'setting' },
+    { label: t('content'), aspect: 'content' },
+    { label: t('design'), aspect: 'design' },
+    { label: t('settings'), aspect: 'setting' },
 ] as const;
 
 const onChange = (data: BaseConceptModel) => {

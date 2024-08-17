@@ -6,6 +6,7 @@ import { UploadRequestOptions } from 'element-plus';
 import { inject, ref, watch } from 'vue';
 import { ImageUploader } from '../types';
 import type { CommonEvents, CommonProps } from './common';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<CommonProps<ImageItem>>();
 
@@ -19,6 +20,8 @@ watch(
         _model.value = value?.url ?? '';
     }
 );
+
+const { t } = useI18n();
 
 const method = ref('upload');
 
@@ -43,8 +46,8 @@ const emitChange = () => {
     <el-form-item class="m-0 flex flex-col image-item-container w-full">
         <ItemLabel :item="item" :model="props.model" />
         <el-radio-group v-model="method" class="w-full mb-1">
-            <el-radio value="upload">上传</el-radio>
-            <el-radio value="url">提供地址</el-radio>
+            <el-radio value="upload">{{ t('upload') }}</el-radio>
+            <el-radio value="url">{{ t('provideURL') }}</el-radio>
         </el-radio-group>
 
         <el-upload
@@ -60,10 +63,12 @@ const emitChange = () => {
             </div>
             <el-image v-else :src="_model" class="w-full"
                 ><template #placeholder>
-                    <div>Loading...</div>
+                    <div>{{ t('loading') }}</div>
                 </template>
                 <template #error>
-                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center"><p>加载失败</p></div>
+                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center">
+                        <p>{{ t('failedToLoad') }}</p>
+                    </div>
                 </template>
             </el-image>
         </el-upload>
@@ -74,7 +79,9 @@ const emitChange = () => {
                     <div>Loading...</div>
                 </template>
                 <template #error>
-                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center"><p>加载失败</p></div>
+                    <div class="w-full h-32 bg-gray-200 flex items-center justify-center">
+                        <p>{{ t('failedToLoad') }}</p>
+                    </div>
                 </template>
             </el-image>
         </div>

@@ -52,6 +52,7 @@ export const getSchema = (item: ConfigItemBase, context: GetSchemaContext) => {
                 app: context.app,
                 rootModel: context.rootModel,
                 currentModel: context.parentModel,
+                ct: (key) => key,
             });
         } else {
             throw new Error('No condition or conditionProvider provided');

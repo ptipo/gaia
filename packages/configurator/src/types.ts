@@ -1,5 +1,6 @@
 import { AppInstance } from './app';
 import { Concept } from './concept';
+import { TranslationFunction } from './i18n';
 import { BaseConceptModel } from './inference';
 import { ValidationIssueCode } from './validation';
 
@@ -33,6 +34,11 @@ export type ProviderContext = {
      * The current context model
      */
     currentModel: any;
+
+    /**
+     * Function for translating texts in app config
+     */
+    ct: TranslationFunction;
 };
 
 /**

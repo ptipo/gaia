@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { CopyToClipboard, ImageElement, TextElement } from '../page-items';
 
 /**
@@ -6,21 +6,21 @@ import { CopyToClipboard, ImageElement, TextElement } from '../page-items';
  */
 export const CompletePage = defineConcept({
     name: 'CompletePage',
-    displayName: '结束页',
+    displayName: t`completePage`,
     description: 'Page for confirming form submission and thanking the user',
 
     items: {
         /**
          * 页面名称
          */
-        name: { type: 'text', name: '页面名称' },
+        name: { type: 'text', name: t`pageName` },
 
         /**
          * 页面内容项
          */
         pageItems: {
             type: 'has-many',
-            name: '内容项',
+            name: t`pageItem`,
             candidates: [TextElement, ImageElement, CopyToClipboard],
         },
     },

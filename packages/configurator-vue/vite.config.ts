@@ -45,7 +45,7 @@ export default defineConfig({
             fileName: 'index',
         },
         rollupOptions: {
-            external: ['vue', 'element-plus'],
+            external: ['vue', 'element-plus', 'vue-i18n'],
             output: {
                 globals: {
                     vue: 'Vue',
@@ -54,7 +54,7 @@ export default defineConfig({
             },
         },
         commonjsOptions: {
-            esmExternals: ['vue', 'element-plus'],
+            esmExternals: ['vue', 'element-plus', 'vue-i18n'],
         },
         sourcemap: true,
     },

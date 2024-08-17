@@ -1,4 +1,4 @@
-import { ConfigGroups, ConfigItem } from '@hayadev/configurator';
+import { ConfigGroups, ConfigItem, t } from '@hayadev/configurator';
 import { DynamicSelectOption } from '@hayadev/configurator/items';
 
 /**
@@ -8,12 +8,12 @@ export const QuestionCommonItems = {
     /**
      * 表单项名称
      */
-    name: { type: 'text', name: '表单项名称', required: true, groupKey: 'basic' },
+    name: { type: 'text', name: t`itemName`, required: true, groupKey: 'basic' },
 
     /**
      * 问题
      */
-    question: { type: 'text', name: '问题', groupKey: 'basic' },
+    question: { type: 'text', name: t`question`, groupKey: 'basic' },
 
     /**
      * 描述信息
@@ -21,14 +21,14 @@ export const QuestionCommonItems = {
     description: {
         type: 'text',
         guarded: true,
-        name: '描述',
+        name: t`description1`,
         groupKey: 'basic',
     },
 
     /**
      * 是否必填
      */
-    required: { type: 'switch', name: '必填', default: false, groupKey: 'basic' },
+    required: { type: 'switch', name: t`required`, default: false, groupKey: 'basic' },
 
     /**
      * 是否保存为用户标签
@@ -36,7 +36,7 @@ export const QuestionCommonItems = {
     saveAsUserTag: {
         type: 'dynamic-select',
         guarded: true,
-        name: '保存为用户标签',
+        name: t`saveAsUserTag`,
         multiple: true,
         allowCreate: true,
         groupKey: 'data',
@@ -52,21 +52,21 @@ export const QuestionCommonItems = {
  * 问题通用分组
  */
 export const QuestionCommonGroups = {
-    basic: { name: '基本设置', aspect: 'content' },
-    answer: { name: '回答', aspect: 'content' },
-    data: { name: '数据', aspect: 'content' },
+    basic: { name: t`basicSettings`, aspect: 'content' },
+    answer: { name: t`answer`, aspect: 'content' },
+    data: { name: t`data`, aspect: 'content' },
 } satisfies ConfigGroups;
 
 export const AlignmentItems = {
     align: {
         type: 'select',
-        name: '对齐方式',
+        name: t`alignment`,
         default: 'center',
         options: {
-            center: '居中',
-            left: '左对齐',
-            right: '右对齐',
+            center: t`centerAlign`,
+            left: t`leftAlign`,
+            right: t`rightAlign`,
         },
     },
-    maxWidth: { type: 'number', name: '最大宽度%', default: 100 },
+    maxWidth: { type: 'number', name: t`maxWidth%`, default: 100 },
 } satisfies Record<string, ConfigItem>;

@@ -7,6 +7,7 @@ import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 import LogicalGroupElement from './logical-group/LogicalGroupElement.vue';
 import { composeLogicalGroupData } from '@/lib/logical-group-utils';
+import { useI18n } from 'vue-i18n';
 
 type ModelType = Array<{
     $id: string;
@@ -31,6 +32,8 @@ watch(
         _model.value = transformModel(value);
     }
 );
+
+const { t } = useI18n();
 
 function transformModel(model: inferConfigItem<LogicalGroupItem>): ModelType {
     const result: ModelType = [];
@@ -105,7 +108,7 @@ const emitChange = () => {
                 @change="(data) => onElementChange(data, row.$id)"
                 @delete="() => onElementDelete(row.$id)"
             />
-            <el-button link @click="onAddCondition" class="self-start">+ 添加条件</el-button>
+            <el-button link @click="onAddCondition" class="self-start">+ {{ t('addCondition') }}</el-button>
         </div>
     </div>
 </template>

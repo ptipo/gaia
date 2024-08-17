@@ -1,21 +1,21 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 
 /**
  * 文本元素
  */
 export const TextCheckElement = defineConcept({
     name: 'TextCheckElement',
-    displayName: '隐私协议',
+    displayName: t`privacyTerms`,
 
     items: {
         /**
          * 内容
          */
-        content: { type: 'text', name: '内容', richText: true },
+        content: { type: 'text', name: t`content`, richText: true },
 
         /**
          * 开启
          */
-        defaultSelected: { type: 'switch', name: '默认选中' },
+        defaultSelected: { type: 'switch', name: t`defaultSelected` },
     },
 });

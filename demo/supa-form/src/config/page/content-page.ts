@@ -2,12 +2,14 @@ import {
     BaseConceptModel,
     Concept,
     ProviderContext,
+    TranslationFunction,
     ValidationIssue,
     ValidationIssueCode,
     cloneConceptModel,
     defineConcept,
     incrementName,
     inferPartialConcept,
+    t,
 } from '@hayadev/configurator';
 import { match } from 'ts-pattern';
 import { AllPageItems } from '../page-items';
@@ -18,21 +20,21 @@ import { NextButton } from './next-button';
  */
 export const ContentPage = defineConcept({
     name: 'ContentPage',
-    displayName: '表单页',
+    displayName: t`contentPage`,
     description: 'Page for collecting user input',
 
     items: {
         /**
          * 页面名称
          */
-        name: { type: 'text', name: '页面名称' },
+        name: { type: 'text', name: t`pageName` },
 
         /**
          * 页面内容项
          */
         pageItems: {
             type: 'has-many',
-            name: '内容项',
+            name: t`pageItem`,
             candidates: AllPageItems,
             newItemProvider,
             cloneItemProvider,
@@ -43,7 +45,7 @@ export const ContentPage = defineConcept({
          */
         nextButton: {
             type: 'has',
-            name: '下一步',
+            name: t`next`,
             concept: NextButton,
             inline: true,
         },
@@ -51,28 +53,28 @@ export const ContentPage = defineConcept({
 
     selectable: true,
 
-    validate: (model) => {
+    validate: (model, ct) => {
         const issues: ValidationIssue[] = [];
-        issues.push(...validateDuplicatedQuestionNames(model as inferPartialConcept<typeof ContentPage>));
+        issues.push(...validateDuplicatedQuestionNames(model as inferPartialConcept<typeof ContentPage>, ct));
         return issues;
     },
 });
 
 // 根据不同的内容项类型，生成默认带自增序号的名称
 function newItemProvider(concept: Concept, context: ProviderContext) {
-    const { app, currentModel } = context;
+    const { app, currentModel, ct } = context;
 
     const mappedName = match(concept.name)
-        .with('QAQuestion', () => '问答')
-        .with('ChoiceQuestion', () => '选择')
-        .with('EmailQuestion', () => '邮件')
-        .with('DateQuestion', () => '日期')
+        .with('QAQuestion', () => ct(t`qa`))
+        .with('ChoiceQuestion', () => ct(t`choice`))
+        .with('EmailQuestion', () => ct(t`email`))
+        .with('DateQuestion', () => ct(t`date`))
         .otherwise(() => undefined);
 
     if (!mappedName) {
         // 非问题类内容
         return app.createConceptInstance(concept, {
-            name: concept.displayName,
+            name: context.ct(concept.displayName),
         });
     }
 
@@ -91,7 +93,7 @@ function cloneItemProvider(_concept: Concept, source: BaseConceptModel, context:
     const newName = incrementName(
         result.name as string,
         context.currentModel?.map((question: any) => question.name) ?? [],
-        { suffix: '副本' }
+        { suffix: context.ct(t`clonedCopy`) }
     );
     result.name = newName;
     result.question = newName;
@@ -99,7 +101,7 @@ function cloneItemProvider(_concept: Concept, source: BaseConceptModel, context:
 }
 
 // 校验问题名称是否重复
-function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof ContentPage>) {
+function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof ContentPage>, ct: TranslationFunction) {
     const issues: ValidationIssue[] = [];
     const knownQuestionNames = new Set<string>();
 
@@ -112,7 +114,7 @@ function validateDuplicatedQuestionNames(model: inferPartialConcept<typeof Conte
             if (knownQuestionNames.has(name)) {
                 issues.push({
                     code: ValidationIssueCode.InvalidValue,
-                    message: `问题名称"${name}"重复`,
+                    message: ct(t`duplicatedQuestionName`) + `: ${name}`,
                     path: ['pageItems', index, 'name'],
                 });
             } else {

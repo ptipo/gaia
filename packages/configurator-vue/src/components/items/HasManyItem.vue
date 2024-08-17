@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { APP_KEY, CONFIG_TRANSLATOR_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
 import { confirmDelete } from '@/lib/message';
 import {
     cloneConceptModel,
     incrementName,
-    type SelectionData,
+    ProviderContext,
+    TranslationFunction,
     type AppInstance,
     type BaseConceptModel,
     type Concept,
+    type SelectionData,
 } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
 import { v4 as uuid } from 'uuid';
-import { computed, inject, ref, watch, type Ref } from 'vue';
+import { computed, inject, ref, unref, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData } from '../types';
 import ItemLabel from './ItemLabel.vue';
@@ -60,6 +64,8 @@ watch(
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION_KEY);
+const { t } = useI18n();
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 // draggable state changed
 const onDragChanged = () => {
@@ -129,11 +135,13 @@ const onCloneElement = (index: number) => {
     let cloned: BaseConceptModel;
 
     if (props.item.cloneItemProvider) {
-        cloned = props.item.cloneItemProvider?.(concept, elementModel, {
-            app,
-            rootModel: rootModel?.value,
+        const context: ProviderContext = {
+            app: app!,
+            rootModel: rootModel!.value,
             currentModel: props.model,
-        });
+            ct: unref(ct),
+        };
+        cloned = props.item.cloneItemProvider?.(concept, elementModel, context);
     } else {
         cloned = cloneConceptModel(elementModel);
         if (typeof cloned.name === 'string') {
@@ -158,11 +166,10 @@ const onDeleteElement = async (index: number) => {
     if (!elementConcept) {
         return;
     }
-    if (
-        await confirmDelete(
-            typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName
-        )
-    ) {
+
+    const name =
+        typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName;
+    if (await confirmDelete(t('confirmDeleteName', { name: unref(ct)(name) }), t('confirmDelete'))) {
         _model.value.splice(index, 1);
         emitChange();
     }
@@ -194,7 +201,7 @@ watch(selectedElement, (value) => {
         // scroll the selected element into view
         const el = document.querySelector(`.concept-element-${thisInstanceId}-${_model.value.indexOf(value)}`);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: "nearest", inline: "nearest" });
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }
 });
@@ -209,28 +216,48 @@ const reachedMaxItems = computed(() => {
         <ItemLabel v-if="!inline" :item="item" :model="props.model" :parent-model="props.parentModel" />
 
         <!-- draggable element list -->
-        <draggable class="flex flex-col gap-2" handle=".handle" v-model="_model" :group="draggableGroup" item-key="$id"
-            @change="onDragChanged">
+        <draggable
+            class="flex flex-col gap-2"
+            handle=".handle"
+            v-model="_model"
+            :group="draggableGroup"
+            item-key="$id"
+            @change="onDragChanged"
+        >
             <template #item="{ element, index }">
-                <div :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
-                    class="flex items-center w-full">
+                <div
+                    :class="{ 'border rounded p-3': !inline, 'border-blue-600': isSelected(element) }"
+                    class="flex items-center w-full"
+                >
                     <div class="flex-grow" :class="`concept-element-${thisInstanceId}-${index}`">
-                        <ConceptElement v-if="findConcept(element.$concept)" :concept="findConcept(element.$concept)"
-                            :key="element.$id" :model="element" :parent="props.item" :inlineEditing="item.inline"
-                            :allowDelete="_model.length > 1" :allowClone="!reachedMaxItems"
+                        <ConceptElement
+                            v-if="findConcept(element.$concept)"
+                            :concept="findConcept(element.$concept)"
+                            :key="element.$id"
+                            :model="element"
+                            :parent="props.item"
+                            :inlineEditing="item.inline"
+                            :allowDelete="_model.length > 1"
+                            :allowClone="!reachedMaxItems"
                             :allowAddSibling="!reachedMaxItems"
                             @add-sibling="(data: ConceptModelPair) => onAddSibling(index, data)"
-                            @clone="() => onCloneElement(index)" @delete="() => onDeleteElement(index)"
+                            @clone="() => onCloneElement(index)"
+                            @delete="() => onDeleteElement(index)"
                             @enter="(data: EnterConceptData) => onEnterConcept(data, index)"
                             @change="(data: BaseConceptModel) => onChangeElement(data, index)"
-                            @selected="(data: ConceptModelPair) => onElementSelected(data)" />
+                            @selected="(data: ConceptModelPair) => onElementSelected(data)"
+                        />
                     </div>
                 </div>
             </template>
         </draggable>
 
         <!-- footer button -->
-        <CreateCandidateButton v-if="showCreateButton && !reachedMaxItems" :name="item.name"
-            :candidates="item.candidates" @create="onCreate" />
+        <CreateCandidateButton
+            v-if="showCreateButton && !reachedMaxItems"
+            :name="ct(item.name ?? '')"
+            :candidates="item.candidates"
+            @create="onCreate"
+        />
     </div>
 </template>

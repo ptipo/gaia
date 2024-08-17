@@ -90,7 +90,7 @@ const { data: userData } = useFindUniqueUser({
     where: { id: user?.value?.id },
 });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
@@ -115,6 +115,8 @@ const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
 
 const serializeConfig = () => JSON.stringify({ appVersion: appInstance.value?.version, model: model.value });
+
+const localeMessages = ref<Record<string, Record<string, string>>>({});
 
 const initializeApp = async (app: App) => {
     if (appEl.value) {
@@ -144,6 +146,8 @@ const initializeApp = async (app: App) => {
 
         // create app instance
         appInstance.value = createAppInstance(module.config, version);
+        localeMessages.value = module.locales;
+        console.log('App locale messages:', localeMessages.value ? Object.keys(localeMessages.value) : undefined);
     } catch (err) {
         error(t('unableToLoadAppBundle', { error: err }));
         hasError.value = true;
@@ -613,6 +617,8 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 <AppConfigurator
                     :app="appInstance"
                     :model="model"
+                    :locale-messages="localeMessages"
+                    :locale="locale"
                     v-model:editPath="editPath"
                     v-model:selection="selection"
                     :image-uploader="uploadImage"

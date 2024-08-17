@@ -3,9 +3,9 @@ import { ElMessageBox } from 'element-plus';
 /**
  * Confirm for deletion
  */
-export async function confirmDelete(name: string) {
+export async function confirmDelete(message: string, title: string) {
     try {
-        await ElMessageBox.confirm(`确定删除"${name}"吗？`, '删除确认');
+        await ElMessageBox.confirm(message, title);
         return true;
     } catch {
         return false;

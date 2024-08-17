@@ -124,6 +124,8 @@ const uploadImage = async (file: File) => {
             <AppConfigurator
                 :app="app"
                 :model="model"
+                locale="en"
+                :locale-messages="{ en: {} }"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
                 :image-uploader="uploadImage"

@@ -1,4 +1,4 @@
-import { type BaseConceptModel, Concept, ConfigItem, defineConcept, NonPrimitiveTypes } from '@hayadev/configurator';
+import { type BaseConceptModel, Concept, ConfigItem, defineConcept, t, NonPrimitiveTypes } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
@@ -11,15 +11,15 @@ import { LanguageSetting } from './language-setting';
  */
 export const Form = defineConcept({
     name: 'Form',
-    displayName: '表单',
+    displayName: t`form`,
     description: 'Survey form',
 
     groups: {
-        contentPages: { name: '表单页', aspect: 'content' },
-        completePages: { name: '结束页', aspect: 'content' },
-        language: { name: '语言', aspect: 'setting' },
-        dataCollection: { name: '表单信息收集', aspect: 'setting' },
-        style: { name: '样式', aspect: 'design' },
+        contentPages: { name: t`contentPage`, aspect: 'content' },
+        completePages: { name: t`completePage`, aspect: 'content' },
+        language: { name: t`language`, aspect: 'setting' },
+        dataCollection: { name: t`dataCollection`, aspect: 'setting' },
+        style: { name: t`styles`, aspect: 'design' },
     },
 
     items: {
@@ -28,7 +28,7 @@ export const Form = defineConcept({
          */
         contentPages: {
             type: 'has-many',
-            name: '表单页',
+            name: t`contentPage`,
             description: 'Pages for collecting user input',
             required: true,
             candidates: [ContentPage],
@@ -38,11 +38,11 @@ export const Form = defineConcept({
                 const { app, currentModel } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(ContentPage, {
-                    name: `表单页${existing.length + 1}`,
+                    name: `${t`contentPage`}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(ChoiceQuestion, {
-                            name: '选择1',
-                            question: '选择1',
+                            name: `${t`choice`}1`,
+                            question: `${t`choice`}1`,
                         }),
                     ],
                 });
@@ -54,7 +54,7 @@ export const Form = defineConcept({
          */
         completePages: {
             type: 'has-many',
-            name: '结束页',
+            name: t`completePage`,
             description: 'Pages for confirming form submission and thanking the user',
             candidates: [CompletePage],
             inline: true,
@@ -63,16 +63,16 @@ export const Form = defineConcept({
                 const { app, currentModel } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(CompletePage, {
-                    name: `结束页${existing.length + 1}`,
+                    name: `${t`completePage`}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(TextElement, {
-                            content: '标题',
+                            content: t`title`,
                         }),
                         app.createConceptInstance(ImageElement, {
                             image: { $type: 'image' },
                         }),
                         app.createConceptInstance(TextElement, {
-                            content: '说明文字',
+                            content: t`description`,
                         }),
                     ],
                 });
@@ -94,7 +94,7 @@ export const Form = defineConcept({
          */
         customCSS: {
             type: 'code',
-            name: '自定义CSS',
+            name: t`customCSS`,
             language: CodeLanguage.CSS,
             groupKey: 'style',
         },

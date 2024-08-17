@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 import { ConditionalAction } from './conditional-action';
 
@@ -8,9 +8,9 @@ import { ConditionalAction } from './conditional-action';
 export const NextButton = defineConcept({
     name: 'NextButton',
 
-    displayName: '下一步',
+    displayName: t`next`,
 
-    groups: { basic: { name: '基本设置' }, action: { name: '动作设置' } },
+    groups: { basic: { name: t`basicSettings` }, action: { name: t`actionSettings` } },
 
     items: {
         /**
@@ -18,12 +18,12 @@ export const NextButton = defineConcept({
          */
         action: {
             type: 'select',
-            name: '点击按钮时',
+            name: t`whenClicked`,
             default: 'next',
             options: {
-                next: '前往下一页',
-                goToPage: '前往指定页面',
-                conditional: '根据回答，执行不同动作',
+                next: t`gotoNextPage`,
+                goToPage: t`gotoSpecificPage`,
+                conditional: t`runConditionalActions`,
             },
             groupKey: 'action',
         },
@@ -40,7 +40,7 @@ export const NextButton = defineConcept({
 
             child: {
                 type: 'dynamic-select',
-                name: '前往页面',
+                name: t`gotoPage`,
                 description: 'Page to go when the button is clicked. Value must be a reference to an existing page.',
                 required: true,
 
@@ -63,7 +63,7 @@ export const NextButton = defineConcept({
 
             child: {
                 type: 'has-many',
-                name: '条件和动作',
+                name: t`conditionAndAction`,
                 required: true,
                 candidates: [ConditionalAction],
             },
