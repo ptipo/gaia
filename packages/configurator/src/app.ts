@@ -152,6 +152,7 @@ export class AppInstance<TConcept extends Concept> {
             currentModel: model,
             parentModel: undefined,
             autoFix,
+            ct: (key) => key, // TODO: translation
         });
         const { error, data } = schema.safeParse(model);
         if (error) {

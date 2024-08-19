@@ -1,4 +1,4 @@
-import { AppInstance, Concept, defineConcept } from '@hayadev/configurator';
+import { AppInstance, Concept, defineConcept, t } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 import { ImageChoice } from './image-choice';
 import { TextChoice } from './text-choice';
@@ -8,9 +8,13 @@ import { TextChoice } from './text-choice';
  */
 export const ChoiceQuestion = defineConcept({
     name: 'ChoiceQuestion',
-    displayName: '选择题',
+    displayName: t`choiceQuestion`,
 
-    groups: { basic: QuestionCommonGroups.basic, choice: { name: '选项' }, data: QuestionCommonGroups.data },
+    groups: {
+        basic: QuestionCommonGroups.basic,
+        choice: { name: t`choiceOption` },
+        data: QuestionCommonGroups.data,
+    },
 
     items: {
         ...QuestionCommonItems,
@@ -20,10 +24,10 @@ export const ChoiceQuestion = defineConcept({
          */
         kind: {
             type: 'select',
-            name: '类型',
+            name: t`type`,
             required: true,
             default: 'single',
-            options: { single: '单选', multiple: '多选' },
+            options: { single: t`singleChoice`, multiple: t`multiChoice` },
             groupKey: 'choice',
         },
 
@@ -32,10 +36,10 @@ export const ChoiceQuestion = defineConcept({
          */
         choiceKind: {
             type: 'select',
-            name: '选项类型',
+            name: t`choiceType`,
             required: true,
             default: 'text',
-            options: { text: '文字选项', image: '图片选项' },
+            options: { text: t`textOption`, image: t`imageOption` },
             groupKey: 'choice',
         },
 
@@ -51,7 +55,7 @@ export const ChoiceQuestion = defineConcept({
 
             child: {
                 type: 'switch',
-                name: '显示选项文字',
+                name: t`showOptionText`,
                 groupKey: 'choice',
                 default: true,
             },
@@ -74,7 +78,7 @@ export const ChoiceQuestion = defineConcept({
 
             child: {
                 type: 'has-many',
-                name: '文字选项',
+                name: t`textOption`,
                 required: true,
                 candidates: [TextChoice],
 
@@ -109,7 +113,7 @@ export const ChoiceQuestion = defineConcept({
 
             child: {
                 type: 'has-many',
-                name: '图片选项',
+                name: t`imageOption`,
                 required: true,
                 candidates: [ImageChoice],
 
@@ -140,7 +144,7 @@ export const ChoiceQuestion = defineConcept({
 
             child: {
                 type: 'dynamic-select',
-                name: '限制选项数',
+                name: t`limitNumberOfChoices`,
 
                 // 根据当前选项数计算候选项: 1, 2, 3, [总选项数]
                 provider: ({ currentModel }) => {
@@ -163,7 +167,7 @@ export const ChoiceQuestion = defineConcept({
          */
         randomOrder: {
             type: 'switch',
-            name: '随机顺序',
+            name: t`randomOrder`,
             groupKey: 'choice',
         },
 
@@ -172,7 +176,7 @@ export const ChoiceQuestion = defineConcept({
          */
         flatMode: {
             type: 'switch',
-            name: '平铺选项',
+            name: t`flatLayout`,
             groupKey: 'choice',
         },
     },
@@ -183,8 +187,8 @@ export const ChoiceQuestion = defineConcept({
         textChoices: makeDefaultTextChoices(app),
     }),
 
-    summary: ({ currentModel }) => {
-        return `${currentModel?.name || '选择'} ${currentModel?.required ? '*' : ''}`;
+    summary: ({ currentModel, ct }) => {
+        return `${currentModel?.name || ct(t`choice`)} ${currentModel?.required ? '*' : ''}`;
     },
 
     onModelChange: (model, key, data) => {

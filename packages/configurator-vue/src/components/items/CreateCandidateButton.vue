@@ -1,7 +1,11 @@
 <script setup lang="ts">
 // A "create" button for creating a new item from a list of concept candidates
 
-import type { Concept } from '@hayadev/configurator';
+import { CONFIG_TRANSLATOR_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import type { Concept, TranslationFunction } from '@hayadev/configurator';
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
     name: string;
@@ -11,6 +15,9 @@ defineProps<{
 defineEmits<{
     (e: 'create', data: Concept): void;
 }>();
+
+const { t } = useI18n();
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 </script>
 
 <template>
@@ -21,15 +28,17 @@ defineEmits<{
         type="info"
         class="self-start"
         @click="() => $emit('create', candidates[0])"
-        >+ 添加{{ name }}</el-button
+        ><el-icon><i-ep-plus /></el-icon> {{ t('addNew', { name: ct(name) }) }}</el-button
     >
     <!-- otherwise show a menu of candidates -->
     <el-dropdown trigger="click" v-else>
-        <el-button link type="info" class="self-start">+ 添加{{ name }}</el-button>
+        <el-button link type="info" class="self-start"
+            ><el-icon><i-ep-plus /></el-icon> {{ t('addNew', { name: ct(name) }) }}</el-button
+        >
         <template #dropdown>
             <el-dropdown-menu>
                 <el-dropdown-item v-for="candidate in candidates" @click="() => $emit('create', candidate)">{{
-                    candidate.displayName
+                    ct(candidate.displayName)
                 }}</el-dropdown-item>
             </el-dropdown-menu>
         </template>

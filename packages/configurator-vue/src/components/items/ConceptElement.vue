@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import DragAnchor from '@/assets/icon/drag-anchor.svg';
 import { getItemComponent } from '@/lib/component';
-import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import type { AppInstance, BaseConceptModel, Concept, ConfigItem } from '@hayadev/configurator';
+import { APP_KEY, CONFIG_TRANSLATOR_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import type {
+    AppInstance,
+    BaseConceptModel,
+    Concept,
+    ConfigItem,
+    ProviderContext,
+    TranslationFunction,
+} from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
 import type { DropdownInstance } from 'element-plus';
-import { Ref, computed, inject, ref, watch } from 'vue';
+import { computed, inject, Ref, ref, unref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { ConceptModelPair, EnterConceptData } from '../types';
 import HasManyItemComponent from './HasManyItem.vue';
 
@@ -92,6 +101,9 @@ const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 // mutable model
 const _model = ref<BaseConceptModel>({ ...props.model });
 
+const { t } = useI18n();
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
+
 // showing secondary-level menu
 const showCandidateCreateMenu = ref(false);
 
@@ -115,6 +127,7 @@ const elementSummary = computed(() => {
             app: app!,
             rootModel: rootModel?.value!,
             currentModel: props.model,
+            ct: unref(ct),
         });
     }
     return props.model.name ?? props.concept.displayName ?? props.concept.name;
@@ -188,10 +201,12 @@ const onCreateNestedHasManyItem = (concept: Concept) => {
     const parentKey = nestedHasMany.value.key;
     const currentModel = _model.value[parentKey] as BaseConceptModel[];
     const currentModelLength = currentModel.length;
-    const context = {
+
+    const context: ProviderContext = {
         app: app!,
         currentModel,
-        rootModel: rootModel?.value,
+        rootModel: rootModel!.value,
+        ct: unref(ct),
     };
 
     // call new item provider if available
@@ -278,8 +293,8 @@ const closeMenu = () => {
             }"
         >
             <div class="flex-grow" @click="onClickNested">
-                <span v-if="elementSummary">{{ elementSummary }}</span
-                ><span v-else class="italic text-gray-600">未命名</span>
+                <span v-if="elementSummary">{{ ct(elementSummary as string) }}</span
+                ><span v-else class="italic text-gray-600">{{ t('unnamed') }}</span>
             </div>
             <el-dropdown
                 trigger="click"
@@ -293,7 +308,7 @@ const closeMenu = () => {
                 "
             >
                 <el-icon class="hidden group-hover:block">
-                    <el-tooltip content="拖拽移动，点击打开菜单" placement="top" :show-after="600">
+                    <el-tooltip :content="t('dragMoveClickMenu')" placement="top" :show-after="600">
                         <img class="handle" :src="DragAnchor" />
                     </el-tooltip>
                 </el-icon>
@@ -304,22 +319,27 @@ const closeMenu = () => {
                                 <el-dropdown-item
                                     v-for="{ key, item } in inlineEditableItems"
                                     @click="onEdit(key, item)"
-                                    ><el-icon><i-ep-edit /></el-icon> {{ item.name }}</el-dropdown-item
+                                    ><el-icon><i-ep-edit /></el-icon> {{ ct(item.name ?? '') }}</el-dropdown-item
                                 >
                             </div>
                             <div v-else>
                                 <el-dropdown-item @click="onEditNested"
-                                    ><el-icon><i-ep-edit /></el-icon> 设置</el-dropdown-item
+                                    ><el-icon><i-ep-edit /></el-icon> {{ t('settings') }}</el-dropdown-item
                                 >
                             </div>
                             <el-dropdown-item
                                 v-if="parent.candidates.length === 1"
                                 :disabled="!allowAddSibling"
                                 @click="() => onAddSibling(parent.candidates[0])"
-                                ><el-icon><i-ep-plus /></el-icon>在下方添加{{
-                                    parent.candidates.length === 1 ? concept.displayName : parent.name
-                                }}</el-dropdown-item
-                            >
+                                ><el-icon><i-ep-plus /></el-icon>
+                                {{
+                                    t('addBelow', {
+                                        name: ct(
+                                            parent.candidates.length === 1 ? concept.displayName : parent.name ?? ''
+                                        ),
+                                    })
+                                }}
+                            </el-dropdown-item>
                             <el-dropdown-item
                                 v-else
                                 divided
@@ -329,16 +349,21 @@ const closeMenu = () => {
                                         showCandidateCreateMenu = true;
                                     }
                                 "
-                                ><el-icon><i-ep-plus /></el-icon>在下方添加{{
-                                    parent.candidates.length === 1 ? concept.displayName : parent.name
-                                }}</el-dropdown-item
-                            >
+                                ><el-icon><i-ep-plus /></el-icon>
+                                {{
+                                    t('addBelow', {
+                                        name: ct(
+                                            parent.candidates.length === 1 ? concept.displayName : parent.name ?? ''
+                                        ),
+                                    })
+                                }}
+                            </el-dropdown-item>
 
                             <el-dropdown-item divided :disabled="!allowClone" @click="() => onClone({ concept, model })"
-                                ><el-icon><i-ep-document-copy /></el-icon>复制</el-dropdown-item
+                                ><el-icon><i-ep-document-copy /></el-icon>{{ t('clone') }}</el-dropdown-item
                             >
                             <el-dropdown-item @click="() => onDelete({ concept, model })"
-                                ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
+                                ><el-icon><i-ep-delete /></el-icon>{{ t('delete') }}</el-dropdown-item
                             >
                         </template>
                         <!-- showing candidate create menu items -->
@@ -348,7 +373,7 @@ const closeMenu = () => {
                                 :key="candidate.name"
                                 @click="() => onAddSibling(candidate)"
                             >
-                                {{ candidate.displayName ?? candidate.name }}
+                                {{ ct(candidate.displayName ?? candidate.name) }}
                             </el-dropdown-item>
                         </template>
                     </el-dropdown-menu>
@@ -393,7 +418,7 @@ const closeMenu = () => {
         <el-dialog
             v-model="showEditDialog"
             v-if="currentEditItem"
-            :title="`修改${currentEditItem.item.name}`"
+            :title="t('update', { name: ct(currentEditItem.item.name ?? '') })"
             width="500"
         >
             <component
@@ -405,8 +430,8 @@ const closeMenu = () => {
             ></component>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="onCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="onSaveEdit">确定</el-button>
+                    <el-button @click="onCancelEdit">{{ t('cancel') }}</el-button>
+                    <el-button type="primary" @click="onSaveEdit">{{ t('confirm') }}</el-button>
                 </div>
             </template>
         </el-dialog>

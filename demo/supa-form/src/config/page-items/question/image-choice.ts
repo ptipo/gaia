@@ -1,15 +1,15 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 /**
  * 图片选项
  */
 export const ImageChoice = defineConcept({
     name: 'ImageChoice',
-    displayName: '图片选项',
+    displayName: t`imageOption`,
 
     items: {
         name: {
             type: 'text',
-            name: '选项',
+            name: t`choiceOption`,
             required: true,
         },
 
@@ -18,7 +18,7 @@ export const ImageChoice = defineConcept({
          */
         value: {
             type: 'image',
-            name: '图片',
+            name: t`image`,
             default: 'https://comp.ptengine.com/res/placeholder-md.svg',
             required: true,
         },
@@ -28,7 +28,7 @@ export const ImageChoice = defineConcept({
          */
         defaultSelected: {
             type: 'switch',
-            name: '默认选中',
+            name: t`defaultSelected`,
         },
     },
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept, ConfigItem, SelectionData } from '@hayadev/configurator';
+import { CONFIG_TRANSLATOR_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import type { BaseConceptModel, Concept, ConfigItem, SelectionData, TranslationFunction } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import ConceptConfigurator from './ConceptConfigurator.vue';
 import type { EditPathRecord, EnterConceptData } from './types';
 
@@ -26,6 +28,8 @@ const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
     (e: 'selectionChange', data: SelectionData): void;
 }>();
+
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 type StackItem = {
     concept: Concept;
@@ -195,7 +199,7 @@ const goBack = () => {
 <template>
     <div class="h-full overflow-auto">
         <el-page-header v-if="parentConcept" @back="goBack" class="mb-4">
-            <template #title>{{ currentConcept.displayName }}</template>
+            <template #title>{{ ct(currentConcept.displayName) }}</template>
         </el-page-header>
         <ConceptConfigurator
             :concept="currentConcept"

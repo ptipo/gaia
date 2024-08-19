@@ -6,6 +6,7 @@ import { inject, onMounted, ref, watch, type Ref } from 'vue';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 import { useGuard } from './guard';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<
     CommonProps<DynamicSelectItem<any>> & {
@@ -18,6 +19,8 @@ const emit = defineEmits<CommonEvents<DynamicSelectItem<any>>>();
 const _model = ref();
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
+
+const { t } = useI18n();
 
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
@@ -100,7 +103,7 @@ const onChange = (data: any) => {
             default-first-option
             filterable
             :reserve-keyword="false"
-            placeholder="请选择"
+            :placeholder="t('pleaseSelect')"
             value-key="key"
             @change="onChange"
         >

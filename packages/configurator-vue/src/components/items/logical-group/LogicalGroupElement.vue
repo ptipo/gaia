@@ -8,6 +8,7 @@ import type {
     LogicalRightOperandCandidates,
 } from '@hayadev/configurator/items';
 import { Ref, computed, inject, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 type ModelType = {
     groupOperator?: 'and' | 'or';
@@ -29,6 +30,8 @@ const emit = defineEmits<{
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+
+const { t } = useI18n();
 
 // options
 const leftOperandOptions = ref<LogicalLeftOperandCandidates>();
@@ -211,7 +214,7 @@ const checkEmitChange = () => {
 <template>
     <div class="flex flex-col gap-2">
         <div v-if="groupOperator" class="w-20">
-            <el-select v-model="groupOperator" placeholder="请选择" @change="checkEmitChange">
+            <el-select v-model="groupOperator" :placeholder="t('pleaseSelect')" @change="checkEmitChange">
                 <el-option label="并且" value="and" />
                 <el-option label="或" value="or" />
             </el-select>
@@ -219,7 +222,12 @@ const checkEmitChange = () => {
         <div class="w-full flex items-center">
             <el-form class="flex flex-grow gap-1 justify-between">
                 <!-- left operand -->
-                <el-select placeholder="请选择" value-key="key" v-model="left" @change="onLeftOperandChange">
+                <el-select
+                    :placeholder="t('pleaseSelect')"
+                    value-key="key"
+                    v-model="left"
+                    @change="onLeftOperandChange"
+                >
                     <el-option-group v-for="group in leftOperandOptionsGroups" :label="group" :key="group">
                         <el-option
                             v-for="option in getLeftOperandOptionsByGroup(group)"
@@ -233,7 +241,7 @@ const checkEmitChange = () => {
                 <!-- operator -->
                 <el-select
                     :disabled="!left"
-                    :placeholder="left ? '请选择' : '--'"
+                    :placeholder="left ? t('pleaseSelect') : '--'"
                     v-model="operator"
                     @change="onOperatorChange"
                 >
@@ -248,7 +256,7 @@ const checkEmitChange = () => {
                 <!-- right operand -->
                 <el-select
                     v-if="rightOperandOptions?.kind === 'select'"
-                    placeholder="请选择"
+                    :placeholder="t('pleaseSelect')"
                     :multiple="rightOperandOptions?.multiple"
                     v-model="right"
                     value-key="key"
@@ -276,7 +284,7 @@ const checkEmitChange = () => {
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="$emit('delete')"
-                                ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
+                                ><el-icon><i-ep-delete /></el-icon>{{ t('delete') }}</el-dropdown-item
                             >
                         </el-dropdown-menu>
                     </template>

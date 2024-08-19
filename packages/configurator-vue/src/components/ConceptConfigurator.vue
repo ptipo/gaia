@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { getItemComponent } from '@/lib/component';
-import { CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
-import type { BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
+import { CONFIG_TRANSLATOR_KEY, CURRENT_ASPECT_KEY, DEFAULT_ASPECT } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import type { BaseConceptModel, Concept, SelectionData, TranslationFunction } from '@hayadev/configurator';
 import { computed, defineAsyncComponent, inject, ref, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { EnterConceptData } from './types';
 
 const props = withDefaults(
@@ -30,6 +32,9 @@ const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
     (e: 'selectionChange', data: SelectionData): void;
 }>();
+
+const { t } = useI18n();
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 const currentAspect = inject<Ref<string>>(CURRENT_ASPECT_KEY);
 
@@ -102,11 +107,11 @@ const childComponents = computed(() => {
 
 <template>
     <div class="flex flex-col gap-4 pb-4">
-        <div v-if="groups.length === 0" class="text-gray-500">没有该类别的配置项</div>
+        <div v-if="groups.length === 0" class="text-gray-500">{{ t('noConfigItems') }}</div>
         <div v-for="(group, index) in groups">
             <div v-if="group.items.length > 0">
                 <el-divider v-if="index > 0" class="mt-1 mb-4" />
-                <div class="text-gray-500 mb-4">{{ group.name }}</div>
+                <div class="text-gray-500 mb-4">{{ ct(group.name) }}</div>
                 <div class="flex flex-col gap-4">
                     <div v-for="[key, item] in group.items" :key="key">
                         <component

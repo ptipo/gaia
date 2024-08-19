@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 
 /**
@@ -6,7 +6,7 @@ import { QuestionCommonGroups, QuestionCommonItems } from '../common';
  */
 export const QAQuestion = defineConcept({
     name: 'QAQuestion',
-    displayName: '问答题',
+    displayName: t`qaQuestion`,
 
     groups: {
         ...QuestionCommonGroups,
@@ -21,8 +21,8 @@ export const QAQuestion = defineConcept({
         placeholder: {
             type: 'text',
             guarded: true,
-            name: '提示语（Placeholder）',
-            help: 'Placeholder，帮助用户简单理解操作要求或呼吁用户行动',
+            name: t`placeholder`,
+            help: t`placeholderHelp`,
             groupKey: 'answer',
         },
 
@@ -32,13 +32,13 @@ export const QAQuestion = defineConcept({
         default: {
             type: 'text',
             guarded: true,
-            name: '预置内容',
-            help: '在用户未填写的情况下预置部分内容，常用于提供填写格式模板',
+            name: t`prefilledContent`,
+            help: t`prefilledContentHelp`,
             groupKey: 'answer',
         },
     },
 
-    summary: ({ currentModel }) => {
-        return `${currentModel?.name || '问答'} ${currentModel?.required ? '*' : ''}`;
+    summary: ({ currentModel, ct }) => {
+        return `${currentModel?.name || ct(t`qa`)} ${currentModel?.required ? '*' : ''}`;
     },
 });

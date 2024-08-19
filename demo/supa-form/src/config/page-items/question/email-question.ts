@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 
 /**
@@ -6,7 +6,7 @@ import { QuestionCommonGroups, QuestionCommonItems } from '../common';
  */
 export const EmailQuestion = defineConcept({
     name: 'EmailQuestion',
-    displayName: '邮件',
+    displayName: t`email`,
 
     groups: QuestionCommonGroups,
 
