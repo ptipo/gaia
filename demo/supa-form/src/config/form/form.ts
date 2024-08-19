@@ -35,14 +35,14 @@ export const Form = defineConcept({
             inline: true,
             groupKey: 'contentPages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel } = context;
+                const { app, currentModel, ct } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(ContentPage, {
                     name: `${t`contentPage`}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(ChoiceQuestion, {
-                            name: `${t`choice`}1`,
-                            question: `${t`choice`}1`,
+                            name: `${ct(t`choice`)}1`,
+                            question: `${ct(t`choice`)}1`,
                         }),
                     ],
                 });
@@ -60,19 +60,19 @@ export const Form = defineConcept({
             inline: true,
             groupKey: 'completePages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel } = context;
+                const { app, currentModel, ct } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(CompletePage, {
                     name: `${t`completePage`}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(TextElement, {
-                            content: t`title`,
+                            content: ct(t`title`),
                         }),
                         app.createConceptInstance(ImageElement, {
                             image: { $type: 'image' },
                         }),
                         app.createConceptInstance(TextElement, {
-                            content: t`description`,
+                            content: ct(t`description`),
                         }),
                     ],
                 });

@@ -98,6 +98,7 @@ const createItem = (concept: Concept) => {
         app: app!,
         currentModel: _model.value,
         rootModel: rootModel?.value,
+        ct: unref(ct),
     };
     return props.item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
 };
