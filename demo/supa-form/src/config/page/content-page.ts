@@ -74,7 +74,7 @@ function newItemProvider(concept: Concept, context: ProviderContext) {
     if (!mappedName) {
         // 非问题类内容
         return app.createConceptInstance(concept, {
-            name: context.ct(concept.displayName),
+            name: ct(concept.displayName),
         });
     }
 
