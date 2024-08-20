@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import { useConfigI18n } from '@/lib/i18n';
 import { type BaseConceptModel, type Concept, type ValidationIssue, ValidationIssueCode } from '@hayadev/configurator';
 import { match } from 'ts-pattern';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { EditPathRecord } from './types';
 
 const props = defineProps<{
     issues: ValidationIssue[];
     concept: Concept;
     model: BaseConceptModel;
+    localeMessages: Record<string, Record<string, string>>;
 }>();
 
 const emit = defineEmits<{
     (e: 'navigate', data: EditPathRecord[]): void;
 }>();
+
+const { t } = useI18n();
+const { ct } = useConfigI18n(props.localeMessages);
 
 const parseIssue = (issue: ValidationIssue) => {
     const path: string[] = [];
@@ -41,7 +47,7 @@ const parseIssue = (issue: ValidationIssue) => {
             if (currentModel?.name) {
                 path.push(currentModel.name);
             } else if (currentItem?.name) {
-                path.push(currentItem.name);
+                path.push(ct(currentItem.name));
             }
         }
 
@@ -71,9 +77,9 @@ type ParsedIssue = ReturnType<typeof parseIssue>;
 
 const getIssueCodeName = (code: ValidationIssueCode) => {
     return match(code)
-        .with(ValidationIssueCode.Required, () => '未设置')
-        .with(ValidationIssueCode.RequiredArray, () => '未设置')
-        .with(ValidationIssueCode.InvalidValue, () => '设置错误')
+        .with(ValidationIssueCode.Required, () => t('notSet'))
+        .with(ValidationIssueCode.RequiredArray, () => t('notSet'))
+        .with(ValidationIssueCode.InvalidValue, () => t('invalidConfig'))
         .exhaustive();
 };
 

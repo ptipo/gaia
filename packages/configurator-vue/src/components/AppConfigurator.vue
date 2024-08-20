@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import {
     APP_KEY,
+    CONFIG_TRANSLATOR_KEY,
     CURRENT_ASPECT_KEY,
     CURRENT_SELECTION_KEY,
     DEFAULT_ASPECT,
     IMAGE_UPLOADER_KEY,
     ROOT_MODEL_KEY,
-    CONFIG_TRANSLATOR_KEY,
 } from '@/lib/constants';
+import { useConfigI18n } from '@/lib/i18n';
 import type { AppInstance, BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
-import { computed, provide, ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ConceptStack from './ConceptStack.vue';
 import type { EditPathRecord, ImageUploader } from './types';
-import { useI18n, createI18n } from 'vue-i18n';
-import { getTranslator } from '@/lib/i18n';
 
 const activeAspect = ref(DEFAULT_ASPECT);
 
@@ -22,7 +22,6 @@ const props = defineProps<{
     model: BaseConceptModel;
     imageUploader: ImageUploader;
     localeMessages: Record<string, Record<string, string>>;
-    locale: string;
 }>();
 
 // v-model for currently selected concept instance
@@ -59,17 +58,9 @@ provide(CURRENT_SELECTION_KEY, selection);
 
 provide(IMAGE_UPLOADER_KEY, props.imageUploader);
 
-const configI18n = createI18n({ legacy: false, messages: props.localeMessages, locale: props.locale });
+const { ct } = useConfigI18n(props.localeMessages);
 
-const configTranslate = computed(() => getTranslator(configI18n as any));
-watch(
-    () => props.locale,
-    (value) => {
-        configI18n.global.locale.value = value;
-    }
-);
-
-provide(CONFIG_TRANSLATOR_KEY, configTranslate);
+provide(CONFIG_TRANSLATOR_KEY, ct);
 
 const { t } = useI18n();
 

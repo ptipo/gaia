@@ -539,6 +539,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                                 :issues="issues"
                                 :concept="appInstance.concept"
                                 :model="model"
+                                :locale-messages="localeMessages"
                                 @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
                             />
                         </el-dropdown-menu>
@@ -618,7 +619,6 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     :app="appInstance"
                     :model="model"
                     :locale-messages="localeMessages"
-                    :locale="locale"
                     v-model:editPath="editPath"
                     v-model:selection="selection"
                     :image-uploader="uploadImage"

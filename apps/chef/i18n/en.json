@@ -78,5 +78,7 @@
     "provideURL": "Provide URL",
     "itemRequired": "This item is required",
     "confirmDeleteName": "Are you sure to delete \"{name}\"?",
-    "confirmDelete": "Delete confirmation"
+    "confirmDelete": "Delete confirmation",
+    "notSet": "Not set",
+    "invalidConfig": "Invalid configuration"
 }

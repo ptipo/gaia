@@ -78,5 +78,7 @@
     "provideURL": "提供地址",
     "itemRequired": "此项为必填",
     "confirmDeleteName": "确定要删除\"{name}\"吗？",
-    "confirmDelete": "删除确认"
+    "confirmDelete": "删除确认",
+    "notSet": "未设置",
+    "invalidConfig": "设置错误"
 }
