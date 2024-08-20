@@ -53,6 +53,8 @@ export const ContentPage = defineConcept({
 
     selectable: true,
 
+    excludeFromSchema: ['nextButton'],
+
     validate: (model, ct) => {
         const issues: ValidationIssue[] = [];
         issues.push(...validateDuplicatedQuestionNames(model as inferPartialConcept<typeof ContentPage>, ct));

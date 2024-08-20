@@ -1,5 +1,6 @@
-import { type BaseConceptModel, Concept, ConfigItem, defineConcept, t, NonPrimitiveTypes } from '@hayadev/configurator';
+import { type BaseConceptModel, Concept, ConfigItem, defineConcept, NonPrimitiveTypes, t } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
+import { v4 as uuid } from 'uuid';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
@@ -104,14 +105,25 @@ export const Form = defineConcept({
         // add $type to data (recursively) if missing
         fixMissingValueTypeForConcept(app.concept, data);
 
+        // add data collection and language settings if missing
+        addMissingSettings(data);
+
         return { success: true, model: data as any };
     },
+
+    excludeFromSchema: ['dataCollection', 'languageSettings'],
 });
 
 function fixMissingValueTypeForConcept(concept: Concept, data: any) {
     if (!data || typeof data !== 'object') {
         return;
     }
+
+    if (!('$id' in data)) {
+        console.log(`Adding missing $id to ${concept.name}`);
+        data.$id = uuid();
+    }
+
     Object.entries(concept.items).forEach(([key, item]) => {
         fixMissingValueTypeForItem(item, data[key]);
     });
@@ -175,5 +187,29 @@ function fixDataType(data: any, type: NonPrimitiveTypes) {
     if (typeof data === 'object' && !data.$type) {
         console.log(`Fixing missing $type to "${type}" in ${JSON.stringify(data)}`);
         data.$type = type;
+    }
+}
+function addMissingSettings(data: any) {
+    if (!('languageSettings' in data)) {
+        console.log(`Adding missing languageSettings to form`);
+        data['languageSettings'] = { $type: NonPrimitiveTypes.itemGroup, language: 'zh-CN' };
+    }
+
+    if (!('dataCollection' in data)) {
+        console.log(`Adding missing dataCollection to form`);
+        data['dataCollection'] = {
+            $type: NonPrimitiveTypes.itemGroup,
+            drip: { $type: NonPrimitiveTypes.itemGroup },
+            autoCollect: { $type: NonPrimitiveTypes.itemGroup },
+        };
+    }
+
+    if (Array.isArray(data.contentPages)) {
+        data.contentPages.forEach((page: any) => {
+            if (!('nextButton' in page)) {
+                console.log(`Adding missing nextButton to ${page.name}`);
+                page.nextButton = { $type: NonPrimitiveTypes.concept, $concept: 'NextButton', $id: uuid() };
+            }
+        });
     }
 }

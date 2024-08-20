@@ -100,13 +100,13 @@ export class JSONSchemaBuilder {
                 type: 'object',
                 required: [
                     '$type',
-                    '$id',
+                    // '$id',
                     '$concept',
                     ...items.filter(([_, item]) => this.isRequired(item)).map(([key, _]) => key),
                 ],
                 properties: {
                     $type: { const: 'concept' },
-                    $id: { type: 'string' },
+                    // $id: { type: 'string' },
                     $concept: { const: concept.name },
                     ...items
                         .filter(([_, item]) => !this.isIfWithSimpleCondition(item))

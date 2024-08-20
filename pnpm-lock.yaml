@@ -184,6 +184,9 @@ importers:
       ts-pattern:
         specifier: ^5.1.1
         version: 5.2.0
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
     devDependencies:
       '@hayadev/configurator-vue':
         specifier: workspace:*
@@ -194,6 +197,9 @@ importers:
       '@tailwindcss/forms':
         specifier: ^0.5.7
         version: 0.5.7(tailwindcss@3.4.4)
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.5(vite@5.3.3)(vue@3.4.31)
