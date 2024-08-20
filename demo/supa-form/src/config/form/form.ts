@@ -38,7 +38,7 @@ export const Form = defineConcept({
                 const { app, currentModel, ct } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(ContentPage, {
-                    name: `${t`contentPage`}${existing.length + 1}`,
+                    name: `${ct(t`contentPage`)}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(ChoiceQuestion, {
                             name: `${ct(t`choice`)}1`,
@@ -63,7 +63,7 @@ export const Form = defineConcept({
                 const { app, currentModel, ct } = context;
                 const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(CompletePage, {
-                    name: `${t`completePage`}${existing.length + 1}`,
+                    name: `${ct(t`completePage`)}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(TextElement, {
                             content: ct(t`title`),
