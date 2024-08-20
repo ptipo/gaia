@@ -115,6 +115,7 @@ const uploadImage = async (file: File) => {
                         :issues="issues"
                         :concept="app.concept"
                         :model="model"
+                        :locale-messages="{ en: {} }"
                         @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
                     />
                 </div>
@@ -124,7 +125,6 @@ const uploadImage = async (file: File) => {
             <AppConfigurator
                 :app="app"
                 :model="model"
-                locale="en"
                 :locale-messages="{ en: {} }"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
