@@ -18,20 +18,20 @@
     .pt-form {
         background-color: var(--pt-form-background-color);
         color: var(--pt-form-main-text-color);
-        font-family: var(--pt-form-font-family, 'Noto Sans JP,sans-serif');
+        font-family: var(--pt-form-font-family, 'Noto Sans JP');
     }
 
     .pt-question {
         background-color: var(--pt-form-question-background-color);
         color: var(--pt-form-question-color);
-        font-size: calc(var(--pt-form-question-font-size) * 1.25rem);
+        font-size: calc(var(--pt-form-question-font-size, 1) * 1.25rem * var(--pt-form-font-size, 1));
         text-align: var(--pt-form-question-text-align, left);
     }
 
     .pt-question-description {
         background-color: var(--pt-form-question-description-background-color);
         color: var(--pt-form-question-description-color);
-        font-size: calc(var(--pt-form-question-description-font-size) * 0.875rem);
+        font-size: calc(var(--pt-form-question-description-font-size, 1) * var(--pt-form-font-size, 1));
         text-align: var(--pt-form-question-description-text-align, left);
     }
     .pt-question-answer {

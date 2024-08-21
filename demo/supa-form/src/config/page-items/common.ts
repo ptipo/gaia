@@ -78,8 +78,7 @@ export const AlignmentItems = {
 
 export const Font = {
     type: 'select',
-    name: '字体',
-    default: 'system',
+    name: t`font`,
     options: {
         system: 'system-ui',
         sans: 'Noto Sans JP',
@@ -89,9 +88,8 @@ export const Font = {
 
 export const FontSize = {
     type: 'select',
-    name: '字体大小',
-    default: 'base',
-    options: { xs: '小', sm: '较小', base: '中等', lg: '较大', xl: '大' },
+    name: t`fontSize`,
+    options: { xs: t`extra small`, sm: t`small`, base: t`medium`, lg: t`large`, xl: t`extra large` },
 } satisfies ConfigItem;
 
 export const TextCommonItems = {

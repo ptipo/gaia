@@ -6,6 +6,7 @@ import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { QuestionStyle } from '../design/question-style';
+import { generalStyle } from '../design/general-style';
 
 /**
  * 表单
@@ -100,9 +101,16 @@ export const Form = defineConcept({
             groupKey: 'style',
         },
 
+        generalStyle: {
+            type: 'has',
+            name: t`text and layout`,
+            concept: generalStyle,
+            groupKey: 'style',
+        },
+
         questionStyle: {
             type: 'has',
-            name: '问题样式',
+            name: t`question style`,
             concept: QuestionStyle,
             groupKey: 'style',
         },
