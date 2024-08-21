@@ -24,11 +24,15 @@
     .pt-question {
         background-color: var(--pt-form-question-background-color);
         color: var(--pt-form-question-color);
+        font-size: calc(var(--pt-form-question-font-size) * 1.25rem);
+        text-align: var(--pt-form-question-text-align, left);
     }
 
     .pt-question-description {
         background-color: var(--pt-form-question-description-background-color);
         color: var(--pt-form-question-description-color);
+        font-size: calc(var(--pt-form-question-description-font-size) * 0.875rem);
+        text-align: var(--pt-form-question-description-text-align, left);
     }
     .pt-question-answer {
         background-color: var(--pt-form-question-answer-background-color);
@@ -43,6 +47,7 @@
 
     .pt-choice {
         color: var(--pt-form-choice-color);
+        /* bg-gray-200 */
         border-color: var(--pt-form-choice-border-color);
 
         /* bg-gray-50 */
@@ -84,6 +89,7 @@
     }
 
     .pt-back-button {
+        /* text-gray-500 */
         color: var(--pt-form-back-button-color, #6b7280);
     }
 }

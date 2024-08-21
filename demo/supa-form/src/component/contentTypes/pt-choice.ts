@@ -100,7 +100,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         return html`
             <fieldset class="block">
                 <legend class="pt-question">
-                    <span class="text-xl font-bold block">
+                    <span class="font-bold block">
                         <pt-editable-label
                             config-path="${this.configPath + '.question'}"
                             label="${this.data?.question || ''}"
@@ -108,9 +108,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                         </pt-editable-label>
                     </span>
                 </legend>
-                ${description
-                    ? html`<p class="mt-1 text-sm font-normal pt-question-description">${description}</p>`
-                    : ''}
+                ${description ? html`<p class="mt-1 font-normal pt-question-description">${description}</p>` : ''}
                 <div class="mt-5 flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice, i) => html`

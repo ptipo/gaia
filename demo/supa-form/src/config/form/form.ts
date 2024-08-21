@@ -5,6 +5,7 @@ import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
+import { QuestionStyle } from '../design/question-style';
 
 /**
  * 表单
@@ -96,6 +97,13 @@ export const Form = defineConcept({
             type: 'code',
             name: t`customCSS`,
             language: CodeLanguage.CSS,
+            groupKey: 'style',
+        },
+
+        questionStyle: {
+            type: 'has',
+            name: '问题样式',
+            concept: QuestionStyle,
             groupKey: 'style',
         },
     },
