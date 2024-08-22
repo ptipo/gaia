@@ -92,6 +92,17 @@ export const FontSize = {
     options: { xs: t`extra small`, sm: t`small`, base: t`medium`, lg: t`large`, xl: t`extra large` },
 } satisfies ConfigItem;
 
+export const FontColor = {
+    type: 'color',
+    name: t`fontColor`,
+} satisfies ConfigItem;
+
+export const BackgroundColor = {
+    type: 'color',
+    name: t`backgroundColor`,
+} satisfies ConfigItem;
+
 export const TextCommonItems = {
+    color: FontColor,
     fontSize: FontSize,
 } satisfies Record<string, ConfigItem>;

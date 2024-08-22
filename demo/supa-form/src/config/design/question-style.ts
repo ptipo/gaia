@@ -1,5 +1,5 @@
 import { defineConcept, t } from '@hayadev/configurator';
-import { getAlignConfig, TextCommonItems } from '../page-items/common';
+import { BackgroundColor, getAlignConfig, TextCommonItems } from '../page-items/common';
 import { defineGroupItem } from '@hayadev/configurator/items';
 
 const sharedItems = {
@@ -7,7 +7,7 @@ const sharedItems = {
     ...getAlignConfig(),
 };
 const questionGroup = defineGroupItem({
-    items: sharedItems,
+    items: { BackgroundColor, ...sharedItems },
     groupKey: 'question',
 });
 
@@ -21,7 +21,7 @@ export const QuestionStyle = defineConcept({
 
     displayName: t`question and description`,
 
-    groups: { question: { name: t`问题` }, description: { name: t`描述` } },
+    groups: { question: { name: t`question` }, description: { name: t`description` } },
 
     items: {
         question: questionGroup,

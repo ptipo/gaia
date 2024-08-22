@@ -4,13 +4,16 @@
 
 @layer base {
     h1 {
-        @apply text-2xl;
+        font-size: 1.5rem;
+        line-height: 1.25rem;
     }
     h2 {
-        @apply text-xl;
+        font-size: 1.25rem;
+        line-height: 1.5rem;
     }
     h3 {
-        @apply text-lg;
+        font-size: 1.125rem;
+        line-height: 1.5rem;
     }
 }
 
@@ -31,7 +34,7 @@
     .pt-question-description {
         background-color: var(--pt-form-question-description-background-color);
         color: var(--pt-form-question-description-color);
-        font-size: calc(var(--pt-form-question-description-font-size, 1) * var(--pt-form-font-size, 1));
+        font-size: calc(var(--pt-form-question-description-font-size, 1) * 0.875rem * var(--pt-form-font-size, 1));
         text-align: var(--pt-form-question-description-text-align, left);
     }
     .pt-question-answer {
