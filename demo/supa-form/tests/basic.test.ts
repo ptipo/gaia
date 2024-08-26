@@ -194,8 +194,35 @@ describe('Basic test', async () => {
                     source: '',
                     language: 'css',
                 },
+                generalStyle: {
+                    $id: 'f3072407-3b1c-442a-b415-21565592220f',
+                    $type: 'concept',
+                    $concept: 'generalStyle',
+                },
+                questionStyle: {
+                    $id: '6914ab58-eb22-4bbf-90a6-7c8362179614',
+                    $type: 'concept',
+                    $concept: 'QuestionStyle',
+                    question: {
+                        $type: 'item-group',
+                    },
+                    description: {
+                        $type: 'item-group',
+                    },
+                },
+                answerChoiceStyle: {
+                    $id: '190779bd-f2e8-47f2-a2fd-a60434e15972',
+                    $type: 'concept',
+                    $concept: 'answerChoiceStyle',
+                    answer: {
+                        $type: 'item-group',
+                    },
+                    choice: {
+                        $type: 'item-group',
+                    },
+                },
             },
-            appVersion: '1.0.0',
+            appVersion: '1.0.16',
         };
 
         const asset = document.createElement('pt-form');

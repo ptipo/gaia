@@ -21,6 +21,8 @@ type ConverterDictionary<T> = {
 };
 
 function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
+    if (!obj) return {};
+
     return Object.keys(converters).reduce((result, path) => {
         const keys = path.split('.');
         let value: any = obj;
@@ -93,8 +95,8 @@ const descriptionConverter: ConverterDictionary<description> = {
 
 function getQuestionStyle(question: typeof model.questionStyle) {
     return {
-        ...convertValue(question.question, questionConverter),
-        ...convertValue(question.description, descriptionConverter),
+        ...convertValue(question?.question, questionConverter),
+        ...convertValue(question?.description, descriptionConverter),
     };
 }
 
@@ -142,8 +144,8 @@ const choiceConverter: ConverterDictionary<choice> = {
 
 function getAnswerChoiceStyle(answerChoice: typeof model.answerChoiceStyle) {
     return {
-        ...convertValue(answerChoice.answer, answerConverter),
-        ...convertValue(answerChoice.choice, choiceConverter),
+        ...convertValue(answerChoice?.answer, answerConverter),
+        ...convertValue(answerChoice?.choice, choiceConverter),
     };
 }
 
