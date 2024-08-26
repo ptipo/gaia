@@ -192,7 +192,7 @@ export class PtForm extends PtBaseShadow {
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
-            const backgroundImage = this.config?.BackgroundStyle.backgroundImage;
+            const backgroundImage = this.config?.BackgroundStyle?.backgroundImage;
 
             return html`${css}
                     <div class="pt-form" style="${

@@ -9,7 +9,7 @@ import { QuestionStyle } from '../design/question-style';
 import { generalStyle } from '../design/general-style';
 import { answerChoiceStyle } from '../design/answer-choice-style';
 import { ProgressButtonStyle } from '../design/progress-button-style';
-import { BackgroundStyle } from '../design/background-style';
+import { backgroundStyle } from '../design/background-style';
 
 /**
  * 表单
@@ -134,7 +134,7 @@ export const Form = defineConcept({
         BackgroundStyle: {
             type: 'has',
             name: t`background style`,
-            concept: BackgroundStyle,
+            concept: backgroundStyle,
             groupKey: 'style',
         },
     },
