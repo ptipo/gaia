@@ -20,6 +20,7 @@
 @layer components {
     .pt-form {
         background-color: var(--pt-form-background-color);
+        background-size: var(--pt-form-background-size, cover);
         color: var(--pt-form-main-text-color);
         font-family: var(--pt-form-font-family, 'Noto Sans JP');
     }

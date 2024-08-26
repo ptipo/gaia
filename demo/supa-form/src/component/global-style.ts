@@ -215,6 +215,20 @@ function getProgressButtonStyle(progressButton: typeof model.progressButtonStyle
     };
 }
 
+type background = typeof model.BackgroundStyle;
+
+const backgroundConverter: ConverterDictionary<background> = {
+    backgroundColor: (value) => ({
+        '--pt-form-background-color': value,
+    }),
+    backgroundImageFill: (value) => ({
+        '--pt-form-background-size': value,
+    }),
+};
+
+function getBackgroundStyle(background: typeof model.BackgroundStyle) {
+    return convertValue(background, backgroundConverter);
+}
 type general = typeof model.generalStyle;
 
 const generalConverter: ConverterDictionary<general> = {
@@ -239,6 +253,7 @@ export function getCSSVariableValues(config: typeof model) {
         ...getQuestionStyle(config.questionStyle),
         ...getAnswerChoiceStyle(config.answerChoiceStyle),
         ...getProgressButtonStyle(config.progressButtonStyle),
+        ...getBackgroundStyle(config.BackgroundStyle),
     };
 
     return Object.entries(result)
