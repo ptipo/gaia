@@ -89,12 +89,14 @@
 
     .pt-progress {
         /* bg-black */
-        background-color: var(--pt-form-progress-background-color, #000000);
+        background-color: var(--pt-form-progress-color, #000000);
     }
 
     .pt-progress-remain {
         /* bg-gray-200 */
-        background-color: var(--pt-form-progress-remain-background-color, #e5e7eb);
+        background-color: var(--pt-form-progress-remain-color, #e5e7eb);
+        /* h-1 */
+        height: calc(var(--pt-form-progress-height, 1) * 0.25rem);
     }
 
     .pt-bottom-bar {
@@ -102,8 +104,9 @@
     }
 
     .pt-next-button {
+        font-size: calc(var(--pt-form-next-button-size, 1) * 1rem);
         background-color: var(--pt-form-next-button-background-color, #000000);
-        color: var(--pt-form-next-button-color, #ffffff);
+        color: var(--pt-form-next-button-text-color, #ffffff);
         border-color: var(--pt-form-next-button-border-color);
         &:hover {
             /* bg-gray-800 */

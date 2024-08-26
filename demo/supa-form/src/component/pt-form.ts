@@ -197,7 +197,7 @@ export class PtForm extends PtBaseShadow {
                         <div class="pt-top-bar sticky top-0 h-8 opacity-100">
                             <div class="flex flex-col h-full justify-center">
                                 <div
-                                    class="pt-progress-remain flex h-1 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                                    class="pt-progress-remain flex rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                                     role="progressbar">
                                     <div
                                         class="pt-progress flex flex-col justify-center rounded-full overflow-hidden text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"

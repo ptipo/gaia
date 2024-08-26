@@ -27,7 +27,7 @@ const choiceGroup = defineGroupItem({
 
 export const answerChoiceStyle = defineConcept({
     name: 'answerChoiceStyle',
-    displayName: t`answer choice`,
+    displayName: t`answer and choice`,
     groups: { answer: { name: t`answer` }, choice: { name: t`choice` } },
     items: {
         answer: answerGroup,

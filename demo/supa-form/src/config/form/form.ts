@@ -8,6 +8,7 @@ import { LanguageSetting } from './language-setting';
 import { QuestionStyle } from '../design/question-style';
 import { generalStyle } from '../design/general-style';
 import { answerChoiceStyle } from '../design/answer-choice-style';
+import { ProgressButtonStyle } from '../design/progress-button-style';
 
 /**
  * 表单
@@ -120,6 +121,13 @@ export const Form = defineConcept({
             type: 'has',
             name: t`answer choice style`,
             concept: answerChoiceStyle,
+            groupKey: 'style',
+        },
+
+        progressButtonStyle: {
+            type: 'has',
+            name: t`progress button style`,
+            concept: ProgressButtonStyle,
             groupKey: 'style',
         },
     },

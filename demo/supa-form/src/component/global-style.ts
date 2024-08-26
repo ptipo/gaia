@@ -1,3 +1,4 @@
+import { buttonStyles, ProgressHeight } from '../config/design/progress-button-style';
 import { FontSize, Gap } from '../config/page-items/common';
 import { model } from './pt-form';
 
@@ -58,6 +59,14 @@ const gapSizeRatio: Record<GapSize, number> = {
     normal: 1,
     tight: 0.8,
 };
+
+type progressHeight = keyof typeof ProgressHeight.options;
+const progressHeightRatio: Record<progressHeight, number> = {
+    small: 0.8,
+    medium: 1,
+    large: 1.2,
+};
+
 //#endregion
 
 type question = typeof model.questionStyle.question;
@@ -149,6 +158,63 @@ function getAnswerChoiceStyle(answerChoice: typeof model.answerChoiceStyle) {
     };
 }
 
+type floating = typeof model.progressButtonStyle.floating;
+const floatingConverter: ConverterDictionary<floating> = {
+    topBarColor: (value) => ({
+        '--pt-form-top-bar-background-color': value,
+    }),
+    bottomBarColor: (value) => ({
+        '--pt-form-bottom-bar-background-color': value,
+    }),
+};
+
+type progress = typeof model.progressButtonStyle.progress;
+
+const progressConverter: ConverterDictionary<progress> = {
+    progressColor: (value) => ({
+        '--pt-form-progress-color': value,
+    }),
+    progressRemainColor: (value) => ({
+        '--pt-form-progress-remain-color': value,
+    }),
+    progressHeight: (value) =>
+        value && {
+            '--pt-form-progress-height': progressHeightRatio[value],
+        },
+};
+
+type button = typeof model.progressButtonStyle.nextButton;
+
+type buttonSize = keyof typeof buttonStyles.buttonSize.options;
+
+const buttonSizeRatio: Record<buttonSize, number> = {
+    small: 0.8,
+    medium: 1,
+    large: 1.2,
+};
+
+const nextButtonConverter: ConverterDictionary<button> = {
+    buttonSize: (value) => value && { '--pt-form-next-button-size': buttonSizeRatio[value] },
+
+    buttonTextColor: (value) => ({
+        '--pt-form-next-button-text-color': value,
+    }),
+    buttonBackgroundColor: (value) => ({
+        '--pt-form-next-button-background-color': value,
+    }),
+    buttonBorderColor: (value) => ({
+        '--pt-form-next-button-border-color': value,
+    }),
+};
+
+function getProgressButtonStyle(progressButton: typeof model.progressButtonStyle) {
+    return {
+        ...convertValue(progressButton?.floating, floatingConverter),
+        ...convertValue(progressButton?.progress, progressConverter),
+        ...convertValue(progressButton?.nextButton, nextButtonConverter),
+    };
+}
+
 type general = typeof model.generalStyle;
 
 const generalConverter: ConverterDictionary<general> = {
@@ -172,6 +238,7 @@ export function getCSSVariableValues(config: typeof model) {
         ...getGeneralStyle(config.generalStyle),
         ...getQuestionStyle(config.questionStyle),
         ...getAnswerChoiceStyle(config.answerChoiceStyle),
+        ...getProgressButtonStyle(config.progressButtonStyle),
     };
 
     return Object.entries(result)
