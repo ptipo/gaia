@@ -102,6 +102,17 @@ export const BackgroundColor = {
     name: t`backgroundColor`,
 } satisfies ConfigItem;
 
+export const BorderColor = {
+    type: 'color',
+    name: t`borderColor`,
+} satisfies ConfigItem;
+
+export const Gap = {
+    type: 'select',
+    name: t`gap`,
+    options: { loose: t`loose`, normal: t`medium`, tight: t`compact` },
+} satisfies ConfigItem;
+
 export const TextCommonItems = {
     color: FontColor,
     fontSize: FontSize,

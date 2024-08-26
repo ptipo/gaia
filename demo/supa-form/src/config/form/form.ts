@@ -7,6 +7,7 @@ import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { QuestionStyle } from '../design/question-style';
 import { generalStyle } from '../design/general-style';
+import { answerChoiceStyle } from '../design/answer-choice-style';
 
 /**
  * 表单
@@ -112,6 +113,13 @@ export const Form = defineConcept({
             type: 'has',
             name: t`question style`,
             concept: QuestionStyle,
+            groupKey: 'style',
+        },
+
+        answerChoiceStyle: {
+            type: 'has',
+            name: t`answer choice style`,
+            concept: answerChoiceStyle,
             groupKey: 'style',
         },
     },

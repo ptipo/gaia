@@ -1,6 +1,7 @@
-import { FontSize } from '../config/page-items/common';
+import { FontSize, Gap } from '../config/page-items/common';
 import { model } from './pt-form';
 
+//#region utility types
 type PathsToProperties<T> = T extends object
     ? {
           [K in keyof T & string]: T[K] extends object ? `${K}.${PathsToProperties<T[K]>}` : K;
@@ -34,6 +35,8 @@ function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
                 return { ...result, ...data };
             }
         }
+
+        return result;
     }, {});
 }
 
@@ -45,6 +48,15 @@ const fontSizeRatio: Record<FontSize, number> = {
     lg: 1.2,
     xl: 1.5,
 };
+
+type GapSize = keyof typeof Gap.options;
+
+const gapSizeRatio: Record<GapSize, number> = {
+    loose: 1.2,
+    normal: 1,
+    tight: 0.8,
+};
+//#endregion
 
 type question = typeof model.questionStyle.question;
 
@@ -86,6 +98,55 @@ function getQuestionStyle(question: typeof model.questionStyle) {
     };
 }
 
+type questionAnswer = typeof model.answerChoiceStyle.answer;
+const answerConverter: ConverterDictionary<questionAnswer> = {
+    fontSize: (value) =>
+        value && {
+            '--pt-form-question-answer-font-size': fontSizeRatio[value],
+        },
+    color: (value) => ({
+        '--pt-form-question-answer-color': value,
+    }),
+    BackgroundColor: (value) => ({
+        '--pt-form-question-answer-background-color': value,
+    }),
+    BorderColor: (value) => ({
+        '--pt-form-question-answer-border-color': value,
+    }),
+    placeHolderColor: (value) => ({
+        '--pt-form-question-answer-placeholder-color': value,
+    }),
+};
+
+type choice = typeof model.answerChoiceStyle.choice;
+
+const choiceConverter: ConverterDictionary<choice> = {
+    fontSize: (value) =>
+        value && {
+            '--pt-form-choice-answer-font-size': fontSizeRatio[value],
+        },
+    color: (value) => ({
+        '--pt-form-choice-label-color': value,
+    }),
+    BackgroundColor: (value) => ({
+        '--pt-form-choice-answer-background-color': value,
+    }),
+    BorderColor: (value) => ({
+        '--pt-form-choice-answer-border-color': value,
+    }),
+    Gap: (value) =>
+        value && {
+            '--pt-form-choice-gap': gapSizeRatio[value],
+        },
+};
+
+function getAnswerChoiceStyle(answerChoice: typeof model.answerChoiceStyle) {
+    return {
+        ...convertValue(answerChoice.answer, answerConverter),
+        ...convertValue(answerChoice.choice, choiceConverter),
+    };
+}
+
 type general = typeof model.generalStyle;
 
 const generalConverter: ConverterDictionary<general> = {
@@ -102,8 +163,14 @@ function getGeneralStyle(general: typeof model.generalStyle) {
     return convertValue(general, generalConverter);
 }
 
+type CSSVariableList = Record<string, string | number | undefined>;
+
 export function getCSSVariableValues(config: typeof model) {
-    const result = { ...getGeneralStyle(config.generalStyle), ...getQuestionStyle(config.questionStyle) };
+    const result: CSSVariableList = {
+        ...getGeneralStyle(config.generalStyle),
+        ...getQuestionStyle(config.questionStyle),
+        ...getAnswerChoiceStyle(config.answerChoiceStyle),
+    };
 
     return Object.entries(result)
         .filter(([, value]) => value)
