@@ -26,6 +26,16 @@ watch(
         _model.value = value;
     }
 );
+
+const onColorChange = (value: RGBA) => {
+    if (!value) {
+        delete _model.value;
+        emit('drop');
+    } else {
+        _model.value = value;
+        emit('change', value);
+    }
+};
 </script>
 
 <template>
@@ -33,12 +43,7 @@ watch(
         <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" v-model:enabled="enabled" />
 
         <template v-if="!item.guarded || enabled">
-            <el-color-picker
-                v-model="_model"
-                show-alpha
-                :predefine="PredefinedColors"
-                @change="$emit('change', _model)"
-            />
+            <el-color-picker v-model="_model" show-alpha :predefine="PredefinedColors" @change="onColorChange" />
         </template>
     </el-form-item>
 </template>
