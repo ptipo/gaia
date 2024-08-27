@@ -615,15 +615,17 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                 <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
                     <el-button class="w-full pt-4" @click="aiDialogVisible = true">{{ $t('aiGenerate') }}</el-button>
                 </div>
-                <AppConfigurator
-                    :app="appInstance"
-                    :model="model"
-                    :locale-messages="localeMessages"
-                    v-model:editPath="editPath"
-                    v-model:selection="selection"
-                    :image-uploader="uploadImage"
-                    @change="onAppChange"
-                />
+                <div :class="isAIPermission ? 'h-[calc(100%-4rem)]' : 'h-full'">
+                    <AppConfigurator
+                        :app="appInstance"
+                        :model="model"
+                        :locale-messages="localeMessages"
+                        v-model:editPath="editPath"
+                        v-model:selection="selection"
+                        :image-uploader="uploadImage"
+                        @change="onAppChange"
+                    />
+                </div>
             </div>
         </div>
     </el-container>
