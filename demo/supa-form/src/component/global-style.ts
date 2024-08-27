@@ -227,6 +227,7 @@ const generalConverter: ConverterDictionary<general> = {
         value && {
             '--pt-form-font-size': RangeRatio[value],
         },
+    lineHeight: (value) => value && { '--pt-form-line-height': RangeRatio[value] },
 };
 
 function getGeneralStyle(general: typeof model.generalStyle) {

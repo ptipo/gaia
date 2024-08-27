@@ -1,5 +1,5 @@
 import { defineConcept, t } from '@hayadev/configurator';
-import { Font, FontSize } from '../page-items/common';
+import { Font, FontSize, PartialRange } from '../page-items/common';
 
 export const generalStyle = defineConcept({
     name: 'generalStyle',
@@ -14,5 +14,14 @@ export const generalStyle = defineConcept({
          * 字号
          */
         fontSize: FontSize,
+
+        /**
+         * 行高
+         */
+        lineHeight: {
+            type: 'select',
+            name: t`lineHeight`,
+            options: PartialRange,
+        },
     },
 });

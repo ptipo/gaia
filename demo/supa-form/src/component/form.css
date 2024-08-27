@@ -5,15 +5,13 @@
 @layer base {
     h1 {
         font-size: 1.5rem;
-        line-height: 1.25rem;
+        line-height: calc(var(--pt-form-line-height, 1) * 1.25rem);
     }
     h2 {
         font-size: 1.25rem;
-        line-height: 1.5rem;
     }
     h3 {
         font-size: 1.125rem;
-        line-height: 1.5rem;
     }
 }
 
@@ -23,6 +21,7 @@
         background-size: var(--pt-form-background-size, cover);
         color: var(--pt-form-main-text-color);
         font-family: var(--pt-form-font-family, 'Noto Sans JP');
+        line-height: calc(var(--pt-form-line-height, 1) * 1.5rem);
     }
 
     .pt-question {
