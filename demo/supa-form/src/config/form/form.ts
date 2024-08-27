@@ -106,34 +106,34 @@ export const Form = defineConcept({
 
         generalStyle: {
             type: 'has',
-            name: t`text and layout`,
+            name: t`textAndLayout`,
             concept: generalStyle,
             groupKey: 'style',
         },
 
         questionStyle: {
             type: 'has',
-            name: t`question style`,
+            name: t`questionStyle`,
             concept: QuestionStyle,
             groupKey: 'style',
         },
 
         answerChoiceStyle: {
             type: 'has',
-            name: t`answer choice style`,
+            name: t`answerChoiceStyle`,
             concept: answerChoiceStyle,
             groupKey: 'style',
         },
 
         progressButtonStyle: {
             type: 'has',
-            name: t`progress button style`,
+            name: t`progressButtonStyle`,
             concept: ProgressButtonStyle,
             groupKey: 'style',
         },
         BackgroundStyle: {
             type: 'has',
-            name: t`background style`,
+            name: t`backgroundStyle`,
             concept: backgroundStyle,
             groupKey: 'style',
         },

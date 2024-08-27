@@ -1,14 +1,11 @@
 import { ConfigItem, defineConcept, t } from '@hayadev/configurator';
 import { defineGroupItem } from '@hayadev/configurator/items';
+import { PartialRange } from '../page-items/common';
 
 export const ProgressHeight = {
     type: 'select',
     name: t`progressSize`,
-    options: {
-        small: t`small`,
-        medium: t`medium`,
-        large: t`large`,
-    },
+    options: PartialRange,
 } satisfies ConfigItem;
 
 const floatingGroup = defineGroupItem({
@@ -44,11 +41,7 @@ export const buttonStyles = {
     buttonSize: {
         type: 'select',
         name: t`buttonSize`,
-        options: {
-            small: t`small`,
-            medium: t`medium`,
-            large: t`large`,
-        },
+        options: PartialRange,
     },
 
     buttonTextColor: {
@@ -79,12 +72,12 @@ const backButtonGroup = defineGroupItem({
 
 export const ProgressButtonStyle = defineConcept({
     name: 'ProgressButton',
-    displayName: t`progress and button`,
+    displayName: t`progressAndButton`,
     groups: {
         floating: { name: t`floating` },
         progress: { name: t`progress` },
-        nextButton: { name: t`next button` },
-        backButton: { name: t`back button` },
+        nextButton: { name: t`nextButton` },
+        backButton: { name: t`backButton` },
     },
     items: {
         floating: floatingGroup,

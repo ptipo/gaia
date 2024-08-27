@@ -15,7 +15,7 @@ export const backgroundStyle = defineConcept({
         },
         backgroundColor: {
             type: 'if',
-            name: t`background color`,
+            name: t`backgroundColor`,
             condition: { field: 'background', value: 'color' },
             child: {
                 type: 'color',
@@ -24,7 +24,7 @@ export const backgroundStyle = defineConcept({
         },
         backgroundImage: {
             type: 'if',
-            name: t`background image`,
+            name: t`backgroundImage`,
             condition: { field: 'background', value: 'image' },
             child: {
                 type: 'image',
@@ -33,11 +33,11 @@ export const backgroundStyle = defineConcept({
         },
         backgroundImageFill: {
             type: 'if',
-            name: t`background image fill`,
+            name: t`backgroundImageFill`,
             condition: { field: 'background', value: 'image' },
             child: {
                 type: 'select',
-                name: t`background image fill`,
+                name: t`backgroundImageFill`,
                 options: {
                     contain: t`contain`,
                     cover: t`cover`,

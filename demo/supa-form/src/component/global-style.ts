@@ -1,5 +1,5 @@
 import { buttonStyles, ProgressHeight } from '../config/design/progress-button-style';
-import { FontSize, Gap } from '../config/page-items/common';
+import { FontSize as RangeKey, FullRange, Gap } from '../config/page-items/common';
 import { model } from './pt-form';
 
 //#region utility types
@@ -43,28 +43,12 @@ function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
     }, {});
 }
 
-type FontSize = keyof typeof FontSize.options;
-const fontSizeRatio: Record<FontSize, number> = {
+const RangeRatio: Record<keyof typeof FullRange, number> = {
     xs: 0.8,
     sm: 0.9,
     base: 1,
     lg: 1.2,
     xl: 1.5,
-};
-
-type GapSize = keyof typeof Gap.options;
-
-const gapSizeRatio: Record<GapSize, number> = {
-    loose: 1.2,
-    normal: 1,
-    tight: 0.8,
-};
-
-type progressHeight = keyof typeof ProgressHeight.options;
-const progressHeightRatio: Record<progressHeight, number> = {
-    small: 0.8,
-    medium: 1,
-    large: 1.2,
 };
 
 //#endregion
@@ -77,7 +61,7 @@ const questionConverter: ConverterDictionary<question> = {
     }),
     fontSize: (value) =>
         value && {
-            '--pt-form-question-font-size': fontSizeRatio[value],
+            '--pt-form-question-font-size': RangeRatio[value],
         },
     color: (value) => ({
         '--pt-form-question-color': value,
@@ -95,7 +79,7 @@ const descriptionConverter: ConverterDictionary<description> = {
     }),
     fontSize: (value) =>
         value && {
-            '--pt-form-question-description-font-size': fontSizeRatio[value],
+            '--pt-form-question-description-font-size': RangeRatio[value],
         },
     color: (value) => ({
         '--pt-form-question-description-color': value,
@@ -113,7 +97,7 @@ type questionAnswer = typeof model.answerChoiceStyle.answer;
 const answerConverter: ConverterDictionary<questionAnswer> = {
     fontSize: (value) =>
         value && {
-            '--pt-form-question-answer-font-size': fontSizeRatio[value],
+            '--pt-form-question-answer-font-size': RangeRatio[value],
         },
     color: (value) => ({
         '--pt-form-question-answer-color': value,
@@ -134,7 +118,7 @@ type choice = typeof model.answerChoiceStyle.choice;
 const choiceConverter: ConverterDictionary<choice> = {
     fontSize: (value) =>
         value && {
-            '--pt-form-choice-answer-font-size': fontSizeRatio[value],
+            '--pt-form-choice-answer-font-size': RangeRatio[value],
         },
     color: (value) => ({
         '--pt-form-choice-label-color': value,
@@ -147,7 +131,7 @@ const choiceConverter: ConverterDictionary<choice> = {
     }),
     Gap: (value) =>
         value && {
-            '--pt-form-choice-gap': gapSizeRatio[value],
+            '--pt-form-choice-gap': RangeRatio[value],
         },
 };
 
@@ -179,22 +163,14 @@ const progressConverter: ConverterDictionary<progress> = {
     }),
     progressHeight: (value) =>
         value && {
-            '--pt-form-progress-height': progressHeightRatio[value],
+            '--pt-form-progress-height': RangeRatio[value],
         },
 };
 
 type button = typeof model.progressButtonStyle.nextButton;
 
-type buttonSize = keyof typeof buttonStyles.buttonSize.options;
-
-const buttonSizeRatio: Record<buttonSize, number> = {
-    small: 0.8,
-    medium: 1,
-    large: 1.2,
-};
-
 const nextButtonConverter: ConverterDictionary<button> = {
-    buttonSize: (value) => value && { '--pt-form-next-button-size': buttonSizeRatio[value] },
+    buttonSize: (value) => value && { '--pt-form-next-button-size': RangeRatio[value] },
 
     buttonTextColor: (value) => ({
         '--pt-form-next-button-text-color': value,
@@ -208,7 +184,7 @@ const nextButtonConverter: ConverterDictionary<button> = {
 };
 
 const backButtonConverter: ConverterDictionary<button> = {
-    buttonSize: (value) => value && { '--pt-form-back-button-size': buttonSizeRatio[value] },
+    buttonSize: (value) => value && { '--pt-form-back-button-size': RangeRatio[value] },
 
     buttonTextColor: (value) => ({
         '--pt-form-back-button-text-color': value,
@@ -249,7 +225,7 @@ const generalConverter: ConverterDictionary<general> = {
     }),
     fontSize: (value) =>
         value && {
-            '--pt-form-font-size': fontSizeRatio[value],
+            '--pt-form-font-size': RangeRatio[value],
         },
 };
 

@@ -19,7 +19,7 @@ export const descriptionGroup = defineGroupItem({
 export const QuestionStyle = defineConcept({
     name: 'QuestionStyle',
 
-    displayName: t`question and description`,
+    displayName: t`questionAndDescription`,
 
     groups: { question: { name: t`question` }, description: { name: t`description` } },
 

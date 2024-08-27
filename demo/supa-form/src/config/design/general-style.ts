@@ -3,7 +3,7 @@ import { Font, FontSize } from '../page-items/common';
 
 export const generalStyle = defineConcept({
     name: 'generalStyle',
-    displayName: t`text and layout`,
+    displayName: t`textAndLayout`,
     items: {
         /**
          * 字体
