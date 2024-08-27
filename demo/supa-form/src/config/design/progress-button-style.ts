@@ -59,14 +59,16 @@ export const buttonStyles = {
         type: 'color',
         name: t`buttonBackgroundColor`,
     },
-    buttonBorderColor: {
-        type: 'color',
-        name: t`buttonBorderColor`,
-    },
 } satisfies Record<string, ConfigItem>;
 
 const nextButtonGroup = defineGroupItem({
-    items: { ...buttonStyles },
+    items: {
+        ...buttonStyles,
+        buttonBorderColor: {
+            type: 'color',
+            name: t`buttonBorderColor`,
+        },
+    },
     groupKey: 'nextButton',
 });
 

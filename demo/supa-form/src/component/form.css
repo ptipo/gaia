@@ -108,7 +108,7 @@
         font-size: calc(var(--pt-form-next-button-size, 1) * 1rem);
         background-color: var(--pt-form-next-button-background-color, #000000);
         color: var(--pt-form-next-button-text-color, #ffffff);
-        border-color: var(--pt-form-next-button-border-color);
+        border-color: var(--pt-form-next-button-border-color, transparent);
         &:hover {
             /* bg-gray-800 */
             background-color: var(--pt-form-next-button-hover-background-color, #1f2937);
@@ -117,7 +117,10 @@
 
     .pt-back-button {
         /* text-gray-500 */
-        color: var(--pt-form-back-button-color, #6b7280);
+        color: var(--pt-form-back-button-text-color, #6b7280);
+        font-size: calc(var(--pt-form-back-button-size, 1) * 1rem);
+        background-color: var(--pt-form-back-button-background-color, transparent);
+        border-color: var(--pt-form-back-button-border-color, transparent);
     }
 }
 

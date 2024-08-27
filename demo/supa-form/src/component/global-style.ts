@@ -207,11 +207,23 @@ const nextButtonConverter: ConverterDictionary<button> = {
     }),
 };
 
+const backButtonConverter: ConverterDictionary<button> = {
+    buttonSize: (value) => value && { '--pt-form-back-button-size': buttonSizeRatio[value] },
+
+    buttonTextColor: (value) => ({
+        '--pt-form-back-button-text-color': value,
+    }),
+    buttonBackgroundColor: (value) => ({
+        '--pt-form-back-button-background-color': value,
+    }),
+};
+
 function getProgressButtonStyle(progressButton: typeof model.progressButtonStyle) {
     return {
         ...convertValue(progressButton?.floating, floatingConverter),
         ...convertValue(progressButton?.progress, progressConverter),
         ...convertValue(progressButton?.nextButton, nextButtonConverter),
+        ...convertValue(progressButton?.backButton, backButtonConverter),
     };
 }
 
