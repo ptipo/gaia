@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@hayadev/configurator';
+import { APP_KEY, CONFIG_TRANSLATOR_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import {
+    modelEquals,
+    TranslationFunction,
+    type AppInstance,
+    type BaseConceptModel,
+    type Concept,
+} from '@hayadev/configurator';
 import type {
     LogicalGroupItem,
     LogicalLeftOperandCandidates,
     LogicalOperator,
     LogicalRightOperandCandidates,
 } from '@hayadev/configurator/items';
-import { Ref, computed, inject, onMounted, ref, watch } from 'vue';
+import { Ref, computed, inject, onMounted, ref, unref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 type ModelType = {
@@ -32,6 +39,8 @@ const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 
 const { t } = useI18n();
+
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 // options
 const leftOperandOptions = ref<LogicalLeftOperandCandidates>();
@@ -123,7 +132,9 @@ const getOperator = async () => {
             app: app!,
             currentModel: props.parentModel,
             rootModel: rootModel?.value,
+            ct: unref(ct),
         },
+
         left.value.value
     );
     operatorOptions.value = items;
@@ -139,6 +150,7 @@ const getRightOperandOptions = async () => {
             app: app!,
             currentModel: props.parentModel,
             rootModel: rootModel?.value,
+            ct: unref(ct),
         },
         left.value.value,
         operator.value!
