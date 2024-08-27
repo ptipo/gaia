@@ -5,6 +5,11 @@ import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
+import { QuestionStyle } from '../design/question-style';
+import { generalStyle } from '../design/general-style';
+import { answerChoiceStyle } from '../design/answer-choice-style';
+import { ProgressButtonStyle } from '../design/progress-button-style';
+import { backgroundStyle } from '../design/background-style';
 
 /**
  * 表单
@@ -96,6 +101,40 @@ export const Form = defineConcept({
             type: 'code',
             name: t`customCSS`,
             language: CodeLanguage.CSS,
+            groupKey: 'style',
+        },
+
+        generalStyle: {
+            type: 'has',
+            name: t`textAndLayout`,
+            concept: generalStyle,
+            groupKey: 'style',
+        },
+
+        questionStyle: {
+            type: 'has',
+            name: t`questionStyle`,
+            concept: QuestionStyle,
+            groupKey: 'style',
+        },
+
+        answerChoiceStyle: {
+            type: 'has',
+            name: t`answerChoiceStyle`,
+            concept: answerChoiceStyle,
+            groupKey: 'style',
+        },
+
+        progressButtonStyle: {
+            type: 'has',
+            name: t`progressButtonStyle`,
+            concept: ProgressButtonStyle,
+            groupKey: 'style',
+        },
+        BackgroundStyle: {
+            type: 'has',
+            name: t`backgroundStyle`,
+            concept: backgroundStyle,
             groupKey: 'style',
         },
     },

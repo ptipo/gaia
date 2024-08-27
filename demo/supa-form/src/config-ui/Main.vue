@@ -13,6 +13,7 @@ import { nextTick, onMounted, ref, watch } from 'vue';
 import JsonEditorVue from 'json-editor-vue';
 import pkgJson from '../../package.json';
 import { FormApp } from '../config';
+import { locales } from '../locales';
 
 // form app
 const app = createAppInstance(FormApp, pkgJson.version);
@@ -208,6 +209,7 @@ const uploadImage = async (file: File) => {
             <AppConfigurator
                 :app="app"
                 :model="model"
+                :locale-messages="locales"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
                 :image-uploader="uploadImage"

@@ -4,35 +4,45 @@
 
 @layer base {
     h1 {
-        @apply text-2xl;
+        font-size: 1.5rem;
+        line-height: calc(var(--pt-form-line-height, 1) * 1.25rem);
     }
     h2 {
-        @apply text-xl;
+        font-size: 1.25rem;
     }
     h3 {
-        @apply text-lg;
+        font-size: 1.125rem;
     }
 }
 
 @layer components {
     .pt-form {
         background-color: var(--pt-form-background-color);
+        background-size: var(--pt-form-background-size, cover);
         color: var(--pt-form-main-text-color);
-        font-family: var(--pt-form-font-family, 'Noto Sans JP,sans-serif');
+        font-family: var(--pt-form-font-family, 'Noto Sans JP');
+        line-height: calc(var(--pt-form-line-height, 1) * 1.5rem);
     }
 
     .pt-question {
         background-color: var(--pt-form-question-background-color);
         color: var(--pt-form-question-color);
+        font-size: calc(var(--pt-form-question-font-size, 1) * 1.25rem * var(--pt-form-font-size, 1));
+        text-align: var(--pt-form-question-text-align, left);
     }
 
     .pt-question-description {
         background-color: var(--pt-form-question-description-background-color);
         color: var(--pt-form-question-description-color);
+        /* text-sm */
+        font-size: calc(var(--pt-form-question-description-font-size, 1) * 0.875rem * var(--pt-form-font-size, 1));
+        text-align: var(--pt-form-question-description-text-align, left);
     }
     .pt-question-answer {
         background-color: var(--pt-form-question-answer-background-color);
         color: var(--pt-form-question-answer-color);
+        /* text-sm */
+        font-size: calc(var(--pt-form-question-answer-font-size, 1) * 0.875rem * var(--pt-form-font-size, 1));
         /* bg-gray-400; */
         border-color: var(--pt-form-question-answer-border-color, #9ca3af);
         &:focus {
@@ -41,16 +51,34 @@
         }
     }
 
+    .pt-question-answer::placeholder {
+        /* placeholder-gray-400 */
+        color: var(--pt-form-question-answer-placeholder-color, #9ca3af);
+        --tw-placeholder-opacity: 1;
+    }
+
     .pt-choice {
-        color: var(--pt-form-choice-color);
-        border-color: var(--pt-form-choice-border-color);
+        /* gap-2 */
+        gap: calc(var(--pt-form-choice-gap, 1) * 0.5rem);
+    }
+
+    .pt-choice-answer {
+        /* bg-gray-200 */
+        border-color: var(--pt-form-choice-answer-border-color);
+
+        /* text-sm */
+        font-size: calc(var(--pt-form-choice-answer-font-size, 1) * 0.875rem * var(--pt-form-font-size, 1));
 
         /* bg-gray-50 */
-        background-color: var(--pt-form-choice-background-color, #f9fafb);
+        background-color: var(--pt-form-choice-answer-background-color, #f9fafb);
 
         &:hover {
             /* bg-gray-100 */
-            background-color: var(--pt-form-choice-hover-background-color, #f3f4f6);
+            background-color: var(--pt-form-choice-answer-hover-background-color, #f3f4f6);
+        }
+
+        .pt-choice-label {
+            color: var(--pt-form-choice-label-color);
         }
     }
 
@@ -61,12 +89,14 @@
 
     .pt-progress {
         /* bg-black */
-        background-color: var(--pt-form-progress-background-color, #000000);
+        background-color: var(--pt-form-progress-color, #000000);
     }
 
     .pt-progress-remain {
         /* bg-gray-200 */
-        background-color: var(--pt-form-progress-remain-background-color, #e5e7eb);
+        background-color: var(--pt-form-progress-remain-color, #e5e7eb);
+        /* h-1 */
+        height: calc(var(--pt-form-progress-height, 1) * 0.25rem);
     }
 
     .pt-bottom-bar {
@@ -74,9 +104,10 @@
     }
 
     .pt-next-button {
+        font-size: calc(var(--pt-form-next-button-size, 1) * 1rem);
         background-color: var(--pt-form-next-button-background-color, #000000);
-        color: var(--pt-form-next-button-color, #ffffff);
-        border-color: var(--pt-form-next-button-border-color);
+        color: var(--pt-form-next-button-text-color, #ffffff);
+        border-color: var(--pt-form-next-button-border-color, transparent);
         &:hover {
             /* bg-gray-800 */
             background-color: var(--pt-form-next-button-hover-background-color, #1f2937);
@@ -84,7 +115,11 @@
     }
 
     .pt-back-button {
-        color: var(--pt-form-back-button-color, #6b7280);
+        /* text-gray-500 */
+        color: var(--pt-form-back-button-text-color, #6b7280);
+        font-size: calc(var(--pt-form-back-button-size, 1) * 1rem);
+        background-color: var(--pt-form-back-button-background-color, transparent);
+        border-color: var(--pt-form-back-button-border-color, transparent);
     }
 }
 

@@ -18,8 +18,9 @@ import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
+import { getCSSVariableValues } from './global-style';
 
-export let model: FormModel = app.createConceptInstance(app.concept);
+export let model = app.createConceptInstance(app.concept);
 
 type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
@@ -179,19 +180,28 @@ export class PtForm extends PtBaseShadow {
         }
 
         const completePages = this.config?.completePages ?? [];
+        const cssVariableValues = getCSSVariableValues(this.config!);
+
         const css = html`<style>
+            :host{
+                ${cssVariableValues};
+            }
             ${this.config?.customCSS?.source}
         </style>`;
 
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
+            const backgroundImage = this.config?.BackgroundStyle?.backgroundImage;
+
             return html`${css}
-                    <div class="pt-form">
+                    <div class="pt-form" style="${
+                        backgroundImage ? `background-image: url('${backgroundImage.url}')` : ''
+                    }">
                         <div class="pt-top-bar sticky top-0 h-8 opacity-100">
                             <div class="flex flex-col h-full justify-center">
                                 <div
-                                    class="pt-progress-remain flex h-1 rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                                    class="pt-progress-remain flex rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                                     role="progressbar">
                                     <div
                                         class="pt-progress flex flex-col justify-center rounded-full overflow-hidden text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"

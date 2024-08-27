@@ -100,7 +100,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
         return html`
             <fieldset class="block">
                 <legend class="pt-question">
-                    <span class="text-xl font-bold block">
+                    <span class="font-bold block">
                         <pt-editable-label
                             config-path="${this.configPath + '.question'}"
                             label="${this.data?.question || ''}"
@@ -108,10 +108,8 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                         </pt-editable-label>
                     </span>
                 </legend>
-                ${description
-                    ? html`<p class="mt-1 text-sm font-normal pt-question-description">${description}</p>`
-                    : ''}
-                <div class="mt-5 flex flex-auto flex-wrap gap-2 ${isFlat ? '' : 'flex-col'} items-stretch">
+                ${description ? html`<p class="mt-1 font-normal pt-question-description">${description}</p>` : ''}
+                <div class="pt-choice mt-5 flex flex-auto flex-wrap ${isFlat ? '' : 'flex-col'} items-stretch">
                     ${choices!.map(
                         (choice, i) => html`
                             ${when(
@@ -122,7 +120,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             style="${isFlat
                                                 ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
                                                 : ''}"
-                                            class="pt-choice flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 has-[:checked]:border-black transition"
+                                            class="pt-choice-answer flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 has-[:checked]:border-black transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
@@ -150,7 +148,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                                     () =>
                                                         html`<label
                                                             for="${choice.$id}"
-                                                            class="cursor-pointer leading-none"
+                                                            class="pt-choice-label cursor-pointer leading-none"
                                                             ><pt-editable-label
                                                                 config-path="${this.configPath +
                                                                 '.imageChoices[' +
@@ -166,12 +164,12 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                 () =>
                                     html`
                                         <label
-                                            class="pt-choice flex items-center border rounded-md p-4  has-[:checked]:border-black cursor-pointer transition"
+                                            class="pt-choice-answer flex items-center border rounded-md p-4  has-[:checked]:border-black cursor-pointer transition"
                                         >
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label
                                                 for="${choice.$id}"
-                                                class="cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
+                                                class="pt-choice-label cursor-pointer block ms-2 text-sm font-medium dark:text-gray-300"
                                             >
                                                 <pt-editable-label
                                                     config-path="${this.configPath + '.textChoices[' + i + '].value'}"
