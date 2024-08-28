@@ -28,7 +28,7 @@ export class JSONSchemaBuilder {
             type: 'object',
             required: ['key', 'value', 'label'],
             properties: {
-                key: { enum: ['string', 'number'] },
+                key: { anyOf: [{ type: 'string' }, { type: 'number' }] },
                 label: { type: 'string' },
                 value: {},
             },

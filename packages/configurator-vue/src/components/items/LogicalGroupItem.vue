@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { composeLogicalGroupData } from '@/lib/logical-group-utils';
 import type { BaseConceptModel, inferConfigItem } from '@hayadev/configurator';
-import { type LogicalGroupItem } from '@hayadev/configurator/items';
+import type { LogicalGroup, LogicalGroupAssociation, LogicalGroupItem } from '@hayadev/configurator/items';
 import { v4 as uuid } from 'uuid';
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ItemLabel from './ItemLabel.vue';
 import type { CommonEvents, CommonProps } from './common';
 import LogicalGroupElement from './logical-group/LogicalGroupElement.vue';
-import { composeLogicalGroupData } from '@/lib/logical-group-utils';
-import { useI18n } from 'vue-i18n';
 
 type ModelType = Array<{
     $id: string;
@@ -37,28 +37,36 @@ const { t } = useI18n();
 
 function transformModel(model: inferConfigItem<LogicalGroupItem>): ModelType {
     const result: ModelType = [];
+    if (model) {
+        collectItem(model, result);
+    }
+    return result;
+}
 
-    if (!model) {
-        return result;
+function collectItem(data: LogicalGroup, result: ModelType) {
+    if (data.kind === 'expression') {
+        result.push({ ...data, $id: uuid() });
+    } else {
+        collectAssociation(data, result);
+    }
+}
+
+function collectAssociation(data: LogicalGroupAssociation, result: ModelType) {
+    // collect first
+    const firstItems: ModelType = [];
+    collectItem(data.first, firstItems);
+
+    // collect second
+    const secondItems: ModelType = [];
+    collectItem(data.second, secondItems);
+
+    // set group operator
+    if (secondItems.length > 0) {
+        secondItems[0].groupOperator = data.groupOperator;
     }
 
-    let current = model;
-
-    while (current) {
-        if (!('groupOperator' in current)) {
-            result.push({ ...current, $id: uuid() });
-            break;
-        } else {
-            result.push({
-                $id: uuid(),
-                ...current.second,
-                groupOperator: current.groupOperator,
-            });
-            current = current.first;
-        }
-    }
-
-    return result.reverse();
+    // merge
+    result.push(...firstItems, ...secondItems);
 }
 
 const onAddCondition = () => {
