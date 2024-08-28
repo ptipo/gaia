@@ -227,8 +227,8 @@ const checkEmitChange = () => {
     <div class="flex flex-col gap-2">
         <div v-if="groupOperator" class="w-20">
             <el-select v-model="groupOperator" :placeholder="t('pleaseSelect')" @change="checkEmitChange">
-                <el-option label="并且" value="and" />
-                <el-option label="或" value="or" />
+                <el-option :label="t('and')" value="and" />
+                <el-option :label="t('or')" value="or" />
             </el-select>
         </div>
         <div class="w-full flex items-center">

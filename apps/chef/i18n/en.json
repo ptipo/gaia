@@ -80,5 +80,7 @@
     "confirmDeleteName": "Are you sure to delete \"{name}\"?",
     "confirmDelete": "Delete confirmation",
     "notSet": "Not set",
-    "invalidConfig": "Invalid configuration"
+    "invalidConfig": "Invalid configuration",
+    "and": "And",
+    "or": "Or"
 }
