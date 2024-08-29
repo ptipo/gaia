@@ -80,7 +80,7 @@
     "confirmDeleteName": "\"{name}\"を削除してもよろしいですか？",
     "confirmDelete": "削除確認",
     "notSet": "未設定",
-    "invalidConfig": "無効な構成"
-        "and": "かつ",
+    "invalidConfig": "無効な構成",
+    "and": "かつ",
     "or": "または"
 }
