@@ -52,15 +52,62 @@ export const buttonStyles = {
         type: 'color',
         name: t`buttonBackgroundColor`,
     },
+    buttonBorderColor: {
+        type: 'color',
+        name: t`buttonBorderColor`,
+    },
+    buttonShadow: {
+        type: 'switch',
+        name: t`buttonShadow`,
+    },
+
+    shadowOffsetX: {
+        type: 'if',
+        condition: { field: 'buttonShadow', value: true },
+        child: {
+            type: 'number',
+            name: t`shadowOffsetX`,
+        },
+    },
+
+    shadowOffsetY: {
+        type: 'if',
+        condition: { field: 'buttonShadow', value: true },
+        child: {
+            type: 'number',
+            name: t`shadowOffsetY`,
+        },
+    },
+
+    shadowBlur: {
+        type: 'if',
+        condition: { field: 'buttonShadow', value: true },
+        child: {
+            type: 'number',
+            name: t`blur`,
+        },
+    },
+    shadowSpread: {
+        type: 'if',
+        condition: { field: 'buttonShadow', value: true },
+        child: {
+            type: 'number',
+            name: t`spread`,
+        },
+    },
+    shadowColor: {
+        type: 'if',
+        condition: { field: 'buttonShadow', value: true },
+        child: {
+            type: 'color',
+            name: t`color`,
+        },
+    },
 } satisfies Record<string, ConfigItem>;
 
 const nextButtonGroup = defineGroupItem({
     items: {
         ...buttonStyles,
-        buttonBorderColor: {
-            type: 'color',
-            name: t`buttonBorderColor`,
-        },
     },
     groupKey: 'nextButton',
 });

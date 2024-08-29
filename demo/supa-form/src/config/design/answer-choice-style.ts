@@ -1,15 +1,40 @@
-import { defineConcept, t } from '@hayadev/configurator';
-import { BackgroundColor, BorderColor, Gap, TextCommonItems } from '../page-items/common';
+import { ConfigItem, defineConcept, t } from '@hayadev/configurator';
+import { BackgroundColor, BorderColor, BorderRadius, BorderWidth, Gap, TextCommonItems } from '../page-items/common';
 import { defineGroupItem } from '@hayadev/configurator/items';
+
+const BorderCommon = {
+    borderWidth: BorderWidth,
+    borderRadius: {
+        type: 'if',
+        name: t`borderRadius`,
+        condition: { field: 'style', value: 'box' },
+        child: BorderRadius,
+    },
+} satisfies Record<string, ConfigItem>;
 
 const answerGroup = defineGroupItem({
     items: {
         ...TextCommonItems,
-        BackgroundColor,
-        BorderColor,
+        backgroundColor: BackgroundColor,
+        borderColor: BorderColor,
         placeHolderColor: {
             type: 'color',
             name: t`placeHolderColor`,
+        },
+        style: {
+            type: 'select',
+            name: t`style`,
+            options: {
+                line: t`line`,
+                box: t`box`,
+            },
+        },
+        borderWidth: BorderWidth,
+        borderRadius: {
+            type: 'if',
+            name: t`borderRadius`,
+            condition: { field: 'style', value: 'box' },
+            child: BorderRadius,
         },
     },
     groupKey: 'answer',
@@ -18,9 +43,23 @@ const answerGroup = defineGroupItem({
 const choiceGroup = defineGroupItem({
     items: {
         ...TextCommonItems,
-        BackgroundColor,
-        BorderColor,
-        Gap,
+        backgroundColor: BackgroundColor,
+        style: {
+            type: 'select',
+            name: t`style`,
+            options: {
+                button: t`button`,
+                box: t`box`,
+            },
+        },
+        borderColor: BorderColor,
+        selectInputColor: {
+            type: 'color',
+            name: t`selectInputColor`,
+        },
+        borderWidth: BorderWidth,
+        borderRadius: BorderRadius,
+        gap: Gap,
     },
     groupKey: 'choice',
 });

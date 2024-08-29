@@ -131,7 +131,7 @@ export const Form = defineConcept({
             concept: ProgressButtonStyle,
             groupKey: 'style',
         },
-        BackgroundStyle: {
+        backgroundStyle: {
             type: 'has',
             name: t`backgroundStyle`,
             concept: backgroundStyle,
