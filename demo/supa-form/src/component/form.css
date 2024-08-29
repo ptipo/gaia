@@ -24,6 +24,19 @@
         line-height: calc(var(--pt-form-line-height, 1) * 1.5rem);
     }
 
+    .pt-form-page {
+        /* mx-10 */
+        margin-top: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+        margin-bottom: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+
+        /* px-10 */
+        padding-left: calc(var(--pt-form-margin-x, 1) * 2.5rem);
+        padding-right: calc(var(--pt-form-margin-x, 1) * 2.5rem);
+
+        /* gap-y-10 */
+        row-gap: calc(var(--pt-form-content-gap, 1) * 2.5rem);
+    }
+
     .pt-question {
         background-color: var(--pt-form-question-background-color);
         color: var(--pt-form-question-color);
@@ -45,6 +58,12 @@
         font-size: calc(var(--pt-form-question-answer-font-size, 1) * 0.875rem * var(--pt-form-font-size, 1));
         /* bg-gray-400; */
         border-color: var(--pt-form-question-answer-border-color, #9ca3af);
+
+        border-width: var(--pt-form-question-answer-border-width, 0);
+        border-bottom-width: var(--pt-form-question-answer-border-bottom-width, 1px);
+
+        border-radius: var(--pt-form-question-answer-border-radius);
+
         &:focus {
             /* bg-gray-400; */
             border-color: var(--pt-form-question-answer-border-color, #9ca3af);
@@ -72,6 +91,12 @@
         /* bg-gray-50 */
         background-color: var(--pt-form-choice-answer-background-color, #f9fafb);
 
+        /* border */
+        border-width: var(--pt-form-choice-answer-border-width, 1px);
+
+        /* rounded-md */
+        border-radius: var(--pt-form-choice-answer-border-radius, 0.375rem);
+
         &:hover {
             /* bg-gray-100 */
             background-color: var(--pt-form-choice-answer-hover-background-color, #f3f4f6);
@@ -79,6 +104,10 @@
 
         .pt-choice-label {
             color: var(--pt-form-choice-label-color);
+        }
+
+        .pt-choice-answer-input {
+            color: var(--pt-form-choice-answer-input-color, #000000);
         }
     }
 
@@ -108,6 +137,9 @@
         background-color: var(--pt-form-next-button-background-color, #000000);
         color: var(--pt-form-next-button-text-color, #ffffff);
         border-color: var(--pt-form-next-button-border-color, transparent);
+        /* w-44 */
+        width: cal(var(--pt-form-next-button-size, 1) * 11rem);
+        box-shadow: var(--pt-form-next-button-shadow);
         &:hover {
             /* bg-gray-800 */
             background-color: var(--pt-form-next-button-hover-background-color, #1f2937);
@@ -120,6 +152,12 @@
         font-size: calc(var(--pt-form-back-button-size, 1) * 1rem);
         background-color: var(--pt-form-back-button-background-color, transparent);
         border-color: var(--pt-form-back-button-border-color, transparent);
+
+        font-size: calc(var(--pt-form-back-button-size, 1) * 1rem);
+        /* w-12 */
+        width: calc(var(--pt-form-back-button-size, 1) * 4rem);
+
+        box-shadow: var(--pt-form-back-button-shadow);
     }
 }
 

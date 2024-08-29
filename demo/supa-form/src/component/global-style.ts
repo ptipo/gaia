@@ -1,5 +1,4 @@
-import { buttonStyles, ProgressHeight } from '../config/design/progress-button-style';
-import { FontSize as RangeKey, FullRange, Gap } from '../config/page-items/common';
+import { FullRange, PartialRange } from '../config/page-items/common';
 import { model } from './pt-form';
 
 //#region utility types
@@ -18,7 +17,10 @@ type PropertyType<T, P extends string> = P extends keyof T
     : never;
 
 type ConverterDictionary<T> = {
-    [P in PathsToProperties<T extends infer U & Record<string, unknown> ? U : T>]?: (value: PropertyType<T, P>) => any;
+    [P in PathsToProperties<T extends infer U & Record<string, unknown> ? U : T>]?: (
+        value: PropertyType<T, P>,
+        root: T
+    ) => any;
 };
 
 function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
@@ -33,7 +35,7 @@ function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
 
         if (value) {
             // @ts-ignore
-            const data = converters[path](value);
+            const data = converters[path](value, obj);
             if (data) {
                 return { ...result, ...data };
             }
@@ -47,9 +49,17 @@ const RangeRatio: Record<keyof typeof FullRange, number> = {
     xs: 0.8,
     sm: 0.9,
     base: 1,
-    lg: 1.2,
+    lg: 1.1,
+    xl: 1.2,
+};
+
+const ProgressRatio: Record<keyof typeof PartialRange, number> = {
+    xs: 0.5,
+    base: 1,
     xl: 1.5,
 };
+
+const pxToRem = (px: number) => `${px / 16}rem`;
 
 //#endregion
 
@@ -66,7 +76,7 @@ const questionConverter: ConverterDictionary<question> = {
     color: (value) => ({
         '--pt-form-question-color': value,
     }),
-    BackgroundColor: (value) => ({
+    backgroundColor: (value) => ({
         '--pt-form-question-background-color': value,
     }),
 };
@@ -102,15 +112,28 @@ const answerConverter: ConverterDictionary<questionAnswer> = {
     color: (value) => ({
         '--pt-form-question-answer-color': value,
     }),
-    BackgroundColor: (value) => ({
+    backgroundColor: (value) => ({
         '--pt-form-question-answer-background-color': value,
     }),
-    BorderColor: (value) => ({
+    borderColor: (value) => ({
         '--pt-form-question-answer-border-color': value,
     }),
     placeHolderColor: (value) => ({
         '--pt-form-question-answer-placeholder-color': value,
     }),
+    borderWidth: (value, root) =>
+        root.style == 'box'
+            ? {
+                  '--pt-form-question-answer-border-width': `${value}px`,
+                  '--pt-form-question-answer-border-bottom-width': `${value}px`,
+              }
+            : {
+                  '--pt-form-question-answer-border-bottom-width': `${value}px`,
+              },
+    borderRadius: (value) =>
+        value && {
+            '--pt-form-question-answer-border-radius': `${pxToRem(value)}`,
+        },
 };
 
 type choice = typeof model.answerChoiceStyle.choice;
@@ -123,13 +146,20 @@ const choiceConverter: ConverterDictionary<choice> = {
     color: (value) => ({
         '--pt-form-choice-label-color': value,
     }),
-    BackgroundColor: (value) => ({
+    backgroundColor: (value) => ({
         '--pt-form-choice-answer-background-color': value,
     }),
-    BorderColor: (value) => ({
+    borderColor: (value) => ({
         '--pt-form-choice-answer-border-color': value,
     }),
-    Gap: (value) =>
+    selectIconColor: (value) => ({
+        '--pt-form-choice-answer-input-color': value,
+    }),
+    borderWidth: (value) => ({
+        '--pt-form-choice-answer-border-width': `${value}px`,
+    }),
+    borderRadius: (value) => value && { '--pt-form-choice-answer-border-radius': `${pxToRem(value)}` },
+    gap: (value) =>
         value && {
             '--pt-form-choice-gap': RangeRatio[value],
         },
@@ -163,13 +193,13 @@ const progressConverter: ConverterDictionary<progress> = {
     }),
     progressHeight: (value) =>
         value && {
-            '--pt-form-progress-height': RangeRatio[value],
+            '--pt-form-progress-height': ProgressRatio[value],
         },
 };
 
-type button = typeof model.progressButtonStyle.nextButton;
+type NextButton = typeof model.progressButtonStyle.nextButton;
 
-const nextButtonConverter: ConverterDictionary<button> = {
+const nextButtonConverter: ConverterDictionary<NextButton> = {
     buttonSize: (value) => value && { '--pt-form-next-button-size': RangeRatio[value] },
 
     buttonTextColor: (value) => ({
@@ -181,9 +211,17 @@ const nextButtonConverter: ConverterDictionary<button> = {
     buttonBorderColor: (value) => ({
         '--pt-form-next-button-border-color': value,
     }),
+    buttonShadow: (value, root) =>
+        value && {
+            '--pt-form-next-button-shadow': `${root.shadowOffsetX || '0'}px ${root.shadowOffsetY || '0'}px ${
+                root.shadowBlur || '0'
+            }px ${root.shadowSpread || '0'}px ${root.shadowColor || ''}`,
+        },
 };
 
-const backButtonConverter: ConverterDictionary<button> = {
+type BackButton = typeof model.progressButtonStyle.backButton;
+
+const backButtonConverter: ConverterDictionary<BackButton> = {
     buttonSize: (value) => value && { '--pt-form-back-button-size': RangeRatio[value] },
 
     buttonTextColor: (value) => ({
@@ -192,6 +230,15 @@ const backButtonConverter: ConverterDictionary<button> = {
     buttonBackgroundColor: (value) => ({
         '--pt-form-back-button-background-color': value,
     }),
+    buttonBorderColor: (value) => ({
+        '--pt-form-back-button-border-color': value,
+    }),
+    buttonShadow: (value, root) =>
+        value && {
+            '--pt-form-back-button-shadow': `${root.shadowOffsetX || '0'}px ${root.shadowOffsetY || '0'}px ${
+                root.shadowBlur || '0'
+            }px ${root.shadowSpread || '0'}px ${root.shadowColor || ''}`,
+        },
 };
 
 function getProgressButtonStyle(progressButton: typeof model.progressButtonStyle) {
@@ -203,7 +250,7 @@ function getProgressButtonStyle(progressButton: typeof model.progressButtonStyle
     };
 }
 
-type background = typeof model.BackgroundStyle;
+type background = typeof model.backgroundStyle;
 
 const backgroundConverter: ConverterDictionary<background> = {
     backgroundColor: (value) => ({
@@ -217,6 +264,18 @@ const backgroundConverter: ConverterDictionary<background> = {
 function getBackgroundStyle(background: typeof model.BackgroundStyle) {
     return convertValue(background, backgroundConverter);
 }
+
+type layout = typeof model.LayoutStyle;
+const layoutConverter: ConverterDictionary<layout> = {
+    marginHorizontal: (value) => value && { '--pt-form-margin-x': `${RangeRatio[value]}` },
+    marginVertical: (value) => value && { '--pt-form-margin-y': `${RangeRatio[value]}` },
+    contentGap: (value) => value && { '--pt-form-content-gap': `${RangeRatio[value]}` },
+};
+
+function getLayoutStyle(layout: typeof model.LayoutStyle) {
+    return convertValue(layout, layoutConverter);
+}
+
 type general = typeof model.generalStyle;
 
 const generalConverter: ConverterDictionary<general> = {
@@ -242,7 +301,8 @@ export function getCSSVariableValues(config: typeof model) {
         ...getQuestionStyle(config.questionStyle),
         ...getAnswerChoiceStyle(config.answerChoiceStyle),
         ...getProgressButtonStyle(config.progressButtonStyle),
-        ...getBackgroundStyle(config.BackgroundStyle),
+        ...getBackgroundStyle(config.backgroundStyle),
+        ...getLayoutStyle(config.LayoutStyle),
     };
 
     return Object.entries(result)

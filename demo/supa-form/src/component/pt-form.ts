@@ -20,7 +20,7 @@ import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
 import { getCSSVariableValues } from './global-style';
 
-export let model = app.createConceptInstance(app.concept);
+export let model = app.createConceptInstance(app.concept) as FormModel;
 
 type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
@@ -192,7 +192,7 @@ export class PtForm extends PtBaseShadow {
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
-            const backgroundImage = this.config?.BackgroundStyle?.backgroundImage;
+            const backgroundImage = this.config?.backgroundStyle?.backgroundImage;
 
             return html`${css}
                     <div class="pt-form" style="${
@@ -223,16 +223,16 @@ export class PtForm extends PtBaseShadow {
                         )}
                     </div>
                     <div class="pt-bottom-bar sticky opacity-90 w-full h-20  bottom-0 ">
-                        <div class="flex h-full items-center justify-end gap-x-8">
+                        <div class="flex h-full items-center justify-end gap-x-4">
                         ${when(
                             this.editSelection || this.pageIdStack.length > 0,
                             () =>
-                                html` <button type="button" @click=${this.prePage} class="pt-back-button">
+                                html` <button type="button" @click=${this.prePage} class="pt-back-button border">
                                     ${msg('Back')}
                                 </button>`
                         )}
 
-                        <span class="w-44 max-w-[33%] mr-10">
+                        <span class="max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
                         } class="pt-next-button border w-full py-2 px-4 rounded mr-10 ml-auto" >${msg('NEXT')}</button>

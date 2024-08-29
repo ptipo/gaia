@@ -41,7 +41,7 @@ export class PtQuestionBase extends PtBase {
             <div class="mt-4">
                 <span>
                     <input
-                        class="pt-question-answer w-full appearance-none ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
+                        class="pt-question-answer w-full appearance-none ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] border-solid outline-none "
                         value=${ifDefined(this.value)}
                         placeholder=${ifDefined(this.placeholder)}
                         type=${this.inputType}

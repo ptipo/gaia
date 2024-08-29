@@ -258,3 +258,15 @@ export const TextCommonItems = {
     color: FontColor,
     fontSize: FontSize,
 } satisfies Record<string, ConfigItem>;
+
+export const BorderWidth = {
+    type: 'number',
+    name: t`borderWidth`,
+    allowFloat: true,
+} satisfies ConfigItem;
+
+export const BorderRadius = {
+    type: 'number',
+    name: t`borderRadius`,
+    allowFloat: true,
+} satisfies ConfigItem;

@@ -65,7 +65,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
             name="${this.data?.$id!}"
             ?checked=${this.value ? isChecked : choice.defaultSelected}
             @change=${(e: any) => this.onChange(e)}
-            class="mr-2 w-4 h-4 cursor-pointer text-black border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            class="pt-choice-answer-input mr-2 w-4 h-4 cursor-pointer border-gray-300 focus:ring-black dark:focus:ring-black dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             checked
             required
         />`;
@@ -120,7 +120,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                             style="${isFlat
                                                 ? `width: calc(${(1 / this.widthLevel) * 100}% - 0.5rem);`
                                                 : ''}"
-                                            class="pt-choice-answer flex cursor-pointer gap-y-4 flex-col justify-center items-center border rounded-md p-2.5 has-[:checked]:border-black transition"
+                                            class="pt-choice-answer flex cursor-pointer gap-y-4 flex-col justify-center items-center p-2.5 has-[:checked]:border-black transition"
                                         >
                                             <div class="flex flex-auto items-center w-full">
                                                 <div class="flex items-center flex-col w-full gap-y-4 cursor-pointer">
@@ -164,7 +164,7 @@ export class PtChoice extends PtBaseData<Array<[string, string]>> {
                                 () =>
                                     html`
                                         <label
-                                            class="pt-choice-answer flex items-center border rounded-md p-4  has-[:checked]:border-black cursor-pointer transition"
+                                            class="pt-choice-answer flex items-center p-4  has-[:checked]:border-black cursor-pointer transition"
                                         >
                                             ${this.getInputComponent(choice, isSingleChoice)}
                                             <label

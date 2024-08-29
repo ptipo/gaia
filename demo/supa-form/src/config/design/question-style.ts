@@ -7,7 +7,7 @@ const sharedItems = {
     ...getAlignConfig(),
 };
 const questionGroup = defineGroupItem({
-    items: { BackgroundColor, ...sharedItems },
+    items: { backgroundColor: BackgroundColor, ...sharedItems },
     groupKey: 'question',
 });
 
