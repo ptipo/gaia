@@ -53,9 +53,9 @@ const choiceGroup = defineGroupItem({
             },
         },
         borderColor: BorderColor,
-        selectInputColor: {
+        selectIconColor: {
             type: 'color',
-            name: t`selectInputColor`,
+            name: t`selectIconColor`,
         },
         borderWidth: BorderWidth,
         borderRadius: BorderRadius,

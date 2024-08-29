@@ -152,7 +152,7 @@ const choiceConverter: ConverterDictionary<choice> = {
     borderColor: (value) => ({
         '--pt-form-choice-answer-border-color': value,
     }),
-    selectInputColor: (value) => ({
+    selectIconColor: (value) => ({
         '--pt-form-choice-answer-input-color': value,
     }),
     borderWidth: (value) => ({
