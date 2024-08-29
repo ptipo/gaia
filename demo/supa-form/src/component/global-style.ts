@@ -264,6 +264,18 @@ const backgroundConverter: ConverterDictionary<background> = {
 function getBackgroundStyle(background: typeof model.BackgroundStyle) {
     return convertValue(background, backgroundConverter);
 }
+
+type layout = typeof model.LayoutStyle;
+const layoutConverter: ConverterDictionary<layout> = {
+    marginHorizontal: (value) => value && { '--pt-form-margin-x': `${RangeRatio[value]}` },
+    marginVertical: (value) => value && { '--pt-form-margin-y': `${RangeRatio[value]}` },
+    contentGap: (value) => value && { '--pt-form-content-gap': `${RangeRatio[value]}` },
+};
+
+function getLayoutStyle(layout: typeof model.LayoutStyle) {
+    return convertValue(layout, layoutConverter);
+}
+
 type general = typeof model.generalStyle;
 
 const generalConverter: ConverterDictionary<general> = {
@@ -290,6 +302,7 @@ export function getCSSVariableValues(config: typeof model) {
         ...getAnswerChoiceStyle(config.answerChoiceStyle),
         ...getProgressButtonStyle(config.progressButtonStyle),
         ...getBackgroundStyle(config.backgroundStyle),
+        ...getLayoutStyle(config.LayoutStyle),
     };
 
     return Object.entries(result)

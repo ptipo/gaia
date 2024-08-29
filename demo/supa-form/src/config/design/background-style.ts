@@ -2,7 +2,7 @@ import { defineConcept, t } from '@hayadev/configurator';
 
 export const backgroundStyle = defineConcept({
     name: 'backgroundStyle',
-    displayName: 'background ',
+    displayName: t`backgroundStyle`,
     items: {
         background: {
             type: 'select',

@@ -10,6 +10,7 @@ import { generalStyle } from '../design/general-style';
 import { answerChoiceStyle } from '../design/answer-choice-style';
 import { ProgressButtonStyle } from '../design/progress-button-style';
 import { backgroundStyle } from '../design/background-style';
+import { LayoutStyle } from '../design/layout-style';
 
 /**
  * 表单
@@ -135,6 +136,12 @@ export const Form = defineConcept({
             type: 'has',
             name: t`backgroundStyle`,
             concept: backgroundStyle,
+            groupKey: 'style',
+        },
+        LayoutStyle: {
+            type: 'has',
+            name: t`layoutStyle`,
+            concept: LayoutStyle,
             groupKey: 'style',
         },
     },

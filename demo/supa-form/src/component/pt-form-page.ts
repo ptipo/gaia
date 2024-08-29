@@ -73,7 +73,7 @@ export class PtFormPage extends PtBase {
             })
             ?.map((x) => x.$id);
 
-        return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
+        return html`<div class="pt-form-page flex flex-col animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item, i) => {
                 let el = this.pageItems?.get(item.$id)!;
 

@@ -24,6 +24,19 @@
         line-height: calc(var(--pt-form-line-height, 1) * 1.5rem);
     }
 
+    .pt-form-page {
+        /* mx-10 */
+        margin-top: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+        margin-bottom: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+
+        /* px-10 */
+        padding-left: calc(var(--pt-form-margin-x, 1) * 2.5rem);
+        padding-right: calc(var(--pt-form-margin-x, 1) * 2.5rem);
+
+        /* gap-y-10 */
+        row-gap: calc(var(--pt-form-content-gap, 1) * 2.5rem);
+    }
+
     .pt-question {
         background-color: var(--pt-form-question-background-color);
         color: var(--pt-form-question-color);
