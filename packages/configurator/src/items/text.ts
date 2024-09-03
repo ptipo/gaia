@@ -16,7 +16,7 @@ export interface TextItem extends ConfigItemBase {
     /**
      * 输入类型
      */
-    kind?: 'text' | 'email' | 'phone';
+    kind?: 'text' | 'email' | 'phone' | 'url';
 
     /**
      * 默认值

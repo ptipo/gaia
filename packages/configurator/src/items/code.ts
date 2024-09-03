@@ -20,6 +20,7 @@ export interface CodeItem extends ConfigItemBase {
  */
 export enum CodeLanguage {
     CSS = 'css',
+    JavaScript = 'javascript',
 }
 
 export const getSchema = (item: ConfigItemBase) =>

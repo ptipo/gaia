@@ -1,5 +1,6 @@
 import { defineConcept, t } from '@hayadev/configurator';
 import { CopyToClipboard, ImageElement, TextElement } from '../page-items';
+import { Button } from '../page-items/element/button';
 
 /**
  * 结束页
@@ -21,7 +22,7 @@ export const CompletePage = defineConcept({
         pageItems: {
             type: 'has-many',
             name: t`pageItem`,
-            candidates: [TextElement, ImageElement, CopyToClipboard],
+            candidates: [TextElement, ImageElement, CopyToClipboard, Button],
         },
     },
 

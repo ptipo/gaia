@@ -103,5 +103,9 @@
     "centerAlign": "居中",
     "leftAlign": "左对齐",
     "rightAlign": "右对齐",
-    "maxWidth%": "最大宽度%"
+    "maxWidth%": "最大宽度%",
+    "button": "按钮",
+    "openLink": "打开链接",
+    "code": "代码",
+    "executeJSCode": "执行JS代码"
 }

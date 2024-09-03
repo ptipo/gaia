@@ -142,5 +142,9 @@
     "extraLarge": "Extra Large",
     "fontColor": "Font Color",
     "borderColor": "Border Color",
-    "gap": "Gap"
+    "gap": "Gap",
+    "button": "Button",
+    "openLink": "Open Link",
+    "code": "Code",
+    "executeJSCode": "Execute JavaScript Code"
 }
