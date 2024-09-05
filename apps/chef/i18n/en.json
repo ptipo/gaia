@@ -82,5 +82,7 @@
     "notSet": "Not set",
     "invalidConfig": "Invalid configuration",
     "and": "And",
-    "or": "Or"
+    "or": "Or",
+    "aiGenerate-content": "Generate content with AI",
+    "aiGenerate-design": "Generate design with AI"
 }

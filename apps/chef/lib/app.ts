@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern';
+
 /**
  * App bundle
  */
@@ -9,13 +11,18 @@ export type AppBundle = {
 /**
  * Loads an app bundle.
  */
-export async function loadAppBundle(bundle: string): Promise<AppBundle> {
+export async function loadAppBundle(bundle: string, entry: 'main' | 'config' | 'locales'): Promise<AppBundle> {
     if (bundle.startsWith('@')) {
         let result: AppBundle;
         switch (bundle) {
             case '@hayadev/supa-form':
+                let module: any;
                 // import has to be a constant string for vite to work
-                const module = await import('@hayadev/supa-form');
+                module = await match(entry)
+                    .with('main', () => import('@hayadev/supa-form'))
+                    .with('config', () => import('@hayadev/supa-form/config'))
+                    .with('locales', () => import('@hayadev/supa-form/locales'))
+                    .exhaustive();
                 const pkgJson = await import('@hayadev/supa-form/package.json');
                 if (!pkgJson.default.version) {
                     throw new Error(`No version find in package.json: ${pkgJson}`);

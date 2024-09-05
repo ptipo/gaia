@@ -1,5 +1,5 @@
 import { z, type ZodSchema } from 'zod';
-import type { AppInstance, InitializeContext, TranslationFunction, ValidationIssue } from '.';
+import type { AppInstance, ConfigAspects, InitializeContext, TranslationFunction, ValidationIssue } from '.';
 import { ConfigItem, makeConfigItemSchema } from './config-item';
 import type { BaseConceptModel, inferConcept } from './inference';
 import type { GetSchemaContext } from './items';
@@ -109,7 +109,7 @@ export type ConfigGroups = {
         /**
          * Grouping aspect
          */
-        aspect?: 'content' | 'design' | 'setting';
+        aspect?: ConfigAspects;
 
         /**
          * Group name

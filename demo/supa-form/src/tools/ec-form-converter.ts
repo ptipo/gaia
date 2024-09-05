@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import { version as appVersion } from '../../package.json';
-import { FormApp } from '../config';
+import { config as FormApp } from '../config';
 import { ChoiceQuestion, EmailQuestion, QAQuestion, TextElement } from '../config/page-items';
 import { ImageChoice } from '../config/page-items/question/image-choice';
 import { TextChoice } from '../config/page-items/question/text-choice';

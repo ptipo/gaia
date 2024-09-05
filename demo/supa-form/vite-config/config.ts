@@ -4,18 +4,11 @@ import { resolve } from 'path';
 const config: UserConfig = {
     build: {
         lib: {
-            entry: resolve(__dirname, './src/index.ts'),
-            name: 'PtForm',
-            fileName: 'index',
+            entry: resolve(__dirname, '../src/config/index.ts'),
+            name: 'PtFormConfig',
+            fileName: 'config',
         },
         emptyOutDir: false,
-    },
-    test: {
-        browser: {
-            enabled: true,
-            name: 'chrome',
-            provider: 'webdriverio',
-        },
     },
     define: {
         // By default, Vite doesn't include shims for NodeJS necessary for segment analytics lib to work

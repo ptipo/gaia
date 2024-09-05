@@ -114,6 +114,10 @@ const metadata = {
                     name: "aiApiKey",
                     type: "String",
                     isOptional: true,
+                }, secrets: {
+                    name: "secrets",
+                    type: "Json",
+                    isOptional: true,
                 },
             }
             , uniqueConstraints: {

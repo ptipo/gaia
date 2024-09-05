@@ -1,4 +1,15 @@
+import { loadAppBundle } from '~/lib/app';
 import { prisma } from '../../../db';
+import { z } from 'zod';
+import type { AppDef, Concept } from '@hayadev/configurator';
+
+const payloadSchema = z.object({
+    kind: z.union([z.literal('user-input'), z.literal('elaboration')]),
+    data: z.string(),
+    currentModel: z.any().optional(),
+    aspect: z.enum(['content', 'design', 'setting']).optional(),
+});
+
 export default eventHandler(async (event) => {
     if (!event.context.user) {
         throw createError({
@@ -6,7 +17,6 @@ export default eventHandler(async (event) => {
             statusCode: 403,
         });
     }
-    const { email } = event.context.user;
 
     const id = getRouterParam(event, 'id');
     const asset = await prisma.asset.findUnique({ where: { id }, include: { app: true } });
@@ -17,47 +27,27 @@ export default eventHandler(async (event) => {
         });
     }
 
-    const aiApiKey = asset.app.aiApiKey;
-
-    if (!aiApiKey) {
+    const appBundle = await loadAppBundle(asset.app.bundle, 'config');
+    const appConfig = appBundle.module.config as AppDef<Concept>;
+    if (!appConfig) {
         throw createError({
-            message: 'AI API key not found',
+            message: 'App does not have a config',
             statusCode: 500,
         });
     }
 
-    const { prompt } = await readBody(event);
-
-    const requestBody = {
-        inputs: {
-            requirements: prompt,
-        },
-        response_mode: 'blocking',
-        user: email,
-    };
-
-    const response = await fetch(process.env.AI_API_ENDPOINT!, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + aiApiKey,
-        },
-        body: JSON.stringify(requestBody),
-    });
-
-    const responseBody = await response.json();
-
-    console.log(`AI response:${JSON.stringify(responseBody)}`);
-
-    const responseData = responseBody.data.outputs.text;
-    try {
-        const responseJson: Object = JSON.parse(responseData);
-        return { success: true, data: { json: responseJson } };
-    } catch (e) {
-        console.error('Error parsing AI response:', e);
+    if (!appConfig.generateModel) {
         throw createError({
-            message: 'AI Response is not a valid JSON',
+            message: 'App does not support model generation',
             statusCode: 500,
         });
     }
+
+    const payload = await readBody(event);
+    const parsed = payloadSchema.parse(payload);
+
+    const result = await appConfig.generateModel({ ...parsed, secrets: asset.app.secrets ?? undefined });
+    console.log(`Model generation response: ${JSON.stringify(result)}`);
+
+    return { success: true, data: result };
 });

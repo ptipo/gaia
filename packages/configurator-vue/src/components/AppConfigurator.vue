@@ -9,13 +9,13 @@ import {
     ROOT_MODEL_KEY,
 } from '@/lib/constants';
 import { useConfigI18n } from '@/lib/i18n';
-import type { AppInstance, BaseConceptModel, Concept, SelectionData } from '@hayadev/configurator';
+import type { AppInstance, BaseConceptModel, Concept, SelectionData, ConfigAspects } from '@hayadev/configurator';
 import { provide, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ConceptStack from './ConceptStack.vue';
-import type { EditPathRecord, ImageUploader } from './types';
+import type { EditPathRecord, ImageUploader, ModelGenerationArgs } from './types';
 
-const activeAspect = ref(DEFAULT_ASPECT);
+const activeAspect = ref<ConfigAspects>(DEFAULT_ASPECT);
 
 const props = defineProps<{
     app: AppInstance<Concept>;
@@ -33,6 +33,7 @@ const editPath = defineModel<EditPathRecord[]>('editPath', { default: [] });
 const emit = defineEmits<{
     (e: 'change', data: BaseConceptModel): void;
     (e: 'selectionChange', data: SelectionData): void;
+    (e: 'generateModel', data: ModelGenerationArgs): void;
 }>();
 
 const _model = ref<BaseConceptModel>({ ...props.model });
@@ -82,6 +83,23 @@ const onAspectChange = () => {
     // reset edit path to root when switching aspect
     editPath.value = [];
 };
+
+const onGenerateModel = () => {
+    let userInputHint = '';
+    let modelGenerationHint = '';
+    if (props.app) {
+        const appDef = props.app.def;
+        if (appDef.generateModelHint) {
+            userInputHint = appDef.generateModelHint({ kind: 'user-input', aspect: activeAspect.value, ct });
+            modelGenerationHint = appDef.generateModelHint({
+                kind: 'elaboration',
+                aspect: activeAspect.value,
+                ct,
+            });
+        }
+    }
+    emit('generateModel', { aspect: activeAspect.value, userInputHint, modelGenerationHint });
+};
 </script>
 
 <template>
@@ -89,6 +107,9 @@ const onAspectChange = () => {
         <el-tabs v-model="activeAspect" @tab-change="onAspectChange">
             <el-tab-pane v-for="{ label, aspect } in aspects" :label="label" :name="aspect"> </el-tab-pane>
         </el-tabs>
+
+        <el-button size="large" class="mb-2" @click="onGenerateModel">{{ t(`aiGenerate-${activeAspect}`) }}</el-button>
+
         <div class="flex-grow overflow-auto">
             <ConceptStack
                 :root-concept="app.concept"

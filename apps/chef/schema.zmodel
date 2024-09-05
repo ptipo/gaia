@@ -45,8 +45,8 @@ model App extends EntityWithOwner {
   bundle      String
   htmlTagName String
   ptCodeMode  String? @db.Text
-  aiApiKey    String? @omit
-
+  aiApiKey    String? @omit // TODO: remove and replace with "secrets"
+  secrets     Json?   @omit
 
   @@allow('read', auth() != null)
 }

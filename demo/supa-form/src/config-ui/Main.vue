@@ -12,7 +12,7 @@ import { ElNotification } from 'element-plus';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import JsonEditorVue from 'json-editor-vue';
 import pkgJson from '../../package.json';
-import { FormApp } from '../config';
+import { config as FormApp } from '../config';
 import { locales } from '../locales';
 
 // form app

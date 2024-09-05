@@ -82,5 +82,7 @@
     "notSet": "未设置",
     "invalidConfig": "设置错误",
     "and": "并且",
-    "or": "或"
+    "or": "或",
+    "aiGenerate-content": "AI生成内容",
+    "aiGenerate-design": "AI生成设计"
 }
