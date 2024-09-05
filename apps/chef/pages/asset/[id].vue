@@ -176,6 +176,8 @@ const initializeApp = async (app: App) => {
             if (!importResult.success) {
                 error(t('upgradeFailed'));
                 console.error(importResult);
+                // show the old version
+                model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
             } else {
                 model.value = importResult.model as inferConcept<typeof appInstance.value.concept>;
                 console.log('Loaded app model:', model.value);
