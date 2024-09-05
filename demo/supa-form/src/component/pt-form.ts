@@ -186,7 +186,7 @@ export class PtForm extends PtBaseShadow {
             :host{
                 ${cssVariableValues};
             }
-            ${this.config?.customCSS?.source}
+            ${this.config?.customStyle?.customCSS?.source}
         </style>`;
 
         if (this.currentContentPage) {
