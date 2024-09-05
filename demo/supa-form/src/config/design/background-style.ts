@@ -1,6 +1,6 @@
 import { defineConcept, t } from '@hayadev/configurator';
 
-export const backgroundStyle = defineConcept({
+export const BackgroundStyle = defineConcept({
     name: 'backgroundStyle',
     displayName: t`backgroundStyle`,
     items: {

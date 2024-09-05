@@ -44,14 +44,6 @@ const choiceGroup = defineGroupItem({
     items: {
         ...TextCommonItems,
         backgroundColor: BackgroundColor,
-        style: {
-            type: 'select',
-            name: t`style`,
-            options: {
-                button: t`button`,
-                box: t`box`,
-            },
-        },
         borderColor: BorderColor,
         selectIconColor: {
             type: 'color',

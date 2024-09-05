@@ -1,6 +1,6 @@
 {
     "name": "@hayadev/supa-form",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "description": "",
     "main": "./dist/index.js",
     "type": "module",
@@ -46,6 +46,7 @@
         "@vitest/browser": "^2.0.4",
         "@vitest/ui": "^2.0.4",
         "autoprefixer": "^10.4.19",
+        "chromedriver": "^128.0.1",
         "colors": "^1.4.0",
         "commander": "^12.1.0",
         "dotenv": "^16.4.5",

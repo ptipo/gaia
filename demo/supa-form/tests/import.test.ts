@@ -44,4 +44,20 @@ describe('Data import test', () => {
         );
         expect(imported.model.contentPages[0].nextButton.$type).toBe('concept');
     });
+
+    it('should fix old customCSS value', () => {
+        const data = {
+            $type: 'concept',
+            $concept: 'Form',
+            customCSS: {
+                $type: 'code',
+                source: '*{\n  color:red;\n}',
+                language: 'css',
+            },
+        };
+
+        const imported: any = Form.import?.(data, { app, version: '1.0.0' });
+
+        expect(imported.model.customStyle.customCSS.source).toBe('*{\n  color:red;\n}');
+    });
 });

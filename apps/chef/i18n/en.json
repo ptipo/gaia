@@ -82,5 +82,6 @@
     "notSet": "Not set",
     "invalidConfig": "Invalid configuration",
     "and": "And",
-    "or": "Or"
+    "or": "Or",
+    "upgradeFailed": "Upgrade to latest version failed"
 }
