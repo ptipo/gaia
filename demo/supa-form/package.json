@@ -32,7 +32,7 @@
         "watch": "run-p watch:*",
         "preview": "vite preview -c vite-config/app.ts",
         "convert": "vite-node src/tools/ec-form-converter.ts",
-        "test": "vitest",
+        "test": "vitest -c vite-config/main.ts",
         "ai-test": "vite-node src/tools/ai-gen-test.ts",
         "i18n": "vite-node src/tools/i18n-extract.ts"
     },

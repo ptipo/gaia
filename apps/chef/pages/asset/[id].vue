@@ -668,9 +668,6 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             </div>
             <!-- preview -->
             <div class="w-[400px] shrink-0 border rounded block overflow-clip" v-if="appInstance">
-                <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
-                    <el-button class="w-full pt-4" @click="aiDialogVisible = true">{{ $t('aiGenerate') }}</el-button>
-                </div>
                 <div :class="isAIPermission ? 'h-[calc(100%-4rem)]' : 'h-full'">
                     <AppConfigurator
                         :app="appInstance"
@@ -712,7 +709,9 @@ const onJsonEditorUpdate = (updatedContent: any) => {
 
         <div class="inline-block w-full relative">
             <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
-                ><span class="z-10">{{ $t('generateForm') }}</span></el-button
+                ><span class="z-10">{{
+                    generateInputKind === 'user-input' ? $t('generateContentPlan') : $t('generateForm')
+                }}</span></el-button
             >
             <span class="inline">
                 <span
