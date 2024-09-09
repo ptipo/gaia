@@ -84,5 +84,6 @@
     "and": "And",
     "or": "Or",
     "aiGenerate-content": "Generate content with AI",
-    "aiGenerate-design": "Generate design with AI"
+    "aiGenerate-design": "Generate design with AI",
+    "upgradeFailed": "Upgrade to latest version failed"
 }

@@ -155,7 +155,9 @@ const initializeApp = async (app: App) => {
         return;
     }
 
-    if (!asset.value.config) {
+    const assetConfig = asset.value.config;
+
+    if (!assetConfig) {
         // create default model
         model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
     } else {
@@ -164,16 +166,24 @@ const initializeApp = async (app: App) => {
                 appVersion: z.string(),
                 model: z.unknown(),
             })
-            .safeParse(asset.value.config);
+            .safeParse(assetConfig);
 
         if (!parseResult.success) {
             model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
             console.warn('Invalid asset config:', parseResult.error);
             error(t('assetConfigReset'));
         } else {
-            model.value = parseResult.data.model as inferConcept<typeof appInstance.value.concept>;
-            console.log('Loaded app model:', model.value);
-            console.log('Model app version:', parseResult.data.appVersion);
+            const importResult = appInstance.value?.importModel(toRaw(parseResult.data.model) as object);
+            if (!importResult.success) {
+                error(t('upgradeFailed'));
+                console.error(importResult);
+                // show the old version
+                model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+            } else {
+                model.value = importResult.model as inferConcept<typeof appInstance.value.concept>;
+                console.log('Loaded app model:', model.value);
+                console.log('Model app version:', parseResult.data.appVersion);
+            }
         }
         // TODO: model version migration
     }

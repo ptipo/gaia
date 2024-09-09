@@ -1,5 +1,12 @@
-import { type BaseConceptModel, Concept, ConfigItem, defineConcept, t, NonPrimitiveTypes } from '@hayadev/configurator';
-import { CodeLanguage } from '@hayadev/configurator/items';
+import {
+    type BaseConceptModel,
+    Concept,
+    ConfigItem,
+    defineConcept,
+    t,
+    NonPrimitiveTypes,
+    AppInstance,
+} from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
@@ -7,10 +14,11 @@ import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { QuestionStyle } from '../design/question-style';
 import { generalStyle } from '../design/general-style';
-import { answerChoiceStyle } from '../design/answer-choice-style';
+import { answerChoiceStyle as AnswerChoiceStyle } from '../design/answer-choice-style';
 import { ProgressButtonStyle } from '../design/progress-button-style';
-import { backgroundStyle } from '../design/background-style';
+import { BackgroundStyle } from '../design/background-style';
 import { LayoutStyle } from '../design/layout-style';
+import { CustomCSS } from '../design/custom-css';
 
 /**
  * 表单
@@ -98,10 +106,10 @@ export const Form = defineConcept({
         /**
          * 自定义CSS
          */
-        customCSS: {
-            type: 'code',
+        customStyle: {
+            type: 'has',
             name: t`customCSS`,
-            language: CodeLanguage.CSS,
+            concept: CustomCSS,
             groupKey: 'style',
         },
 
@@ -122,7 +130,7 @@ export const Form = defineConcept({
         answerChoiceStyle: {
             type: 'has',
             name: t`answerChoiceStyle`,
-            concept: answerChoiceStyle,
+            concept: AnswerChoiceStyle,
             groupKey: 'style',
         },
 
@@ -135,7 +143,7 @@ export const Form = defineConcept({
         backgroundStyle: {
             type: 'has',
             name: t`backgroundStyle`,
-            concept: backgroundStyle,
+            concept: BackgroundStyle,
             groupKey: 'style',
         },
         LayoutStyle: {
@@ -149,6 +157,8 @@ export const Form = defineConcept({
     import: (data, { app }) => {
         // add $type to data (recursively) if missing
         fixMissingValueTypeForConcept(app.concept, data);
+
+        fixCustomCSS(app, data);
 
         return { success: true, model: data as any };
     },
@@ -221,5 +231,18 @@ function fixDataType(data: any, type: NonPrimitiveTypes) {
     if (typeof data === 'object' && !data.$type) {
         console.log(`Fixing missing $type to "${type}" in ${JSON.stringify(data)}`);
         data.$type = type;
+    }
+}
+
+//change customCSS from top-level item of Form to a nested item of customStyle
+function fixCustomCSS(app: AppInstance<Concept<Record<string, ConfigItem>>>, data: any) {
+    const customCss = data.customCSS;
+    if (customCss) {
+        console.log('Fixing customCSS');
+        const customCSSConcept = app.createConceptInstance(CustomCSS, {
+            customCSS: data.customCSS,
+        });
+        data.customStyle = customCSSConcept;
+        data.customCSS = undefined;
     }
 }
