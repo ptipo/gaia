@@ -18,13 +18,11 @@ const { t } = useI18n();
 const { mutateAsync: deleteAsset } = useDeleteAsset();
 
 const onOpenPublishUrl = () => {
-    window.open(`${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`);
+    window.open(`${props.asset.publishUrl}`);
 };
 
 const onCopyPublishUrl = () => {
-    navigator.clipboard.writeText(
-        `${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
-    );
+    navigator.clipboard.writeText(`${props.asset.publishUrl}`);
     success(t('publishUrlCopiedToClipboard'));
 };
 
