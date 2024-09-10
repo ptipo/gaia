@@ -23,7 +23,7 @@ import { Mode } from 'vanilla-jsoneditor';
 import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
-import { confirmDelete, error, success } from '~/lib/message';
+import { confirmDelete, error, success, alert } from '~/lib/message';
 
 const route = useRoute();
 
@@ -284,12 +284,23 @@ const onPublish = async () => {
     if (asset.value) {
         await doSaveAsset(asset.value);
 
+        const existingPublishUrl = asset.value.publishUrl;
+        const isOldVersion = existingPublishUrl && !existingPublishUrl.endsWith('latest/index.html');
+
         try {
             const { data } = await $fetch(`/api/asset/${asset.value.id}/publish`, {
                 method: 'POST',
             });
             console.log('Publish response:', data);
             success(t('publishSuccess'));
+
+            if (isOldVersion) {
+                //old version
+                alert(
+                    'App version has updated, if it is already used in any Ptengine, please update with the latest CodeMode Code and republish',
+                    'Update Ptengine CodeMode'
+                );
+            }
         } catch (err) {
             error(t('unableToPublish'));
             console.error('Failed to publish asset:', err);
