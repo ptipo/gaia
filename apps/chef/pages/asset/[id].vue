@@ -297,7 +297,7 @@ const onPublish = async () => {
             if (isOldVersion) {
                 //old version
                 alert(
-                    'App version has updated, if it is already used in any Ptengine, please update with the latest CodeMode Code and republish',
+                    'If it is already used by any Ptengine Experience, please update that with the latest CodeMode Code and republish',
                     'Update Ptengine CodeMode'
                 );
             }
