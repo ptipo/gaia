@@ -57,3 +57,12 @@ export function error(message: string) {
         duration: 2500,
     });
 }
+
+/**
+ * Show an alert dialog.
+ */
+export function alert(message: string, title: string) {
+    ElMessageBox.alert(message, title, {
+        confirmButtonText: 'ok',
+    });
+}
