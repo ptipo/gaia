@@ -82,5 +82,8 @@
     "notSet": "未设置",
     "invalidConfig": "设置错误",
     "and": "并且",
-    "or": "或"
+    "or": "或",
+    "unsavedMessage": "您有未保存的更改，确定要离开吗？",
+    "confirmExit": "确认退出",
+    "sureToStopAiGeneration": "生成中，确定要停止吗？"
 }

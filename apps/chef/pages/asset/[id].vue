@@ -24,12 +24,15 @@ import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success, alert } from '~/lib/message';
+import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
 
 const route = useRoute();
 
 const user = useUser();
 
 const runtimeConfig = useRuntimeConfig();
+
+const { isUnsaved } = useUnsavedChangesWarning();
 
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
@@ -239,6 +242,7 @@ const onAppChange = (data: BaseConceptModel) => {
     if (model.value && validate(model.value).success) {
         resetFormConfig();
         jsonEditorModel.value = model.value;
+        isUnsaved.value = true;
     }
 };
 
@@ -257,6 +261,7 @@ const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
             await doSaveAsset(asset.value);
+            isUnsaved.value = false;
             success(t('saveSuccess'));
         } catch (err) {
             error(t('unableToSave'));
