@@ -95,6 +95,14 @@ const { data: userData } = useFindUniqueUser({
 
 const { t, locale } = useI18n();
 
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
+
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
         console.error('Asset not found:', route.params.id);
@@ -267,6 +275,13 @@ const onSave = async () => {
             error(t('unableToSave'));
             console.error('Failed to save asset:', err);
         }
+    }
+};
+
+const handleKeyDown = async (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent the browser's save dialog
+        await onSave();
     }
 };
 
