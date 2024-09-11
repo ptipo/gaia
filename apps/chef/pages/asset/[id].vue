@@ -24,12 +24,15 @@ import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
 import { confirmDelete, error, success, alert } from '~/lib/message';
+import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
 
 const route = useRoute();
 
 const user = useUser();
 
 const runtimeConfig = useRuntimeConfig();
+
+const { isUnsaved } = useUnsavedChangesWarning();
 
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
@@ -91,6 +94,14 @@ const { data: userData } = useFindUniqueUser({
 });
 
 const { t, locale } = useI18n();
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
 
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
@@ -239,6 +250,7 @@ const onAppChange = (data: BaseConceptModel) => {
     if (model.value && validate(model.value).success) {
         resetFormConfig();
         jsonEditorModel.value = model.value;
+        isUnsaved.value = true;
     }
 };
 
@@ -257,11 +269,19 @@ const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
             await doSaveAsset(asset.value);
+            isUnsaved.value = false;
             success(t('saveSuccess'));
         } catch (err) {
             error(t('unableToSave'));
             console.error('Failed to save asset:', err);
         }
+    }
+};
+
+const handleKeyDown = async (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent the browser's save dialog
+        await onSave();
     }
 };
 

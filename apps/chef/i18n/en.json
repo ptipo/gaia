@@ -83,5 +83,8 @@
     "invalidConfig": "Invalid configuration",
     "and": "And",
     "or": "Or",
-    "upgradeFailed": "Upgrade to latest version failed"
+    "upgradeFailed": "Upgrade to latest version failed",
+    "unsavedMessage": "You have unsaved changes. Are you sure you want to leave?",
+    "confirmExit": "Confirm Exit",
+    "sureToStopAiGeneration": "Are you sure you want to stop AI generation?"
 }
