@@ -36,6 +36,18 @@ export async function confirmDelete(message: string) {
     }
 }
 
+export async function confirmMessage(message: string, t: (message: string) => string) {
+    try {
+        await ElMessageBox.confirm(message, t('confirm'), {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'info',
+        });
+        return true;
+    } catch {
+        return false;
+    }
+}
 /**
  * Show a success notification.
  */
@@ -55,5 +67,14 @@ export function error(message: string) {
         title: message,
         type: 'error',
         duration: 2500,
+    });
+}
+
+/**
+ * Show an alert dialog.
+ */
+export function alert(message: string, title: string) {
+    ElMessageBox.alert(message, title, {
+        confirmButtonText: 'ok',
     });
 }

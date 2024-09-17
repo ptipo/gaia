@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
     const { publishBucket, publishPagePath, public: publicConfig } = useRuntimeConfig();
     console.log('Publishing to:', publishBucket, publishPagePath, publicConfig.publishAccessPoint);
 
-    const assetBasePath = `assets/${asset.id}/${asset.appVersion}`;
+    const assetBasePath = `assets/${asset.id}/latest`;
 
     const s3 = new S3Client();
     const assetPagePath = `${assetBasePath}/index.html`;

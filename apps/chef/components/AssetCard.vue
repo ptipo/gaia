@@ -2,7 +2,7 @@
 import type { App, Asset, User } from '@prisma/client';
 import { useDeleteAsset } from '~/composables/data';
 import { fromNow } from '~/lib/date';
-import { confirmDelete, error, success } from '~/lib/message';
+import { confirmDelete, error, success, confirmMessage } from '~/lib/message';
 
 const props = defineProps<{ asset: Asset & { owner: User; app: App } }>();
 
@@ -17,18 +17,34 @@ const { t } = useI18n();
 
 const { mutateAsync: deleteAsset } = useDeleteAsset();
 
+const checkPublish = () => {
+    if (!props.asset.publishUrl) {
+        confirmMessage(t('notPublished'), t).then((confirmed) => {
+            if (confirmed) {
+                emit('click');
+            }
+        });
+        return false;
+    }
+    return true;
+};
+
 const onOpenPublishUrl = () => {
-    window.open(`${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`);
+    if (checkPublish()) {
+        window.open(`${props.asset.publishUrl}`);
+    }
 };
 
 const onCopyPublishUrl = () => {
-    navigator.clipboard.writeText(
-        `${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
-    );
-    success(t('publishUrlCopiedToClipboard'));
+    if (checkPublish()) {
+        navigator.clipboard.writeText(`${props.asset.publishUrl}`);
+        success(t('publishUrlCopiedToClipboard'));
+    }
 };
 
 const onCopyCode = () => {
+    if (!checkPublish()) return;
+
     const asset = props.asset;
     const app = asset.app;
     const codeModeTemplate = asset.app.ptCodeMode!;
@@ -82,15 +98,9 @@ const onDeleteAsset = async () => {
                 ><el-icon class="invisible group-hover:visible"><ElIconMoreFilled /></el-icon>
                 <template #dropdown>
                     <el-dropdown-menu
-                        ><el-dropdown-item :disabled="!asset.publishUrl" @click="onOpenPublishUrl">{{
-                            $t('visitPublishedPage')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyPublishUrl">{{
-                            $t('copyPublishUrl')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyCode">{{
-                            $t('copyCodeMode')
-                        }}</el-dropdown-item>
+                        ><el-dropdown-item @click="onOpenPublishUrl">{{ $t('visitPublishedPage') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onCopyPublishUrl">{{ $t('copyPublishUrl') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onCopyCode">{{ $t('copyCodeMode') }}</el-dropdown-item>
                         <el-dropdown-item @click="onCopyAsset" divided>{{ $t('clone') }}</el-dropdown-item>
                         <el-dropdown-item @click="onDeleteAsset">{{ $t('delete') }}</el-dropdown-item>
                     </el-dropdown-menu>

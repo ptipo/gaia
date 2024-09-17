@@ -85,5 +85,10 @@
     "and": "并且",
     "or": "或",
     "aiGenerate-content": "AI生成内容",
-    "aiGenerate-design": "AI生成设计"
+    "aiGenerate-design": "AI生成设计",
+    "unsavedMessage": "您有未保存的更改，确定要离开吗？",
+    "confirmExit": "确认退出",
+    "sureToStopAiGeneration": "生成中，确定要停止吗？",
+    "notPublished": "当前资产未发布，是否要去发布？",
+    "upgradeFailed": "升级最新版本失败"
 }

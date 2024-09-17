@@ -24,13 +24,16 @@ import { Mode } from 'vanilla-jsoneditor';
 import { z } from 'zod';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { loadAppBundle } from '~/lib/app';
-import { confirmDelete, error, success } from '~/lib/message';
+import { confirmDelete, error, success, alert } from '~/lib/message';
+import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
 
 const route = useRoute();
 
 const user = useUser();
 
 const runtimeConfig = useRuntimeConfig();
+
+const { isUnsaved } = useUnsavedChangesWarning();
 
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
@@ -92,6 +95,14 @@ const { data: userData } = useFindUniqueUser({
 });
 
 const { t } = useI18n();
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
 
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
@@ -240,6 +251,7 @@ const onAppChange = (data: BaseConceptModel) => {
     if (model.value && validate(model.value).success) {
         resetFormConfig();
         jsonEditorModel.value = model.value;
+        isUnsaved.value = true;
     }
 };
 
@@ -258,11 +270,19 @@ const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
             await doSaveAsset(asset.value);
+            isUnsaved.value = false;
             success(t('saveSuccess'));
         } catch (err) {
             error(t('unableToSave'));
             console.error('Failed to save asset:', err);
         }
+    }
+};
+
+const handleKeyDown = async (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent the browser's save dialog
+        await onSave();
     }
 };
 
@@ -285,12 +305,23 @@ const onPublish = async () => {
     if (asset.value) {
         await doSaveAsset(asset.value);
 
+        const existingPublishUrl = asset.value.publishUrl;
+        const isOldVersion = existingPublishUrl && !existingPublishUrl.endsWith('latest/index.html');
+
         try {
             const { data } = await $fetch(`/api/asset/${asset.value.id}/publish`, {
                 method: 'POST',
             });
             console.log('Publish response:', data);
             success(t('publishSuccess'));
+
+            if (isOldVersion) {
+                //old version
+                alert(
+                    'If it is already used by any Ptengine Experience, please update that with the latest CodeMode Code and republish',
+                    'Update Ptengine CodeMode'
+                );
+            }
         } catch (err) {
             error(t('unableToPublish'));
             console.error('Failed to publish asset:', err);

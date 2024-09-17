@@ -1,8 +1,7 @@
 const assetBundle = '{{assetBundle}}';
 const assetHtmlTag = '{{assetHtmlTag}}';
 const assetId = '{{assetId}}';
-const assetVersion = '{{assetVersion}}';
-const assetConfig = `{{assetAccessPoint}}/${assetId}/${assetVersion}/config.json`;
+const assetConfig = `{{assetAccessPoint}}/assets/${assetId}/latest/config.json`;
 
 //engage id
 const engageId = _pt_popup_info.engage_id;
@@ -111,10 +110,10 @@ function removeLoading(wrap, className = 'pt-popup-loading') {
     }
 }
 
-function onSdkLoad() {
+async function onSdkLoad(appVersion) {
     return new Promise((resolve) => {
         var script = document.createElement('script');
-        script.src = `https://compnpmcache.ptengine.com/${assetBundle}@${assetVersion}/dist/index.js`;
+        script.src = `https://compnpmcache.ptengine.com/${assetBundle}@${appVersion}/dist/index.js`;
         script.type = 'module';
         script.onload = () => {
             resolve();
@@ -303,7 +302,10 @@ function assetEventHandler(assetHtmlElement) {
     }
 }
 
-Promise.all([onSdkLoad(), fetchConfig()]).then(([_, config]) => {
+fetchConfig().then((config) => {
+    const appVersion = config.appVersion;
+    onSdkLoad(appVersion);
+
     const el = ptKit.querySelector(`#${engageElementId} [data-menu-action="insert.popup"]`);
 
     const div = document.createElement('div');
