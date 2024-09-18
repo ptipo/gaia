@@ -6,6 +6,12 @@
     "type": "module",
     "exports": {
         ".": "./dist/index.js",
+        "./config": {
+            "default": "./dist/config.js"
+        },
+        "./locales": {
+            "default": "./dist/locales.js"
+        },
         "./package.json": "./package.json"
     },
     "files": [
@@ -13,17 +19,20 @@
     ],
     "scripts": {
         "dev": "vite --port 5001 -c vite-app.config.ts dev --debug hmr",
-        "build:lib": "tsc && vite build",
-        "build:app": "vue-tsc && vite build -c vite-app.config.ts",
+        "build:tsc": "tsc",
+        "build:main": "vite build -c vite-config/main.ts",
+        "build:config": "vite build -c vite-config/config.ts",
+        "build:locales": "vite build -c vite-config/locales.ts",
+        "build:app": "vue-tsc && vite build -c vite-config/app.ts",
         "generate-json-schema": "vite-node src/tools/json-schema-gen.ts",
         "build": "run-p build:* && pnpm generate-json-schema",
         "publish": "npm publish --access public --registry https://registry.npmjs.org/",
         "watch:tsc": "tsc -w",
-        "watch:vite": "vite build --watch",
+        "watch:main": "vite build -c vite-config/main.ts --watch",
         "watch": "run-p watch:*",
-        "preview": "vite preview -c vite-app.config.ts",
+        "preview": "vite preview -c vite-config/app.ts",
         "convert": "vite-node src/tools/ec-form-converter.ts",
-        "test": "vitest",
+        "test": "vitest -c vite-config/main.ts",
         "ai-test": "vite-node src/tools/ai-gen-test.ts",
         "i18n": "vite-node src/tools/i18n-extract.ts"
     },

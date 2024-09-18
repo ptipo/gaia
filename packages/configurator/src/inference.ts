@@ -42,7 +42,7 @@ export type inferPartialConcept<TConcept extends Concept> = inferConcept<TConcep
 export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<inferConcept<TConcept>>;
 
 /**
- * 基础`Concept`运行时类型
+ * The base type of a concept's runtime type.
  */
 export type BaseConceptModel = {
     $id: string;

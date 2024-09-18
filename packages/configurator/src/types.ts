@@ -5,6 +5,11 @@ import { BaseConceptModel } from './inference';
 import { ValidationIssueCode } from './validation';
 
 /**
+ * Config aspects.
+ */
+export type ConfigAspects = 'content' | 'design' | 'setting';
+
+/**
  * Non-primitive types.
  */
 export enum NonPrimitiveTypes {

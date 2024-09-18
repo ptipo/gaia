@@ -1,4 +1,4 @@
-import { type BaseConceptModel, type Concept } from '@hayadev/configurator';
+import { type BaseConceptModel, type Concept, type ConfigAspects } from '@hayadev/configurator';
 
 /**
  * Type for notifying entering of a concept editing.
@@ -26,3 +26,23 @@ export type ConceptModelPair = {
  * Image uploader function.
  */
 export type ImageUploader = (file: File) => Promise<string | undefined>;
+
+/**
+ * Model generation arguments.
+ */
+export type ModelGenerationArgs = {
+    /**
+     * Aspect to generate model for.
+     */
+    aspect: ConfigAspects;
+
+    /**
+     * Hint message to display for initial user input.
+     */
+    userInputHint: string;
+
+    /**
+     * Hint message to display with elaboration result.
+     */
+    modelGenerationHint: string;
+};

@@ -56,7 +56,8 @@ export default defineNuxtConfig({
         publishBucket: '',
         public: {
             publishAccessPoint: '',
-            aiGeneratingExpectedTime: 25000,
+            aiGeneratingModelExpectedTime: 25000,
+            aiGeneratingElaborateExpectedTime: 5000,
         },
     },
 

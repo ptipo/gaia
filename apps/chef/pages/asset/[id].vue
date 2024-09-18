@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
+import type { AppDef, AppInstance, Concept, ConfigAspects, inferConcept } from '@hayadev/configurator';
 import {
     createAppInstance,
     SELECTION_CHANGE_EVENT,
@@ -12,6 +12,7 @@ import {
     AppConfigurator,
     ValidationIssues,
     type EditPathRecord,
+    type ModelGenerationArgs,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset, Prisma } from '@prisma/client';
@@ -93,7 +94,7 @@ const { data: userData } = useFindUniqueUser({
     where: { id: user?.value?.id },
 });
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 
 onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -148,17 +149,17 @@ const initializeApp = async (app: App) => {
 
     try {
         console.log('Loading app bundle from:', app.bundle);
-        const { module, version } = await loadAppBundle(app.bundle);
 
-        if (!module.config) {
-            console.error('No config found in the app bundle.');
-            return;
-        }
+        const { module, version } = await loadAppBundle(app.bundle, 'main');
+        const { module: configModule } = await loadAppBundle(app.bundle, 'config');
+        const { module: localesModule } = await loadAppBundle(app.bundle, 'locales');
+
+        // load locale messages
+        localeMessages.value = localesModule.locales;
+        console.log('App locale messages:', localeMessages.value ? Object.keys(localeMessages.value) : undefined);
 
         // create app instance
-        appInstance.value = createAppInstance(module.config, version);
-        localeMessages.value = module.locales;
-        console.log('App locale messages:', localeMessages.value ? Object.keys(localeMessages.value) : undefined);
+        appInstance.value = createAppInstance(configModule.config, version);
     } catch (err) {
         error(t('unableToLoadAppBundle', { error: err }));
         hasError.value = true;
@@ -427,6 +428,28 @@ const uploadImage = async (file: File) => {
     return url.toString();
 };
 
+const generateModelArgs = ref<ModelGenerationArgs>();
+const generateInputKind = ref<'user-input' | 'elaboration'>('user-input');
+
+const aiGenerateHint = computed(() => {
+    if (!generateModelArgs.value) {
+        return '';
+    }
+    if (generateInputKind.value === 'user-input') {
+        return generateModelArgs.value.userInputHint;
+    } else {
+        return generateModelArgs.value.modelGenerationHint;
+    }
+});
+
+const onGenerateModel = (args: ModelGenerationArgs) => {
+    console.log('Generate model for:', args);
+    aiInput.value = '';
+    generateModelArgs.value = args;
+    generateInputKind.value = 'user-input';
+    aiDialogVisible.value = true;
+};
+
 const isAiGenerating = ref(false);
 
 const onAiDialogOpen = () => {
@@ -434,11 +457,18 @@ const onAiDialogOpen = () => {
 };
 
 const onGenerate = async () => {
-    if (!asset.value || !appInstance.value) {
-        return undefined;
+    if (!asset.value || !appInstance.value || !aiInput.value) {
+        return;
     }
 
-    const duration = runtimeConfig.public.aiGeneratingExpectedTime;
+    if (!generateModelArgs.value) {
+        return;
+    }
+
+    const duration =
+        generateInputKind.value === 'user-input'
+            ? runtimeConfig.public.aiGeneratingElaborateExpectedTime
+            : runtimeConfig.public.aiGeneratingModelExpectedTime;
     const step = 200;
 
     isAiGenerating.value = true;
@@ -453,31 +483,49 @@ const onGenerate = async () => {
         }
     }, duration / step);
 
+    const payload = {
+        kind: generateInputKind.value,
+        data: aiInput.value,
+        currentModel: model.value,
+        aspect: generateModelArgs.value.aspect,
+    };
+    console.log("Calling app's generation with payload:", payload);
     const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
         method: 'POST',
-        body: { prompt: aiInput.value },
-    });
-
-    confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
+        body: payload,
     });
 
     aiGeneratingProgress.value = 100;
     stopAIGenerating();
 
-    const importResult = appInstance.value?.importModel(data.json);
-    if (!importResult.success) {
-        error(t('aiGenerateFailed'));
-        console.error(importResult);
+    console.log('AI generated result:', data);
+
+    if (generateInputKind.value === 'user-input') {
+        console.log('Proceeding to elaboration -> model config phase');
+        // trim leading and trailing markers
+        const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
+        aiInput.value = result;
+        generateInputKind.value = 'elaboration';
     } else {
-        success(t('aiGenerateSuccess'));
-        aiDialogVisible.value = false;
-        model.value = importResult.model;
-        validate(model.value);
-        resetFormConfig();
-        appEl?.value?.setAttribute('edit-selection', '{}');
+        console.log('Importing AI generated model:', data.result);
+        const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
+        if (!importResult.success) {
+            error(t('aiGenerateFailed'));
+            console.error(importResult);
+        } else {
+            success(t('aiGenerateSuccess'));
+            aiDialogVisible.value = false;
+            model.value = importResult.model;
+            validate(model.value);
+            resetFormConfig();
+            appEl?.value?.setAttribute('edit-selection', '{}');
+
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        }
     }
 };
 
@@ -525,6 +573,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     try {
         parsed = JSON.parse(updatedContent.text);
     } catch (err) {
+        console.error('Invalid JSON content:', err);
         model.value = defaultModel;
     }
 
@@ -653,9 +702,6 @@ const onJsonEditorUpdate = (updatedContent: any) => {
             </div>
             <!-- preview -->
             <div class="w-[400px] shrink-0 border rounded block overflow-clip" v-if="appInstance">
-                <div class="w-full mt-1 flex justify-center p-4" v-if="isAIPermission">
-                    <el-button class="w-full pt-4" @click="aiDialogVisible = true">{{ $t('aiGenerate') }}</el-button>
-                </div>
                 <div :class="isAIPermission ? 'h-[calc(100%-4rem)]' : 'h-full'">
                     <AppConfigurator
                         :app="appInstance"
@@ -665,6 +711,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         v-model:selection="selection"
                         :image-uploader="uploadImage"
                         @change="onAppChange"
+                        @generate-model="onGenerateModel"
                     />
                 </div>
             </div>
@@ -672,22 +719,14 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     </el-container>
 
     <el-dialog
-        :title="$t('aiGenerate')"
+        :title="$t(`aiGenerate-${generateModelArgs?.aspect}`)"
         v-model="aiDialogVisible"
         @opened="onAiDialogOpen"
         :before-close="aiDialogClose"
         style="border-radius: 0.5rem"
     >
         <div class="flex bg-gray-100 px-4 pt-4 rounded-lg justify-between mb-2">
-            <div>
-                <p class="text-gray-700 mb-2">{{ $t('iCanGenerateFormForYou') }}</p>
-
-                <ol class="list-decimal list-inside text-gray-600 mb-2">
-                    <li>{{ t('tellMePurpose') }}</li>
-                    <li>{{ t('orGiveMeQuestions') }}</li>
-                </ol>
-                <p class="text-gray-700 mb-2">{{ t('willStartGeneration') }}</p>
-            </div>
+            <p class="text-gray-700 mb-2"><Markdown :value="aiGenerateHint" /></p>
             <div className="w-[100px] h-[100px] self-end">
                 <img src="/img/ai_assistant.png" alt="ai" className="object-contain w-full h-full" />
             </div>
@@ -704,7 +743,9 @@ const onJsonEditorUpdate = (updatedContent: any) => {
 
         <div class="inline-block w-full relative">
             <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
-                ><span class="z-10">{{ $t('generateForm') }}</span></el-button
+                ><span class="z-10">{{
+                    generateInputKind === 'user-input' ? $t('generateContentPlan') : $t('generateForm')
+                }}</span></el-button
             >
             <span class="inline">
                 <span

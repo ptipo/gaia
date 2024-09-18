@@ -7,7 +7,7 @@ import ora from 'ora';
 import { inspect } from 'util';
 import { fromError } from 'zod-validation-error';
 import { version } from '../../package.json';
-import { FormApp } from '../config';
+import { config as FormApp } from '../config';
 
 const REQUIREMENT_SPLITTER = '----------------\n';
 

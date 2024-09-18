@@ -44,6 +44,8 @@ model App {
   ptCodeMode  String?  @db.Text()
   /// @omit
   aiApiKey    String?
+  /// @omit
+  secrets     Json?
 }
 
 /// @@allow('all', auth() == owner)
