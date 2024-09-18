@@ -1,6 +1,8 @@
 import { defineApp, ModelGenerationResult, t } from '@hayadev/configurator';
 import { Form } from './form/form';
 
+const DEFAULT_USER_IDENTITY = 'chef@haya.dev';
+
 export const FormApp = defineApp({
     concept: Form,
 
@@ -17,7 +19,7 @@ export const FormApp = defineApp({
                 requirements: args.data,
             },
             response_mode: 'blocking',
-            user: 'chef@haya.dev',
+            user: args.userIdentity ?? DEFAULT_USER_IDENTITY,
         };
         console.log('AI request:', JSON.stringify(requestBody));
 

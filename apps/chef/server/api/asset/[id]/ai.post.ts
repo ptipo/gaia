@@ -46,7 +46,11 @@ export default eventHandler(async (event) => {
     const payload = await readBody(event);
     const parsed = payloadSchema.parse(payload);
 
-    const result = await appConfig.generateModel({ ...parsed, secrets: asset.app.secrets ?? undefined });
+    const result = await appConfig.generateModel({
+        ...parsed,
+        secrets: asset.app.secrets ?? undefined,
+        userIdentity: event.context.user.email,
+    });
     console.log(`Model generation response: ${JSON.stringify(result)}`);
 
     return { success: true, data: result };

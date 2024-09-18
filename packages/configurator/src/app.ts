@@ -260,6 +260,11 @@ export type ModelGenerationArgs = {
      * Secret keys used for model generation.
      */
     secrets?: unknown;
+
+    /**
+     * The identity of the user requesting the model generation.
+     */
+    userIdentity?: string;
 };
 
 /**
