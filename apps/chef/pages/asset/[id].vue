@@ -502,7 +502,9 @@ const onGenerate = async () => {
 
     if (generateInputKind.value === 'user-input') {
         console.log('Proceeding to elaboration -> model config phase');
-        aiInput.value = data.result as string;
+        // trim leading and trailing markers
+        const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
+        aiInput.value = result;
         generateInputKind.value = 'elaboration';
     } else {
         console.log('Importing AI generated model:', data.result);
@@ -571,6 +573,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
     try {
         parsed = JSON.parse(updatedContent.text);
     } catch (err) {
+        console.error('Invalid JSON content:', err);
         model.value = defaultModel;
     }
 
