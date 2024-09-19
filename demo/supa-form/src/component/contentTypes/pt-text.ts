@@ -14,7 +14,7 @@ class PtText extends PtBase {
         const tagName = this.data?.kind == 'text' ? 'p' : this.data?.kind!;
         const align = this.data?.align || 'center';
         const maxWidth = this.data?.maxWidth || 100;
-        return html`<div class="w-full flex pt-text" style="justify-content:${align}"> <${unsafeStatic(
+        return html`<div class="w-full flex pt-text" style="justify-content:${align};text-align:${align}"> <${unsafeStatic(
             tagName
         )} style="max-width:${maxWidth}%" class="break-words ${isBold ? 'font-bold' : ''}">${unsafeHTML(
             this.data?.content
