@@ -65,7 +65,7 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
     summary?: (context: ProviderContext) => string;
 
     /**
-     * If the concept can be selected as a preview target
+     * If the concept can be selected as a preview target in the configuration UI
      */
     selectable?: boolean;
 
@@ -80,7 +80,7 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
     onModelChange?: (model: BaseConceptModel, key: string, value: unknown) => void;
 
     /**
-     * Callback for validating the model
+     * Callback for doing custom validation
      */
     validate?: (model: BaseConceptModel, ct: TranslationFunction) => ValidationIssue[] | undefined;
 
@@ -94,11 +94,6 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
      * @private
      */
     excludeFromSchema?: string[];
-};
-
-export type ConceptTemplate = {
-    displayName: string;
-    model: object;
 };
 
 /**

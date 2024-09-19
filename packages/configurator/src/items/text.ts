@@ -3,28 +3,28 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 文本配置项
+ * Text configuration item
  */
 export interface TextItem extends ConfigItemBase {
     type: 'text';
 
     /**
-     * 占位文本
+     * Placeholder text
      */
     placeholder?: string;
 
     /**
-     * 输入类型
+     * Input kind
      */
     kind?: 'text' | 'email' | 'phone';
 
     /**
-     * 默认值
+     * Default value
      */
     default?: string;
 
     /**
-     * 是否为富文本
+     * If rich text is allowed
      */
     richText?: boolean;
 }

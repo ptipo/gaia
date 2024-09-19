@@ -3,23 +3,23 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 数字配置项
+ * Number configuration item
  */
 export interface NumberItem extends ConfigItemBase {
     type: 'number';
 
     /**
-     * 是否支持浮点
+     * If float point number is allowed
      */
     allowFloat?: boolean;
 
     /**
-     * 是否支持负数
+     * If negative number is allowed
      */
     allowNegative?: boolean;
 
     /**
-     * 默认值
+     * Default value
      */
     default?: number;
 }

@@ -6,8 +6,8 @@ import type { BaseConceptModel } from '../inference';
 import type { ConfigItemBase } from './common';
 
 /**
- * An item that manages multiple instances of `Concept` from
- * a given list of candidates.
+ * Config item that manages multiple instances of `Concept` from
+ * a given list of candidates (1-to-many relation).
  */
 export interface HasManyItem<TCandidate extends Concept = Concept> extends ConfigItemBase {
     type: 'has-many';

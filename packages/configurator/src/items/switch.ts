@@ -3,13 +3,13 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 开关配置项
+ * Config item representing an ON/OFF switch.
  */
 export interface SwitchItem extends ConfigItemBase {
     type: 'switch';
 
     /**
-     * 默认值
+     * Default value
      */
     default?: boolean;
 }
