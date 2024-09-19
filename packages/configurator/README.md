@@ -16,7 +16,7 @@ This approach brings the following benefits:
 
 -   **Automatically derived config UI**
 
-    The Haya configurator library is "headless" and doesn't provide any config UI. Since the model is UI-framework neutral, "heads" implemented in different frameworks and component libraries can be implemented. See [`@hayadev/configurator-vue`](../configurator-vue/README.md) for an implementation in Vue + Element-Plus.
+    The Haya configurator library is "headless" and doesn't provide any config UI. Since the model is UI-framework neutral, "heads" can be implemented in different frameworks and component libraries. See [`@hayadev/configurator-vue`](../configurator-vue/README.md) for an implementation in Vue + Element-Plus.
 
 -   **Flexibility**
 
@@ -117,6 +117,7 @@ Some config items are more complex and designed for specific use cases.
     > They're similar in that they both include a list of `ConfigItem`s. There are several differences:
     >
     > -   A `Concept` usually has a clear business meaning, while a `GroupItem` is more for pure grouping.
+    > -   A `Concept` can be reused with `HasItem` and `HasManyItem`, while a `GroupItem` is not referenceable.
     > -   A `Concept` instance can be referenced by its ID (as shown in the `DynamicSelectItem` example), while a `GroupItem` is not referenceable.
     > -   A `Concept` usually occupies a full panel in the configuration UI, while a `GroupItem` is usually rendered inline.
 
