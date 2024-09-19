@@ -3,18 +3,18 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 固定选择配置项
+ * Config item representing a fixed set of options.
  */
 export interface SelectItem<TKey extends string = string> extends ConfigItemBase {
     type: 'select';
 
     /**
-     * 候选项
+     * Options
      */
     options: Record<TKey, string>;
 
     /**
-     * 默认值
+     * Default value
      */
     default?: string;
 }

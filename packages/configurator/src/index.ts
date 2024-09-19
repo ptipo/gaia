@@ -1,4 +1,5 @@
 export * from './app';
+export * from './app-instance';
 export * from './concept';
 export * from './config-item';
 export * from './event';

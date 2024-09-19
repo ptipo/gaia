@@ -4,19 +4,19 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 代码配置项
+ * Code configuration item
  */
 export interface CodeItem extends ConfigItemBase {
     type: 'code';
 
     /**
-     * 输入类型
+     * Language of the code
      */
     language: CodeLanguage;
 }
 
 /**
- * 代码语言
+ * Code language
  */
 export enum CodeLanguage {
     CSS = 'css',

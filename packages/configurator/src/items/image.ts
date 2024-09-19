@@ -4,13 +4,13 @@ import { wrap } from '../schema';
 import { ConfigItemBase } from './common';
 
 /**
- * 图片资源配置项
+ * Image configuration item
  */
 export interface ImageItem extends ConfigItemBase {
     type: 'image';
 
     /**
-     * 默认图片地址
+     * Default URL
      */
     default?: string;
 }
@@ -29,6 +29,6 @@ export const getSchema = (item: ConfigItemBase) => {
 };
 
 /**
- * 图片资源信息
+ * Image info
  */
 export type ImageInfo = z.infer<ReturnType<typeof getSchema>>;
