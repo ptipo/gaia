@@ -9,6 +9,9 @@ module.exports = {
         },
     },
     theme: {
+        fontFamily: {
+            sans: [],
+        },
         extend: {
             colors: {
                 primary: {
