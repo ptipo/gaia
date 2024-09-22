@@ -15,6 +15,7 @@ import { getSchema as getNumberItemSchema } from './number';
 import { getSchema as getSelectItemSchema } from './select';
 import { getSchema as getSwitchItemSchema } from './switch';
 import { getSchema as getTextItemSchema } from './text';
+import { getSchema as getMultipleSelectItemSchema } from './multiple-select';
 
 /**
  * Context for building a Zod schema for validating a config item.
@@ -52,6 +53,7 @@ export const Schemas: {
     switch: getSwitchItemSchema,
     text: getTextItemSchema,
     code: getCodeItemSchema,
+    'multiple-select': getMultipleSelectItemSchema,
 };
 
 export { Code, CodeItem, CodeLanguage } from './code';
@@ -75,3 +77,4 @@ export { NumberItem } from './number';
 export { SelectItem } from './select';
 export { SwitchItem } from './switch';
 export { TextItem } from './text';
+export { MultipleSelectItem } from './multiple-select';

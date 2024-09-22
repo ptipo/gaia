@@ -20,7 +20,6 @@
         background-color: var(--pt-form-background-color);
         background-size: var(--pt-form-background-size, cover);
         color: var(--pt-form-main-text-color);
-        font-family: var(--pt-form-font-family);
         line-height: calc(var(--pt-form-line-height, 1) * 1.5rem);
     }
 
@@ -179,6 +178,10 @@ legend {
 
 .pt-text a {
     color: #409eff;
+}
+
+* {
+    font-family: var(--pt-form-font-family, inherit);
 }
 
 [contenteditable] {

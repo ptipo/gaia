@@ -6,6 +6,7 @@ import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { CodeLanguage } from '@hayadev/configurator/items';
+import { generalStyle } from '../design/general-style';
 
 /**
  * 表单
@@ -94,6 +95,13 @@ export const Form = defineConcept({
             type: 'code',
             name: '自定义CSS',
             language: CodeLanguage.CSS,
+            groupKey: 'style',
+        },
+
+        generalStyle: {
+            type: 'has',
+            name: 'textAndLayout',
+            concept: generalStyle,
             groupKey: 'style',
         },
     },

@@ -160,6 +160,8 @@ export const Form = defineConcept({
 
         fixCustomCSS(app, data);
 
+        fixFont(data);
+
         return { success: true, model: data as any };
     },
 });
@@ -244,5 +246,17 @@ function fixCustomCSS(app: AppInstance<Concept<Record<string, ConfigItem>>>, dat
         });
         data.customStyle = customCSSConcept;
         data.customCSS = undefined;
+    }
+}
+
+function fixFont(data: any) {
+    const generalStyle = data.generalStyle;
+    if (generalStyle) {
+        const font = generalStyle.font;
+        // if font is single string, make it a array of string
+        if (typeof font === 'string') {
+            console.log('Fixing font');
+            generalStyle.font = [font];
+        }
     }
 }

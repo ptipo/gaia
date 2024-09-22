@@ -31,6 +31,7 @@ declare module 'vue' {
     ItemLabel: typeof import('./src/components/items/ItemLabel.vue')['default']
     LogicalGroupElement: typeof import('./src/components/items/logical-group/LogicalGroupElement.vue')['default']
     LogicalGroupItem: typeof import('./src/components/items/LogicalGroupItem.vue')['default']
+    MultipleSelectItem: typeof import('./src/components/items/MultipleSelectItem.vue')['default']
     NumberItem: typeof import('./src/components/items/NumberItem.vue')['default']
     RichTextEditor: typeof import('./src/components/RichTextEditor.vue')['default']
     SelectItem: typeof import('./src/components/items/SelectItem.vue')['default']
