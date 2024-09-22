@@ -35,6 +35,7 @@ const options = computed(() => {
             v-model="_model"
             multiple
             filterable
+            fit-input-width
             :allow-create="props.item?.allowCreate"
             :placeholder="t('pleaseSelect')"
             @change="$emit('change', _model)"
