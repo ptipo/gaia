@@ -1,8 +1,8 @@
 import { defineConcept, t } from '@hayadev/configurator';
 import { CodeLanguage } from '@hayadev/configurator/items';
 
-export const CustomCSS = defineConcept({
-    name: 'customCSS',
+export const CustomStyle = defineConcept({
+    name: 'CustomStyle',
     displayName: t`customCSS`,
     items: {
         customCSS: {

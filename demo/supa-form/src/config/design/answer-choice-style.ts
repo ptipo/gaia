@@ -2,16 +2,6 @@ import { ConfigItem, defineConcept, t } from '@hayadev/configurator';
 import { BackgroundColor, BorderColor, BorderRadius, BorderWidth, Gap, TextCommonItems } from '../page-items/common';
 import { defineGroupItem } from '@hayadev/configurator/items';
 
-const BorderCommon = {
-    borderWidth: BorderWidth,
-    borderRadius: {
-        type: 'if',
-        name: t`borderRadius`,
-        condition: { field: 'style', value: 'box' },
-        child: BorderRadius,
-    },
-} satisfies Record<string, ConfigItem>;
-
 const answerGroup = defineGroupItem({
     items: {
         ...TextCommonItems,
@@ -56,8 +46,8 @@ const choiceGroup = defineGroupItem({
     groupKey: 'choice',
 });
 
-export const answerChoiceStyle = defineConcept({
-    name: 'answerChoiceStyle',
+export const AnswerChoiceStyle = defineConcept({
+    name: 'AnswerChoiceStyle',
     displayName: t`answerAndChoice`,
     groups: { answer: { name: t`answer` }, choice: { name: t`choice` } },
     items: {

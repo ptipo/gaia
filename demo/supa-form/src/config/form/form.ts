@@ -13,12 +13,12 @@ import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { QuestionStyle } from '../design/question-style';
-import { generalStyle } from '../design/general-style';
-import { answerChoiceStyle as AnswerChoiceStyle } from '../design/answer-choice-style';
+import { GeneralStyle } from '../design/general-style';
+import { AnswerChoiceStyle as AnswerChoiceStyle } from '../design/answer-choice-style';
 import { ProgressButtonStyle } from '../design/progress-button-style';
 import { BackgroundStyle } from '../design/background-style';
 import { LayoutStyle } from '../design/layout-style';
-import { CustomCSS } from '../design/custom-css';
+import { CustomStyle } from '../design/custom-css';
 
 /**
  * 表单
@@ -109,14 +109,14 @@ export const Form = defineConcept({
         customStyle: {
             type: 'has',
             name: t`customCSS`,
-            concept: CustomCSS,
+            concept: CustomStyle,
             groupKey: 'style',
         },
 
         generalStyle: {
             type: 'has',
             name: t`textAndLayout`,
-            concept: generalStyle,
+            concept: GeneralStyle,
             groupKey: 'style',
         },
 
@@ -146,7 +146,7 @@ export const Form = defineConcept({
             concept: BackgroundStyle,
             groupKey: 'style',
         },
-        LayoutStyle: {
+        layoutStyle: {
             type: 'has',
             name: t`layoutStyle`,
             concept: LayoutStyle,
@@ -159,6 +159,8 @@ export const Form = defineConcept({
         fixMissingValueTypeForConcept(app.concept, data);
 
         fixCustomCSS(app, data);
+
+        fixStyleName(data);
 
         fixFont(data);
 
@@ -241,7 +243,7 @@ function fixCustomCSS(app: AppInstance<Concept<Record<string, ConfigItem>>>, dat
     const customCss = data.customCSS;
     if (customCss) {
         console.log('Fixing customCSS');
-        const customCSSConcept = app.createConceptInstance(CustomCSS, {
+        const customCSSConcept = app.createConceptInstance(CustomStyle, {
             customCSS: data.customCSS,
         });
         data.customStyle = customCSSConcept;
@@ -259,4 +261,31 @@ function fixFont(data: any) {
             generalStyle.font = [font];
         }
     }
+}
+
+function fixStyleName(data: any) {
+    const layoutStyle = data.LayoutStyle;
+    if (layoutStyle) {
+        console.log('Fixing LayoutStyle');
+        data['layoutStyle'] = layoutStyle;
+        data.LayoutStyle = undefined;
+    }
+
+    [
+        'customStyle',
+        'generalStyle',
+        'questionStyle',
+        'answerChoiceStyle',
+        'progressButtonStyle',
+        'backgroundStyle',
+    ].forEach((key) => {
+        const style = data[key];
+        if (style) {
+            const upperKey = key.charAt(0).toUpperCase() + key.slice(1);
+            if (style.$concept != upperKey) {
+                console.log(`Fixing ${key} to ${upperKey}`);
+                style.$concept = upperKey;
+            }
+        }
+    });
 }

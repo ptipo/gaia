@@ -6,7 +6,7 @@ import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
 import { CodeLanguage } from '@hayadev/configurator/items';
-import { generalStyle } from '../design/general-style';
+import { GeneralStyle } from '../design/general-style';
 
 /**
  * 表单
@@ -101,7 +101,7 @@ export const Form = defineConcept({
         generalStyle: {
             type: 'has',
             name: 'textAndLayout',
-            concept: generalStyle,
+            concept: GeneralStyle,
             groupKey: 'style',
         },
     },

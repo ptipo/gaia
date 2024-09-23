@@ -1,7 +1,7 @@
 import { defineConcept, t } from '@hayadev/configurator';
 
-export const generalStyle = defineConcept({
-    name: 'generalStyle',
+export const GeneralStyle = defineConcept({
+    name: 'GeneralStyle',
     displayName: t`textAndLayout`,
     items: {
         /**
