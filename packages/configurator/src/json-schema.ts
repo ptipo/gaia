@@ -183,6 +183,10 @@ export class JSONSchemaBuilder {
                 enum: Object.keys(item.options),
                 default: item.default,
             }))
+            .with({ type: 'multiple-select' }, (item) => ({
+                type: 'array',
+                items: item.allowCreate ? { type: 'string' } : { enum: Object.keys(item.options) },
+            }))
             .with({ type: 'dynamic-select' }, (item) =>
                 item.multiple
                     ? {

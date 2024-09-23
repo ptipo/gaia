@@ -270,6 +270,15 @@ The main information carried by the args is:
 
 Note that the `generateModel` callback is executed on the server side of the design-time hosting environment. The `secrets` object is pre-configured in the environment for the app and will not be exposed to the client side.
 
+Developers can decide the aspects that it supported for model generation by return them in `supportedGenerateAspects`:
+
+```ts
+type AppDef = {
+    ...
+     supportedGenerateAspects?: () => ConfigAspects[];
+};
+```
+
 To facilitate the user experience of the AI generation process, the `AppDef` type accepts another callback `generateModelHint` that you can use to provide hint messages to the user (for each phase of the generation):
 
 ```ts

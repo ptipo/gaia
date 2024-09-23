@@ -10,7 +10,7 @@ import {
 } from '@/lib/constants';
 import { useConfigI18n } from '@/lib/i18n';
 import type { AppInstance, BaseConceptModel, Concept, SelectionData, ConfigAspects } from '@hayadev/configurator';
-import { provide, ref, watch } from 'vue';
+import { provide, ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ConceptStack from './ConceptStack.vue';
 import type { EditPathRecord, ImageUploader, ModelGenerationArgs } from './types';
@@ -100,6 +100,14 @@ const onGenerateModel = () => {
     }
     emit('generateModel', { aspect: activeAspect.value, userInputHint, modelGenerationHint });
 };
+
+const isGenerateSupport = computed(() => {
+    if (props.app) {
+        const supportedAspects = props.app.def?.supportedGenerateAspects?.();
+        if (supportedAspects?.includes(activeAspect.value)) return true;
+    }
+    return false;
+});
 </script>
 
 <template>
@@ -108,7 +116,9 @@ const onGenerateModel = () => {
             <el-tab-pane v-for="{ label, aspect } in aspects" :label="label" :name="aspect"> </el-tab-pane>
         </el-tabs>
 
-        <el-button size="large" class="mb-2" @click="onGenerateModel">{{ t(`aiGenerate-${activeAspect}`) }}</el-button>
+        <el-button v-if="isGenerateSupport" size="large" class="mb-2" @click="onGenerateModel">{{
+            t(`aiGenerate-${activeAspect}`)
+        }}</el-button>
 
         <div class="flex-grow overflow-auto">
             <ConceptStack

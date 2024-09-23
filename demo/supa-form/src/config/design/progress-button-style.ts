@@ -118,7 +118,7 @@ const backButtonGroup = defineGroupItem({
 });
 
 export const ProgressButtonStyle = defineConcept({
-    name: 'ProgressButton',
+    name: 'ProgressButtonStyle',
     displayName: t`progressAndButton`,
     groups: {
         floating: { name: t`floating` },

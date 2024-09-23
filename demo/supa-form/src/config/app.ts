@@ -58,4 +58,6 @@ export const FormApp = defineApp({
             throw e;
         }
     },
+
+    supportedGenerateAspects: () => ['content'],
 });

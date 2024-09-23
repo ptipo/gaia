@@ -265,14 +265,14 @@ function getBackgroundStyle(background: typeof model.BackgroundStyle) {
     return convertValue(background, backgroundConverter);
 }
 
-type layout = typeof model.LayoutStyle;
+type layout = typeof model.layoutStyle;
 const layoutConverter: ConverterDictionary<layout> = {
     marginHorizontal: (value) => value && { '--pt-form-margin-x': `${RangeRatio[value]}` },
     marginVertical: (value) => value && { '--pt-form-margin-y': `${RangeRatio[value]}` },
     contentGap: (value) => value && { '--pt-form-content-gap': `${RangeRatio[value]}` },
 };
 
-function getLayoutStyle(layout: typeof model.LayoutStyle) {
+function getLayoutStyle(layout: typeof model.layoutStyle) {
     return convertValue(layout, layoutConverter);
 }
 
@@ -302,7 +302,7 @@ export function getCSSVariableValues(config: typeof model) {
         ...getAnswerChoiceStyle(config.answerChoiceStyle),
         ...getProgressButtonStyle(config.progressButtonStyle),
         ...getBackgroundStyle(config.backgroundStyle),
-        ...getLayoutStyle(config.LayoutStyle),
+        ...getLayoutStyle(config.layoutStyle),
     };
 
     return Object.entries(result)

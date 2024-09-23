@@ -77,8 +77,10 @@ export const AlignmentItems = {
 } satisfies Record<string, ConfigItem>;
 
 export const Font = {
-    type: 'select',
+    type: 'multiple-select',
     name: t`font`,
+    required: false,
+    allowCreate: true,
     options: {
         alba: 'alba',
         'alba matter': 'alba matter',

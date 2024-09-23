@@ -8,6 +8,7 @@ import NumberItem from './NumberItem.vue';
 import SelectItem from './SelectItem.vue';
 import SwitchItem from './SwitchItem.vue';
 import TextItem from './TextItem.vue';
+import MultipleSelectItem from './MultipleSelectItem.vue';
 
 export {
     DynamicSelectItem,
@@ -20,4 +21,5 @@ export {
     SelectItem,
     SwitchItem,
     TextItem,
+    MultipleSelectItem,
 };

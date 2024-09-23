@@ -10,6 +10,7 @@ import {
     ImageItem,
     LogicalGroup,
     LogicalGroupItem,
+    MultipleSelectItem,
     NumberItem,
     SelectItem,
     SwitchItem,
@@ -84,6 +85,8 @@ export type inferConfigItem<
     ? CheckPartial<TItem, TPartial, TItem extends { multiple: true } ? TValue[] : TValue>
     : TItem extends SelectItem<infer TKey>
     ? CheckPartial<TItem, TPartial, TKey>
+    : TItem extends MultipleSelectItem<infer TKey>
+    ? CheckPartial<TItem, TPartial, TItem extends { allowCreate: true } ? string[] : TKey[]>
     : TItem extends NumberItem
     ? CheckPartial<TItem, TPartial, number>
     : TItem extends ColorItem
