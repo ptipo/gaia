@@ -66,9 +66,9 @@ provide(CONFIG_TRANSLATOR_KEY, ct);
 const { t } = useI18n();
 
 const aspects = [
-    { label: t('content'), aspect: 'content', enableAi: true },
-    { label: t('design'), aspect: 'design', enableAi: false },
-    { label: t('settings'), aspect: 'setting', enableAi: false },
+    { label: t('content'), aspect: 'content' },
+    { label: t('design'), aspect: 'design' },
+    { label: t('settings'), aspect: 'setting' },
 ] as const;
 
 const onChange = (data: BaseConceptModel) => {
