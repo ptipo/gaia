@@ -189,15 +189,15 @@ describe('Basic test', async () => {
                         $type: 'item-group',
                     },
                 },
-                customCSS: {
-                    $type: 'code',
-                    source: '',
-                    language: 'css',
+                customStyle: {
+                    $id: '54d88902-ec31-4476-8872-7b244121f064',
+                    $type: 'concept',
+                    $concept: 'CustomStyle',
                 },
                 generalStyle: {
                     $id: 'f3072407-3b1c-442a-b415-21565592220f',
                     $type: 'concept',
-                    $concept: 'generalStyle',
+                    $concept: 'GeneralStyle',
                 },
                 questionStyle: {
                     $id: '6914ab58-eb22-4bbf-90a6-7c8362179614',
@@ -213,7 +213,7 @@ describe('Basic test', async () => {
                 answerChoiceStyle: {
                     $id: '190779bd-f2e8-47f2-a2fd-a60434e15972',
                     $type: 'concept',
-                    $concept: 'answerChoiceStyle',
+                    $concept: 'AnswerChoiceStyle',
                     answer: {
                         $type: 'item-group',
                     },
