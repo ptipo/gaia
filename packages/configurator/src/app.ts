@@ -1,5 +1,5 @@
 import { type Concept } from './concept';
-import { ModelGenerationArgs, ModelGenerationHintProviderArgs, ModelGenerationResult } from './types';
+import { ModelGenerationArgs, ModelGenerationHintProviderArgs, ModelGenerationResult, ConfigAspects } from './types';
 
 /**
  * Definition of an app.
@@ -19,6 +19,11 @@ export interface AppDef<TConcept extends Concept> {
      * Callback for generating a model (potentially from an external API).
      */
     generateModel?: (args: ModelGenerationArgs) => Promise<ModelGenerationResult>;
+
+    /**
+     * Supported aspects for generating models.
+     */
+    supportedGenerateAspects?: () => ConfigAspects[];
 }
 
 /**
