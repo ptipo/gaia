@@ -1,4 +1,4 @@
-import { ConceptRef, defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 
 /**
@@ -7,7 +7,7 @@ import { getAllPages } from '../util';
 export const GoToPageAction = defineConcept({
     name: 'GoToPageAction',
 
-    displayName: '跳转页面',
+    displayName: t`gotoPage`,
 
     items: {
         /**
@@ -15,7 +15,7 @@ export const GoToPageAction = defineConcept({
          */
         goToPage: {
             type: 'dynamic-select',
-            name: '目标页面',
+            name: t`targetPage`,
             inline: true,
 
             // 从root model获取所有页面
@@ -23,15 +23,15 @@ export const GoToPageAction = defineConcept({
         },
     },
 
-    summary: ({ app, currentModel }) => {
-        let pageName = '未设置';
+    summary: ({ app, rootModel, currentModel, ct }) => {
+        let pageName = ct(t`notSet`);
         if (currentModel) {
-            const page = currentModel.goToPage && app.resolveConcept(currentModel.goToPage);
+            const page = currentModel?.goToPage && app.resolveConcept(rootModel, currentModel.goToPage);
             if (page) {
                 pageName = page.name;
             }
         }
 
-        return `跳转到页面 - ${pageName}`;
+        return ct(t`gotoPage`) + ` - ${pageName}`;
     },
 });

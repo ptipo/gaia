@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue';
-import fs from 'node:fs';
 import type { UserConfig } from 'vite';
 
 const config: UserConfig = {
@@ -16,11 +15,18 @@ const config: UserConfig = {
     build: {
         outDir: 'app-dist',
         rollupOptions: {
+            external: ['vue-i18n'],
             input: {
                 main: 'index.html',
                 preview: 'preview.html', // Specify the path for preview.html
             },
         },
+    },
+
+    define: {
+        // By default, Vite doesn't include shims for NodeJS necessary for segment analytics lib to work
+        // https://github.com/vitejs/vite/discussions/5912
+        global: {},
     },
 };
 

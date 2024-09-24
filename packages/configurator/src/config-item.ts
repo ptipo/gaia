@@ -15,6 +15,7 @@ import {
     type SelectItem,
     type SwitchItem,
     type TextItem,
+    type MultipleSelectItem,
 } from './items';
 
 /**
@@ -33,7 +34,8 @@ export type ConfigItem =
     | HasManyItem
     | IfItem
     | LogicalGroupItem
-    | CodeItem;
+    | CodeItem
+    | MultipleSelectItem;
 
 /**
  * Types of config items

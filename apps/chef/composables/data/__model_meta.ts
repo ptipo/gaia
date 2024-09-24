@@ -44,6 +44,10 @@ const metadata = {
                     name: "permission",
                     type: "Json",
                     isOptional: true,
+                }, locale: {
+                    name: "locale",
+                    type: "String",
+                    attributes: [{ "name": "@default", "args": [{ "value": "zh" }] }],
                 },
             }
             , uniqueConstraints: {
@@ -105,6 +109,14 @@ const metadata = {
                 }, ptCodeMode: {
                     name: "ptCodeMode",
                     type: "String",
+                    isOptional: true,
+                }, aiApiKey: {
+                    name: "aiApiKey",
+                    type: "String",
+                    isOptional: true,
+                }, secrets: {
+                    name: "secrets",
+                    type: "Json",
                     isOptional: true,
                 },
             }

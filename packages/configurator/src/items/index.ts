@@ -15,11 +15,22 @@ import { getSchema as getNumberItemSchema } from './number';
 import { getSchema as getSelectItemSchema } from './select';
 import { getSchema as getSwitchItemSchema } from './switch';
 import { getSchema as getTextItemSchema } from './text';
+import { getSchema as getMultipleSelectItemSchema } from './multiple-select';
 
 /**
  * Context for building a Zod schema for validating a config item.
  */
-export type GetSchemaContext = ProviderContext & { parentModel: any };
+export type GetSchemaContext = ProviderContext & {
+    /**
+     * Parent model of the config item.
+     */
+    parentModel: any;
+
+    /**
+     * If obvious errors should be fixed automatically.
+     */
+    autoFix?: boolean;
+};
 
 /**
  * Function that gets a Zod schema for validating the model of a config item.
@@ -42,10 +53,11 @@ export const Schemas: {
     switch: getSwitchItemSchema,
     text: getTextItemSchema,
     code: getCodeItemSchema,
+    'multiple-select': getMultipleSelectItemSchema,
 };
 
 export { Code, CodeItem, CodeLanguage } from './code';
-export { ColorItem } from './color';
+export { RGBA, ColorItem } from './color';
 export * from './common';
 export { DynamicSelectItem, DynamicSelectOption } from './dynamic-select';
 export { defineGroupItem, GroupItem } from './group';
@@ -65,3 +77,4 @@ export { NumberItem } from './number';
 export { SelectItem } from './select';
 export { SwitchItem } from './switch';
 export { TextItem } from './text';
+export { MultipleSelectItem } from './multiple-select';

@@ -1,24 +1,39 @@
-import { type BaseConceptModel, defineConcept } from '@hayadev/configurator';
-import { CodeLanguage } from '@hayadev/configurator/items';
+import {
+    type BaseConceptModel,
+    Concept,
+    ConfigItem,
+    defineConcept,
+    t,
+    NonPrimitiveTypes,
+    AppInstance,
+} from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
 import { ContentPage } from '../page/content-page';
 import { DataCollectionSetting } from './data-collection-setting';
 import { LanguageSetting } from './language-setting';
+import { QuestionStyle } from '../design/question-style';
+import { GeneralStyle } from '../design/general-style';
+import { AnswerChoiceStyle as AnswerChoiceStyle } from '../design/answer-choice-style';
+import { ProgressButtonStyle } from '../design/progress-button-style';
+import { BackgroundStyle } from '../design/background-style';
+import { LayoutStyle } from '../design/layout-style';
+import { CustomStyle } from '../design/custom-css';
 
 /**
  * 表单
  */
 export const Form = defineConcept({
     name: 'Form',
-    displayName: '表单',
+    displayName: t`form`,
+    description: 'Survey form',
 
     groups: {
-        contentPages: { name: '表单页', aspect: 'content' },
-        completePages: { name: '结束页', aspect: 'content' },
-        language: { name: '语言', aspect: 'setting' },
-        dataCollection: { name: '表单信息收集', aspect: 'setting' },
-        style: { name: '样式', aspect: 'design' },
+        contentPages: { name: t`contentPage`, aspect: 'content' },
+        completePages: { name: t`completePage`, aspect: 'content' },
+        language: { name: t`language`, aspect: 'setting' },
+        dataCollection: { name: t`dataCollection`, aspect: 'setting' },
+        style: { name: t`styles`, aspect: 'design' },
     },
 
     items: {
@@ -27,20 +42,21 @@ export const Form = defineConcept({
          */
         contentPages: {
             type: 'has-many',
-            name: '表单页',
+            name: t`contentPage`,
+            description: 'Pages for collecting user input',
             required: true,
             candidates: [ContentPage],
             inline: true,
             groupKey: 'contentPages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel } = context;
-                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
+                const { app, currentModel, ct } = context;
+                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(ContentPage, {
-                    name: `表单页${existing.length + 1}`,
+                    name: `${ct(t`contentPage`)}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(ChoiceQuestion, {
-                            name: '选择1',
-                            question: '选择1',
+                            name: `${ct(t`choice`)}1`,
+                            question: `${ct(t`choice`)}1`,
                         }),
                     ],
                 });
@@ -52,24 +68,25 @@ export const Form = defineConcept({
          */
         completePages: {
             type: 'has-many',
-            name: '结束页',
+            name: t`completePage`,
+            description: 'Pages for confirming form submission and thanking the user',
             candidates: [CompletePage],
             inline: true,
             groupKey: 'completePages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel } = context;
-                const existing = currentModel.filter((item: BaseConceptModel) => item.$concept === concept.name);
+                const { app, currentModel, ct } = context;
+                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
                 return app.createConceptInstance(CompletePage, {
-                    name: `结束页${existing.length + 1}`,
+                    name: `${ct(t`completePage`)}${existing.length + 1}`,
                     pageItems: [
                         app.createConceptInstance(TextElement, {
-                            content: '标题',
+                            content: ct(t`title`),
                         }),
                         app.createConceptInstance(ImageElement, {
                             image: { $type: 'image' },
                         }),
                         app.createConceptInstance(TextElement, {
-                            content: '说明文字',
+                            content: ct(t`description`),
                         }),
                     ],
                 });
@@ -89,11 +106,186 @@ export const Form = defineConcept({
         /**
          * 自定义CSS
          */
-        customCSS: {
-            type: 'code',
-            name: '自定义CSS',
-            language: CodeLanguage.CSS,
+        customStyle: {
+            type: 'has',
+            name: t`customCSS`,
+            concept: CustomStyle,
+            groupKey: 'style',
+        },
+
+        generalStyle: {
+            type: 'has',
+            name: t`textAndLayout`,
+            concept: GeneralStyle,
+            groupKey: 'style',
+        },
+
+        questionStyle: {
+            type: 'has',
+            name: t`questionStyle`,
+            concept: QuestionStyle,
+            groupKey: 'style',
+        },
+
+        answerChoiceStyle: {
+            type: 'has',
+            name: t`answerChoiceStyle`,
+            concept: AnswerChoiceStyle,
+            groupKey: 'style',
+        },
+
+        progressButtonStyle: {
+            type: 'has',
+            name: t`progressButtonStyle`,
+            concept: ProgressButtonStyle,
+            groupKey: 'style',
+        },
+        backgroundStyle: {
+            type: 'has',
+            name: t`backgroundStyle`,
+            concept: BackgroundStyle,
+            groupKey: 'style',
+        },
+        layoutStyle: {
+            type: 'has',
+            name: t`layoutStyle`,
+            concept: LayoutStyle,
             groupKey: 'style',
         },
     },
+
+    import: (data, { app }) => {
+        // add $type to data (recursively) if missing
+        fixMissingValueTypeForConcept(app.concept, data);
+
+        fixCustomCSS(app, data);
+
+        fixStyleName(data);
+
+        fixFont(data);
+
+        return { success: true, model: data as any };
+    },
 });
+
+function fixMissingValueTypeForConcept(concept: Concept, data: any) {
+    if (!data || typeof data !== 'object') {
+        return;
+    }
+    Object.entries(concept.items).forEach(([key, item]) => {
+        fixMissingValueTypeForItem(item, data[key]);
+    });
+}
+
+function fixMissingValueTypeForItem(item: ConfigItem, data: any) {
+    if (!data) {
+        return;
+    }
+
+    switch (item.type) {
+        case 'code': {
+            fixDataType(data, NonPrimitiveTypes.code);
+            break;
+        }
+
+        case 'image': {
+            fixDataType(data, NonPrimitiveTypes.image);
+            break;
+        }
+
+        case 'group': {
+            fixDataType(data, NonPrimitiveTypes.itemGroup);
+            // recurse
+            Object.entries(item.items).forEach(([key, subItem]) => fixMissingValueTypeForItem(subItem, data[key]));
+            break;
+        }
+
+        case 'if': {
+            // recurse
+            fixMissingValueTypeForItem(item.child, data);
+            break;
+        }
+
+        case 'has': {
+            fixDataType(data, NonPrimitiveTypes.concept);
+            // recurse
+            fixMissingValueTypeForConcept(item.concept, data);
+            break;
+        }
+
+        case 'has-many': {
+            if (Array.isArray(data)) {
+                data.forEach((subData) => {
+                    fixDataType(subData, NonPrimitiveTypes.concept);
+                    if (typeof subData.$concept === 'string') {
+                        // find the concept of the element
+                        const subConcept = item.candidates.find((c) => c.name === subData.$concept);
+                        if (subConcept) {
+                            // recurse
+                            fixMissingValueTypeForConcept(subConcept, subData);
+                        }
+                    }
+                });
+            }
+        }
+    }
+}
+
+function fixDataType(data: any, type: NonPrimitiveTypes) {
+    if (typeof data === 'object' && !data.$type) {
+        console.log(`Fixing missing $type to "${type}" in ${JSON.stringify(data)}`);
+        data.$type = type;
+    }
+}
+
+//change customCSS from top-level item of Form to a nested item of customStyle
+function fixCustomCSS(app: AppInstance<Concept<Record<string, ConfigItem>>>, data: any) {
+    const customCss = data.customCSS;
+    if (customCss) {
+        console.log('Fixing customCSS');
+        const customCSSConcept = app.createConceptInstance(CustomStyle, {
+            customCSS: data.customCSS,
+        });
+        data.customStyle = customCSSConcept;
+        data.customCSS = undefined;
+    }
+}
+
+function fixFont(data: any) {
+    const generalStyle = data.generalStyle;
+    if (generalStyle) {
+        const font = generalStyle.font;
+        // if font is single string, make it a array of string
+        if (typeof font === 'string') {
+            console.log('Fixing font');
+            generalStyle.font = [font];
+        }
+    }
+}
+
+function fixStyleName(data: any) {
+    const layoutStyle = data.LayoutStyle;
+    if (layoutStyle) {
+        console.log('Fixing LayoutStyle');
+        data['layoutStyle'] = layoutStyle;
+        data.LayoutStyle = undefined;
+    }
+
+    [
+        'customStyle',
+        'generalStyle',
+        'questionStyle',
+        'answerChoiceStyle',
+        'progressButtonStyle',
+        'backgroundStyle',
+    ].forEach((key) => {
+        const style = data[key];
+        if (style) {
+            const upperKey = key.charAt(0).toUpperCase() + key.slice(1);
+            if (style.$concept != upperKey) {
+                console.log(`Fixing ${key} to ${upperKey}`);
+                style.$concept = upperKey;
+            }
+        }
+    });
+}

@@ -20,13 +20,13 @@ export function isRGBA(input: unknown): input is string {
 }
 
 /**
- * 颜色配置项
+ * Color configuration item
  */
 export interface ColorItem extends ConfigItemBase {
     type: 'color';
 
     /**
-     * 默认值
+     * Default value
      */
     default?: RGBA;
 }

@@ -6,7 +6,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { when } from 'lit/directives/when.js';
-import { app } from '../app';
+import { app, FormModel } from '../app';
 import { CompletePage } from '../config/page/complete-page';
 import { ContentPage } from '../config/page/content-page';
 import { FormAnswerData, formState } from '../state';
@@ -18,8 +18,11 @@ import './pt-form-complete-page';
 import './pt-form-page';
 import { PtFormPage } from './pt-form-page';
 import { StorageWrapper } from './storage-wrapper';
+import { getCSSVariableValues } from './global-style';
 
-type retention = NonNullable<typeof app.model.dataCollection.drip.retention>;
+export let model = app.createConceptInstance(app.concept) as FormModel;
+
+type retention = NonNullable<typeof model.dataCollection.drip.retention>;
 @customElement('pt-form')
 export class PtForm extends PtBaseShadow {
     @property()
@@ -42,13 +45,34 @@ export class PtForm extends PtBaseShadow {
         converter: {
             fromAttribute: (value: string | null) => {
                 if (value === null) return undefined;
-                const { error, model, appVersion } = app.loadModel(value);
-                if (error) {
-                    console.warn('Error loading model', error.message);
-                    return;
+
+                let parsedValue: any;
+                try {
+                    parsedValue = JSON.parse(value);
+                } catch {
+                    console.error('Error parsing JSON', value);
+                    return undefined;
                 }
+
+                if (typeof parsedValue.appVersion !== 'string') {
+                    console.error('App version not found in config');
+                    return undefined;
+                }
+
+                if (!parsedValue.model || typeof parsedValue.model !== 'object') {
+                    console.error('Model not found in config');
+                    return undefined;
+                }
+
+                const validationResult = app.validateModel(parsedValue.model);
+                if (!validationResult.success) {
+                    console.error('Error validating model', validationResult.issues);
+                    return undefined;
+                }
+
+                model = validationResult.model;
                 console.log('Loaded model', model);
-                console.log('Model app version', appVersion);
+                console.log('Model app version', parsedValue.appVersion);
 
                 const language = model.languageSettings.language;
 
@@ -59,7 +83,7 @@ export class PtForm extends PtBaseShadow {
             },
         },
     })
-    config?: typeof app.model;
+    config?: FormModel;
 
     @state()
     private pageId: string = '';
@@ -156,22 +180,31 @@ export class PtForm extends PtBaseShadow {
         }
 
         const completePages = this.config?.completePages ?? [];
+        const cssVariableValues = getCSSVariableValues(this.config!);
+
         const css = html`<style>
-            ${this.config?.customCSS?.source}
+            :host{
+                ${cssVariableValues};
+            }
+            ${this.config?.customStyle?.customCSS?.source}
         </style>`;
 
         if (this.currentContentPage) {
             const progress: number = this.getCurrentProgress() * 100;
 
+            const backgroundImage = this.config?.backgroundStyle?.backgroundImage;
+
             return html`${css}
-                    <div>
-                        <div class="sticky top-0 h-8 bg-white opacity-100">
+                    <div class="pt-form" style="${
+                        backgroundImage ? `background-image: url('${backgroundImage.url}')` : ''
+                    }">
+                        <div class="pt-top-bar sticky top-0 h-8 opacity-100">
                             <div class="flex flex-col h-full justify-center">
                                 <div
-                                    class="flex h-1 bg-gray-200  rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
+                                    class="pt-progress-remain flex rounded-full overflow-hidden dark:bg-neutral-700 w-[calc(100%_-_5rem)] ml-auto mr-auto"
                                     role="progressbar">
                                     <div
-                                        class="flex flex-col justify-center rounded-full overflow-hidden bg-black text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
+                                        class="pt-progress flex flex-col justify-center rounded-full overflow-hidden text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500"
                                         style="width: ${progress}%">
                                     </div>
                               </div>
@@ -189,22 +222,20 @@ export class PtForm extends PtBaseShadow {
                             ></pt-form-page>`
                         )}
                     </div>
-                    <div class="sticky bg-white opacity-90 w-full h-20  bottom-0 ">
-                        <div class="flex h-full items-center justify-end gap-x-8">
+                    <div class="pt-bottom-bar sticky opacity-90 w-full h-20  bottom-0 ">
+                        <div class="flex h-full items-center justify-end gap-x-4">
                         ${when(
                             this.editSelection || this.pageIdStack.length > 0,
                             () =>
-                                html` <button type="button" @click=${this.prePage} class="text-gray-500">
+                                html` <button type="button" @click=${this.prePage} class="pt-back-button border">
                                     ${msg('Back')}
                                 </button>`
                         )}
 
-                        <span class="w-44 max-w-[33%] mr-10">
+                        <span class="max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
-                        } class="bg-black text-white w-full py-2 px-4 rounded hover:bg-gray-800 mr-10 ml-auto" >${msg(
-                'NEXT'
-            )}</button>
+                        } class="pt-next-button border w-full py-2 px-4 rounded mr-10 ml-auto" >${msg('NEXT')}</button>
                         </span>
                         </div>
                     </div>
@@ -216,6 +247,24 @@ export class PtForm extends PtBaseShadow {
 
             if (completePage) {
                 return html`${css} <pt-form-complete-page .page=${completePage!}></pt-form-complete-page>`;
+            }
+        }
+    }
+
+    protected willUpdate() {
+        if (!this.editSelection) {
+            // skip if not at design time
+            return;
+        }
+
+        if (
+            !this.pageId ||
+            (!this.config?.contentPages?.find((x) => x.$id == this.pageId) &&
+                !this.config?.completePages?.find((x) => x.$id == this.pageId))
+        ) {
+            // current page id not valid, select the content page
+            if (this.config?.contentPages && this.config.contentPages.length > 0) {
+                this.emitPageChangeEvent('content', this.config.contentPages[0].$id);
             }
         }
     }

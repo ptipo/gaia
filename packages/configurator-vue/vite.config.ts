@@ -45,7 +45,7 @@ export default defineConfig({
             fileName: 'index',
         },
         rollupOptions: {
-            external: ['vue', 'element-plus'],
+            external: ['vue', 'element-plus', 'vue-i18n'],
             output: {
                 globals: {
                     vue: 'Vue',
@@ -54,8 +54,14 @@ export default defineConfig({
             },
         },
         commonjsOptions: {
-            esmExternals: ['vue', 'element-plus'],
+            esmExternals: ['vue', 'element-plus', 'vue-i18n'],
         },
         sourcemap: true,
+    },
+
+    define: {
+        // By default, Vite doesn't include shims for NodeJS necessary for segment analytics lib to work
+        // https://github.com/vitejs/vite/discussions/5912
+        global: {},
     },
 });

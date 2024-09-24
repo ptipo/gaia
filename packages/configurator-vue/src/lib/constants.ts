@@ -27,3 +27,8 @@ export const DEFAULT_ASPECT = 'content';
  * Injection key for image uploader.
  */
 export const IMAGE_UPLOADER_KEY = 'imageUploader';
+
+/**
+ * Injection key for app config translator.
+ */
+export const CONFIG_TRANSLATOR_KEY = 'configTranslator';

@@ -4,6 +4,7 @@ import {
     createRef,
     defineConcept,
     inferConcept,
+    t,
     type BaseConceptModel,
 } from '@hayadev/configurator';
 import { LogicalLeftOperandCandidates, LogicalRightOperandCandidates } from '@hayadev/configurator/items';
@@ -17,14 +18,14 @@ import { GoToPageAction } from './goto-page-action';
  */
 export const ConditionalAction = defineConcept({
     name: 'ConditionalAction',
-    displayName: '条件动作',
+    displayName: t`conditionalAction`,
     items: {
         /**
          * 条件
          */
         condition: {
             type: 'logical-group',
-            name: '当满足以下条件时',
+            name: t`whenMatchingConditions`,
             leftProvider: provideLeftOperand,
             operatorProvider: provideOperator,
             rightProvider: provideRightOperand,
@@ -35,12 +36,12 @@ export const ConditionalAction = defineConcept({
          */
         action: {
             type: 'if',
-            conditionProvider: ({ currentModel }) => !!currentModel.condition,
+            conditionProvider: ({ currentModel }) => !!currentModel?.condition,
             child: {
                 type: 'has-many',
-                name: '动作',
+                name: t`action`,
                 inline: true,
-                help: '当条件为真时执行的动作。',
+                help: `runWhenConditionMatches`,
                 candidates: [GoToPageAction],
                 minItems: 1,
                 maxItems: 1,
@@ -78,34 +79,34 @@ function provideLeftOperand({ rootModel }: ProviderContext): LogicalLeftOperandC
 /**
  * 计算运算符
  */
-function provideOperator(context: ProviderContext, leftOperandValue: any) {
+function provideOperator({ app, rootModel, ct }: ProviderContext, leftOperandValue: any) {
     const questionRef = leftOperandValue;
-    const question = context.app.resolveConcept(questionRef);
+    const question = app.resolveConcept(rootModel, questionRef);
 
     return (
         match(question)
             // 问答/邮件
             .with({ $concept: P.union('QAQuestion', 'EmailQuestion') }, () => [
-                { key: 'contains', name: '包含' },
-                { key: 'notContains', name: '不包含' },
-                { key: 'empty', name: '为空' },
-                { key: 'notEmpty', name: '有值' },
+                { key: 'contains', name: ct(t`contain`) },
+                { key: 'notContains', name: ct(t`notContain`) },
+                { key: 'empty', name: ct(t`isEmpty`) },
+                { key: 'notEmpty', name: ct(t`hasValue`) },
             ])
             // 单选
             .with({ $concept: 'ChoiceQuestion', kind: 'single' }, () => [
-                { key: 'selected', name: '选择' },
-                { key: 'notSelected', name: '未选择' },
-                { key: 'empty', name: '为空' },
-                { key: 'notEmpty', name: '有值' },
+                { key: 'selected', name: ct(t`selected`) },
+                { key: 'notSelected', name: ct(t`notSelected`) },
+                { key: 'empty', name: ct(t`isEmpty`) },
+                { key: 'notEmpty', name: ct(t`hasValue`) },
             ])
             // 多选
             .with({ $concept: 'ChoiceQuestion', kind: 'multiple' }, () => [
-                { key: 'selectedAll', name: '选择以下全部' },
-                { key: 'selectedOne', name: '选择以下任一' },
-                { key: 'notSelectedAll', name: '未选择以下全部' },
-                { key: 'notSelectedAny', name: '未选择以下任一' },
-                { key: 'empty', name: '为空' },
-                { key: 'notEmpty', name: '有值' },
+                { key: 'selectedAll', name: ct(t`selectedAll`) },
+                { key: 'selectedOne', name: ct(t`selectedAny`) },
+                { key: 'notSelectedAll', name: ct(t`notSelectedAll`) },
+                { key: 'notSelectedAny', name: ct(t`notSelectedAny`) },
+                { key: 'empty', name: ct(t`isEmpty`) },
+                { key: 'notEmpty', name: ct(t`hasValue`) },
             ])
             .otherwise(() => [])
     );
@@ -113,7 +114,7 @@ function provideOperator(context: ProviderContext, leftOperandValue: any) {
 
 // 计算右端运算数
 function provideRightOperand(
-    context: ProviderContext,
+    { app, rootModel }: ProviderContext,
     leftOperandValue: ConceptRef,
     operator: string
 ): LogicalRightOperandCandidates {
@@ -124,7 +125,7 @@ function provideRightOperand(
     const questionRef = leftOperandValue;
     let choices: BaseConceptModel[] = [];
     if (questionRef.$concept === 'ChoiceQuestion') {
-        const choiceQuestion = context.app.resolveConcept<typeof ChoiceQuestion>(questionRef);
+        const choiceQuestion = app.resolveConcept<typeof ChoiceQuestion>(rootModel, questionRef);
         if (choiceQuestion) {
             choices = choiceQuestion?.textChoices ?? choiceQuestion?.imageChoices ?? [];
         }

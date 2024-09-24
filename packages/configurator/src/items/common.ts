@@ -15,6 +15,11 @@ export interface ConfigItemBase {
     name?: string;
 
     /**
+     * Item description (for documentation purpose only)
+     */
+    description?: string;
+
+    /**
      * If the item is required
      */
     required?: boolean;

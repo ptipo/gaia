@@ -1,4 +1,3 @@
-import { defineApp } from '@hayadev/configurator';
-import { Form } from './form/form';
+import { FormApp } from './app';
 
-export const FormApp = defineApp(Form);
+export const config = FormApp;

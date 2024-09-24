@@ -14,7 +14,7 @@ export default defineNuxtConfig({
 
     plugins: [{ src: '~/plugins/element-plus', mode: 'client' }],
 
-    modules: ['@element-plus/nuxt', '@hebilicious/vue-query-nuxt'],
+    modules: ['@element-plus/nuxt', '@hebilicious/vue-query-nuxt', '@nuxtjs/i18n'],
 
     elementPlus: {
         icon: 'ElIcon',
@@ -23,6 +23,11 @@ export default defineNuxtConfig({
     vite: {
         optimizeDeps: {
             include: ['dayjs', 'dayjs/plugin/*'],
+        },
+        define: {
+            // By default, Vite doesn't include shims for NodeJS necessary for segment analytics lib to work
+            // https://github.com/vitejs/vite/discussions/5912
+            global: {},
         },
     },
 
@@ -40,12 +45,19 @@ export default defineNuxtConfig({
                 target: 'esnext',
             },
         },
+        vercel: {
+            functions: {
+                maxDuration: 300,
+            },
+        },
     },
 
     runtimeConfig: {
         publishBucket: '',
         public: {
             publishAccessPoint: '',
+            aiGeneratingModelExpectedTime: 25000,
+            aiGeneratingElaborateExpectedTime: 5000,
         },
     },
 
@@ -59,5 +71,23 @@ export default defineNuxtConfig({
                 },
             };
         },
+    },
+
+    i18n: {
+        strategy: 'no_prefix',
+        locales: [
+            {
+                code: 'en',
+                name: 'English',
+            },
+            {
+                code: 'zh',
+                name: '中文',
+            },
+            {
+                code: 'ja',
+                name: '日本語',
+            },
+        ],
     },
 });

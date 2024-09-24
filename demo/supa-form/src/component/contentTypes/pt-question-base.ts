@@ -26,14 +26,14 @@ export class PtQuestionBase extends PtBase {
 
     render() {
         return html`
-            <span class="text-xl font-bold"
+            <span class="font-bold pt-question block"
                 ><pt-editable-label
                     config-path="${this.configPath + '.question'}"
-                    label="${this.question}"
+                    label="${this.question!}"
                 ></pt-editable-label
             ></span>
             ${this.description
-                ? html`<p class="mt-1 text-sm font-normal">
+                ? html`<p class="mt-1 font-normal pt-question-description">
                       <pt-editable-label config-path="${this.configPath + '.description'}" label="${this.description}">
                       </pt-editable-label>
                   </p>`
@@ -41,7 +41,7 @@ export class PtQuestionBase extends PtBase {
             <div class="mt-4">
                 <span>
                     <input
-                        class="w-full text-sm text-black placeholder-gray-400 border-b-gray-400 focus:border-gray-400 appearance-none bg-transparent  ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] rounded-none border-0 border-b border-solid outline-none "
+                        class="pt-question-answer w-full appearance-none ml-0 mr-[0.6em] my-0 px-[0.2em] py-[0.16em] border-solid outline-none "
                         value=${ifDefined(this.value)}
                         placeholder=${ifDefined(this.placeholder)}
                         type=${this.inputType}

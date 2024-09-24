@@ -33,6 +33,7 @@ model User extends EntityBase {
   apps       App[]
   assets     Asset[]
   permission Json?
+  locale     String    @default('zh')
 
   @@allow('read', true)
   @@allow('all', auth() == this)
@@ -44,7 +45,8 @@ model App extends EntityWithOwner {
   bundle      String
   htmlTagName String
   ptCodeMode  String? @db.Text
-
+  aiApiKey    String? @omit // TODO: remove and replace with "secrets"
+  secrets     Json?   @omit
 
   @@allow('read', auth() != null)
 }

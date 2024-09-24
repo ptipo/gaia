@@ -1,14 +1,14 @@
-import { customElement, property, state } from 'lit/decorators.js';
-import { PtBase, PtBaseData, PtFormSingleChoiceSelectedEventName, PtFormNextPageEventName } from './pt-base';
-import { app } from '../app';
-import { getContentTypeComponent } from './contentTypes';
-import { LitElement, html } from 'lit';
-import { when } from 'lit/directives/when.js';
-import { PtChoice } from './contentTypes/pt-choice';
-import { provide } from '@lit/context';
-import { formWidth } from '../state';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
+import { provide } from '@lit/context';
+import { LitElement, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
+import { formWidth } from '../state';
 import { ERROR_MESSAGE_CLASS } from './constant';
+import { getContentTypeComponent } from './contentTypes';
+import { PtChoice } from './contentTypes/pt-choice';
+import { PtBase, PtBaseData, PtFormNextPageEventName, PtFormSingleChoiceSelectedEventName } from './pt-base';
+import { model } from './pt-form';
 
 @customElement('pt-form-page')
 export class PtFormPage extends PtBase {
@@ -16,7 +16,7 @@ export class PtFormPage extends PtBase {
     name?: string;
 
     @property({ type: Object })
-    page: (typeof app.model.contentPages)[number] = {} as any;
+    page: (typeof model.contentPages)[number] = {} as any;
 
     @provide({ context: formWidth })
     @state()
@@ -67,10 +67,13 @@ export class PtFormPage extends PtBase {
         this.isValid = true;
 
         const pageAnswerItemIds = this.page.pageItems
-            ?.filter((x) => x.$concept != 'TextCheckElement')
+            ?.filter((x) => {
+                const el = this.pageItems?.get(x.$id);
+                return el instanceof PtBaseData;
+            })
             ?.map((x) => x.$id);
 
-        return html`<div class="flex flex-col mt-10 px-10 gap-y-10 animate-[ffadeInUp_.5s]">
+        return html`<div class="pt-form-page flex flex-col animate-[ffadeInUp_.5s]">
             ${this.page.pageItems?.map((item, i) => {
                 let el = this.pageItems?.get(item.$id)!;
 

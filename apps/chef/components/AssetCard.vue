@@ -2,7 +2,7 @@
 import type { App, Asset, User } from '@prisma/client';
 import { useDeleteAsset } from '~/composables/data';
 import { fromNow } from '~/lib/date';
-import { confirmDelete, error, success } from '~/lib/message';
+import { confirmDelete, error, success, confirmMessage } from '~/lib/message';
 
 const props = defineProps<{ asset: Asset & { owner: User; app: App } }>();
 
@@ -13,21 +13,38 @@ const emit = defineEmits<{
 }>();
 
 const runtimeConfig = useRuntimeConfig();
+const { t } = useI18n();
 
 const { mutateAsync: deleteAsset } = useDeleteAsset();
 
+const checkPublish = () => {
+    if (!props.asset.publishUrl) {
+        confirmMessage(t('notPublished'), t).then((confirmed) => {
+            if (confirmed) {
+                emit('click');
+            }
+        });
+        return false;
+    }
+    return true;
+};
+
 const onOpenPublishUrl = () => {
-    window.open(`${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`);
+    if (checkPublish()) {
+        window.open(`${props.asset.publishUrl}`);
+    }
 };
 
 const onCopyPublishUrl = () => {
-    navigator.clipboard.writeText(
-        `${runtimeConfig.public.publishAccessPoint}/${props.asset.id}/${props.asset.appVersion}/index.html`
-    );
-    success('发布地址已复制到剪贴板');
+    if (checkPublish()) {
+        navigator.clipboard.writeText(`${props.asset.publishUrl}`);
+        success(t('publishUrlCopiedToClipboard'));
+    }
 };
 
 const onCopyCode = () => {
+    if (!checkPublish()) return;
+
     const asset = props.asset;
     const app = asset.app;
     const codeModeTemplate = asset.app.ptCodeMode!;
@@ -42,7 +59,7 @@ const onCopyCode = () => {
     console.log('copy code:\n' + result);
 
     navigator.clipboard.writeText(result);
-    success('代码已复制到剪贴板');
+    success(t('codeCopiedToClipboard'));
 };
 
 const onCopyAsset = async () => {
@@ -50,23 +67,23 @@ const onCopyAsset = async () => {
         const { data: newAsset } = await $fetch(`/api/asset/${props.asset.id}/clone`, {
             method: 'POST',
         });
-        success('复制成功');
+        success(t('cloneSuccess'));
         emit('clone', newAsset);
     } catch (err) {
-        error(`暂时无法复制，请稍后再试`);
+        error(t('unableToClone'));
         console.error('Failed to save asset:', err);
         return;
     }
 };
 
 const onDeleteAsset = async () => {
-    if (await confirmDelete(`确定要删除资产 "${props.asset.name}" 吗？`)) {
+    if (await confirmDelete(t('sureToDeleteAsset', { name: props.asset.name }))) {
         try {
             await deleteAsset({ where: { id: props.asset.id } });
-            success('删除成功！');
+            success(t('deleteSuccess'));
             emit('delete', props.asset);
         } catch (err) {
-            error(`暂时无法删除，请稍后再试`);
+            error(t('unableToDelete'));
             console.error('Failed to save asset:', err);
         }
     }
@@ -81,17 +98,11 @@ const onDeleteAsset = async () => {
                 ><el-icon class="invisible group-hover:visible"><ElIconMoreFilled /></el-icon>
                 <template #dropdown>
                     <el-dropdown-menu
-                        ><el-dropdown-item :disabled="!asset.publishUrl" @click="onOpenPublishUrl"
-                            >访问发布页面</el-dropdown-item
-                        >
-                        <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyPublishUrl"
-                            >复制发布地址</el-dropdown-item
-                        >
-                        <el-dropdown-item :disabled="!asset.publishUrl" @click="onCopyCode"
-                            >复制CodeMode代码</el-dropdown-item
-                        >
-                        <el-dropdown-item @click="onCopyAsset" divided>复制</el-dropdown-item>
-                        <el-dropdown-item @click="onDeleteAsset">删除</el-dropdown-item>
+                        ><el-dropdown-item @click="onOpenPublishUrl">{{ $t('visitPublishedPage') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onCopyPublishUrl">{{ $t('copyPublishUrl') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onCopyCode">{{ $t('copyCodeMode') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onCopyAsset" divided>{{ $t('clone') }}</el-dropdown-item>
+                        <el-dropdown-item @click="onDeleteAsset">{{ $t('delete') }}</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -101,8 +112,8 @@ const onDeleteAsset = async () => {
                 <div>{{ asset.name }}</div>
             </div>
             <div class="flex flex-col w-full text-xs text-gray-500 italic gap-1 self-start">
-                <div>创建于 {{ fromNow(asset.createdAt) }}</div>
-                <div>更新于 {{ fromNow(asset.updatedAt) }}</div>
+                <div>{{ $t('createdAt') }} {{ fromNow(asset.createdAt) }}</div>
+                <div>{{ $t('updatedAt') }} {{ fromNow(asset.updatedAt) }}</div>
             </div>
         </div>
     </div>

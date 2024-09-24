@@ -10,6 +10,7 @@ import {
     ImageItem,
     LogicalGroup,
     LogicalGroupItem,
+    MultipleSelectItem,
     NumberItem,
     SelectItem,
     SwitchItem,
@@ -42,7 +43,7 @@ export type inferPartialConcept<TConcept extends Concept> = inferConcept<TConcep
 export type DeepPartialConcept<TConcept extends Concept> = DeepPartial<inferConcept<TConcept>>;
 
 /**
- * 基础`Concept`运行时类型
+ * The base type of a concept's runtime type.
  */
 export type BaseConceptModel = {
     $id: string;
@@ -84,6 +85,8 @@ export type inferConfigItem<
     ? CheckPartial<TItem, TPartial, TItem extends { multiple: true } ? TValue[] : TValue>
     : TItem extends SelectItem<infer TKey>
     ? CheckPartial<TItem, TPartial, TKey>
+    : TItem extends MultipleSelectItem<infer TKey>
+    ? CheckPartial<TItem, TPartial, TItem extends { allowCreate: true } ? string[] : TKey[]>
     : TItem extends NumberItem
     ? CheckPartial<TItem, TPartial, number>
     : TItem extends ColorItem

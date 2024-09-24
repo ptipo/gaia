@@ -12,6 +12,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { ColorPickerInstance } from 'element-plus';
 import { defineModel, nextTick, ref } from 'vue';
+import { PredefinedColors } from './items/common';
 
 const model = defineModel<string>();
 
@@ -55,23 +56,6 @@ const editor = useEditor({
 const textColor = ref('');
 
 const colorPicker = ref<ColorPickerInstance>();
-
-const predefineColors = ref([
-    '#ff4500',
-    '#ff8c00',
-    '#ffd700',
-    '#90ee90',
-    '#00ced1',
-    '#1e90ff',
-    '#c71585',
-    'rgba(255, 69, 0, 0.68)',
-    'rgb(255, 120, 0)',
-    'hsv(51, 100, 98)',
-    'hsva(120, 40, 94, 0.5)',
-    'hsl(181, 100%, 37%)',
-    'hsla(209, 100%, 56%, 0.73)',
-    '#c7158577',
-]);
 
 const onColorPickerFocus = () => {
     // 重新聚焦到编辑器
@@ -181,7 +165,7 @@ const onChangeLink = () => {
                 v-model="textColor"
                 show-alpha
                 size="small"
-                :predefine="predefineColors"
+                :predefine="PredefinedColors"
                 @focus="onColorPickerFocus"
                 @blur="onColorPickerBlur"
                 @change="onColorChange"

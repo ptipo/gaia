@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { APP_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { APP_KEY, CONFIG_TRANSLATOR_KEY, CURRENT_SELECTION_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
 import { confirmDelete } from '@/lib/message';
 import {
     cloneConceptModel,
     incrementName,
-    type SelectionData,
+    ProviderContext,
+    TranslationFunction,
     type AppInstance,
     type BaseConceptModel,
     type Concept,
+    type SelectionData,
 } from '@hayadev/configurator';
 import type { HasManyItem } from '@hayadev/configurator/items';
 import { v4 as uuid } from 'uuid';
-import { computed, inject, ref, watch, type Ref } from 'vue';
+import { computed, inject, ref, unref, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import draggable from 'vuedraggable';
 import type { ConceptModelPair, EnterConceptData } from '../types';
 import ItemLabel from './ItemLabel.vue';
@@ -60,6 +64,8 @@ watch(
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
 const currentSelection = inject<Ref<SelectionData>>(CURRENT_SELECTION_KEY);
+const { t } = useI18n();
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 // draggable state changed
 const onDragChanged = () => {
@@ -92,6 +98,7 @@ const createItem = (concept: Concept) => {
         app: app!,
         currentModel: _model.value,
         rootModel: rootModel?.value,
+        ct: unref(ct),
     };
     return props.item.newItemProvider?.(concept, context) ?? app!.createConceptInstance(concept);
 };
@@ -129,11 +136,13 @@ const onCloneElement = (index: number) => {
     let cloned: BaseConceptModel;
 
     if (props.item.cloneItemProvider) {
-        cloned = props.item.cloneItemProvider?.(concept, elementModel, {
-            app,
-            rootModel: rootModel?.value,
+        const context: ProviderContext = {
+            app: app!,
+            rootModel: rootModel!.value,
             currentModel: props.model,
-        });
+            ct: unref(ct),
+        };
+        cloned = props.item.cloneItemProvider?.(concept, elementModel, context);
     } else {
         cloned = cloneConceptModel(elementModel);
         if (typeof cloned.name === 'string') {
@@ -158,11 +167,10 @@ const onDeleteElement = async (index: number) => {
     if (!elementConcept) {
         return;
     }
-    if (
-        await confirmDelete(
-            typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName
-        )
-    ) {
+
+    const name =
+        typeof elementModel.name === 'string' && elementModel.name ? elementModel.name : elementConcept.displayName;
+    if (await confirmDelete(t('confirmDeleteName', { name: unref(ct)(name) }), t('confirmDelete'))) {
         _model.value.splice(index, 1);
         emitChange();
     }
@@ -194,7 +202,7 @@ watch(selectedElement, (value) => {
         // scroll the selected element into view
         const el = document.querySelector(`.concept-element-${thisInstanceId}-${_model.value.indexOf(value)}`);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }
 });
@@ -248,7 +256,7 @@ const reachedMaxItems = computed(() => {
         <!-- footer button -->
         <CreateCandidateButton
             v-if="showCreateButton && !reachedMaxItems"
-            :name="item.name"
+            :name="ct(item.name ?? '')"
             :candidates="item.candidates"
             @create="onCreate"
         />

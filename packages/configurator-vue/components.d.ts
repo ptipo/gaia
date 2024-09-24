@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppConfigurator: typeof import('./src/components/AppConfigurator.vue')['default']
     CodeItem: typeof import('./src/components/items/CodeItem.vue')['default']
+    ColorItem: typeof import('./src/components/items/ColorItem.vue')['default']
     ConceptConfigurator: typeof import('./src/components/ConceptConfigurator.vue')['default']
     ConceptElement: typeof import('./src/components/items/ConceptElement.vue')['default']
     ConceptStack: typeof import('./src/components/ConceptStack.vue')['default']
@@ -30,6 +31,7 @@ declare module 'vue' {
     ItemLabel: typeof import('./src/components/items/ItemLabel.vue')['default']
     LogicalGroupElement: typeof import('./src/components/items/logical-group/LogicalGroupElement.vue')['default']
     LogicalGroupItem: typeof import('./src/components/items/LogicalGroupItem.vue')['default']
+    MultipleSelectItem: typeof import('./src/components/items/MultipleSelectItem.vue')['default']
     NumberItem: typeof import('./src/components/items/NumberItem.vue')['default']
     RichTextEditor: typeof import('./src/components/RichTextEditor.vue')['default']
     SelectItem: typeof import('./src/components/items/SelectItem.vue')['default']

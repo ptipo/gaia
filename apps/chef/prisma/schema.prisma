@@ -25,6 +25,7 @@ model User {
   apps       App[]
   assets     Asset[]
   permission Json?
+  locale     String    @default("zh")
 }
 
 /// @@allow('all', auth() == owner)
@@ -41,6 +42,10 @@ model App {
   bundle      String
   htmlTagName String
   ptCodeMode  String?  @db.Text()
+  /// @omit
+  aiApiKey    String?
+  /// @omit
+  secrets     Json?
 }
 
 /// @@allow('all', auth() == owner)

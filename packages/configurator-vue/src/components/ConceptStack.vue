@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { BaseConceptModel, Concept, ConfigItem, SelectionData } from '@hayadev/configurator';
+import { CONFIG_TRANSLATOR_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import type { BaseConceptModel, Concept, ConfigItem, SelectionData, TranslationFunction } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import ConceptConfigurator from './ConceptConfigurator.vue';
 import type { EditPathRecord, EnterConceptData } from './types';
 
@@ -27,9 +29,12 @@ const emit = defineEmits<{
     (e: 'selectionChange', data: SelectionData): void;
 }>();
 
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
+
 type StackItem = {
     concept: Concept;
     model: BaseConceptModel;
+    parentItem?: ConfigItem;
     path: EditPathRecord[];
 };
 
@@ -56,7 +61,7 @@ const refreshStack = (newPath: EditPathRecord[]) => {
                 // follow 'has-many' relation
                 const concept = item.candidates.find((c: Concept) => c.name === model.$concept);
                 if (concept && !item.inline) {
-                    conceptStack.value.push({ concept, model, path: [...cumulatedPath] });
+                    conceptStack.value.push({ concept, model, parentItem: item, path: [...cumulatedPath] });
                 }
                 item = concept;
             } else {
@@ -66,9 +71,10 @@ const refreshStack = (newPath: EditPathRecord[]) => {
             item = item?.items?.[part];
             if (item?.type === 'has') {
                 // follow 'has' relation
+                const parentItem = item;
                 item = item.concept;
                 if (!item.inline) {
-                    conceptStack.value.push({ concept: item, model, path: [...cumulatedPath] });
+                    conceptStack.value.push({ concept: item, model, parentItem, path: [...cumulatedPath] });
                 }
             } else {
                 // unwrap 'if'
@@ -109,6 +115,31 @@ const currentModel = computed(() => {
 
 const parentConcept = computed(() => {
     return conceptStack.value[conceptStack.value.length - 2]?.concept;
+});
+
+const findAspect = (concept: Concept, item: ConfigItem) => {
+    if (!item.groupKey) {
+        return undefined;
+    }
+    const group = concept.groups?.[item.groupKey];
+    return group?.aspect;
+};
+
+const defaultAspect = computed(() => {
+    // walk upwards to find an ancestor item with an aspect
+    for (let i = conceptStack.value.length - 1; i >= 1; i--) {
+        const parentConcept = conceptStack.value[i - 1].concept;
+        const parentItem = conceptStack.value[i].parentItem;
+        if (!parentItem) {
+            break;
+        }
+        const aspect = findAspect(parentConcept, parentItem);
+        if (aspect) {
+            return aspect;
+        }
+    }
+
+    return undefined;
 });
 
 const onChange = (data: BaseConceptModel) => {
@@ -168,11 +199,12 @@ const goBack = () => {
 <template>
     <div class="h-full overflow-auto">
         <el-page-header v-if="parentConcept" @back="goBack" class="mb-4">
-            <template #title>{{ currentConcept.displayName }}</template>
+            <template #title>{{ ct(currentConcept.displayName) }}</template>
         </el-page-header>
         <ConceptConfigurator
             :concept="currentConcept"
             :model="currentModel"
+            :default-aspect="defaultAspect"
             @change="onChange"
             @enter="onEnter"
             @selectionChange="(data) => $emit('selectionChange', data)"

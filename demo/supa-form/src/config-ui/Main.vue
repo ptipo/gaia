@@ -12,13 +12,14 @@ import { ColorPickerInstance, ElNotification } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { onMounted, ref, watch } from 'vue';
 import pkgJson from '../../package.json';
-import { FormApp } from '../config';
+import { config as FormApp } from '../config';
+import { locales } from '../locales';
 
 // form app
 const app = createAppInstance(FormApp, pkgJson.version);
 
 // form model
-const model = ref<BaseConceptModel>(app.model);
+const model = ref<BaseConceptModel>(app.createConceptInstance(app.concept));
 
 // current edit path in the configurator
 const editPath = ref<EditPathRecord[]>([]);
@@ -37,7 +38,6 @@ const jsonEditorVueRef = ref();
 const isMobile = ref(false);
 
 const onAppChange = async (data: BaseConceptModel) => {
-    app.model = data as typeof app.model;
     model.value = data;
     validate(model.value);
     resetFormConfig();
@@ -60,11 +60,11 @@ onMounted(async () => {
 });
 
 const resetFormConfig = () => {
-    formEl?.value?.setAttribute('config', app.stringifyModel(model.value));
+    formEl?.value?.setAttribute('config', JSON.stringify({ appVersion: app.version, model: model.value }));
 };
 
 const onSave = () => {
-    localStorage.setItem('haya-app-config', app.stringifyModel(model.value));
+    localStorage.setItem('haya-app-config', JSON.stringify({ appVersion: app.version, model: model.value }));
     ElNotification({
         title: 'Configuration saved',
         type: 'success',
@@ -75,17 +75,19 @@ const onSave = () => {
 const onLoad = (reportError = true) => {
     const data = localStorage.getItem('haya-app-config');
     if (data) {
-        const loaded = app.loadModel(data);
-        if (loaded.error) {
+        const { appVersion, model: loadedModel } = JSON.parse(data);
+        model.value = loadedModel;
+        const validationResult = validate(loadedModel);
+
+        if (!validationResult.success) {
             ElNotification({
                 title: 'Configuration loaded with validation issues',
                 type: 'error',
                 duration: 2000,
             });
         } else {
-            model.value = loaded.model;
             ElNotification({
-                title: `Configuration loaded (v${loaded.appVersion})`,
+                title: `Configuration loaded (v${appVersion})`,
                 type: 'success',
                 duration: 2000,
             });
@@ -105,7 +107,7 @@ const onPreview = () => {
     const newWindow = window.open('./preview.html', '_blank')!;
 
     newWindow.onload = () => {
-        newWindow.postMessage({ ptForm: app.stringifyModel(model.value) });
+        newWindow.postMessage({ ptForm: JSON.stringify({ appVersion: app.version, model: model.value }) });
     };
 };
 
@@ -122,6 +124,7 @@ const validate = (model: BaseConceptModel) => {
     } else {
         issues.value = [];
     }
+    return validationResult;
 };
 
 watch(selection, (value) => {
@@ -193,9 +196,8 @@ const onOpenColorPicker = () => {
                                         } catch {}
 
                                         if (jsonModel) {
-                                            const appModel = { model: jsonModel, appVersion: app.version };
-                                            const loaded = app.loadModel(JSON.stringify(appModel));
-                                            model = loaded.model;
+                                            model = jsonModel;
+                                            validate(model);
                                             resetFormConfig();
                                         }
                                     }
@@ -221,6 +223,7 @@ const onOpenColorPicker = () => {
             <AppConfigurator
                 :app="app"
                 :model="model"
+                :locale-messages="locales"
                 v-model:editPath="editPath"
                 v-model:selection="selection"
                 :image-uploader="uploadImage"

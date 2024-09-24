@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { APP_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
-import { modelEquals, type AppInstance, type BaseConceptModel, type Concept } from '@hayadev/configurator';
+import { APP_KEY, CONFIG_TRANSLATOR_KEY, ROOT_MODEL_KEY } from '@/lib/constants';
+import { ident } from '@/lib/i18n';
+import {
+    modelEquals,
+    TranslationFunction,
+    type AppInstance,
+    type BaseConceptModel,
+    type Concept,
+} from '@hayadev/configurator';
 import type {
     LogicalGroupItem,
     LogicalLeftOperandCandidates,
     LogicalOperator,
     LogicalRightOperandCandidates,
 } from '@hayadev/configurator/items';
-import { Ref, computed, inject, onMounted, ref, watch } from 'vue';
+import { Ref, computed, inject, onMounted, ref, unref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 type ModelType = {
     groupOperator?: 'and' | 'or';
@@ -29,6 +37,10 @@ const emit = defineEmits<{
 
 const app = inject<AppInstance<Concept>>(APP_KEY);
 const rootModel = inject<Ref<BaseConceptModel>>(ROOT_MODEL_KEY);
+
+const { t } = useI18n();
+
+const ct = inject<TranslationFunction>(CONFIG_TRANSLATOR_KEY, ident);
 
 // options
 const leftOperandOptions = ref<LogicalLeftOperandCandidates>();
@@ -120,7 +132,9 @@ const getOperator = async () => {
             app: app!,
             currentModel: props.parentModel,
             rootModel: rootModel?.value,
+            ct: unref(ct),
         },
+
         left.value.value
     );
     operatorOptions.value = items;
@@ -136,6 +150,7 @@ const getRightOperandOptions = async () => {
             app: app!,
             currentModel: props.parentModel,
             rootModel: rootModel?.value,
+            ct: unref(ct),
         },
         left.value.value,
         operator.value!
@@ -211,15 +226,20 @@ const checkEmitChange = () => {
 <template>
     <div class="flex flex-col gap-2">
         <div v-if="groupOperator" class="w-20">
-            <el-select v-model="groupOperator" placeholder="请选择" @change="checkEmitChange">
-                <el-option label="并且" value="and" />
-                <el-option label="或" value="or" />
+            <el-select v-model="groupOperator" :placeholder="t('pleaseSelect')" @change="checkEmitChange">
+                <el-option :label="t('and')" value="and" />
+                <el-option :label="t('or')" value="or" />
             </el-select>
         </div>
         <div class="w-full flex items-center">
             <el-form class="flex flex-grow gap-1 justify-between">
                 <!-- left operand -->
-                <el-select placeholder="请选择" value-key="key" v-model="left" @change="onLeftOperandChange">
+                <el-select
+                    :placeholder="t('pleaseSelect')"
+                    value-key="key"
+                    v-model="left"
+                    @change="onLeftOperandChange"
+                >
                     <el-option-group v-for="group in leftOperandOptionsGroups" :label="group" :key="group">
                         <el-option
                             v-for="option in getLeftOperandOptionsByGroup(group)"
@@ -233,7 +253,7 @@ const checkEmitChange = () => {
                 <!-- operator -->
                 <el-select
                     :disabled="!left"
-                    :placeholder="left ? '请选择' : '--'"
+                    :placeholder="left ? t('pleaseSelect') : '--'"
                     v-model="operator"
                     @change="onOperatorChange"
                 >
@@ -248,7 +268,7 @@ const checkEmitChange = () => {
                 <!-- right operand -->
                 <el-select
                     v-if="rightOperandOptions?.kind === 'select'"
-                    placeholder="请选择"
+                    :placeholder="t('pleaseSelect')"
                     :multiple="rightOperandOptions?.multiple"
                     v-model="right"
                     value-key="key"
@@ -276,7 +296,7 @@ const checkEmitChange = () => {
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="$emit('delete')"
-                                ><el-icon><i-ep-delete /></el-icon>删除</el-dropdown-item
+                                ><el-icon><i-ep-delete /></el-icon>{{ t('delete') }}</el-dropdown-item
                             >
                         </el-dropdown-menu>
                     </template>

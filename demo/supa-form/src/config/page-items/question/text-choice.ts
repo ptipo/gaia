@@ -1,10 +1,10 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 /**
  * 文字选项
  */
 export const TextChoice = defineConcept({
     name: 'TextChoice',
-    displayName: '文字选项',
+    displayName: t`textOption`,
 
     items: {
         /**
@@ -12,7 +12,7 @@ export const TextChoice = defineConcept({
          */
         value: {
             type: 'text',
-            name: '选项',
+            name: t`choiceOption`,
             required: true,
         },
 
@@ -21,7 +21,7 @@ export const TextChoice = defineConcept({
          */
         defaultSelected: {
             type: 'switch',
-            name: '默认选中',
+            name: t`defaultSelected`,
         },
 
         /**
@@ -29,7 +29,7 @@ export const TextChoice = defineConcept({
          */
         additionalInput: {
             type: 'switch',
-            name: '选择后，需要用户输入补充回答',
+            name: t`additionalInput`,
         },
 
         /**
@@ -37,29 +37,33 @@ export const TextChoice = defineConcept({
          */
         additionalInputPlaceholder: {
             type: 'if',
+            description: 'Placeholder for additional input. Only valid when the "additionalInput" field is true.',
 
             // 仅在需要用户输入补充回答时显示
-            conditionProvider: ({ currentModel }) => !!currentModel.additionalInput,
+            condition: { field: 'additionalInput', value: true },
 
-            name: '补充输入的提示语',
+            name: t`additionalInputPlaceholder`,
             child: {
                 type: 'text',
-                name: '提示语（Placeholder）',
-                help: 'Placeholder，帮助用户简单理解操作要求或呼吁用户行动',
+                name: t`placeholder`,
+                help: t`placeholderHelp`,
             },
         },
 
         additionalInputRequired: {
             type: 'if',
+            description: 'Whether additional input is required. Only valid when the "additionalInput" field is true.',
+
             // 仅在需要用户输入补充回答时显示
-            conditionProvider: ({ currentModel }) => !!currentModel.additionalInput,
-            name: '补充输入是否必填',
+            condition: { field: 'additionalInput', value: true },
+
+            name: t`additionalInputRequired`,
             child: {
                 type: 'switch',
-                name: '补充选项是否必填',
+                name: t`additionalInputRequired`,
             },
         },
     },
 
-    summary: ({ currentModel }) => currentModel.value as string,
+    summary: ({ currentModel }) => (currentModel?.value as string) ?? '',
 });

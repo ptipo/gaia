@@ -53,7 +53,8 @@
     "peerDependencies": {
         "@element-plus/icons-vue": "^2.3.1",
         "element-plus": "^2.7.3",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "vue-i18n": "^9.14.0"
     },
     "devDependencies": {
         "@hayadev/samples": "workspace:*",

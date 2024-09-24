@@ -4,7 +4,7 @@ import { wrap } from '../schema';
 import type { ConfigItemBase } from './common';
 
 /**
- * 包含另外一个`Concept` (one-to-one)
+ * Configuration item that has a single `Concept` as a child (1-to-1 relation).
  */
 export interface HasItem<TChild extends Concept = Concept> extends ConfigItemBase {
     type: 'has';

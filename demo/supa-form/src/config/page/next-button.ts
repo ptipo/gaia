@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { getAllPages } from '../util';
 import { ConditionalAction } from './conditional-action';
 
@@ -8,9 +8,9 @@ import { ConditionalAction } from './conditional-action';
 export const NextButton = defineConcept({
     name: 'NextButton',
 
-    displayName: '下一步',
+    displayName: t`next`,
 
-    groups: { basic: { name: '基本设置' }, action: { name: '动作设置' } },
+    groups: { basic: { name: t`basicSettings` }, action: { name: t`actionSettings` } },
 
     items: {
         /**
@@ -18,12 +18,12 @@ export const NextButton = defineConcept({
          */
         action: {
             type: 'select',
-            name: '点击按钮时',
+            name: t`whenClicked`,
             default: 'next',
             options: {
-                next: '前往下一页',
-                goToPage: '前往指定页面',
-                conditional: '根据回答，执行不同动作',
+                next: t`gotoNextPage`,
+                goToPage: t`gotoSpecificPage`,
+                conditional: t`runConditionalActions`,
             },
             groupKey: 'action',
         },
@@ -33,13 +33,15 @@ export const NextButton = defineConcept({
          */
         targetPage: {
             type: 'if',
+            description: 'Page to go when the button is clicked. Only valid when the "action" field is "goToPage".',
 
             // 仅在动作为“前往指定页面”时显示
-            conditionProvider: ({ currentModel }) => currentModel.action === 'goToPage',
+            condition: { field: 'action', value: 'goToPage' },
 
             child: {
                 type: 'dynamic-select',
-                name: '前往页面',
+                name: t`gotoPage`,
+                description: 'Page to go when the button is clicked. Value must be a reference to an existing page.',
                 required: true,
 
                 // 从root model获取所有页面
@@ -54,12 +56,14 @@ export const NextButton = defineConcept({
         conditionalAction: {
             type: 'if',
 
+            description: 'Conditions and actions to execute. Only valid when the "action" field is "conditional".',
+
             // 仅在动作为“根据回答，执行不同动作”时显示
-            conditionProvider: ({ currentModel }) => currentModel.action === 'conditional',
+            condition: { field: 'action', value: 'conditional' },
 
             child: {
                 type: 'has-many',
-                name: '条件和动作',
+                name: t`conditionAndAction`,
                 required: true,
                 candidates: [ConditionalAction],
             },

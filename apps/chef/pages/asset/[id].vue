@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept } from '@hayadev/configurator';
+import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
 import {
     createAppInstance,
     SELECTION_CHANGE_EVENT,
@@ -12,20 +12,29 @@ import {
     AppConfigurator,
     ValidationIssues,
     type EditPathRecord,
+    type ModelGenerationArgs,
 } from '@hayadev/configurator-vue';
 import '@hayadev/configurator-vue/dist/index.css';
-import type { App, Asset, User } from '@prisma/client';
+import type { App, Asset, Prisma } from '@prisma/client';
 import byteSize from 'byte-size';
-import type { DropdownInstance } from 'element-plus';
-import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
-import { loadAppBundle } from '~/lib/app';
-import { confirmDelete, error, success } from '~/lib/message';
+import confetti from 'canvas-confetti';
+import type { DropdownInstance, ElColorPicker } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { Mode } from 'vanilla-jsoneditor';
+import { z } from 'zod';
+import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
+import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
+import { loadAppBundle } from '~/lib/app';
+import { alert, confirmDelete, error, success } from '~/lib/message';
+import { PredefinedColors } from '../../lib/color';
 
 const route = useRoute();
 
 const user = useUser();
+
+const runtimeConfig = useRuntimeConfig();
+
+const { isUnsaved } = useUnsavedChangesWarning();
 
 const appInstance = ref<AppInstance<Concept>>();
 const model = ref<BaseConceptModel>();
@@ -55,14 +64,25 @@ const isPreviewAsset = ref(false);
 
 const isMobile = ref(false);
 
+// JSON editor states
 const isShowJSON = ref(false);
-
 const isJSONEditorPermission = ref(false);
+const jsonEditorModel = ref();
 
-const jsonEditorVueRef = ref();
+const isAIPermission = ref(false);
+const aiDialogVisible = ref(false);
+const aiInput = ref('');
+const aiInputEl = ref<HTMLElement>();
+
+const aiGeneratingProgress = ref(0);
+let aiTimer: NodeJS.Timeout | null;
+
+const rteEditColor = ref('');
+const rteEditColorEl = ref<typeof ElColorPicker>();
 
 interface UserPermission {
     jsonEditor?: boolean;
+    ai?: boolean;
 }
 
 const {
@@ -78,12 +98,22 @@ const { data: userData } = useFindUniqueUser({
     where: { id: user?.value?.id },
 });
 
+const { t } = useI18n();
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
+
 watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
     if (!isLoadingValue && assetValue === null) {
         console.error('Asset not found:', route.params.id);
         throw createError({
             statusCode: 404,
-            statusMessage: '指定的资产不存在',
+            statusMessage: t('assetNotFound'),
             fatal: true,
         });
     }
@@ -92,7 +122,7 @@ watch([asset, isLoading], ([assetValue, isLoadingValue]) => {
 watch(loadError, (value) => {
     if (value) {
         console.error('Failed to load asset:', value);
-        error(`无法加载资产`);
+        error(t('unableToLoadAsset'));
         navigateTo('/');
     }
 });
@@ -102,9 +132,14 @@ const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset(
 
 const onOpenColorPicker = () => {
     console.log('Open color picker');
+    rteEditColorEl.value?.show();
 };
 
-const createAppElement = async (app: App) => {
+const serializeConfig = () => JSON.stringify({ appVersion: appInstance.value?.version, model: model.value });
+
+const localeMessages = ref<Record<string, Record<string, string>>>({});
+
+const initializeApp = async (app: App) => {
     if (appEl.value) {
         // already created
         return;
@@ -117,64 +152,86 @@ const createAppElement = async (app: App) => {
 
     if (!app.bundle) {
         console.error('No bundle found in the app instance.');
+        error(t('unableToLoadAssetApp'));
         return;
     }
 
     try {
         console.log('Loading app bundle from:', app.bundle);
-        const { module, version } = await loadAppBundle(app.bundle);
 
-        if (!module.config) {
-            console.error('No config found in the app bundle.');
-            return;
-        }
+        const { module, version } = await loadAppBundle(app.bundle, 'main');
+        const { module: configModule } = await loadAppBundle(app.bundle, 'config');
+        const { module: localesModule } = await loadAppBundle(app.bundle, 'locales');
 
-        appInstance.value = createAppInstance(module.config, version);
-        model.value = appInstance.value.model;
+        // load locale messages
+        localeMessages.value = localesModule.locales;
+        console.log('App locale messages:', localeMessages.value ? Object.keys(localeMessages.value) : undefined);
+
+        // create app instance
+        appInstance.value = createAppInstance(configModule.config, version);
     } catch (err) {
-        error(`Failed to load app bundle: ${err}`);
+        error(t('unableToLoadAppBundle', { error: err }));
         hasError.value = true;
         return;
     }
 
-    if (asset.value?.config) {
-        const {
-            model: loadedModel,
-            appVersion,
-            error: loadError,
-        } = appInstance.value.loadModel(JSON.stringify(asset.value.config));
+    const assetConfig = asset.value.config;
 
-        if (loadError) {
-            console.warn('Error loading app model:', loadError.message);
-            error('资产配置格式不正确，已恢复为默认配置。详情请查看浏览器控制台。');
+    if (!assetConfig) {
+        // create default model
+        model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+    } else {
+        const parseResult = z
+            .object({
+                appVersion: z.string(),
+                model: z.unknown(),
+            })
+            .safeParse(assetConfig);
+
+        if (!parseResult.success) {
+            model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+            console.warn('Invalid asset config:', parseResult.error);
+            error(t('assetConfigReset'));
         } else {
-            model.value = loadedModel;
-            console.log('Loaded app model:', model.value);
-            console.log('Model app version:', appVersion);
+            const importResult = appInstance.value?.importModel(toRaw(parseResult.data.model) as object);
+            if (!importResult.success) {
+                error(t('upgradeFailed'));
+                console.error(importResult);
+                // show the old version
+                model.value = appInstance.value.createConceptInstance(appInstance.value.concept);
+            } else {
+                model.value = importResult.model as inferConcept<typeof appInstance.value.concept>;
+                console.log('Loaded app model:', model.value);
+                console.log('Model app version:', parseResult.data.appVersion);
+            }
         }
+        // TODO: model version migration
     }
 
-    if (model.value) {
-        // trigger an initial validation
-        validate(model.value);
+    validate(model.value);
 
-        if (appContainerEl.value) {
-            appContainerEl.value.innerHTML = '';
-            console.log('Creating app element:', app.htmlTagName);
-            const el = document.createElement(app.htmlTagName);
-            el.setAttribute('config', appInstance.value.stringifyModel(model.value));
-            el.setAttribute('edit-selection', '{"id":""}');
-            el.addEventListener(SELECTION_CHANGE_EVENT, ((evt: CustomEvent<SelectionData>) => {
-                // sync app's selection change to the configurator's selection
-                selection.value = evt.detail;
-            }) as EventListener);
+    if (appContainerEl.value) {
+        // appContainerEl.value.innerHTML = '';
 
-            // install preview-pane inline editing event handlers
-            addInlineEditEventHandlers(el, () => model.value!, onAppChange, onOpenColorPicker);
-
-            appContainerEl.value.appendChild(el);
-            appEl.value = el;
+        const currentAppEl = appContainerEl.value.querySelector(app.htmlTagName);
+        if (currentAppEl) {
+            appContainerEl.value.removeChild(currentAppEl);
         }
+
+        console.log('Creating app element:', app.htmlTagName);
+        const el = document.createElement(app.htmlTagName);
+        el.setAttribute('config', serializeConfig());
+        el.setAttribute('edit-selection', '{"id":""}');
+        el.addEventListener(SELECTION_CHANGE_EVENT, ((evt: CustomEvent<SelectionData>) => {
+            // sync app's selection change to the configurator's selection
+            selection.value = evt.detail;
+        }) as EventListener);
+
+        // install preview-pane inline editing event handlers
+        addInlineEditEventHandlers(el, () => model.value!, onAppChange, onOpenColorPicker);
+
+        appContainerEl.value.appendChild(el);
+        appEl.value = el;
     }
 };
 
@@ -182,12 +239,13 @@ watch(
     [asset, userData],
     ([assetValue, userDataValue]) => {
         if (assetValue) {
-            createAppElement(assetValue.app);
+            initializeApp(assetValue.app);
         }
 
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
             isJSONEditorPermission.value = !!permission?.jsonEditor;
+            isAIPermission.value = !!permission.ai;
         }
     },
     { immediate: true }
@@ -203,55 +261,55 @@ const onAppChange = (data: BaseConceptModel) => {
         return;
     }
     console.log('App change:', data);
-    appInstance.value.model = model.value = data as typeof appInstance.value.model;
+    model.value = data as inferConcept<typeof appInstance.value.concept>;
 
-    if (validate(model.value)) {
+    if (model.value && validate(model.value).success) {
         resetFormConfig();
-
-        if (jsonEditorVueRef.value) {
-            const jsonEditor = jsonEditorVueRef.value.jsonEditor;
-            jsonEditor.set({ json: model.value });
-        }
+        jsonEditorModel.value = model.value;
+        isUnsaved.value = true;
     }
 };
 
 const validate = (model: BaseConceptModel) => {
-    if (!appInstance.value) {
-        return;
-    }
-
-    const validationResult = appInstance.value.validateModel(model);
+    const validationResult = appInstance.value!.validateModel(model);
     if (!validationResult.success) {
         issues.value = validationResult.issues;
         console.log('Validation issues:', validationResult.issues);
-        return false;
     } else {
         issues.value = [];
-        return true;
     }
+    return validationResult;
 };
 
 const onSave = async () => {
     if (asset.value && appInstance.value) {
         try {
             await doSaveAsset(asset.value);
-            success('保存成功！');
+            isUnsaved.value = false;
+            success(t('saveSuccess'));
         } catch (err) {
-            error(`暂时无法保存，请稍后再试`);
+            error(t('unableToSave'));
             console.error('Failed to save asset:', err);
         }
     }
 };
 
+const handleKeyDown = async (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent the browser's save dialog
+        await onSave();
+    }
+};
+
 const onDelete = async () => {
     if (asset.value) {
-        if (await confirmDelete(`确定要删除资产 "${asset.value.name}" 吗？`)) {
+        if (await confirmDelete(t('sureToDelete', { name: asset.value.name }))) {
             try {
                 await deleteAsset({ where: { id: asset.value.id } });
-                success('删除成功！');
+                success(t('deleteSuccess'));
                 navigateTo('/');
             } catch (err) {
-                error(`暂时无法删除，请稍后再试`);
+                error(t('unableToDelete'));
                 console.error('Failed to save asset:', err);
             }
         }
@@ -262,14 +320,25 @@ const onPublish = async () => {
     if (asset.value) {
         await doSaveAsset(asset.value);
 
+        const existingPublishUrl = asset.value.publishUrl;
+        const isOldVersion = existingPublishUrl && !existingPublishUrl.endsWith('latest/index.html');
+
         try {
             const { data } = await $fetch(`/api/asset/${asset.value.id}/publish`, {
                 method: 'POST',
             });
             console.log('Publish response:', data);
-            success('发布成功！');
+            success(t('publishSuccess'));
+
+            if (isOldVersion) {
+                //old version
+                alert(
+                    'If it is already used by any Ptengine Experience, please update that with the latest CodeMode Code and republish',
+                    'Update Ptengine CodeMode'
+                );
+            }
         } catch (err) {
-            error(`暂时无法发布，请稍后再试`);
+            error(t('unableToPublish'));
             console.error('Failed to publish asset:', err);
         }
     }
@@ -294,7 +363,7 @@ const onPreview = async () => {
 
     newWindow!.onload = () => {
         newWindow.postMessage({
-            config: appInstance.value!.stringifyModel(model.value!),
+            config: serializeConfig(),
             bundle,
             htmlTag: asset.value.app.htmlTagName,
         });
@@ -305,11 +374,10 @@ const doSaveAsset = (asset: Asset & { app: App }) => {
     if (!appInstance.value || !model.value) {
         return;
     }
-    const serializedModel = appInstance.value.stringifyModel(model.value);
     return saveAsset({
         where: { id: asset.id },
         data: {
-            config: JSON.parse(serializedModel),
+            config: { appVersion: appInstance.value.version, model: model.value } as Prisma.InputJsonObject,
             appVersion: appInstance.value.version,
         },
     });
@@ -330,7 +398,7 @@ const onEditNameComplete = async () => {
 
 const resetFormConfig = () => {
     if (appEl.value && appInstance.value && model.value) {
-        appEl.value.setAttribute('config', appInstance.value.stringifyModel(model.value));
+        appEl.value.setAttribute('config', serializeConfig());
     }
 };
 
@@ -352,7 +420,7 @@ const uploadImage = async (file: File) => {
     }
 
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        error(`图片大小不能超过${byteSize(MAX_IMAGE_SIZE_BYTES, { precision: 0 })}`);
+        error(t('imageSizeCannotExceed', { size: byteSize(MAX_IMAGE_SIZE_BYTES, { precision: 0 }) }));
         return undefined;
     }
 
@@ -374,6 +442,169 @@ const uploadImage = async (file: File) => {
     url.search = '';
     return url.toString();
 };
+
+const generateModelArgs = ref<ModelGenerationArgs>();
+const generateInputKind = ref<'user-input' | 'elaboration'>('user-input');
+
+const aiGenerateHint = computed(() => {
+    if (!generateModelArgs.value) {
+        return '';
+    }
+    if (generateInputKind.value === 'user-input') {
+        return generateModelArgs.value.userInputHint;
+    } else {
+        return generateModelArgs.value.modelGenerationHint;
+    }
+});
+
+const onGenerateModel = (args: ModelGenerationArgs) => {
+    console.log('Generate model for:', args);
+    aiInput.value = '';
+    generateModelArgs.value = args;
+    generateInputKind.value = 'user-input';
+    aiDialogVisible.value = true;
+};
+
+const isAiGenerating = ref(false);
+
+const onAiDialogOpen = () => {
+    aiInputEl.value?.focus();
+};
+
+const onGenerate = async () => {
+    if (!asset.value || !appInstance.value || !aiInput.value) {
+        return;
+    }
+
+    if (!generateModelArgs.value) {
+        return;
+    }
+
+    const duration =
+        generateInputKind.value === 'user-input'
+            ? runtimeConfig.public.aiGeneratingElaborateExpectedTime
+            : runtimeConfig.public.aiGeneratingModelExpectedTime;
+    const step = 200;
+
+    isAiGenerating.value = true;
+
+    aiTimer = setInterval(() => {
+        aiGeneratingProgress.value = Math.round(Math.random() + aiGeneratingProgress.value);
+
+        if (aiGeneratingProgress.value >= 95) {
+            if (aiTimer) {
+                clearInterval(aiTimer);
+            }
+        }
+    }, duration / step);
+
+    const payload = {
+        kind: generateInputKind.value,
+        data: aiInput.value,
+        currentModel: model.value,
+        aspect: generateModelArgs.value.aspect,
+    };
+    console.log("Calling app's generation with payload:", payload);
+    const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
+        method: 'POST',
+        body: payload,
+    });
+
+    aiGeneratingProgress.value = 100;
+    stopAIGenerating();
+
+    console.log('AI generated result:', data);
+
+    if (generateInputKind.value === 'user-input') {
+        console.log('Proceeding to elaboration -> model config phase');
+        // trim leading and trailing markers
+        const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
+        aiInput.value = result;
+        generateInputKind.value = 'elaboration';
+    } else {
+        console.log('Importing AI generated model:', data.result);
+        const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
+        if (!importResult.success) {
+            error(t('aiGenerateFailed'));
+            console.error(importResult);
+        } else {
+            success(t('aiGenerateSuccess'));
+            aiDialogVisible.value = false;
+            model.value = importResult.model;
+            validate(model.value);
+            resetFormConfig();
+            appEl?.value?.setAttribute('edit-selection', '{}');
+
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        }
+    }
+};
+
+const stopAIGenerating = () => {
+    isAiGenerating.value = false;
+
+    if (aiTimer) {
+        clearInterval(aiTimer);
+        aiTimer = null;
+    }
+    setTimeout(() => {
+        aiGeneratingProgress.value = 0;
+    }, 1000);
+};
+
+const aiDialogClose = (done: () => void) => {
+    if (isAiGenerating.value) {
+        ElMessageBox.confirm(t('sureToStopAiGeneration'))
+            .then(() => {
+                stopAIGenerating();
+                done();
+            })
+            .catch(() => {
+                // catch error
+            });
+    } else {
+        stopAIGenerating();
+        done();
+    }
+};
+watch(isShowJSON, (value) => {
+    if (value) {
+        jsonEditorModel.value = model.value;
+    }
+});
+
+const onJsonEditorUpdate = (updatedContent: any) => {
+    if (!appInstance.value) {
+        return;
+    }
+
+    const defaultModel = appInstance.value.createConceptInstance(appInstance.value.concept);
+
+    let parsed;
+    try {
+        parsed = JSON.parse(updatedContent.text);
+    } catch (err) {
+        console.error('Invalid JSON content:', err);
+        model.value = defaultModel;
+    }
+
+    if (parsed) {
+        const validationResult = validate(parsed);
+        if (validationResult.success) {
+            model.value = validationResult.model;
+        } else {
+            model.value = defaultModel;
+        }
+    }
+
+    editPath.value = [];
+    appEl?.value?.setAttribute('edit-selection', '{}');
+    resetFormConfig();
+};
 </script>
 
 <template>
@@ -384,15 +615,15 @@ const uploadImage = async (file: File) => {
                 <template #content>
                     <div v-if="editName === undefined" class="flex items-center group">
                         <span class="text-large font-600 mr-3"> {{ asset?.name }} </span>
-                        <el-icon class="invisible group-hover:visible cursor-pointer" @click="editName = asset?.name"
-                            ><ElIconEditPen
-                        /></el-icon>
+                        <el-icon class="invisible group-hover:visible cursor-pointer" @click="editName = asset?.name">
+                            <ElIconEditPen />
+                        </el-icon>
                     </div>
                     <div v-else>
                         <el-input
                             ref="editNameEl"
                             v-model="editName"
-                            placeholder="请输入资产名称"
+                            :placeholder="$t('inputAssetName')"
                             @blur="onEditNameComplete"
                             @keyup.enter="onEditNameComplete"
                         />
@@ -403,7 +634,9 @@ const uploadImage = async (file: File) => {
             <div class="flex items-center button-group gap-2">
                 <!-- validation issues dropdown -->
                 <el-dropdown trigger="click" ref="issuesDropdown" v-if="issues.length > 0 && appInstance && model">
-                    <el-icon class="w-4 h-4 cursor-pointer" color="#f09035"><ElIconWarnTriangleFilled /></el-icon>
+                    <el-icon class="w-4 h-4 cursor-pointer" color="#f09035">
+                        <ElIconWarnTriangleFilled />
+                    </el-icon>
                     <template #dropdown>
                         <el-dropdown-menu>
                             <ValidationIssues
@@ -411,16 +644,25 @@ const uploadImage = async (file: File) => {
                                 :issues="issues"
                                 :concept="appInstance.concept"
                                 :model="model"
+                                :locale-messages="localeMessages"
                                 @navigate="(path: EditPathRecord[]) => onNavigateError(path)"
                             />
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-                <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">保存</el-button>
-                <el-button @click="onDelete" v-loading="isDeletingAsset">删除</el-button>
-                <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">预览</el-button>
-                <el-button type="primary" @click="onPublish" :disabled="issues.length > 0" v-loading="isPublishingAsset"
-                    >发布</el-button
+                <el-button @click="onSave" :disabled="issues.length > 0" v-loading="isSavingAsset">{{
+                    $t('save')
+                }}</el-button>
+                <el-button @click="onDelete" v-loading="isDeletingAsset">{{ $t('delete') }}</el-button>
+                <el-button @click="onPreview" :disabled="issues.length > 0" v-loading="isPreviewAsset">{{
+                    $t('preview')
+                }}</el-button>
+                <el-button
+                    type="primary"
+                    @click="onPublish"
+                    :disabled="issues.length > 0"
+                    v-loading="isPublishingAsset"
+                    >{{ $t('publish') }}</el-button
                 >
             </div>
         </div>
@@ -439,7 +681,7 @@ const uploadImage = async (file: File) => {
                             "
                             class="px-4 py-2 text-sm border rounded-l-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
                         >
-                            Mobile
+                            {{ t('mobile') }}
                         </button>
                         <button
                             autofocus
@@ -450,10 +692,10 @@ const uploadImage = async (file: File) => {
                             "
                             class="px-4 py-2 text-sm border rounded-r-md hover:bg-gray-200 text-gray-900 bg-gray-100 border-gray-200 focus:border-gray-200 focus:bg-gray-500 focus:text-white"
                         >
-                            Desktop
+                            {{ t('desktop') }}
                         </button>
                     </div>
-                    <div v-if="isJSONEditorPermission" class="self-end">
+                    <div v-if="isJSONEditorPermission" class="flex items-center gap-1 self-end">
                         <span>JSON</span>
                         <el-switch v-model="isShowJSON"> </el-switch>
                     </div>
@@ -461,40 +703,96 @@ const uploadImage = async (file: File) => {
 
                 <div
                     ref="appContainerEl"
-                    class="overflow-auto ml-auto mr-auto"
+                    id="haya-app-container"
+                    class="overflow-auto ml-auto mr-auto relative"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
-                ></div>
-                <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-1/2">
+                >
+                    <el-color-picker
+                        v-model="rteEditColor"
+                        ref="rteEditColorEl"
+                        show-alpha
+                        :predefine="PredefinedColors"
+                        :teleported="false"
+                        class="invisible absolute inset-1/3"
+                    />
+                </div>
+
+                <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-2/5">
                     <JsonEditorVue
-                        ref="jsonEditorVueRef"
-                        :modelValue="model"
+                        :modelValue="jsonEditorModel"
                         :mode="Mode.text"
                         :stringified="false"
-                        :onChange=" (updatedContent:any) => { let jsonModel; try { jsonModel =
-                    JSON.parse(updatedContent.text); } catch {} if (jsonModel) { const appModel = { model: jsonModel,
-                    appVersion: appInstance!.version }; const loaded = appInstance!.loadModel(JSON.stringify(appModel));
-                    model = loaded.model; resetFormConfig(); } } "
+                        :onChange="onJsonEditorUpdate"
                     />
                 </div>
             </div>
             <!-- preview -->
-            <div class="w-[400px] shrink-0 border rounded" v-if="appInstance">
-                <AppConfigurator
-                    :app="appInstance"
-                    :model="model"
-                    v-model:editPath="editPath"
-                    v-model:selection="selection"
-                    :image-uploader="uploadImage"
-                    @change="onAppChange"
-                />
+            <div class="w-[400px] shrink-0 border rounded block overflow-clip" v-if="appInstance">
+                <div :class="isAIPermission ? 'h-[calc(100%-4rem)]' : 'h-full'">
+                    <AppConfigurator
+                        :app="appInstance"
+                        :model="model"
+                        :locale-messages="localeMessages"
+                        v-model:editPath="editPath"
+                        v-model:selection="selection"
+                        :image-uploader="uploadImage"
+                        :predefined-colors="PredefinedColors"
+                        @change="onAppChange"
+                        @generate-model="onGenerateModel"
+                    />
+                </div>
             </div>
         </div>
     </el-container>
+
+    <el-dialog
+        :title="$t(`aiGenerate-${generateModelArgs?.aspect}`)"
+        v-model="aiDialogVisible"
+        @opened="onAiDialogOpen"
+        :before-close="aiDialogClose"
+        style="border-radius: 0.5rem"
+    >
+        <div class="flex bg-gray-100 px-4 pt-4 rounded-lg justify-between mb-2">
+            <p class="text-gray-700 mb-2"><Markdown :value="aiGenerateHint" /></p>
+            <div className="w-[100px] h-[100px] self-end">
+                <img src="/img/ai_assistant.png" alt="ai" className="object-contain w-full h-full" />
+            </div>
+        </div>
+
+        <el-input
+            type="textarea"
+            v-model="aiInput"
+            :rows="10"
+            :placeholder="$t('inputRequirements')"
+            class="mb-4"
+            ref="aiInputEl"
+        ></el-input>
+
+        <div class="inline-block w-full relative">
+            <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
+                ><span class="z-10">{{
+                    generateInputKind === 'user-input' ? $t('generateContentPlan') : $t('generateForm')
+                }}</span></el-button
+            >
+            <span class="inline">
+                <span
+                    class="bg-blue-500 rounded absolute h-full left-0"
+                    :style="{ width: aiGeneratingProgress + '%' }"
+                ></span>
+            </span>
+        </div>
+    </el-dialog>
 </template>
 
 <style scoped>
 .button-group button {
     @apply w-24;
     @apply ml-0;
+}
+</style>
+
+<style>
+#haya-app-container .el-color-picker__panel {
+    z-index: 100000 !important;
 }
 </style>

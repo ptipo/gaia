@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { QuestionCommonGroups, QuestionCommonItems } from '../common';
 
 /**
@@ -6,7 +6,7 @@ import { QuestionCommonGroups, QuestionCommonItems } from '../common';
  */
 export const DateQuestion = defineConcept({
     name: 'DateQuestion',
-    displayName: '日期',
+    displayName: t`date`,
 
     groups: {
         ...QuestionCommonGroups,
@@ -17,7 +17,7 @@ export const DateQuestion = defineConcept({
 
         format: {
             type: 'select',
-            name: '格式',
+            name: t`format`,
             default: 'mmddyyyy',
             options: {
                 mmddyyyy: 'MM/DD/YYYY',
@@ -28,7 +28,7 @@ export const DateQuestion = defineConcept({
         },
     },
 
-    summary: ({ currentModel }) => {
-        return `${currentModel.name || '日期'} ${currentModel.required ? '*' : ''}`;
+    summary: ({ currentModel, ct }) => {
+        return `${currentModel?.name || ct(t`date`)} ${currentModel?.required ? '*' : ''}`;
     },
 });

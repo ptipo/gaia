@@ -1,4 +1,4 @@
-import { defineConcept } from '@hayadev/configurator';
+import { defineConcept, t } from '@hayadev/configurator';
 import { AlignmentItems } from '../common';
 
 /**
@@ -6,7 +6,7 @@ import { AlignmentItems } from '../common';
  */
 export const ImageElement = defineConcept({
     name: 'ImageElement',
-    displayName: '图片',
+    displayName: t`image`,
 
     items: {
         /**
@@ -14,7 +14,7 @@ export const ImageElement = defineConcept({
          */
         image: {
             type: 'image',
-            name: '图片',
+            name: t`image`,
             default: 'https://comp.ptengine.com/res/placeholder-lg.svg',
             required: true,
         },
