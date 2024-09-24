@@ -29,6 +29,11 @@ export const DEFAULT_ASPECT = 'content';
 export const IMAGE_UPLOADER_KEY = 'imageUploader';
 
 /**
+ * Injection key for predefined colors.
+ */
+export const PREDEFINED_COLORS_KEY = 'predefinedColors';
+
+/**
  * Injection key for app config translator.
  */
 export const CONFIG_TRANSLATOR_KEY = 'configTranslator';

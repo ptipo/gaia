@@ -6,11 +6,12 @@ import {
     CURRENT_SELECTION_KEY,
     DEFAULT_ASPECT,
     IMAGE_UPLOADER_KEY,
+    PREDEFINED_COLORS_KEY,
     ROOT_MODEL_KEY,
 } from '@/lib/constants';
 import { useConfigI18n } from '@/lib/i18n';
-import type { AppInstance, BaseConceptModel, Concept, SelectionData, ConfigAspects } from '@hayadev/configurator';
-import { provide, ref, watch, computed } from 'vue';
+import type { AppInstance, BaseConceptModel, Concept, ConfigAspects, SelectionData } from '@hayadev/configurator';
+import { computed, provide, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ConceptStack from './ConceptStack.vue';
 import type { EditPathRecord, ImageUploader, ModelGenerationArgs } from './types';
@@ -21,6 +22,7 @@ const props = defineProps<{
     app: AppInstance<Concept>;
     model: BaseConceptModel;
     imageUploader: ImageUploader;
+    predefinedColors?: string[];
     localeMessages: Record<string, Record<string, string>>;
 }>();
 
@@ -57,10 +59,14 @@ provide(APP_KEY, props.app);
 // provide the current selected concept instance to descendants
 provide(CURRENT_SELECTION_KEY, selection);
 
+// provide the image uploader
 provide(IMAGE_UPLOADER_KEY, props.imageUploader);
 
-const { ct } = useConfigI18n(props.localeMessages);
+// provide the predefined colors
+provide(PREDEFINED_COLORS_KEY, props.predefinedColors);
 
+// provide the configuration model translator
+const { ct } = useConfigI18n(props.localeMessages);
 provide(CONFIG_TRANSLATOR_KEY, ct);
 
 const { t } = useI18n();

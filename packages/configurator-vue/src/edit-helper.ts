@@ -2,18 +2,19 @@ import { BaseConceptModel } from '@hayadev/configurator';
 import deepcopy from 'deepcopy';
 // import RichTextEditor from './components/RichTextEditor.vue';
 // import { createVNode } from 'vue';
-import { Editor } from '@tiptap/core';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
+import ColorPickerIcon from '@/assets/icon/color-picker.svg?raw';
 import Underline from '@/lib/tiptap/underline';
+import { Editor } from '@tiptap/core';
 import Bold from '@tiptap/extension-bold';
+import BubbleMenu from '@tiptap/extension-bubble-menu';
 import Color from '@tiptap/extension-color';
+import Document from '@tiptap/extension-document';
 import Italic from '@tiptap/extension-italic';
 import Link from '@tiptap/extension-link';
+import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
+import Text from '@tiptap/extension-text';
 import TextStyle from '@tiptap/extension-text-style';
-import BubbleMenu from '@tiptap/extension-bubble-menu';
 
 function findEditableElement(event: Event) {
     if (!event.target) {
@@ -124,7 +125,7 @@ export function addInlineEditEventHandlers(
                 const html = el.innerHTML;
                 hideChildren(el);
 
-                const { menuEl, boldBtn, underlineBtn, colorBtn } = createBubbleMenu();
+                const { menuEl, boldBtn, underlineBtn, italicBtn, strikeThroughBtn, colorBtn } = createBubbleMenu();
 
                 rte = new Editor({
                     element: el,
@@ -148,7 +149,11 @@ export function addInlineEditEventHandlers(
 
                 boldBtn.addEventListener('click', () => rte?.chain().focus().toggleBold().run());
                 underlineBtn.addEventListener('click', () => rte?.chain().focus().toggleUnderline().run());
-                colorBtn.addEventListener('click', () => onOpenColorPicker());
+                colorBtn.addEventListener('click', () => {
+                    onOpenColorPicker();
+                });
+                italicBtn.addEventListener('click', () => rte?.chain().focus().toggleItalic().run());
+                strikeThroughBtn.addEventListener('click', () => rte?.chain().focus().toggleStrike().run());
             } else {
                 el.contentEditable = 'true';
                 el.focus();
@@ -220,12 +225,12 @@ function createBubbleMenu() {
     // menuEl.classList.add('flex', 'gap-1', 'border', 'px-2', 'py-1', 'text-xs', 'bg-white', 'rounded');
 
     menuEl.style.display = 'flex';
-    menuEl.style.gap = '0.5em';
+    menuEl.style.gap = '0.75em';
     menuEl.style.backgroundColor = 'white';
     menuEl.style.border = '1px solid #ccc';
     menuEl.style.borderRadius = '0.25em';
     menuEl.style.fontSize = '0.75em';
-    menuEl.style.padding = '6px 12px';
+    menuEl.style.padding = '8px 12px';
     menuEl.style.fontFamily = 'sans-serif';
     menuEl.style.fontWeight = 'normal';
     menuEl.style.lineHeight = '1';
@@ -238,9 +243,17 @@ function createBubbleMenu() {
     underlineBtn.innerHTML = '<span style="text-decoration: underline;">U</span>';
     menuEl.appendChild(underlineBtn);
 
+    const italicBtn = document.createElement('button');
+    italicBtn.innerHTML = '<span style="font-style: italic;">I</span>';
+    menuEl.appendChild(italicBtn);
+
+    const strikeThroughBtn = document.createElement('button');
+    strikeThroughBtn.innerHTML = '<span style="text-decoration: line-through;">S</span>';
+    menuEl.appendChild(strikeThroughBtn);
+
     const colorBtn = document.createElement('button');
-    colorBtn.innerHTML = '<span style="">C</span>';
+    colorBtn.innerHTML = ColorPickerIcon;
     menuEl.appendChild(colorBtn);
 
-    return { menuEl, boldBtn, underlineBtn, colorBtn };
+    return { menuEl, boldBtn, underlineBtn, italicBtn, strikeThroughBtn, colorBtn };
 }
