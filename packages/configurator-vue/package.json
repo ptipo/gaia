@@ -29,6 +29,7 @@
         "@hayadev/configurator": "workspace:*",
         "@tiptap/core": "^2.5.5",
         "@tiptap/extension-bold": "^2.5.5",
+        "@tiptap/extension-bubble-menu": "^2.5.8",
         "@tiptap/extension-color": "^2.5.4",
         "@tiptap/extension-document": "^2.5.5",
         "@tiptap/extension-italic": "^2.5.5",

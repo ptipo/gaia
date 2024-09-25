@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { AppDef, AppInstance, Concept, ConfigAspects, inferConcept } from '@hayadev/configurator';
+import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
 import {
     createAppInstance,
     SELECTION_CHANGE_EVENT,
@@ -22,10 +22,12 @@ import type { DropdownInstance } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { Mode } from 'vanilla-jsoneditor';
 import { z } from 'zod';
+import InlineRteEditor from '~/components/InlineRteEditor.vue';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
-import { loadAppBundle } from '~/lib/app';
-import { confirmDelete, error, success, alert } from '~/lib/message';
 import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
+import { loadAppBundle } from '~/lib/app';
+import { alert, confirmDelete, error, success } from '~/lib/message';
+import { PredefinedColors } from '../../lib/color';
 
 const route = useRoute();
 
@@ -75,6 +77,8 @@ const aiInputEl = ref<HTMLElement>();
 
 const aiGeneratingProgress = ref(0);
 let aiTimer: NodeJS.Timeout | null;
+
+const inlineRteEditor = ref<typeof InlineRteEditor>();
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -202,7 +206,13 @@ const initializeApp = async (app: App) => {
     validate(model.value);
 
     if (appContainerEl.value) {
-        appContainerEl.value.innerHTML = '';
+        // appContainerEl.value.innerHTML = '';
+
+        const currentAppEl = appContainerEl.value.querySelector(app.htmlTagName);
+        if (currentAppEl) {
+            appContainerEl.value.removeChild(currentAppEl);
+        }
+
         console.log('Creating app element:', app.htmlTagName);
         const el = document.createElement(app.htmlTagName);
         el.setAttribute('config', serializeConfig());
@@ -213,7 +223,12 @@ const initializeApp = async (app: App) => {
         }) as EventListener);
 
         // install preview-pane inline editing event handlers
-        addInlineEditEventHandlers(el, () => model.value!, onAppChange);
+        addInlineEditEventHandlers(
+            el,
+            () => model.value!,
+            onAppChange,
+            (onColorChange) => inlineRteEditor.value?.openColorPicker(onColorChange)
+        );
 
         appContainerEl.value.appendChild(el);
         appEl.value = el;
@@ -688,9 +703,18 @@ const onJsonEditorUpdate = (updatedContent: any) => {
 
                 <div
                     ref="appContainerEl"
-                    class="overflow-auto ml-auto mr-auto"
+                    id="haya-app-container"
+                    class="overflow-auto ml-auto mr-auto relative"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
-                ></div>
+                >
+                    <!-- InlineRteEditor owns a ElColorPicker which has a trigger button that
+                we don't want to display, but would put it around the center of the pane so the 
+                color picker popover shows close to the center -->
+                    <div class="invisible absolute inset-1/3">
+                        <InlineRteEditor ref="inlineRteEditor" />
+                    </div>
+                </div>
+
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-2/5">
                     <JsonEditorVue
                         :modelValue="jsonEditorModel"
@@ -710,6 +734,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         v-model:editPath="editPath"
                         v-model:selection="selection"
                         :image-uploader="uploadImage"
+                        :predefined-colors="PredefinedColors"
                         @change="onAppChange"
                         @generate-model="onGenerateModel"
                     />
@@ -761,5 +786,12 @@ const onJsonEditorUpdate = (updatedContent: any) => {
 .button-group button {
     @apply w-24;
     @apply ml-0;
+}
+</style>
+
+<style>
+#haya-app-container .el-color-picker__panel {
+    /* make sure the color picker panel shows on the top */
+    z-index: 100000 !important;
 }
 </style>

@@ -11,14 +11,15 @@ import Text from '@tiptap/extension-text';
 import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { ColorPickerInstance } from 'element-plus';
-import { defineModel, nextTick, ref } from 'vue';
-import { PredefinedColors } from './items/common';
+import { defineModel, inject, nextTick, ref } from 'vue';
 
 const model = defineModel<string>();
 
 const emit = defineEmits<{
     (e: 'change', data: string): void;
 }>();
+
+const predefinedColors = inject<string[]>('predefinedColors', []);
 
 const editor = useEditor({
     extensions: [
@@ -165,7 +166,7 @@ const onChangeLink = () => {
                 v-model="textColor"
                 show-alpha
                 size="small"
-                :predefine="PredefinedColors"
+                :predefine="predefinedColors"
                 @focus="onColorPickerFocus"
                 @blur="onColorPickerBlur"
                 @change="onColorChange"

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { ColorItem, RGBA } from '@hayadev/configurator/items';
-import { ref, watch } from 'vue';
-import { PredefinedColors, type CommonEvents, type CommonProps } from './common';
+import { inject, ref, watch } from 'vue';
+import { type CommonEvents, type CommonProps } from './common';
 import { useGuard } from './guard';
 import ItemLabel from './ItemLabel.vue';
 
 const props = defineProps<CommonProps<ColorItem>>();
 const emit = defineEmits<CommonEvents<ColorItem>>();
+const predefinedColors = inject<string[]>('predefinedColors', []);
 
 const { enabled } = useGuard(props.model !== undefined, {
     onSetOn: () => {
@@ -43,7 +44,7 @@ const onColorChange = (value: RGBA) => {
         <ItemLabel :item="item" :model="props.model" :parent-model="props.parentModel" v-model:enabled="enabled" />
 
         <template v-if="!item.guarded || enabled">
-            <el-color-picker v-model="_model" show-alpha :predefine="PredefinedColors" @change="onColorChange" />
+            <el-color-picker v-model="_model" show-alpha :predefine="predefinedColors" @change="onColorChange" />
         </template>
     </el-form-item>
 </template>
