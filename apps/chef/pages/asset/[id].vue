@@ -79,6 +79,7 @@ let aiTimer: NodeJS.Timeout | null;
 
 const rteEditColor = ref('');
 const rteEditColorEl = ref<typeof ElColorPicker>();
+let onRteEditColorChange: ((color: string | null) => void) | undefined;
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -130,8 +131,8 @@ watch(loadError, (value) => {
 const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
 
-const onOpenColorPicker = () => {
-    console.log('Open color picker');
+const onOpenColorPicker = (onColorChange: (color: string | null) => void) => {
+    onRteEditColorChange = onColorChange;
     rteEditColorEl.value?.show();
 };
 
@@ -713,6 +714,8 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                         show-alpha
                         :predefine="PredefinedColors"
                         :teleported="false"
+                        @blur="onRteEditColorChange = undefined"
+                        @change="(color) => onRteEditColorChange?.(color)"
                         class="invisible absolute inset-1/3"
                     />
                 </div>
