@@ -18,10 +18,11 @@ import '@hayadev/configurator-vue/dist/index.css';
 import type { App, Asset, Prisma } from '@prisma/client';
 import byteSize from 'byte-size';
 import confetti from 'canvas-confetti';
-import type { DropdownInstance, ElColorPicker } from 'element-plus';
+import type { DropdownInstance } from 'element-plus';
 import JsonEditorVue from 'json-editor-vue';
 import { Mode } from 'vanilla-jsoneditor';
 import { z } from 'zod';
+import InlineRteEditor from '~/components/InlineRteEditor.vue';
 import { useDeleteAsset, useFindUniqueAsset, useFindUniqueUser, useUpdateAsset } from '~/composables/data';
 import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
 import { loadAppBundle } from '~/lib/app';
@@ -77,9 +78,7 @@ const aiInputEl = ref<HTMLElement>();
 const aiGeneratingProgress = ref(0);
 let aiTimer: NodeJS.Timeout | null;
 
-const rteEditColor = ref('');
-const rteEditColorEl = ref<typeof ElColorPicker>();
-let onRteEditColorChange: ((color: string | null) => void) | undefined;
+const inlineRteEditor = ref<typeof InlineRteEditor>();
 
 interface UserPermission {
     jsonEditor?: boolean;
@@ -130,11 +129,6 @@ watch(loadError, (value) => {
 
 const { mutateAsync: saveAsset, isPending: isSavingAsset } = useUpdateAsset();
 const { mutateAsync: deleteAsset, isPending: isDeletingAsset } = useDeleteAsset();
-
-const onOpenColorPicker = (onColorChange: (color: string | null) => void) => {
-    onRteEditColorChange = onColorChange;
-    rteEditColorEl.value?.show();
-};
 
 const serializeConfig = () => JSON.stringify({ appVersion: appInstance.value?.version, model: model.value });
 
@@ -229,7 +223,12 @@ const initializeApp = async (app: App) => {
         }) as EventListener);
 
         // install preview-pane inline editing event handlers
-        addInlineEditEventHandlers(el, () => model.value!, onAppChange, onOpenColorPicker);
+        addInlineEditEventHandlers(
+            el,
+            () => model.value!,
+            onAppChange,
+            (onColorChange) => inlineRteEditor.value?.openColorPicker(onColorChange)
+        );
 
         appContainerEl.value.appendChild(el);
         appEl.value = el;
@@ -708,16 +707,9 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     class="overflow-auto ml-auto mr-auto relative"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
                 >
-                    <el-color-picker
-                        v-model="rteEditColor"
-                        ref="rteEditColorEl"
-                        show-alpha
-                        :predefine="PredefinedColors"
-                        :teleported="false"
-                        @blur="onRteEditColorChange = undefined"
-                        @change="(color) => onRteEditColorChange?.(color)"
-                        class="invisible absolute inset-1/3"
-                    />
+                    <div class="invisible absolute inset-1/3">
+                        <InlineRteEditor ref="inlineRteEditor" />
+                    </div>
                 </div>
 
                 <div v-if="isShowJSON" class="bottom-tabs overflow-auto w-full h-2/5">
