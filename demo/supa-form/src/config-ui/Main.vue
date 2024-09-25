@@ -145,7 +145,6 @@ const pickedColor = ref('');
 const colorPicker = ref<ColorPickerInstance>();
 
 const onOpenColorPicker = () => {
-    console.log('Open color picker');
     colorPicker.value?.show();
 };
 </script>

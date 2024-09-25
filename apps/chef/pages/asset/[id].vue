@@ -707,6 +707,9 @@ const onJsonEditorUpdate = (updatedContent: any) => {
                     class="overflow-auto ml-auto mr-auto relative"
                     :class="[isMobile ? 'w-[375px]' : 'w-full', isShowJSON ? 'h-1/2' : 'h-3/4']"
                 >
+                    <!-- InlineRteEditor owns a ElColorPicker which has a trigger button that
+                we don't want to display, but would put it around the center of the pane so the 
+                color picker popover shows close to the center -->
                     <div class="invisible absolute inset-1/3">
                         <InlineRteEditor ref="inlineRteEditor" />
                     </div>
@@ -788,6 +791,7 @@ const onJsonEditorUpdate = (updatedContent: any) => {
 
 <style>
 #haya-app-container .el-color-picker__panel {
+    /* make sure the color picker panel shows on the top */
     z-index: 100000 !important;
 }
 </style>
