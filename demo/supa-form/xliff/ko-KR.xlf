@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="ko-KR" source-language="en-US" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="s6fc73ba7929aa5d6">
+  <source>Please make the selection</source>
+  <target>선택해 주세요</target>
+</trans-unit>
+<trans-unit id="s0bb7ca461c368945">
+  <source>Please provide more information</source>
+  <target>추가 정보를 제공하십시오</target>
+</trans-unit>
+<trans-unit id="se8cd0d023e89f577">
+  <source>Please fill this in</source>
+  <target>이것을 기입하십시오</target>
+</trans-unit>
+<trans-unit id="s618f82f6f2816e6c">
+  <source>Please enter a valid email</source>
+  <target>유효한 이메일을 입력하십시오</target>
+</trans-unit>
+<trans-unit id="sa2e67553ecfa8d54">
+  <source>Please agree to the terms &amp; conditions</source>
+  <target>약관에 동의하십시오</target>
+</trans-unit>
+<trans-unit id="sc16e00a7a8b2fde2">
+  <source>Back</source>
+  <target>뒤로</target>
+</trans-unit>
+<trans-unit id="sfa236dc6043a5fe8">
+  <source>NEXT</source>
+  <target>다음</target>
+</trans-unit>
+</body>
+</file>
+</xliff>
