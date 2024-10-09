@@ -18,6 +18,7 @@ export const LanguageSetting = defineGroupItem({
                 'ja-JP': '日本語',
                 'fr-FR': 'Français',
                 'de-DE': 'Deutsch',
+                'ko-KR': '한국어',
             },
             help: t`languageHelp`,
         },
