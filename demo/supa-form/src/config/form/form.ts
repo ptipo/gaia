@@ -6,6 +6,7 @@ import {
     t,
     NonPrimitiveTypes,
     AppInstance,
+    inferConcept,
 } from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
@@ -19,6 +20,7 @@ import { ProgressButtonStyle } from '../design/progress-button-style';
 import { BackgroundStyle } from '../design/background-style';
 import { LayoutStyle } from '../design/layout-style';
 import { CustomStyle } from '../design/custom-css';
+import { isRGBA, RGBA } from '../../../../../packages/configurator/dist/esm/items/color';
 
 /**
  * 表单
@@ -166,7 +168,38 @@ export const Form = defineConcept({
 
         return { success: true, model: data as any };
     },
+
+    mergeStyle: (data, model) => {
+        const form = model as inferConcept<typeof Form>;
+        let isMerged = false;
+
+        if (data.buttonColor) {
+            form.progressButtonStyle.nextButton.buttonBackgroundColor = normalizeRGBAColor(data.buttonColor);
+            isMerged = true;
+        }
+
+        if (data.backgroundColor) {
+            form.backgroundStyle.background = 'color';
+            form.backgroundStyle.backgroundColor = normalizeRGBAColor(data.backgroundColor);
+            isMerged = true;
+        }
+
+        if (data.fontFamily) {
+            form.generalStyle.font = covertFontFamily(data.fontFamily);
+            isMerged = true;
+        }
+        return isMerged;
+    },
 });
+
+function covertFontFamily(fontFamily: string): string[] {
+    return fontFamily.split(',').map((f) => f.trim());
+}
+
+function normalizeRGBAColor(color: string): RGBA {
+    if (isRGBA(color)) return color as RGBA;
+    return (color as string).replace('rgb', 'rgba').replace(')', ',1)') as RGBA;
+}
 
 function fixMissingValueTypeForConcept(concept: Concept, data: any) {
     if (!data || typeof data !== 'object') {

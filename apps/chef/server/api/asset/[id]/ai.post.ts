@@ -3,6 +3,8 @@ import { prisma } from '../../../db';
 import { z } from 'zod';
 import type { AppDef, Concept } from '@hayadev/configurator';
 
+import { getWebsiteStyle } from '../../../utils/scrape';
+
 const payloadSchema = z.object({
     kind: z.union([z.literal('user-input'), z.literal('elaboration')]),
     data: z.string(),
@@ -45,6 +47,13 @@ export default eventHandler(async (event) => {
 
     const payload = await readBody(event);
     const parsed = payloadSchema.parse(payload);
+
+    if (parsed.aspect == 'design') {
+        const url = parsed.data;
+        const result = await getWebsiteStyle(url);
+        console.log(`Model generation response: ${JSON.stringify(result)}`);
+        return { success: true, data: { result } };
+    }
 
     const result = await appConfig.generateModel({
         ...parsed,
