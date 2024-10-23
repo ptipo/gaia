@@ -36,7 +36,7 @@ export function validateLogic(model: FormModel, condition: LogicalGroup, data: a
                 const dataValue = answerData.data as Array<[string, string]>;
                 if (choiceQuestion.kind == 'single') {
                     const expectedData = (condition.right as ConceptRef).$id;
-                    return validateValue(operator, dataValue[0][0], expectedData);
+                    return validateValue(operator, dataValue[0]?.[0], expectedData);
                 } else {
                     const expectedData = (condition.right as ConceptRef[]).map((x) => x.$id);
                     return validateArrayValue(

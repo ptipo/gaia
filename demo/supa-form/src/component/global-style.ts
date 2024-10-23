@@ -50,7 +50,7 @@ const RangeRatio: Record<keyof typeof FullRange, number> = {
     sm: 0.9,
     base: 1,
     lg: 1.1,
-    xl: 1.2,
+    xl: 1.5,
 };
 
 const ProgressRatio: Record<keyof typeof PartialRange, number> = {

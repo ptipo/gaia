@@ -216,7 +216,7 @@ export class PtForm extends PtBaseShadow {
                                 ${ref(this.pageRef)}
                                 class="mt-4 block"
                                 @pt-form-state-changed=${this.onFormStateChange}
-                                @pt-form-next-page=${this.nextPage}
+                                @pt-form-next-page=${this.formPageComplete}
                                 .page=${this.currentContentPage}
                                 config-path="contentPages[${contentPages.indexOf(this.currentContentPage)}]"
                             ></pt-form-page>`
@@ -307,6 +307,12 @@ export class PtForm extends PtBaseShadow {
             if (this.pageIdStack.length) {
                 this.pageId = this.pageIdStack.pop()!;
             }
+        }
+    }
+
+    private async formPageComplete() {
+        if (!this.editSelection) {
+            this.nextPage();
         }
     }
 
