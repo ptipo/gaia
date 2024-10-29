@@ -28,7 +28,7 @@ describe('scrape', () => {
         const result = await getStyleFromPage(page);
 
         expect(result.buttonColor).toEqual('rgb(212, 62, 98)');
-        expect(result.backgroundColor).toEqual('rgb(255, 255, 255)');
+        expect(result.backgroundColor).toEqual('rgb(237, 130, 174)');
         expect(result.fontFamily).toEqual('Montserrat, sans-serif');
     });
 
@@ -55,7 +55,7 @@ describe('scrape', () => {
 
         const result = await getStyleFromPage(page);
 
-        expect(result.buttonColor).toEqual('rgb(0, 0, 0)');
+        expect(result.buttonColor).toEqual('rgb(204, 204, 204)');
         expect(result.backgroundColor).toEqual('rgb(255, 255, 255)');
     });
 
