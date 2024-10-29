@@ -15,8 +15,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "vercel-build": "pnpm build && prisma migrate deploy",
-        "i18n": "tsx i18n/i18n-extract.ts",
-        "test": "vitest"
+        "i18n": "tsx i18n/i18n-extract.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.596.0",
