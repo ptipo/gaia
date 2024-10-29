@@ -12,7 +12,7 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "packageManager": "pnpm@8.15.8",
+    "packageManager": "pnpm@9.10.0",
     "devDependencies": {
         "@jest/globals": "^29.7.0",
         "@types/jest": "^29.5.12",

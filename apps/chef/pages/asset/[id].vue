@@ -245,7 +245,7 @@ watch(
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
             isJSONEditorPermission.value = !!permission?.jsonEditor;
-            isAIPermission.value = !!permission.ai;
+            isAIPermission.value = !!permission?.ai;
         }
     },
     { immediate: true }
@@ -260,6 +260,7 @@ const onAppChange = (data: BaseConceptModel) => {
     if (!appInstance.value) {
         return;
     }
+
     console.log('App change:', data);
     model.value = data as inferConcept<typeof appInstance.value.concept>;
 
@@ -505,42 +506,61 @@ const onGenerate = async () => {
         aspect: generateModelArgs.value.aspect,
     };
     console.log("Calling app's generation with payload:", payload);
-    const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
-        method: 'POST',
-        body: payload,
-    });
 
-    aiGeneratingProgress.value = 100;
-    stopAIGenerating();
+    try {
+        const { data } = await $fetch(`/api/asset/${asset.value.id}/ai`, {
+            method: 'POST',
+            body: payload,
+        });
 
-    console.log('AI generated result:', data);
+        aiGeneratingProgress.value = 100;
+        stopAIGenerating();
 
-    if (generateInputKind.value === 'user-input') {
-        console.log('Proceeding to elaboration -> model config phase');
-        // trim leading and trailing markers
-        const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
-        aiInput.value = result;
-        generateInputKind.value = 'elaboration';
-    } else {
-        console.log('Importing AI generated model:', data.result);
-        const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
-        if (!importResult.success) {
-            error(t('aiGenerateFailed'));
-            console.error(importResult);
+        console.log('AI generated result:', data);
+
+        if (generateInputKind.value === 'user-input') {
+            console.log('Proceeding to elaboration -> model config phase');
+            // trim leading and trailing markers
+            if (generateModelArgs.value.aspect == 'design') {
+                appInstance.value?.mergeStyle(data.result as any, model.value as BaseConceptModel);
+                success(t('aiGenerateSuccess'));
+                aiDialogVisible.value = false;
+                resetFormConfig();
+                appEl?.value?.setAttribute('edit-selection', '{}');
+            } else {
+                const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
+                aiInput.value = result;
+                generateInputKind.value = 'elaboration';
+            }
         } else {
-            success(t('aiGenerateSuccess'));
-            aiDialogVisible.value = false;
-            model.value = importResult.model;
-            validate(model.value);
-            resetFormConfig();
-            appEl?.value?.setAttribute('edit-selection', '{}');
+            console.log('Importing AI generated model:', data.result);
+            const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
+            if (!importResult.success) {
+                error(t('aiGenerateFailed'));
+                console.error(importResult);
+            } else {
+                success(t('aiGenerateSuccess'));
+                aiDialogVisible.value = false;
+                model.value = importResult.model;
+                validate(model.value);
+                resetFormConfig();
+                appEl?.value?.setAttribute('edit-selection', '{}');
 
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-            });
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                });
+            }
         }
+    } catch (e) {
+        console.error(e);
+        error(t('aiGenerateFailed'));
+        if (aiTimer) {
+            clearInterval(aiTimer);
+        }
+        aiGeneratingProgress.value = 0;
+        isAiGenerating.value = false;
     }
 };
 
@@ -769,7 +789,11 @@ const onJsonEditorUpdate = (updatedContent: any) => {
         <div class="inline-block w-full relative">
             <el-button class="w-full" type="primary" :disabled="isAiGenerating" @click="onGenerate"
                 ><span class="z-10">{{
-                    generateInputKind === 'user-input' ? $t('generateContentPlan') : $t('generateForm')
+                    generateModelArgs?.aspect === 'design'
+                        ? $t('generateDesign')
+                        : generateInputKind === 'user-input'
+                        ? $t('generateContentPlan')
+                        : $t('generateForm')
                 }}</span></el-button
             >
             <span class="inline">

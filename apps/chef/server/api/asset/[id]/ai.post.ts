@@ -3,6 +3,8 @@ import { prisma } from '../../../db';
 import { z } from 'zod';
 import type { AppDef, Concept } from '@hayadev/configurator';
 
+import { getWebsiteStyle } from '../../../utils/scrape';
+
 const payloadSchema = z.object({
     kind: z.union([z.literal('user-input'), z.literal('elaboration')]),
     data: z.string(),
@@ -46,6 +48,20 @@ export default eventHandler(async (event) => {
     const payload = await readBody(event);
     const parsed = payloadSchema.parse(payload);
 
+    if (parsed.aspect == 'design') {
+        const urls = extractUrls(parsed.data);
+
+        if (urls.length === 0) {
+            throw createError({
+                message: 'No URLs found in the input',
+                statusCode: 400,
+            });
+        }
+        const result = await getWebsiteStyle(urls[0]);
+        console.log(`Model generation response: ${JSON.stringify(result)}`);
+        return { success: true, data: { result } };
+    }
+
     const result = await appConfig.generateModel({
         ...parsed,
         secrets: asset.app.secrets ?? undefined,
@@ -55,3 +71,14 @@ export default eventHandler(async (event) => {
 
     return { success: true, data: result };
 });
+
+function extractUrls(text: string): string[] {
+    // Regular expression pattern to match URLs
+    const urlPattern = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?/g;
+
+    // Find all matches in the text
+    const matches = text.match(urlPattern);
+
+    // Return the matches or empty array if no matches found
+    return matches || [];
+}

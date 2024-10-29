@@ -8,6 +8,11 @@ export const FormApp = defineApp({
 
     generateModelHint: (args) => {
         console.log('Generate model hint:', args);
+
+        if (args.aspect === 'design') {
+            return args.ct(t`aiGenerateDesignHint`);
+        }
+
         return args.kind === 'user-input' ? args.ct(t`aiGenerateContentHint1`) : args.ct(t`aiGenerateContentHint2`);
     },
 
@@ -59,5 +64,5 @@ export const FormApp = defineApp({
         }
     },
 
-    supportedGenerateAspects: () => ['content'],
+    supportedGenerateAspects: () => ['content', 'design'],
 });

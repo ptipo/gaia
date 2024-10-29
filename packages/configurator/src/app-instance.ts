@@ -175,6 +175,16 @@ export class AppInstance<TConcept extends Concept> {
         // validate the result model
         return this.validateModel(model, true);
     }
+
+    /**
+     * Merges style data with a model.
+     */
+    mergeStyle(data: WebsiteStyle, model: inferConcept<TConcept>) {
+        if (this.concept.mergeStyle) {
+            return this.concept.mergeStyle(data, model);
+        }
+        return false;
+    }
 }
 
 /**
@@ -183,3 +193,19 @@ export class AppInstance<TConcept extends Concept> {
 export function createAppInstance<TConcept extends Concept>(def: AppDef<TConcept>, version: string) {
     return new AppInstance(def, version);
 }
+
+export type WebsiteStyle = {
+    /**
+     * The button color of the website.
+     */
+    buttonColor?: string;
+
+    /**
+     * The background color of the website.
+     */
+    backgroundColor?: string;
+    /**
+     * The font of the website.
+     */
+    fontFamily?: string;
+};

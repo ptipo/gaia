@@ -162,5 +162,6 @@
     "spread": "扩散",
     "borderWidth": "边框宽度",
     "aiGenerateContentHint1": "我可以帮您快速生成表单或问卷，您可以：\n1. 告诉我您的调研目的和对象\n1. 或直接给我问题和选项\n我将立即为您生成表单。",
-    "aiGenerateContentHint2": "根据您的需求，我会为您生成如下问题，您可以确认后使用或微调修改。"
+    "aiGenerateContentHint2": "根据您的需求，我会为您生成如下问题，您可以确认后使用或微调修改。",
+    "aiGenerateDesignHint": "我可以根据您的网站生成按钮颜色、背景颜色和字体。\n 请输入您的网站地址。"
 }
