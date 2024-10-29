@@ -9,7 +9,6 @@ const isColour = (r: string, g: string, b: string) => {
 };
 
 async function getBrowser() {
-    console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
     if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
 
@@ -100,14 +99,14 @@ export async function getStyleFromPage(page: Page) {
         return { colorRecord, fontFamily };
     });
 
-    console.log(`${page.url} color record:`, colorRecord);
+    console.log(`${page.url()} color record:`, colorRecord);
 
     const colorArray = Object.entries(colorRecord).sort((a, b) => b[1].elementCount - a[1].elementCount);
 
-    const backgroundColor = colorArray[0][0];
+    let backgroundColor = colorArray[0][0];
 
     const buttonSortedArray = colorArray
-        .filter(([color, data]) => data.buttonCount > 0 && color !== 'rgb(255, 255, 255)')
+        .filter(([color]) => color !== 'rgb(255, 255, 255)')
         .map(([color, data]) => {
             let isColorur = false;
             const rgb = color.match(/\d+/g);
@@ -125,8 +124,13 @@ export async function getStyleFromPage(page: Page) {
             }
             return b.buttonCount - a.buttonCount;
         });
+    console.log(`${page.url()} button sorted array:`, buttonSortedArray);
 
-    const buttonColor = buttonSortedArray ? buttonSortedArray[0].color : null;
+    const buttonColor = buttonSortedArray ? buttonSortedArray[0]?.color : null;
+
+    if (backgroundColor == buttonColor && colorArray.length > 1) {
+        backgroundColor = buttonSortedArray[1]?.color;
+    }
 
     return { buttonColor, backgroundColor, fontFamily };
 }
