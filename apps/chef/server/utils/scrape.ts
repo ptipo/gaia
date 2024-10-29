@@ -1,6 +1,6 @@
-import puppeteer, { Page, KnownDevices } from 'puppeteer';
-
-const iPhone = KnownDevices['iPhone 15 Pro'];
+import { Page, Browser } from 'puppeteer';
+import puppeteerCore from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 
 const isColour = (r: string, g: string, b: string) => {
     const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
@@ -8,8 +8,27 @@ const isColour = (r: string, g: string, b: string) => {
     return grayscale < 255 - 30 && grayscale > 30;
 };
 
+async function getBrowser() {
+    console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
+    if (process.env.VERCEL_ENV) {
+        const executablePath = await chromium.executablePath();
+
+        const browser = await puppeteerCore.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath,
+            headless: false,
+        });
+        return browser;
+    } else {
+        const puppeteer = await import('puppeteer').then((mod) => mod.default);
+        const browser = await puppeteer.launch({ headless: false });
+        return browser;
+    }
+}
+
 export async function getWebsiteStyle(url: string) {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = (await getBrowser()) as Browser;
     const page = await browser.newPage();
     let normalizedUrl: URL;
     let result = null;
