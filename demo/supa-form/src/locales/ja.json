@@ -31,7 +31,7 @@
     "selectLanguage": "言語を選択",
     "languageHelp": "システムの表示言語は、システムの提示言語に従います。",
     "pageName": "ページ名",
-    "next": "次へ",
+    "next": "次のアクション",
     "qa": "Q＆A",
     "email": "メールアドレス",
     "date": "日付",
@@ -48,10 +48,10 @@
     "hasValue": "値がある",
     "selected": "選択済み",
     "notSelected": "未選択",
-    "selectedAll": "全てを選択",
-    "selectedAny": "いずれかを選択",
-    "notSelectedAll": "全て未選択",
-    "notSelectedAny": "いずれも未選択",
+    "selectedAll": "以下の選択肢と等しい",
+    "selectedAny": "以下の選択肢のいずれか",
+    "notSelectedAll": "以下の選択肢と等しくない",
+    "notSelectedAny": "以下の選択肢のいずれも選択されていない",
     "gotoPage": "ページに移動",
     "targetPage": "対象ページ",
     "notSet": "未設定",
@@ -162,5 +162,5 @@
     "spread": "広がり",
     "borderWidth": "枠線の幅",
     "aiGenerateContentHint1": "フォームやアンケートの作成をお手伝いさせていただきます。どのようなものをご希望でしょうか？\n1. 調査の目的や対象について、お聞かせいただけますか？\n1. もしくは、お考えの質問や選択肢がございましたら、お教えください。\nご要望をお伺いしましたら、すぐにフォームの作成に取り掛かります。",
-    "aiGenerateContentHint2": "根据您的需求，我会为您生成如下问题，您可以确认后使用或微调修改。"
+    "aiGenerateContentHint2": "希望に合わせて、こんな質問を用意しました。下の内容を直接修正して調整できます。"
 }
