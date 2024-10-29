@@ -49,8 +49,15 @@ export default eventHandler(async (event) => {
     const parsed = payloadSchema.parse(payload);
 
     if (parsed.aspect == 'design') {
-        const url = parsed.data;
-        const result = await getWebsiteStyle(url);
+        const urls = extractUrls(parsed.data);
+
+        if (urls.length === 0) {
+            throw createError({
+                message: 'No URLs found in the input',
+                statusCode: 400,
+            });
+        }
+        const result = await getWebsiteStyle(urls[0]);
         console.log(`Model generation response: ${JSON.stringify(result)}`);
         return { success: true, data: { result } };
     }
@@ -64,3 +71,14 @@ export default eventHandler(async (event) => {
 
     return { success: true, data: result };
 });
+
+function extractUrls(text: string): string[] {
+    // Regular expression pattern to match URLs
+    const urlPattern = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?/g;
+
+    // Find all matches in the text
+    const matches = text.match(urlPattern);
+
+    // Return the matches or empty array if no matches found
+    return matches || [];
+}
