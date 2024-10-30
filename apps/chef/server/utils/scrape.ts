@@ -9,19 +9,22 @@ const isColour = (r: string, g: string, b: string) => {
 };
 
 async function getBrowser() {
-    if (process.env.VERCEL_ENV) {
+    const headlessMode = !!process.env.HEDLESS_MODE;
+    console.log('headlessMode:', headlessMode);
+    console.log('process.env.VERCEL_ENV:', process.env.VERCEL_ENV);
+    if (process.env.VERCEL_ENV == 'preview') {
         const executablePath = await chromium.executablePath();
 
         const browser = await puppeteerCore.launch({
             args: chromium.args,
             defaultViewport: chromium.defaultViewport,
             executablePath,
-            headless: false,
+            headless: headlessMode,
         });
         return browser;
     } else {
         const puppeteer = await import('puppeteer').then((mod) => mod.default);
-        const browser = await puppeteer.launch({ headless: false });
+        const browser = await puppeteer.launch({ headless: headlessMode });
         return browser;
     }
 }
