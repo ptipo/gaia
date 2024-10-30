@@ -48,6 +48,7 @@
         "puppeteer-core": "^23.6.1",
         "puppeteer-extra": "^3.3.6",
         "puppeteer-extra-plugin-stealth": "^2.11.2",
+        "random-useragent": "^0.5.0",
         "ts-pattern": "^5.1.1",
         "vanilla-jsoneditor": "^0.23.7",
         "vue": "^3.4.27",
@@ -71,5 +72,8 @@
     },
     "prisma": {
         "seed": "tsx prisma/seed.ts"
+    },
+    "pkg": {
+        "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
     }
 }
