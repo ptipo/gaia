@@ -61,6 +61,7 @@
         "@types/byte-size": "^8.1.2",
         "@types/canvas-confetti": "^1.6.4",
         "@types/markdown-it": "^14.1.2",
+        "@types/random-useragent": "^0.3.3",
         "autoprefixer": "^10.4.19",
         "happy-dom": "^15.7.4",
         "nuxi": "^3.12.0",

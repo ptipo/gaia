@@ -166,6 +166,9 @@ importers:
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
+      '@types/random-useragent':
+        specifier: ^0.3.3
+        version: 0.3.3
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.39)
@@ -3203,6 +3206,9 @@ packages:
 
   '@types/node@22.0.0':
     resolution: {integrity: sha512-VT7KSYudcPOzP5Q0wfbowyNLaVR8QWUdw+088uFWwfvpY6uCWaXpqV6ieLAu9WBcnTa7H4Z5RLK8I5t2FuOcqw==}
+
+  '@types/random-useragent@0.3.3':
+    resolution: {integrity: sha512-FsJ5opTEaHjWaOcfmA+Y74pNjiO2ggred9W5+e6SDDP7UCWVNFGRZAxIbMRceX0/pnffOt50D9HK+y13CfERcw==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -11891,6 +11897,8 @@ snapshots:
   '@types/node@22.0.0':
     dependencies:
       undici-types: 6.11.1
+
+  '@types/random-useragent@0.3.3': {}
 
   '@types/resolve@1.20.2': {}
 
