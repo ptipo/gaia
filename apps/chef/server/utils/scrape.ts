@@ -1,6 +1,7 @@
 import { Page, Browser } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
+import randomUseragent from 'random-useragent';
 
 const isColour = (r: string, g: string, b: string) => {
     const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
@@ -9,19 +10,22 @@ const isColour = (r: string, g: string, b: string) => {
 };
 
 async function getBrowser() {
+    console.log('process.env.VERCEL_ENV:', process.env.VERCEL_ENV);
+
     if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
-
         const browser = await puppeteerCore.launch({
-            args: chromium.args,
+            args: [...chromium.args, `--user-agent=${randomUseragent.getRandom()}`],
             defaultViewport: chromium.defaultViewport,
             executablePath,
-            headless: false,
+            headless: chromium.headless,
         });
         return browser;
     } else {
         const puppeteer = await import('puppeteer').then((mod) => mod.default);
-        const browser = await puppeteer.launch({ headless: false });
+        const browser = await puppeteer.launch({
+            args: [`--user-agent=${randomUseragent.getRandom()}`],
+        });
         return browser;
     }
 }
@@ -39,7 +43,7 @@ export async function getWebsiteStyle(url: string) {
         normalizedUrl = new URL(`https://${url}`);
     }
     try {
-        await page.goto(normalizedUrl.href, { waitUntil: 'domcontentloaded' });
+        await page.goto(normalizedUrl.href, { waitUntil: ['domcontentloaded', 'networkidle2'] });
     } catch (error) {
         console.error(error);
     }
@@ -57,6 +61,7 @@ export async function getWebsiteStyle(url: string) {
 }
 
 export async function getStyleFromPage(page: Page) {
+    page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
     const { colorRecord, fontFamily } = await page.evaluate(() => {
         const getButtonScore = (el: Element) => {
             switch (el.tagName) {
@@ -72,6 +77,8 @@ export async function getStyleFromPage(page: Page) {
         };
         const elements = document.body.getElementsByTagName('*');
         const colorRecord: Record<string, { elementCount: number; buttonCount: number }> = {};
+
+        console.log('elements:', elements.length);
 
         for (let i = 0; i < elements.length; i++) {
             const el = elements[i];
