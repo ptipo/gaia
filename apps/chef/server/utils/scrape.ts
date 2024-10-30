@@ -10,8 +10,6 @@ const isColour = (r: string, g: string, b: string) => {
 };
 
 async function getBrowser() {
-    const headlessMode = !!process.env.HEDLESS_MODE;
-    console.log('headlessMode:', headlessMode);
     console.log('process.env.VERCEL_ENV:', process.env.VERCEL_ENV);
 
     if (process.env.VERCEL_ENV) {
@@ -20,13 +18,14 @@ async function getBrowser() {
             args: [...chromium.args, `--user-agent=${randomUseragent.getRandom()}`],
             defaultViewport: chromium.defaultViewport,
             executablePath,
-            headless: headlessMode,
+            headless: chromium.headless,
         });
         return browser;
     } else {
-        console.log('import puppeteer' + randomUseragent.getRandom());
         const puppeteer = await import('puppeteer').then((mod) => mod.default);
-        const browser = await puppeteer.launch({ headless: headlessMode });
+        const browser = await puppeteer.launch({
+            args: [`--user-agent=${randomUseragent.getRandom()}`],
+        });
         return browser;
     }
 }
