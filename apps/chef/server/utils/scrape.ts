@@ -12,7 +12,8 @@ async function getBrowser() {
     const headlessMode = !!process.env.HEDLESS_MODE;
     console.log('headlessMode:', headlessMode);
     console.log('process.env.VERCEL_ENV:', process.env.VERCEL_ENV);
-    if (process.env.VERCEL_ENV == 'preview') {
+
+    if (!process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
 
         const browser = await puppeteerCore.launch({
@@ -60,6 +61,7 @@ export async function getWebsiteStyle(url: string) {
 }
 
 export async function getStyleFromPage(page: Page) {
+    page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
     const { colorRecord, fontFamily } = await page.evaluate(() => {
         const getButtonScore = (el: Element) => {
             switch (el.tagName) {
@@ -75,6 +77,8 @@ export async function getStyleFromPage(page: Page) {
         };
         const elements = document.body.getElementsByTagName('*');
         const colorRecord: Record<string, { elementCount: number; buttonCount: number }> = {};
+
+        console.log('elements:', elements.length);
 
         for (let i = 0; i < elements.length; i++) {
             const el = elements[i];
