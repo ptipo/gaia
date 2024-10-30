@@ -1,10 +1,9 @@
 import { Page, Browser } from 'puppeteer';
-import puppeteer from 'puppeteer-core';
+import puppeteerVanilla from 'puppeteer-core';
+import { addExtra } from 'puppeteer-extra';
 import chromium from '@sparticuz/chromium';
 import puppeteerExtra from 'puppeteer-extra';
 import Stealth from 'puppeteer-extra-plugin-stealth';
-
-puppeteerExtra.use(Stealth());
 
 const isColour = (r: string, g: string, b: string) => {
     const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
@@ -19,6 +18,8 @@ async function getBrowser() {
 
     if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
+        const puppeteer = addExtra(puppeteerVanilla as any);
+        puppeteer.use(Stealth());
         const browser = await puppeteerExtra.launch({
             args: chromium.args,
             defaultViewport: chromium.defaultViewport,
