@@ -43,7 +43,7 @@ export async function getWebsiteStyle(url: string) {
         normalizedUrl = new URL(`https://${url}`);
     }
     try {
-        await page.goto(normalizedUrl.href, { waitUntil: 'domcontentloaded' });
+        await page.goto(normalizedUrl.href, { waitUntil: ['domcontentloaded', 'networkidle2'] });
     } catch (error) {
         console.error(error);
     }
