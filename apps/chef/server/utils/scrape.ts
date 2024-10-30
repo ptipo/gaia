@@ -13,7 +13,7 @@ async function getBrowser() {
     console.log('headlessMode:', headlessMode);
     console.log('process.env.VERCEL_ENV:', process.env.VERCEL_ENV);
 
-    if (!process.env.VERCEL_ENV) {
+    if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
 
         const browser = await puppeteerCore.launch({
