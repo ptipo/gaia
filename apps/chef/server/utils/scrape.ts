@@ -1,7 +1,7 @@
 import { Page, Browser } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
-import randomUseragent from 'random-useragent';
+import { getRandom } from 'random-useragent';
 
 const isColour = (r: string, g: string, b: string) => {
     const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
@@ -15,7 +15,7 @@ async function getBrowser() {
     if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
         const browser = await puppeteerCore.launch({
-            args: [...chromium.args, `--user-agent=${randomUseragent.getRandom()}`],
+            args: [...chromium.args, `--user-agent=${getRandom()}`],
             defaultViewport: chromium.defaultViewport,
             executablePath,
             headless: chromium.headless,
@@ -24,7 +24,7 @@ async function getBrowser() {
     } else {
         const puppeteer = await import('puppeteer').then((mod) => mod.default);
         const browser = await puppeteer.launch({
-            args: [`--user-agent=${randomUseragent.getRandom()}`],
+            args: [`--user-agent=${getRandom()}`],
         });
         return browser;
     }

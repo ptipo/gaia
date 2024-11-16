@@ -188,7 +188,7 @@ export const Form = defineConcept({
             form.generalStyle.font = covertFontFamily(data.fontFamily);
             isMerged = true;
         }
-        return isMerged;
+        return { success: true, model };
     },
 });
 

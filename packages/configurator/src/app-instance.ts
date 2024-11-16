@@ -180,10 +180,28 @@ export class AppInstance<TConcept extends Concept> {
      * Merges style data with a model.
      */
     mergeStyle(data: WebsiteStyle, model: inferConcept<TConcept>) {
+        const clonedModel = deepcopy(model);
+
         if (this.concept.mergeStyle) {
-            return this.concept.mergeStyle(data, model);
+            const mergedResult = this.concept.mergeStyle(data, clonedModel);
+            if (mergedResult.success === false) {
+                return {
+                    issues: conceptImportResult.errors.map((e) => ({
+                        code: ValidationIssueCode.InvalidValue,
+                        message: e,
+                        path: [],
+                    })),
+                    success: false,
+                };
+            } else {
+                return this.validateModel(mergedResult.model, true);
+            }
+        } else {
+            return {
+                success: false,
+                issues: [{ code: ValidationIssueCode.InvalidValue, message: 'Style merge is not supported' }],
+            };
         }
-        return false;
     }
 }
 
