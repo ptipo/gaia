@@ -531,6 +531,8 @@ const onGenerate = async () => {
                 } else {
                     success(t('aiGenerateSuccess'));
                     aiDialogVisible.value = false;
+                    isUnsaved.value = true;
+                    model.value = importResult.model;
                     resetFormConfig();
                     appEl?.value?.setAttribute('edit-selection', '{}');
                 }
@@ -548,8 +550,8 @@ const onGenerate = async () => {
             } else {
                 success(t('aiGenerateSuccess'));
                 aiDialogVisible.value = false;
+                isUnsaved.value = true;
                 model.value = importResult.model;
-                validate(model.value);
                 resetFormConfig();
                 appEl?.value?.setAttribute('edit-selection', '{}');
 
