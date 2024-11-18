@@ -3,6 +3,11 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { z } from 'zod';
 import { error } from '~/lib/message';
 
+const route = useRoute();
+const isSuperLogin = computed(() => {
+    return route.query.superlogin !== undefined;
+});
+
 definePageMeta({
     layout: 'auth',
 });
@@ -10,6 +15,7 @@ definePageMeta({
 const formState = reactive({
     email: '',
     password: '',
+    impersonatedEmail: '',
 });
 
 const formRef = ref<FormInstance>();
@@ -17,6 +23,7 @@ const formRef = ref<FormInstance>();
 const rules = reactive<FormRules<typeof formState>>({
     email: [{ validator: validateEmail, trigger: 'blur' }],
     password: [{ validator: validatePassword, trigger: 'blur' }],
+    impersonatedEmail: [{ validator: validateEmail, trigger: 'blur' }],
 });
 
 const { t } = useI18n();
@@ -49,9 +56,15 @@ async function onSubmit() {
     formRef.value.validate(async (valid) => {
         if (valid) {
             try {
+                const data: Record<string, string> = { email: formState.email, password: formState.password };
+
+                if (isSuperLogin) {
+                    data.impersonatedEmail = formState.impersonatedEmail;
+                }
+
                 await $fetch('/api/login', {
                     method: 'POST',
-                    body: { email: formState.email, password: formState.password },
+                    body: data,
                 });
                 await navigateTo('/');
             } catch (err: any) {
@@ -82,6 +95,10 @@ async function onSubmit() {
 
                         <el-form-item :label="$t('password')" prop="password">
                             <el-input v-model="formState.password" type="password" />
+                        </el-form-item>
+
+                        <el-form-item v-if="isSuperLogin" :label="$t('impersonatedEmail')" prop="password">
+                            <el-input v-model="formState.impersonatedEmail" type="email" />
                         </el-form-item>
 
                         <el-form-item>

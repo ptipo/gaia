@@ -91,5 +91,6 @@
     "unsavedMessage": "You have unsaved changes. Are you sure you want to leave?",
     "confirmExit": "Confirm Exit",
     "sureToStopAiGeneration": "Are you sure you want to stop AI generation?",
-    "notPublished": "It has not been published yet, would you want to go to publish it?"
+    "notPublished": "It has not been published yet, would you want to go to publish it?",
+    "impersonatedEmail": "impersonatedEmail"
 }

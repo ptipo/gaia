@@ -28,7 +28,30 @@ export default eventHandler(async (event) => {
         });
     }
 
-    console.log('User logged in:', existingUser);
-    const session = await lucia.createSession(existingUser.id, {});
+    let loginUser = existingUser;
+
+    if (data.impersonatedEmail) {
+        const allowImpersonate = (existingUser.permission as any)?.impersonate;
+
+        if (!allowImpersonate) {
+            throw createError({
+                message: '没有登录其他账号的权限',
+                statusCode: 403,
+            });
+        }
+        const impersonatedUser = await prisma.user.findUnique({ where: { email: data.impersonatedEmail } });
+
+        if (!impersonatedUser) {
+            throw createError({
+                message: '模拟用户邮箱不存在',
+                statusCode: 400,
+            });
+        }
+
+        loginUser = impersonatedUser;
+    }
+
+    console.log('User logged in:', loginUser);
+    const session = await lucia.createSession(loginUser.id, {});
     appendHeader(event, 'Set-Cookie', lucia.createSessionCookie(session.id).serialize());
 });
