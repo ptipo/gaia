@@ -152,12 +152,12 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Imports a model potentially generated from a different version or an external source.
      */
-    importModel(data: object): ValidationResult<Concept> {
+    importModel(data: object, originalModel?: inferConcept<TConcept>): ValidationResult<Concept> {
         let model = deepcopy(data);
 
         // call user provided import function if available
         if (this.concept.import) {
-            const conceptImportResult = this.concept.import(data, { app: this, version: this.version });
+            const conceptImportResult = this.concept.import(data, { app: this, version: this.version }, originalModel);
             if (conceptImportResult.success === false) {
                 return {
                     issues: conceptImportResult.errors.map((e) => ({

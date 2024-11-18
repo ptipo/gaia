@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
+import type { AppInstance, Concept, inferConcept, WebsiteStyle } from '@hayadev/configurator';
 import {
     createAppInstance,
     modelEquals,
@@ -523,7 +523,10 @@ const onGenerate = async () => {
             console.log('Proceeding to elaboration -> model config phase');
             // trim leading and trailing markers
             if (generateModelArgs.value.aspect == 'design') {
-                const importResult = appInstance.value?.mergeStyle(data.result as any, model.value as BaseConceptModel);
+                const importResult = appInstance.value?.mergeStyle(
+                    data.result as WebsiteStyle,
+                    model.value as BaseConceptModel
+                );
 
                 if (!importResult.success) {
                     error(t('aiGenerateFailed'));
@@ -543,7 +546,10 @@ const onGenerate = async () => {
             }
         } else {
             console.log('Importing AI generated model:', data.result);
-            const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
+            const importResult = appInstance.value?.importModel(
+                data.result as unknown as BaseConceptModel,
+                model.value
+            );
             if (!importResult.success) {
                 error(t('aiGenerateFailed'));
                 console.error(importResult);
