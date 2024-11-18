@@ -1,12 +1,26 @@
 import { Page, Browser } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
-import randomUseragent from 'random-useragent';
+import { getRandom } from 'random-useragent';
+
+const GRAY_THRESHOLD = 30;
+
+const getGrayValue = (r: string, g: string, b: string) => {
+    return 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
+};
 
 const isColour = (r: string, g: string, b: string) => {
-    const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
+    const grayscale = getGrayValue(r, g, b);
+    return grayscale < 255 - GRAY_THRESHOLD && grayscale > GRAY_THRESHOLD;
+};
 
-    return grayscale < 255 - 30 && grayscale > 30;
+const isBlack = (color: string) => {
+    const rgb = color.match(/\d+/g);
+    if (!rgb || rgb.length !== 3) {
+        return false;
+    }
+    const grayscale = getGrayValue(rgb[0], rgb[1], rgb[2]);
+    return grayscale <= GRAY_THRESHOLD;
 };
 
 async function getBrowser() {
@@ -15,7 +29,7 @@ async function getBrowser() {
     if (process.env.VERCEL_ENV) {
         const executablePath = await chromium.executablePath();
         const browser = await puppeteerCore.launch({
-            args: [...chromium.args, `--user-agent=${randomUseragent.getRandom()}`],
+            args: [...chromium.args, `--user-agent=${getRandom()}`],
             defaultViewport: chromium.defaultViewport,
             executablePath,
             headless: chromium.headless,
@@ -24,7 +38,7 @@ async function getBrowser() {
     } else {
         const puppeteer = await import('puppeteer').then((mod) => mod.default);
         const browser = await puppeteer.launch({
-            args: [`--user-agent=${randomUseragent.getRandom()}`],
+            args: [`--user-agent=${getRandom()}`],
         });
         return browser;
     }
@@ -136,7 +150,12 @@ export async function getStyleFromPage(page: Page) {
     const buttonColor = buttonSortedArray ? buttonSortedArray[0]?.color : null;
 
     if (backgroundColor == buttonColor && colorArray.length > 1) {
-        backgroundColor = buttonSortedArray[1]?.color;
+        backgroundColor = colorArray[1][0];
+    }
+
+    // don't use black as background color.
+    if (isBlack(backgroundColor)) {
+        backgroundColor = 'rgb(255, 255, 255)';
     }
 
     return { buttonColor, backgroundColor, fontFamily };

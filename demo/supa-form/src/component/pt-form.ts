@@ -222,7 +222,7 @@ export class PtForm extends PtBaseShadow {
                             ></pt-form-page>`
                         )}
                     </div>
-                    <div class="pt-bottom-bar sticky opacity-90 w-full h-20  bottom-0 ">
+                    <div class="pt-bottom-bar sticky bg-white/[.9] w-full h-20  bottom-0 transition-colors ">
                         <div class="flex h-full items-center justify-end gap-x-4">
                         ${when(
                             this.editSelection || this.pageIdStack.length > 0,
@@ -235,7 +235,9 @@ export class PtForm extends PtBaseShadow {
                         <span class="max-w-[33%] mr-10">
                         <button @click=${
                             this.nextPage
-                        } class="pt-next-button border w-full py-2 px-4 rounded mr-10 ml-auto" >${msg('NEXT')}</button>
+                        } class="pt-next-button border w-full py-2 px-4 rounded mr-10 ml-auto hover:brightness-75 transition-all" >${msg(
+                'NEXT'
+            )}</button>
                         </span>
                         </div>
                     </div>

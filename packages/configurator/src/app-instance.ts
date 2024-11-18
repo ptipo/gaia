@@ -152,12 +152,12 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Imports a model potentially generated from a different version or an external source.
      */
-    importModel(data: object): ValidationResult<Concept> {
+    importModel(data: object, originalModel?: inferConcept<TConcept>): ValidationResult<Concept> {
         let model = deepcopy(data);
 
         // call user provided import function if available
         if (this.concept.import) {
-            const conceptImportResult = this.concept.import(data, { app: this, version: this.version });
+            const conceptImportResult = this.concept.import(data, { app: this, version: this.version }, originalModel);
             if (conceptImportResult.success === false) {
                 return {
                     issues: conceptImportResult.errors.map((e) => ({
@@ -179,11 +179,29 @@ export class AppInstance<TConcept extends Concept> {
     /**
      * Merges style data with a model.
      */
-    mergeStyle(data: WebsiteStyle, model: inferConcept<TConcept>) {
+    mergeStyle(data: WebsiteStyle, model: inferConcept<TConcept>): ValidationResult<Concept> {
+        const clonedModel = deepcopy(model);
+
         if (this.concept.mergeStyle) {
-            return this.concept.mergeStyle(data, model);
+            const mergedResult = this.concept.mergeStyle(data, clonedModel);
+            if (mergedResult.success === false) {
+                return {
+                    issues: mergedResult.errors.map((e) => ({
+                        code: ValidationIssueCode.InvalidValue,
+                        message: e,
+                        path: [],
+                    })),
+                    success: false,
+                };
+            } else {
+                return this.validateModel(mergedResult.model, true);
+            }
+        } else {
+            return {
+                success: false,
+                issues: [{ code: ValidationIssueCode.InvalidValue, path: [], message: 'Style merge is not supported' }],
+            };
         }
-        return false;
     }
 }
 

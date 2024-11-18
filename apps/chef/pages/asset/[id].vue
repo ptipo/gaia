@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import type { AppInstance, Concept, inferConcept } from '@hayadev/configurator';
+import type { AppInstance, Concept, inferConcept, WebsiteStyle } from '@hayadev/configurator';
 import {
     createAppInstance,
+    modelEquals,
     SELECTION_CHANGE_EVENT,
     type BaseConceptModel,
     type SelectionData,
@@ -522,11 +523,22 @@ const onGenerate = async () => {
             console.log('Proceeding to elaboration -> model config phase');
             // trim leading and trailing markers
             if (generateModelArgs.value.aspect == 'design') {
-                appInstance.value?.mergeStyle(data.result as any, model.value as BaseConceptModel);
-                success(t('aiGenerateSuccess'));
-                aiDialogVisible.value = false;
-                resetFormConfig();
-                appEl?.value?.setAttribute('edit-selection', '{}');
+                const importResult = appInstance.value?.mergeStyle(
+                    data.result as WebsiteStyle,
+                    model.value as BaseConceptModel
+                );
+
+                if (!importResult.success) {
+                    error(t('aiGenerateFailed'));
+                    console.error(importResult);
+                } else {
+                    success(t('aiGenerateSuccess'));
+                    aiDialogVisible.value = false;
+                    isUnsaved.value = true;
+                    model.value = importResult.model;
+                    resetFormConfig();
+                    appEl?.value?.setAttribute('edit-selection', '{}');
+                }
             } else {
                 const result = (data.result as string).replace(/^```\n?/, '').replace(/```\n?$/, '');
                 aiInput.value = result;
@@ -534,15 +546,18 @@ const onGenerate = async () => {
             }
         } else {
             console.log('Importing AI generated model:', data.result);
-            const importResult = appInstance.value?.importModel(data.result as unknown as BaseConceptModel);
+            const importResult = appInstance.value?.importModel(
+                data.result as unknown as BaseConceptModel,
+                model.value
+            );
             if (!importResult.success) {
                 error(t('aiGenerateFailed'));
                 console.error(importResult);
             } else {
                 success(t('aiGenerateSuccess'));
                 aiDialogVisible.value = false;
+                isUnsaved.value = true;
                 model.value = importResult.model;
-                validate(model.value);
                 resetFormConfig();
                 appEl?.value?.setAttribute('edit-selection', '{}');
 

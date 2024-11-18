@@ -22,6 +22,16 @@ import { LayoutStyle } from '../design/layout-style';
 import { CustomStyle } from '../design/custom-css';
 import { isRGBA, RGBA } from '../../../../../packages/configurator/dist/esm/items/color';
 
+const AllStyleProperties = [
+    'layoutStyle',
+    'customStyle',
+    'generalStyle',
+    'questionStyle',
+    'answerChoiceStyle',
+    'progressButtonStyle',
+    'backgroundStyle',
+];
+
 /**
  * 表单
  */
@@ -156,7 +166,7 @@ export const Form = defineConcept({
         },
     },
 
-    import: (data, { app }) => {
+    import: (data, { app }, originalModel) => {
         // add $type to data (recursively) if missing
         fixMissingValueTypeForConcept(app.concept, data);
 
@@ -166,29 +176,34 @@ export const Form = defineConcept({
 
         fixFont(data);
 
+        //preserve the old style
+        if (originalModel) {
+            AllStyleProperties.forEach((key) => {
+                const originalStyle = originalModel[key];
+                if (originalStyle) {
+                    (data as any)[key] = originalStyle;
+                }
+            });
+        }
+
         return { success: true, model: data as any };
     },
 
     mergeStyle: (data, model) => {
         const form = model as inferConcept<typeof Form>;
-        let isMerged = false;
-
         if (data.buttonColor) {
             form.progressButtonStyle.nextButton.buttonBackgroundColor = normalizeRGBAColor(data.buttonColor);
-            isMerged = true;
         }
 
         if (data.backgroundColor) {
             form.backgroundStyle.background = 'color';
             form.backgroundStyle.backgroundColor = normalizeRGBAColor(data.backgroundColor);
-            isMerged = true;
         }
 
         if (data.fontFamily) {
             form.generalStyle.font = covertFontFamily(data.fontFamily);
-            isMerged = true;
         }
-        return isMerged;
+        return { success: true, model };
     },
 });
 
@@ -304,14 +319,7 @@ function fixStyleName(data: any) {
         data.LayoutStyle = undefined;
     }
 
-    [
-        'customStyle',
-        'generalStyle',
-        'questionStyle',
-        'answerChoiceStyle',
-        'progressButtonStyle',
-        'backgroundStyle',
-    ].forEach((key) => {
+    AllStyleProperties.forEach((key) => {
         const style = data[key];
         if (style) {
             const upperKey = key.charAt(0).toUpperCase() + key.slice(1);
