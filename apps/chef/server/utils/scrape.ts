@@ -3,10 +3,24 @@ import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { getRandom } from 'random-useragent';
 
-const isColour = (r: string, g: string, b: string) => {
-    const grayscale = 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
+const GRAY_THRESHOLD = 30;
 
-    return grayscale < 255 - 30 && grayscale > 30;
+const getGrayValue = (r: string, g: string, b: string) => {
+    return 0.299 * parseInt(r, 10) + 0.587 * parseInt(g, 10) + 0.114 * parseInt(b, 10);
+};
+
+const isColour = (r: string, g: string, b: string) => {
+    const grayscale = getGrayValue(r, g, b);
+    return grayscale < 255 - GRAY_THRESHOLD && grayscale > GRAY_THRESHOLD;
+};
+
+const isBlack = (color: string) => {
+    const rgb = color.match(/\d+/g);
+    if (!rgb || rgb.length !== 3) {
+        return false;
+    }
+    const grayscale = getGrayValue(rgb[0], rgb[1], rgb[2]);
+    return grayscale <= GRAY_THRESHOLD;
 };
 
 async function getBrowser() {
@@ -136,7 +150,12 @@ export async function getStyleFromPage(page: Page) {
     const buttonColor = buttonSortedArray ? buttonSortedArray[0]?.color : null;
 
     if (backgroundColor == buttonColor && colorArray.length > 1) {
-        backgroundColor = buttonSortedArray[1]?.color;
+        backgroundColor = colorArray[1][0];
+    }
+
+    // don't use black as background color.
+    if (isBlack(backgroundColor)) {
+        backgroundColor = 'rgb(255, 255, 255)';
     }
 
     return { buttonColor, backgroundColor, fontFamily };

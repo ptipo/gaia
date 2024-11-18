@@ -139,10 +139,6 @@
         /* w-44 */
         width: cal(var(--pt-form-next-button-size, 1) * 11rem);
         box-shadow: var(--pt-form-next-button-shadow);
-        &:hover {
-            /* bg-gray-800 */
-            background-color: var(--pt-form-next-button-hover-background-color, #1f2937);
-        }
     }
 
     .pt-back-button {
