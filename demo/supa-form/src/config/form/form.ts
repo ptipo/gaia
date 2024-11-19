@@ -192,12 +192,11 @@ export const Form = defineConcept({
     mergeStyle: (data, model) => {
         const form = model as inferConcept<typeof Form>;
         if (data.buttonColor) {
-            form.progressButtonStyle.nextButton.buttonBackgroundColor = normalizeRGBAColor(data.buttonColor);
-        }
-
-        if (data.backgroundColor) {
-            form.backgroundStyle.background = 'color';
-            form.backgroundStyle.backgroundColor = normalizeRGBAColor(data.backgroundColor);
+            const color = normalizeRGBAColor(data.buttonColor);
+            form.progressButtonStyle.nextButton.buttonBackgroundColor = color;
+            form.progressButtonStyle.progress.progressColor = color;
+            form.answerChoiceStyle.answer.borderColor = color;
+            form.answerChoiceStyle.choice.borderColor = color;
         }
 
         if (data.fontFamily) {

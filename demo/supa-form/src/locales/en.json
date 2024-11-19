@@ -163,5 +163,5 @@
     "borderWidth": "Border Width",
     "aiGenerateContentHint1": "I can craft forms or surveys for you. Please let me know:\n1. Your survey purpose and target audience\n1. Or, specific questions and options you've created\nI will start generating the form immediately.",
     "aiGenerateContentHint2": "I have created the following form design based on your requirements. Please confirm it or make adjustments and then start the form generation.",
-    "aiGenerateDesignHint": "I can generate button color, background color and font from your website.\n Please provide your website URL"
+    "aiGenerateDesignHint": "I can generate button color and font from your website.\n Please provide your website URL"
 }
