@@ -33,7 +33,7 @@ function convertValue<T>(obj: T, converters: ConverterDictionary<T>): any {
             value = value[key];
         }
 
-        if (value) {
+        if (value != null) {
             // @ts-ignore
             const data = converters[path](value, obj);
             if (data) {
@@ -131,7 +131,7 @@ const answerConverter: ConverterDictionary<questionAnswer> = {
                   '--pt-form-question-answer-border-bottom-width': `${value}px`,
               },
     borderRadius: (value) =>
-        value && {
+        value != null && {
             '--pt-form-question-answer-border-radius': `${pxToRem(value)}`,
         },
 };
@@ -158,7 +158,7 @@ const choiceConverter: ConverterDictionary<choice> = {
     borderWidth: (value) => ({
         '--pt-form-choice-answer-border-width': `${value}px`,
     }),
-    borderRadius: (value) => value && { '--pt-form-choice-answer-border-radius': `${pxToRem(value)}` },
+    borderRadius: (value) => value != null && { '--pt-form-choice-answer-border-radius': `${pxToRem(value)}` },
     gap: (value) =>
         value && {
             '--pt-form-choice-gap': RangeRatio[value],

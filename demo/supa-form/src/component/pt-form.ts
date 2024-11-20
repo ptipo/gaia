@@ -222,7 +222,7 @@ export class PtForm extends PtBaseShadow {
                             ></pt-form-page>`
                         )}
                     </div>
-                    <div class="pt-bottom-bar sticky bg-white/[.9] w-full h-20  bottom-0 transition-colors ">
+                    <div class="pt-bottom-bar sticky w-full h-20  bottom-0 transition-colors ">
                         <div class="flex h-full items-center justify-end gap-x-4">
                         ${when(
                             this.editSelection || this.pageIdStack.length > 0,

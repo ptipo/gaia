@@ -1,6 +1,6 @@
 import { ConfigItem, defineConcept, t } from '@hayadev/configurator';
 import { defineGroupItem } from '@hayadev/configurator/items';
-import { PartialRange } from '../page-items/common';
+import { FullRange, PartialRange } from '../page-items/common';
 
 export const ProgressHeight = {
     type: 'select',
@@ -41,7 +41,7 @@ export const buttonStyles = {
     buttonSize: {
         type: 'select',
         name: t`buttonSize`,
-        options: PartialRange,
+        options: FullRange,
     },
 
     buttonTextColor: {
