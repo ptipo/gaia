@@ -31,7 +31,7 @@ export const getSchema = (item: ConfigItemBase) => {
         result = result.int();
     }
     if (!myItem.allowNegative) {
-        result = result.positive();
+        result = result.nonnegative();
     }
     return myItem.default !== undefined ? result.default(myItem.default) : wrap(item, result);
 };

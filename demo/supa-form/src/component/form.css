@@ -25,8 +25,8 @@
 
     .pt-form-page {
         /* mx-10 */
-        margin-top: calc(var(--pt-form-margin-y, 1) * 2.5rem);
-        margin-bottom: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+        padding-top: calc(var(--pt-form-margin-y, 1) * 2.5rem);
+        padding-bottom: calc(var(--pt-form-margin-y, 1) * 2.5rem);
 
         /* px-10 */
         padding-left: calc(var(--pt-form-margin-x, 1) * 2.5rem);
@@ -128,7 +128,7 @@
     }
 
     .pt-bottom-bar {
-        background-color: var(--pt-form-bottom-bar-background-color, #ffffff);
+        background-color: var(--pt-form-bottom-bar-background-color, #ffffffe6);
     }
 
     .pt-next-button {
