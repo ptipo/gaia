@@ -195,8 +195,6 @@ export const Form = defineConcept({
             const color = normalizeRGBAColor(data.buttonColor);
             form.progressButtonStyle.nextButton.buttonBackgroundColor = color;
             form.progressButtonStyle.progress.progressColor = color;
-            form.answerChoiceStyle.answer.borderColor = color;
-            form.answerChoiceStyle.choice.borderColor = color;
         }
 
         if (data.fontFamily) {
