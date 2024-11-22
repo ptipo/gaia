@@ -167,6 +167,7 @@ export const Form = defineConcept({
     },
 
     import: (data, { app }, originalModel) => {
+        fixTopLevelMissingItem(app, data);
         // add $type to data (recursively) if missing
         fixMissingValueTypeForConcept(app.concept, data);
 
@@ -324,6 +325,18 @@ function fixStyleName(data: any) {
                 console.log(`Fixing ${key} to ${upperKey}`);
                 style.$concept = upperKey;
             }
+        }
+    });
+}
+
+function fixTopLevelMissingItem(app: AppInstance<Concept<Record<string, ConfigItem>>>, data: any) {
+    if (!data || typeof data !== 'object') {
+        return;
+    }
+    Object.keys(app.concept.items).forEach((key) => {
+        if (!data[key]) {
+            console.log(`Fixing missing top-level item ${key}`);
+            data[key] = app.createItemModel(app.concept.items[key]);
         }
     });
 }

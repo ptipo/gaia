@@ -74,7 +74,7 @@ export class PtForm extends PtBaseShadow {
                 console.log('Loaded model', model);
                 console.log('Model app version', parsedValue.appVersion);
 
-                const language = model.languageSettings.language;
+                const language = model.languageSettings?.language;
 
                 if (language) {
                     setLocale(language);
