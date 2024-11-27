@@ -16,6 +16,7 @@ export class PtEmail extends PtBaseData<string> {
     render() {
         const description = this.data?.description;
         const question = this.data?.question;
+        const placeholder = this.data?.placeholder;
 
         return html`<pt-question
             @input=${(e: any) => this.onChange(e.target.value)}
@@ -24,6 +25,7 @@ export class PtEmail extends PtBaseData<string> {
             .configPath=${this.configPath}
             value=${ifDefined(this.value.data)}
             inputType="email"
+            placeholder=${ifDefined(placeholder!)}
         ></pt-question> `;
     }
 
