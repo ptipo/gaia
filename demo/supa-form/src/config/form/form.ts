@@ -7,6 +7,7 @@ import {
     NonPrimitiveTypes,
     AppInstance,
     inferConcept,
+    ProviderContext,
 } from '@hayadev/configurator';
 import { ChoiceQuestion, ImageElement, TextElement } from '../page-items';
 import { CompletePage } from '../page/complete-page';
@@ -61,10 +62,12 @@ export const Form = defineConcept({
             inline: true,
             groupKey: 'contentPages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel, ct } = context;
-                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
+                const { app, ct } = context;
+
+                const name = findFirstNotExistedIndexName(concept, context);
+
                 return app.createConceptInstance(ContentPage, {
-                    name: `${ct(t`contentPage`)}${existing.length + 1}`,
+                    name: name,
                     pageItems: [
                         app.createConceptInstance(ChoiceQuestion, {
                             name: `${ct(t`choice`)}1`,
@@ -86,10 +89,10 @@ export const Form = defineConcept({
             inline: true,
             groupKey: 'completePages',
             newItemProvider: (concept, context) => {
-                const { app, currentModel, ct } = context;
-                const existing = currentModel?.filter((item: BaseConceptModel) => item.$concept === concept.name) ?? [];
+                const { app, ct } = context;
+                const name = findFirstNotExistedIndexName(concept, context);
                 return app.createConceptInstance(CompletePage, {
-                    name: `${ct(t`completePage`)}${existing.length + 1}`,
+                    name: name,
                     pageItems: [
                         app.createConceptInstance(TextElement, {
                             content: ct(t`title`),
@@ -339,4 +342,20 @@ function fixTopLevelMissingItem(app: AppInstance<Concept<Record<string, ConfigIt
             data[key] = app.createItemModel(app.concept.items[key]);
         }
     });
+}
+
+function findFirstNotExistedIndexName(concept: Concept, context: ProviderContext) {
+    const { currentModel, ct } = context;
+
+    let index = 1;
+
+    while (
+        currentModel?.find(
+            (item: BaseConceptModel) =>
+                item.$concept === concept.name && item.name === `${ct(concept.displayName)}${index}`
+        ) !== undefined
+    ) {
+        index++;
+    }
+    return `${ct(concept.displayName)}${index}`;
 }

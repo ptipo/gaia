@@ -1,5 +1,5 @@
 import { defineConcept, t } from '@hayadev/configurator';
-import { AlignmentItems } from '../common';
+import { AlignmentItems, getAlignConfig } from '../common';
 
 /**
  * 图片元素
@@ -19,6 +19,15 @@ export const ImageElement = defineConcept({
             required: true,
         },
 
-        ...AlignmentItems,
+        ...getAlignConfig('left'),
+
+        widthUnit: {
+            type: 'select',
+            name: t`widthUnit`,
+            options: { percentage: '%', px: 'px' },
+            default: 'percentage',
+        },
+
+        maxWidth: { type: 'number', name: t`maxWidth`, default: 100 },
     },
 });
