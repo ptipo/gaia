@@ -93,7 +93,7 @@ export type Concept<TItems extends Record<string, ConfigItem> = Record<string, C
     /**
      * Function for merging style data with a model
      */
-    mergeStyle?: (data: WebsiteStyle, model: BaseConceptModel) => ImportResult<Concept>;
+    mergeStyle?: (data: WebsiteStyle, metadata: ImportMetadata, model: BaseConceptModel) => ImportResult<Concept>;
 
     /**
      * Items to be excluded from the generated JSON schema

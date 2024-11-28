@@ -10,7 +10,7 @@ class PtImage extends PtBase {
 
     render() {
         const align = this.data?.align || 'center';
-        const widthUnit = this.data?.widthUnit == 'percentage' ? '%' : 'px';
+        const widthUnit = this.data?.widthUnit == 'px' ? 'px' : '%';
         const maxWidth = this.data?.maxWidth || 100;
         return html`
             <div class="w-full flex" style="justify-content:${align}">
