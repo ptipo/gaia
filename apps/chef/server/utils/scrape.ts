@@ -2,6 +2,8 @@ import { Page, Browser } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { getRandom } from 'random-useragent';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { createId } from '@paralleldrive/cuid2';
 
 const GRAY_THRESHOLD = 30;
 
@@ -44,7 +46,7 @@ async function getBrowser() {
     }
 }
 
-export async function getWebsiteStyle(url: string) {
+export async function getWebsiteStyle(url: string, assetId: string) {
     const browser = (await getBrowser()) as Browser;
     const page = await browser.newPage();
     let normalizedUrl: URL;
@@ -71,12 +73,25 @@ export async function getWebsiteStyle(url: string) {
         browser.close();
     }
 
+    if (result?.logo) {
+        try {
+            console.log('Uploading logo from:', result.logo);
+            const runtimeConfig = useRuntimeConfig();
+            const filePath = `assets/${assetId}/files/${createId()}`;
+            await uploadImageToS3(result.logo, filePath);
+            result.logo = `${runtimeConfig.public.publishAccessPoint}/${filePath}`;
+            console.log('Logo uploaded to:', result.logo);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return result;
 }
 
 export async function getStyleFromPage(page: Page) {
     page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
-    const { colorRecord, fontFamily } = await page.evaluate(() => {
+    const { colorRecord, fontFamily, logo } = await page.evaluate(() => {
         const getButtonScore = (el: Element) => {
             switch (el.tagName) {
                 case 'BUTTON':
@@ -117,7 +132,16 @@ export async function getStyleFromPage(page: Page) {
 
         const fontFamily = window.getComputedStyle(document.body).fontFamily;
 
-        return { colorRecord, fontFamily };
+        const logoSelectors = ['a[href="/"] img', '.logo img', '#logo img', '.site-logo img', '.brand img'];
+
+        let logo: HTMLImageElement | null = null;
+
+        for (const selector of logoSelectors) {
+            logo = document.querySelector(selector);
+            if (logo) break;
+        }
+
+        return { colorRecord, fontFamily, logo: logo?.currentSrc };
     });
 
     console.log(`${page.url()} color record:`, colorRecord);
@@ -158,5 +182,23 @@ export async function getStyleFromPage(page: Page) {
         backgroundColor = 'rgb(255, 255, 255)';
     }
 
-    return { buttonColor, backgroundColor, fontFamily };
+    return { buttonColor, backgroundColor, fontFamily, logo };
+}
+
+async function uploadImageToS3(imageSrc: string, filePath: string) {
+    const response = await fetch(imageSrc);
+
+    const { publishBucket } = useRuntimeConfig();
+
+    const buffer = await response.arrayBuffer();
+
+    const s3 = new S3Client();
+    const params = {
+        Bucket: publishBucket,
+        Key: filePath,
+        Body: Buffer.from(buffer),
+        ContentType: response.headers.get('content-type') || 'image/png',
+    };
+
+    await s3.send(new PutObjectCommand(params));
 }

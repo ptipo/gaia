@@ -57,7 +57,7 @@ export default eventHandler(async (event) => {
                 statusCode: 400,
             });
         }
-        const result = await getWebsiteStyle(urls[0]);
+        const result = await getWebsiteStyle(urls[0], id!);
         console.log(`Model generation response: ${JSON.stringify(result)}`);
         return { success: true, data: { result } };
     }

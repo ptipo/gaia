@@ -193,7 +193,7 @@ export const Form = defineConcept({
         return { success: true, model: data as any };
     },
 
-    mergeStyle: (data, model) => {
+    mergeStyle: (data, { app }, model) => {
         const form = model as inferConcept<typeof Form>;
         if (data.buttonColor) {
             const color = normalizeRGBAColor(data.buttonColor);
@@ -203,6 +203,18 @@ export const Form = defineConcept({
 
         if (data.fontFamily) {
             form.generalStyle.font = covertFontFamily(data.fontFamily);
+        }
+
+        if (data.logo && form.contentPages.length > 0) {
+            const firstPage = form.contentPages[0];
+            firstPage.pageItems = [
+                app.createConceptInstance(ImageElement, {
+                    image: { $type: 'image', url: data.logo },
+                    align: 'center',
+                    maxWidth: 30,
+                }),
+                ...firstPage.pageItems,
+            ];
         }
         return { success: true, model };
     },

@@ -183,7 +183,7 @@ export class AppInstance<TConcept extends Concept> {
         const clonedModel = deepcopy(model);
 
         if (this.concept.mergeStyle) {
-            const mergedResult = this.concept.mergeStyle(data, clonedModel);
+            const mergedResult = this.concept.mergeStyle(data, { app: this, version: this.version }, clonedModel);
             if (mergedResult.success === false) {
                 return {
                     issues: mergedResult.errors.map((e) => ({
@@ -226,4 +226,9 @@ export type WebsiteStyle = {
      * The font of the website.
      */
     fontFamily?: string;
+
+    /**
+     * The logo of the website
+     */
+    logo?: string;
 };
