@@ -103,11 +103,11 @@ const { data: userData } = useFindUniqueUser({
 
 const { t } = useI18n();
 
-const superLoginCookie = ref(null);
+const isSuperLogin = ref(false);
 
 onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
-    superLoginCookie.value = Cookies.get(SUPER_LOGIN_COOKIE_NAME);
+    isSuperLogin.value = !!Cookies.get(SUPER_LOGIN_COOKIE_NAME);
 });
 
 onBeforeUnmount(() => {
@@ -250,7 +250,7 @@ watch(
 
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
-            isJSONEditorPermission.value = !!permission?.jsonEditor || !!superLoginCookie.value;
+            isJSONEditorPermission.value = !!permission?.jsonEditor || !!isSuperLogin.value;
             isAIPermission.value = !!permission?.ai;
         }
     },
