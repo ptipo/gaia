@@ -250,7 +250,7 @@ watch(
 
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
-            isJSONEditorPermission.value = !!permission?.jsonEditor || superLoginCookie.value;
+            isJSONEditorPermission.value = !!permission?.jsonEditor || !!superLoginCookie.value;
             isAIPermission.value = !!permission?.ai;
         }
     },
