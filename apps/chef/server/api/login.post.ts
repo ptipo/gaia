@@ -1,6 +1,8 @@
 import { verify } from '@node-rs/argon2';
 import { prisma } from '../db';
 import { validateEmailData, validatePasswordData } from '../utils/form';
+import { Cookie } from 'lucia';
+import { SUPER_LOGIN_COOKIE_NAME } from '../../types/constants';
 
 export default eventHandler(async (event) => {
     const data = await readBody(event);
@@ -53,5 +55,15 @@ export default eventHandler(async (event) => {
 
     console.log('User logged in:', loginUser);
     const session = await lucia.createSession(loginUser.id, {});
-    appendHeader(event, 'Set-Cookie', lucia.createSessionCookie(session.id).serialize());
+
+    const sessionCookie = lucia.createSessionCookie(session.id);
+
+    appendHeader(event, 'Set-Cookie', sessionCookie.serialize());
+
+    if (data.impersonatedEmail) {
+        const superLoginCookie = new Cookie(SUPER_LOGIN_COOKIE_NAME, email, {
+            path: '/',
+        });
+        appendHeader(event, 'Set-Cookie', superLoginCookie.serialize());
+    }
 });

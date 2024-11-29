@@ -39,6 +39,7 @@
         "canvas-confetti": "^1.9.3",
         "dayjs": "^1.11.11",
         "element-plus": "^2.7.3",
+        "js-cookie": "^3.0.5",
         "json-editor-vue": "^0.15.1",
         "lucia": "^3.2.0",
         "markdown-it": "^14.1.0",
