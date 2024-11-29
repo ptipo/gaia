@@ -1,3 +1,5 @@
+import { SUPER_LOGIN_COOKIE_NAME } from '../../types/constants';
+
 export default eventHandler(async (event) => {
     if (!event.context.session) {
         throw createError({
@@ -5,5 +7,11 @@ export default eventHandler(async (event) => {
         });
     }
     await lucia.invalidateSession(event.context.session.id);
-    appendHeader(event, 'Set-Cookie', lucia.createBlankSessionCookie().serialize());
+
+    const blankCookie = lucia.createBlankSessionCookie();
+    appendHeader(event, 'Set-Cookie', blankCookie.serialize());
+
+    //remove super-login cookie
+    blankCookie.name = SUPER_LOGIN_COOKIE_NAME;
+    appendHeader(event, 'Set-Cookie', blankCookie.serialize());
 });

@@ -29,6 +29,8 @@ import { useUnsavedChangesWarning } from '~/composables/unsavedChangeWarning';
 import { loadAppBundle } from '~/lib/app';
 import { alert, confirmDelete, error, success } from '~/lib/message';
 import { PredefinedColors } from '../../lib/color';
+import Cookies from 'js-cookie';
+import { SUPER_LOGIN_COOKIE_NAME } from '../../types/constants';
 
 const route = useRoute();
 
@@ -101,8 +103,11 @@ const { data: userData } = useFindUniqueUser({
 
 const { t } = useI18n();
 
+const isSuperLogin = ref(false);
+
 onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
+    isSuperLogin.value = !!Cookies.get(SUPER_LOGIN_COOKIE_NAME);
 });
 
 onBeforeUnmount(() => {
@@ -245,7 +250,7 @@ watch(
 
         if (userDataValue) {
             const permission = userDataValue.permission as UserPermission;
-            isJSONEditorPermission.value = !!permission?.jsonEditor;
+            isJSONEditorPermission.value = !!permission?.jsonEditor || !!isSuperLogin.value;
             isAIPermission.value = !!permission?.ai;
         }
     },
