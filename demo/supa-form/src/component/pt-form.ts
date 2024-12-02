@@ -389,7 +389,7 @@ export class PtForm extends PtBaseShadow {
         let answerState = isNextPageComplete ? FormSubmitState.COMPLETE : FormSubmitState.STEP;
 
         // if need to go to the complete page
-        const limitPagesPerDrip = this.config?.dataCollection.drip.limitPagesPerDrip;
+        const limitPagesPerDrip = this.config?.dataCollection?.drip?.limitPagesPerDrip;
         if (
             !isNextPageComplete &&
             limitPagesPerDrip?.maxPagesPerDrip &&
