@@ -1,0 +1,1570 @@
+{
+    "title": "$t(form) Schema",
+    "description": "Survey form",
+    "$defs": {
+        "QAQuestion": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "name"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "QAQuestion"
+                },
+                "name": {
+                    "title": "$t(itemName)",
+                    "type": "string"
+                },
+                "question": {
+                    "title": "$t(question)",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "$t(description1)",
+                    "type": "string"
+                },
+                "required": {
+                    "title": "$t(required)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "saveAsUserTag": {
+                    "title": "$t(saveAsUserTag)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "placeholder": {
+                    "title": "$t(placeholder)",
+                    "type": "string"
+                },
+                "default": {
+                    "title": "$t(prefilledContent)",
+                    "type": "string"
+                }
+            }
+        },
+        "TextChoice": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "value"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "TextChoice"
+                },
+                "value": {
+                    "title": "$t(choiceOption)",
+                    "type": "string"
+                },
+                "defaultSelected": {
+                    "title": "$t(defaultSelected)",
+                    "type": "boolean"
+                },
+                "additionalInput": {
+                    "title": "$t(additionalInput)",
+                    "type": "boolean"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "additionalInput": {
+                                "const": true
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "additionalInputPlaceholder": {
+                                "title": "$t(placeholder)",
+                                "description": "Placeholder for additional input. Only valid when the \"additionalInput\" field is true.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "additionalInput": {
+                                "const": true
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "additionalInputRequired": {
+                                "title": "$t(additionalInputRequired)",
+                                "description": "Whether additional input is required. Only valid when the \"additionalInput\" field is true.",
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "ImageChoice": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "name", "value"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ImageChoice"
+                },
+                "name": {
+                    "title": "$t(choiceOption)",
+                    "type": "string"
+                },
+                "value": {
+                    "title": "$t(image)",
+                    "$ref": "#/$defs/Image"
+                },
+                "defaultSelected": {
+                    "title": "$t(defaultSelected)",
+                    "type": "boolean"
+                }
+            }
+        },
+        "ChoiceQuestion": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "name", "kind", "choiceKind"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ChoiceQuestion"
+                },
+                "name": {
+                    "title": "$t(itemName)",
+                    "type": "string"
+                },
+                "question": {
+                    "title": "$t(question)",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "$t(description1)",
+                    "type": "string"
+                },
+                "required": {
+                    "title": "$t(required)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "saveAsUserTag": {
+                    "title": "$t(saveAsUserTag)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "kind": {
+                    "title": "$t(type)",
+                    "enum": ["single", "multiple"],
+                    "default": "single"
+                },
+                "choiceKind": {
+                    "title": "$t(choiceType)",
+                    "enum": ["text", "image"],
+                    "default": "text"
+                },
+                "randomOrder": {
+                    "title": "$t(randomOrder)",
+                    "type": "boolean"
+                },
+                "flatMode": {
+                    "title": "$t(flatLayout)",
+                    "type": "boolean"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "choiceKind": {
+                                "const": "image"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "showTextWithImage": {
+                                "title": "$t(showOptionText)",
+                                "description": "Show text with image choices. Only valid when the \"choiceKind\" field is \"image\".",
+                                "type": "boolean",
+                                "default": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "choiceKind": {
+                                "const": "text"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "textChoices": {
+                                "title": "$t(textOption)",
+                                "description": "Choices for question of \"text\" kind. Only valid when the \"choiceKind\" field is \"text\".",
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/TextChoice"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "required": ["textChoices"]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "choiceKind": {
+                                "const": "image"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "imageChoices": {
+                                "title": "$t(imageOption)",
+                                "description": "Choices for question of \"image\" kind. Only valid when the \"choiceKind\" field is \"image\".",
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/ImageChoice"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "required": ["imageChoices"]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "kind": {
+                                "const": "multiple"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "limitSelectedItems": {
+                                "title": "$t(limitNumberOfChoices)",
+                                "description": "Limit the number of selected items. Only valid when the \"kind\" field is \"multiple\".",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "EmailQuestion": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "name"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "EmailQuestion"
+                },
+                "name": {
+                    "title": "$t(itemName)",
+                    "type": "string"
+                },
+                "question": {
+                    "title": "$t(question)",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "$t(description1)",
+                    "type": "string"
+                },
+                "required": {
+                    "title": "$t(required)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "saveAsUserTag": {
+                    "title": "$t(saveAsUserTag)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "placeholder": {
+                    "title": "$t(placeholder)",
+                    "type": "string"
+                }
+            }
+        },
+        "DateQuestion": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "name"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "DateQuestion"
+                },
+                "name": {
+                    "title": "$t(itemName)",
+                    "type": "string"
+                },
+                "question": {
+                    "title": "$t(question)",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "$t(description1)",
+                    "type": "string"
+                },
+                "required": {
+                    "title": "$t(required)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "saveAsUserTag": {
+                    "title": "$t(saveAsUserTag)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "format": {
+                    "title": "$t(format)",
+                    "enum": ["mmddyyyy", "ddmmyyyy", "yyyymmdd"],
+                    "default": "mmddyyyy"
+                }
+            }
+        },
+        "ImageElement": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "image"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ImageElement"
+                },
+                "image": {
+                    "title": "$t(image)",
+                    "$ref": "#/$defs/Image"
+                },
+                "align": {
+                    "title": "$t(alignment)",
+                    "enum": ["center", "left", "right"],
+                    "default": "left"
+                },
+                "widthUnit": {
+                    "title": "$t(widthUnit)",
+                    "enum": ["percentage", "px"],
+                    "default": "percentage"
+                },
+                "maxWidth": {
+                    "title": "$t(maxWidth)",
+                    "type": "number",
+                    "default": 100
+                }
+            }
+        },
+        "TextElement": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "TextElement"
+                },
+                "kind": {
+                    "title": "$t(type)",
+                    "enum": ["h1", "h2", "h3", "text"],
+                    "default": "text"
+                },
+                "content": {
+                    "title": "$t(content)",
+                    "type": "string"
+                },
+                "align": {
+                    "title": "$t(alignment)",
+                    "enum": ["center", "left", "right"],
+                    "default": "left"
+                },
+                "maxWidth": {
+                    "title": "$t(maxWidth%)",
+                    "type": "number",
+                    "default": 100
+                }
+            }
+        },
+        "CopyToClipboard": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "CopyToClipboard"
+                },
+                "content": {
+                    "title": "$t(text)",
+                    "type": "string"
+                },
+                "align": {
+                    "title": "$t(alignment)",
+                    "enum": ["center", "left", "right"],
+                    "default": "left"
+                },
+                "maxWidth": {
+                    "title": "$t(maxWidth%)",
+                    "type": "number",
+                    "default": 100
+                }
+            }
+        },
+        "TextCheckElement": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "TextCheckElement"
+                },
+                "content": {
+                    "title": "$t(content)",
+                    "type": "string"
+                },
+                "defaultSelected": {
+                    "title": "$t(defaultSelected)",
+                    "type": "boolean"
+                }
+            }
+        },
+        "GoToPageAction": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "GoToPageAction"
+                },
+                "goToPage": {
+                    "title": "$t(targetPage)",
+                    "$ref": "#/$defs/TargetPage"
+                }
+            }
+        },
+        "ConditionalAction": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ConditionalAction"
+                },
+                "condition": {
+                    "title": "$t(whenMatchingConditions)",
+                    "$ref": "#/$defs/LogicalGroup"
+                },
+                "action": {
+                    "title": "$t(action)",
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/GoToPageAction"
+                            }
+                        ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                }
+            }
+        },
+        "NextButton": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "NextButton"
+                },
+                "action": {
+                    "title": "$t(whenClicked)",
+                    "enum": ["next", "goToPage", "conditional"],
+                    "default": "next"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "action": {
+                                "const": "goToPage"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "targetPage": {
+                                "title": "$t(gotoPage)",
+                                "description": "Page to go when the button is clicked. Value must be a reference to an existing page.",
+                                "$ref": "#/$defs/TargetPage"
+                            }
+                        },
+                        "required": ["targetPage"]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "action": {
+                                "const": "conditional"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "conditionalAction": {
+                                "title": "$t(conditionAndAction)",
+                                "description": "Conditions and actions to execute. Only valid when the \"action\" field is \"conditional\".",
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/ConditionalAction"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "required": ["conditionalAction"]
+                    }
+                }
+            ]
+        },
+        "ContentPage": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "pageItems", "nextButton"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ContentPage"
+                },
+                "name": {
+                    "title": "$t(pageName)",
+                    "type": "string"
+                },
+                "pageItems": {
+                    "title": "$t(pageItem)",
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/QAQuestion"
+                            },
+                            {
+                                "$ref": "#/$defs/ChoiceQuestion"
+                            },
+                            {
+                                "$ref": "#/$defs/EmailQuestion"
+                            },
+                            {
+                                "$ref": "#/$defs/DateQuestion"
+                            },
+                            {
+                                "$ref": "#/$defs/ImageElement"
+                            },
+                            {
+                                "$ref": "#/$defs/TextElement"
+                            },
+                            {
+                                "$ref": "#/$defs/CopyToClipboard"
+                            },
+                            {
+                                "$ref": "#/$defs/TextCheckElement"
+                            }
+                        ]
+                    }
+                },
+                "nextButton": {
+                    "title": "$t(next)",
+                    "$ref": "#/$defs/NextButton"
+                }
+            }
+        },
+        "CompletePage": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "pageItems"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "CompletePage"
+                },
+                "name": {
+                    "title": "$t(pageName)",
+                    "type": "string"
+                },
+                "pageItems": {
+                    "title": "$t(pageItem)",
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/TextElement"
+                            },
+                            {
+                                "$ref": "#/$defs/ImageElement"
+                            },
+                            {
+                                "$ref": "#/$defs/CopyToClipboard"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "CustomStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "CustomStyle"
+                },
+                "customCSS": {
+                    "title": "$t(customCSS)",
+                    "$ref": "#/$defs/Code"
+                }
+            }
+        },
+        "GeneralStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "GeneralStyle"
+                },
+                "font": {
+                    "title": "$t(font)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "fontSize": {
+                    "title": "$t(fontSize)",
+                    "enum": ["xs", "sm", "base", "lg", "xl"]
+                },
+                "lineHeight": {
+                    "title": "$t(lineHeight)",
+                    "enum": ["xs", "base", "xl"]
+                }
+            }
+        },
+        "QuestionStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "question", "description"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "QuestionStyle"
+                },
+                "question": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "backgroundColor": {
+                            "title": "$t(backgroundColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "color": {
+                            "title": "$t(fontColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "fontSize": {
+                            "title": "$t(fontSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "align": {
+                            "title": "$t(alignment)",
+                            "enum": ["center", "left", "right"]
+                        }
+                    }
+                },
+                "description": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "color": {
+                            "title": "$t(fontColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "fontSize": {
+                            "title": "$t(fontSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "align": {
+                            "title": "$t(alignment)",
+                            "enum": ["center", "left", "right"]
+                        }
+                    }
+                }
+            }
+        },
+        "AnswerChoiceStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "answer", "choice"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "AnswerChoiceStyle"
+                },
+                "answer": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "color": {
+                            "title": "$t(fontColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "fontSize": {
+                            "title": "$t(fontSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "backgroundColor": {
+                            "title": "$t(backgroundColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "borderColor": {
+                            "title": "$t(borderColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "placeHolderColor": {
+                            "title": "$t(placeHolderColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "style": {
+                            "title": "$t(style)",
+                            "enum": ["line", "box"]
+                        },
+                        "borderWidth": {
+                            "title": "$t(borderWidth)",
+                            "type": "number"
+                        }
+                    },
+                    "if": {
+                        "properties": {
+                            "style": {
+                                "const": "box"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "borderRadius": {
+                                "title": "$t(borderRadius)",
+                                "type": "number"
+                            }
+                        }
+                    }
+                },
+                "choice": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "color": {
+                            "title": "$t(fontColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "fontSize": {
+                            "title": "$t(fontSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "backgroundColor": {
+                            "title": "$t(backgroundColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "borderColor": {
+                            "title": "$t(borderColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "selectIconColor": {
+                            "title": "$t(selectIconColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "borderWidth": {
+                            "title": "$t(borderWidth)",
+                            "type": "number"
+                        },
+                        "borderRadius": {
+                            "title": "$t(borderRadius)",
+                            "type": "number"
+                        },
+                        "gap": {
+                            "title": "$t(gap)",
+                            "enum": ["xs", "base", "xl"]
+                        }
+                    }
+                }
+            }
+        },
+        "ProgressButtonStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept", "floating", "progress", "nextButton", "backButton"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "ProgressButtonStyle"
+                },
+                "floating": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "topBarColor": {
+                            "title": "$t(topBarColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "bottomBarColor": {
+                            "title": "$t(bottomBarColor)",
+                            "$ref": "#/$defs/Color"
+                        }
+                    }
+                },
+                "progress": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "progressColor": {
+                            "title": "$t(progressColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "progressRemainColor": {
+                            "title": "$t(progressRemainColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "progressHeight": {
+                            "title": "$t(progressSize)",
+                            "enum": ["xs", "base", "xl"]
+                        }
+                    }
+                },
+                "nextButton": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "buttonSize": {
+                            "title": "$t(buttonSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "buttonTextColor": {
+                            "title": "$t(buttonTextColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonBackgroundColor": {
+                            "title": "$t(buttonBackgroundColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonBorderColor": {
+                            "title": "$t(buttonBorderColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonShadow": {
+                            "title": "$t(buttonShadow)",
+                            "type": "boolean"
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowOffsetX": {
+                                        "title": "$t(shadowOffsetX)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowOffsetY": {
+                                        "title": "$t(shadowOffsetY)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowBlur": {
+                                        "title": "$t(blur)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowSpread": {
+                                        "title": "$t(spread)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowColor": {
+                                        "title": "$t(color)",
+                                        "$ref": "#/$defs/Color"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "backButton": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "buttonSize": {
+                            "title": "$t(buttonSize)",
+                            "enum": ["xs", "sm", "base", "lg", "xl"]
+                        },
+                        "buttonTextColor": {
+                            "title": "$t(buttonTextColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonBackgroundColor": {
+                            "title": "$t(buttonBackgroundColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonBorderColor": {
+                            "title": "$t(buttonBorderColor)",
+                            "$ref": "#/$defs/Color"
+                        },
+                        "buttonShadow": {
+                            "title": "$t(buttonShadow)",
+                            "type": "boolean"
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowOffsetX": {
+                                        "title": "$t(shadowOffsetX)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowOffsetY": {
+                                        "title": "$t(shadowOffsetY)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowBlur": {
+                                        "title": "$t(blur)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowSpread": {
+                                        "title": "$t(spread)",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "buttonShadow": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "shadowColor": {
+                                        "title": "$t(color)",
+                                        "$ref": "#/$defs/Color"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "BackgroundStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "BackgroundStyle"
+                },
+                "background": {
+                    "title": "$t(background)",
+                    "enum": ["transparent", "color", "image"]
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "background": {
+                                "const": "color"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "backgroundColor": {
+                                "title": "$t(backgroundColor)",
+                                "$ref": "#/$defs/Color"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "background": {
+                                "const": "image"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "backgroundImage": {
+                                "title": "$t(backgroundImage)",
+                                "$ref": "#/$defs/Image"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "background": {
+                                "const": "image"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "backgroundImageFill": {
+                                "title": "$t(backgroundImageFill)",
+                                "enum": ["contain", "cover"]
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "LayoutStyle": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "LayoutStyle"
+                },
+                "marginVertical": {
+                    "title": "$t(marginVertical)",
+                    "enum": ["xs", "base", "xl"]
+                },
+                "marginHorizontal": {
+                    "title": "$t(marginHorizontal)",
+                    "enum": ["xs", "base", "xl"]
+                },
+                "contentGap": {
+                    "title": "$t(contentGap)",
+                    "enum": ["xs", "base", "xl"]
+                }
+            }
+        },
+        "Form": {
+            "type": "object",
+            "required": [
+                "$type",
+                "$id",
+                "$concept",
+                "contentPages",
+                "completePages",
+                "languageSettings",
+                "dataCollection",
+                "customStyle",
+                "generalStyle",
+                "questionStyle",
+                "answerChoiceStyle",
+                "progressButtonStyle",
+                "backgroundStyle",
+                "layoutStyle"
+            ],
+            "properties": {
+                "$type": {
+                    "const": "concept"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "const": "Form"
+                },
+                "contentPages": {
+                    "title": "$t(contentPage)",
+                    "description": "Pages for collecting user input",
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ContentPage"
+                            }
+                        ]
+                    }
+                },
+                "completePages": {
+                    "title": "$t(completePage)",
+                    "description": "Pages for confirming form submission and thanking the user",
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/CompletePage"
+                            }
+                        ]
+                    }
+                },
+                "languageSettings": {
+                    "type": "object",
+                    "required": ["$type"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "language": {
+                            "title": "$t(selectLanguage)",
+                            "enum": ["zh-CN", "en-US", "ja-JP", "fr-FR", "de-DE", "ko-KR"]
+                        }
+                    }
+                },
+                "dataCollection": {
+                    "type": "object",
+                    "required": ["$type", "drip", "autoCollect"],
+                    "properties": {
+                        "$type": {
+                            "const": "item-group"
+                        },
+                        "drip": {
+                            "type": "object",
+                            "required": ["$type"],
+                            "properties": {
+                                "$type": {
+                                    "const": "item-group"
+                                },
+                                "enable": {
+                                    "title": "$t(enableDrip)",
+                                    "type": "boolean"
+                                },
+                                "retention": {
+                                    "title": "$t(retentionPeriod)",
+                                    "enum": ["once", "oneDay", "oneWeek", "oneMonth", "forever"]
+                                }
+                            },
+                            "if": {
+                                "properties": {
+                                    "enable": {
+                                        "const": true
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "limitPagesPerDrip": {
+                                        "description": "Control the number of pages submitted each time. Only valid when the \"enable\" field is true.",
+                                        "type": "object",
+                                        "required": ["$type"],
+                                        "properties": {
+                                            "$type": {
+                                                "const": "item-group"
+                                            },
+                                            "maxPagesPerDrip": {
+                                                "title": "$t(maxPagesPerCollect)",
+                                                "type": "number"
+                                            },
+                                            "dripCompletePage": {
+                                                "title": "$t(pageAfterEachCollect)",
+                                                "$ref": "#/$defs/TargetPage"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "autoCollect": {
+                            "type": "object",
+                            "required": ["$type"],
+                            "properties": {
+                                "$type": {
+                                    "const": "item-group"
+                                },
+                                "utmParameters": {
+                                    "title": "$t(utmParams)",
+                                    "type": "boolean"
+                                },
+                                "page_url": {
+                                    "title": "$t(pageURL)",
+                                    "type": "boolean"
+                                },
+                                "landing_page_url": {
+                                    "title": "$t(landingURL)",
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "customStyle": {
+                    "title": "$t(customCSS)",
+                    "$ref": "#/$defs/CustomStyle"
+                },
+                "generalStyle": {
+                    "title": "$t(textAndLayout)",
+                    "$ref": "#/$defs/GeneralStyle"
+                },
+                "questionStyle": {
+                    "title": "$t(questionStyle)",
+                    "$ref": "#/$defs/QuestionStyle"
+                },
+                "answerChoiceStyle": {
+                    "title": "$t(answerChoiceStyle)",
+                    "$ref": "#/$defs/AnswerChoiceStyle"
+                },
+                "progressButtonStyle": {
+                    "title": "$t(progressButtonStyle)",
+                    "$ref": "#/$defs/ProgressButtonStyle"
+                },
+                "backgroundStyle": {
+                    "title": "$t(backgroundStyle)",
+                    "$ref": "#/$defs/BackgroundStyle"
+                },
+                "layoutStyle": {
+                    "title": "$t(layoutStyle)",
+                    "$ref": "#/$defs/LayoutStyle"
+                }
+            }
+        },
+        "Color": {
+            "type": "string",
+            "pattern": "^rgba(d{1,3},s*d{1,3},s*d{1,3},s*d(.d+)?)$"
+        },
+        "Image": {
+            "type": "object",
+            "required": ["$type", "url"],
+            "properties": {
+                "$type": {
+                    "const": "image"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "Code": {
+            "type": "object",
+            "required": ["$type", "language", "source"],
+            "properties": {
+                "$type": {
+                    "const": "code"
+                },
+                "language": {
+                    "enum": ["css"]
+                },
+                "source": {
+                    "type": "string",
+                    "default": ""
+                }
+            }
+        },
+        "LogicalGroup": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "required": ["kind", "left", "operator"],
+                    "properties": {
+                        "kind": {
+                            "const": "expression"
+                        },
+                        "operator": {
+                            "type": "string"
+                        },
+                        "left": {},
+                        "right": {}
+                    }
+                },
+                {
+                    "$ref": "#/$defs/LogicalGroupAssociation"
+                }
+            ]
+        },
+        "LogicalGroupAssociation": {
+            "type": "object",
+            "required": ["kind", "groupOperator", "first", "second"],
+            "properties": {
+                "kind": {
+                    "const": "association"
+                },
+                "groupOperator": {
+                    "enum": ["and", "or"]
+                },
+                "first": {
+                    "$ref": "#/$defs/LogicalGroup"
+                },
+                "second": {
+                    "$ref": "#/$defs/LogicalGroup"
+                }
+            }
+        },
+        "TargetPage": {
+            "type": "object",
+            "required": ["$type", "$id", "$concept"],
+            "properties": {
+                "$type": {
+                    "const": "ref"
+                },
+                "$id": {
+                    "type": "string"
+                },
+                "$concept": {
+                    "enum": ["ContentPage", "CompletePage"]
+                }
+            }
+        }
+    },
+    "$ref": "#/$defs/Form"
+}
