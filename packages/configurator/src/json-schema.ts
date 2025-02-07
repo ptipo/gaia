@@ -24,16 +24,6 @@ export class JSONSchemaBuilder {
     }
 
     private buildCommonSchemas() {
-        this.result.$defs['DynamicSelectOption'] = {
-            type: 'object',
-            required: ['key', 'value', 'label'],
-            properties: {
-                key: { anyOf: [{ type: 'string' }, { type: 'number' }] },
-                label: { type: 'string' },
-                value: {},
-            },
-        };
-
         this.result.$defs['Color'] = {
             type: 'string',
             pattern: '^rgba(d{1,3},s*d{1,3},s*d{1,3},s*d(.d+)?)$',
@@ -187,13 +177,14 @@ export class JSONSchemaBuilder {
                 type: 'array',
                 items: item.allowCreate ? { type: 'string' } : { enum: Object.keys(item.options) },
             }))
+            // FIXME: Can't get the dynamic select return type. Use 'string' temporarily.
             .with({ type: 'dynamic-select' }, (item) =>
                 item.multiple
                     ? {
                           type: 'array',
-                          items: this.makeDefRef('DynamicSelectOption'),
+                          items: { type: 'string' },
                       }
-                    : this.makeDefRef('DynamicSelectOption')
+                    : { type: 'string' }
             )
             .with({ type: 'color' }, (item) => ({ ...this.makeDefRef('Color'), default: item.default }))
             .with({ type: 'image' }, () => this.makeDefRef('Image'))

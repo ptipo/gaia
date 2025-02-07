@@ -11,7 +11,7 @@ const email = window.shopifyEmail || '';
 let uid = (window.ptengine && window.ptengine.__ptePeid) || Date.now() + '';
 
 // 加loading
-const loadingEl = document.querySelector(`#${engageElementId} [data-menu-action="insert.popup"]`);
+const loadingEl = ptKit.querySelector(`#${engageElementId} [data-menu-action="insert.popup"]`);
 addLoading(loadingEl);
 
 function addLoading(wrap, className = 'pt-popup-loading', styleId = 'pt-popup-loading-style') {
@@ -96,12 +96,12 @@ function addLoading(wrap, className = 'pt-popup-loading', styleId = 'pt-popup-lo
     loading.innerHTML = loadingHTML;
     wrap.appendChild(loading.firstChild);
     // add style
-    if (document.querySelector('#' + styleId)) return;
+    if (ptKit.querySelector('#' + styleId)) return;
     const head = document.getElementsByTagName('head')[0];
     const styleEle = document.createElement('style');
     styleEle.setAttribute('id', styleId);
     styleEle.innerHTML = loadingStyle;
-    head.appendChild(styleEle);
+    wrap.appendChild(styleEle);
 }
 function removeLoading(wrap, className = 'pt-popup-loading') {
     const loading = wrap.querySelector('.' + className);
